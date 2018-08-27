@@ -51,16 +51,16 @@ pipeline {
                 deploy action: 'jiraPreprod'
             }
         }
-        post {
-            always {
-                postProcess action: 'always'
-            }
-            success {
-                postProcess action: 'success'
-            }
-            failure {
-                postProcess action: 'failure'
-            }
+    }
+    post {
+        always {
+            postProcess action: 'always'
+        }
+        success {
+            postProcess action: 'success'
+        }
+        failure {
+            postProcess action: 'failure'
         }
     }
 }
