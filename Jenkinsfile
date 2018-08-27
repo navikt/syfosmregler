@@ -5,6 +5,7 @@ pipeline {
 
     environment {
         APPLICATION_NAME = 'syfosykemeldingregler'
+        DISABLE_SLACK_MESSAGES = true
     }
 
     stages {
