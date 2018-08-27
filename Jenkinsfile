@@ -50,7 +50,7 @@ pipeline {
                 dockerUtils action: 'createPushImage'
                 nais action: 'validate'
                 nais action: 'upload'
-                deploy action: 'jiraPreprod'
+                deployApp action: 'jiraPreprod'
             }
         }
     }
