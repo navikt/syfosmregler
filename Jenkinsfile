@@ -13,7 +13,7 @@ pipeline {
                 script {
                     init action: 'default'
                     sh './gradlew clean'
-                    applicationVersion = sh(script: './gradlew -q printVersion', returnStdout: true).trim()
+                    applicationVersionGradle = sh(script: './gradlew -q printVersion', returnStdout: true).trim()
                     env.APPLICATION_VERSION = "${applicationVersionGradle}"
                     if (applicationVersionGradle.endsWith('-SNAPSHOT')) {
                         env.APPLICATION_VERSION = "${applicationVersionGradle}.${env.BUILD_ID}-${env.COMMIT_HASH_SHORT}"
