@@ -7,27 +7,25 @@ replicas:
 port: 8080
 healthcheck:
   liveness:
-    path: /internal/isAlive
+    path: /is_ready
     initialDelay: 60
     timeout: 1
     periodSeconds: 10
     failureThreshold: 3
   readiness:
-    path: /internal/isReady
+    path: /is_alive
     initialDelay: 60
     timeout: 1
 prometheus:
   enabled: true
-  path: /internal/prometheus
+  path: /prometheus
 resources:
   limits:
     cpu: 1000m
-    memory: 512Mi
+    memory: 256Mi
   requests:
-    cpu: 500m
-    memory: 384Mi
+    cpu: 50m
+    memory: 128Mi
 fasitResources:
   exposed:
 used:
-  - alias: srvappname
-    resourceType: Credential
