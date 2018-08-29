@@ -1,6 +1,9 @@
 package no.nav.syfo
 
 import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
+import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -33,5 +36,8 @@ fun Application.initRouting(applicationState: ApplicationState) {
     routing {
         registerNaisApi(readynessCheck = ::doReadynessCheck, livenessCheck = { applicationState.running })
         registerRuleApi()
+    }
+    install(ContentNegotiation) {
+        jackson {}
     }
 }
