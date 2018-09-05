@@ -1,5 +1,5 @@
-name: "syfosykemeldingregler"
-image: "repo.adeo.no:5443/syfo/syfosykemeldingregler"
+name: "syfosmregler"
+image: "repo.adeo.no:5443/syfo/syfosmregler"
 replicas:
   min: 1
   max: 2
