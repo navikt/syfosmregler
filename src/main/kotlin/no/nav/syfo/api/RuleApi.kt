@@ -34,7 +34,7 @@ fun Routing.registerRuleApi() {
         val marker = Markers.append("msgId", fellesformat.get<XMLMsgHead>().msgInfo.msgId)
                 .and<LogstashMarker>(Markers.append("organisationNumber", extractOrganisationNumberFromSender(fellesformat)?.id))
                 .and<LogstashMarker>(Markers.append("ediLoggId", fellesformat.get<XMLMottakenhetBlokk>().ediLoggId))
-        log.info(marker, "Received a SM2013, going to persist in DB")
+        log.info(marker, "Received a SM2013, going to rules")
 
         call.respond(ValidationResult(
                 status = when {

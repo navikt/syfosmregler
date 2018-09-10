@@ -11,6 +11,7 @@ buildscript {
     ext.logstash_encoder_version = '5.1'
     ext.jaxb_api_version = '2.1'
     ext.jaxb_version = '2.3.0.1'
+    ext.javax_activation_version = '1.1.1'
 }
 
 plugins {
@@ -68,6 +69,7 @@ dependencies {
 
     implementation "javax.xml.bind:jaxb-api:$jaxb_api_version"
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb_version"
+    implementation "javax.activation:activation:$javax_activation_version"
 }
 
 compileKotlin {
