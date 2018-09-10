@@ -18,7 +18,6 @@ fun doReadynessCheck(): Boolean {
 
 data class ApplicationState(var running: Boolean = true)
 
-
 fun main(args: Array<String>) {
     val env = Environment()
     val applicationState = ApplicationState()
