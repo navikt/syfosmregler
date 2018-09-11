@@ -5,8 +5,7 @@ import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
-import net.logstash.logback.marker.LogstashMarker
-import net.logstash.logback.marker.Markers
+import net.logstash.logback.argument.StructuredArguments
 import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
 import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
 import no.nav.syfo.model.Status
@@ -31,10 +30,17 @@ fun Routing.registerRuleApi() {
             log.debug(text)
         }
         val fellesformat = fellesformatUnmarshaller.unmarshal(StringReader(text)) as XMLEIFellesformat
-        val marker = Markers.append("msgId", fellesformat.get<XMLMsgHead>().msgInfo.msgId)
-                .and<LogstashMarker>(Markers.append("organisationNumber", extractOrganisationNumberFromSender(fellesformat)?.id))
-                .and<LogstashMarker>(Markers.append("smId", fellesformat.get<XMLMottakenhetBlokk>().ediLoggId))
-        log.info(marker, "Received a SM2013, going to rules")
+        val logValues = arrayOf(
+                StructuredArguments.keyValue("smId", fellesformat.get<XMLMottakenhetBlokk>().ediLoggId),
+                StructuredArguments.keyValue("organizationNumber", extractOrganisationNumberFromSender(fellesformat)?.id),
+                StructuredArguments.keyValue("msgId", fellesformat.get<XMLMsgHead>().msgInfo.msgId)
+        )
+
+        val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
+            "{}"
+        }
+
+        log.info("Received a SM2013, going to rules, $logKeys", *logValues)
 
         call.respond(ValidationResult(
                 status = when {

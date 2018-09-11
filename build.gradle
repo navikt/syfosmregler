@@ -42,6 +42,8 @@ test {
         showStandardStreams = true
     }
 }
+// suppress warning for experimental coroutines
+kotlin { experimental { coroutines "enable"} }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
