@@ -1,9 +1,9 @@
 package no.nav.syfo
 
-data class Rule<in T>(val outcomeType: OutcomeType, val description: String, val predicate: (T) -> Boolean)
+data class Rule<in T>(val name: String, val outcomeType: OutcomeType, val description: String, val predicate: (T) -> Boolean)
 data class Outcome(val outcomeType: OutcomeType, val description: String)
 
-data class RuleChain<in T>(val description: String, val rules: List<Rule<T>>) {
+data class RuleChain<in T>(val name: String, val description: String, val rules: List<Rule<T>>) {
     fun executeFlow(input: T): List<Outcome> = rules
             .filter { RULE_HIT_SUMMARY.labels(it.outcomeType.name).startTimer().use { _ -> it.predicate(input) } }
             .onEach { RULE_HIT_COUNTER.labels(it.outcomeType.name) }
