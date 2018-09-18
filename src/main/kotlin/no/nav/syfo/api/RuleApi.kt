@@ -1,11 +1,11 @@
 package no.nav.syfo.api
 
 import io.ktor.application.call
-import io.ktor.request.receiveText
+import io.ktor.request.receiveStream
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
-import net.logstash.logback.argument.StructuredArguments
+import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
 import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
 import no.nav.syfo.model.Status
@@ -14,7 +14,10 @@ import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import no.trygdeetaten.xml.eiff._1.XMLMottakenhetBlokk
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.StringReader
+import no.nav.syfo.get
+import no.nav.syfo.model.RuleInfo
+import no.nav.syfo.rules.fellesformatValidationChain
+import no.nav.syfo.rules.validationChain
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 
@@ -25,15 +28,11 @@ val fellesformatUnmarshaller: Unmarshaller = fellesformatJaxBContext.createUnmar
 fun Routing.registerRuleApi() {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
-        val text = call.receiveText()
-        if (log.isDebugEnabled) {
-            log.debug(text)
-        }
-        val fellesformat = fellesformatUnmarshaller.unmarshal(StringReader(text)) as XMLEIFellesformat
+        val fellesformat = fellesformatUnmarshaller.unmarshal(call.receiveStream()) as XMLEIFellesformat
         val logValues = arrayOf(
-                StructuredArguments.keyValue("smId", fellesformat.get<XMLMottakenhetBlokk>().ediLoggId),
-                StructuredArguments.keyValue("organizationNumber", extractOrganisationNumberFromSender(fellesformat)?.id),
-                StructuredArguments.keyValue("msgId", fellesformat.get<XMLMsgHead>().msgInfo.msgId)
+                keyValue("smId", fellesformat.get<XMLMottakenhetBlokk>().ediLoggId),
+                keyValue("organizationNumber", extractOrganisationNumberFromSender(fellesformat)?.id),
+                keyValue("msgId", fellesformat.get<XMLMsgHead>().msgInfo.msgId)
         )
 
         val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
@@ -41,14 +40,14 @@ fun Routing.registerRuleApi() {
         }
 
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
+        val results = listOf(
+                fellesformatValidationChain.executeFlow(fellesformat),
+                validationChain.executeFlow(fellesformat.get())
+        ).flatMap { it }
 
         call.respond(ValidationResult(
-                status = when {
-                    text.contains("TMP_MANUAL") -> Status.MANUAL_PROCESSING
-                    text.contains("TMP_INVALID") -> Status.INVALID
-                    else -> Status.OK
-                },
-                ruleHits = listOf()
+                status = results.map { it.outcomeType.status }.firstOrNull { it == Status.INVALID } ?: Status.OK,
+                ruleHits = results.map { RuleInfo(it.description) }
         ))
     }
 }

@@ -9,6 +9,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
+import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import java.util.concurrent.TimeUnit
 
 fun doReadynessCheck(): Boolean {
@@ -18,6 +19,11 @@ fun doReadynessCheck(): Boolean {
 
 data class ApplicationState(var running: Boolean = true)
 
+// TODO: WS calls required
+// TPS
+// kuhr-sar
+// Addresseregister
+// Fastlegeregister
 fun main(args: Array<String>) {
     val env = Environment()
     val applicationState = ApplicationState()
@@ -40,3 +46,5 @@ fun Application.initRouting(applicationState: ApplicationState) {
         jackson {}
     }
 }
+
+inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T
