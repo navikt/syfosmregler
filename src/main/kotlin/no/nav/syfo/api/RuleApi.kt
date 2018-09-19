@@ -8,6 +8,7 @@ import io.ktor.routing.post
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
 import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
+import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
@@ -22,17 +23,26 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
-val fellesformatJaxBContext: JAXBContext = JAXBContext.newInstance(XMLEIFellesformat::class.java, XMLMsgHead::class.java)
+val fellesformatJaxBContext: JAXBContext = JAXBContext.newInstance(
+        XMLEIFellesformat::class.java,
+        XMLMsgHead::class.java,
+        HelseOpplysningerArbeidsuforhet::class.java
+)
 val fellesformatUnmarshaller: Unmarshaller = fellesformatJaxBContext.createUnmarshaller()
 
 fun Routing.registerRuleApi() {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
         val fellesformat = fellesformatUnmarshaller.unmarshal(call.receiveStream()) as XMLEIFellesformat
+
+        val mottakenhetBlokk: XMLMottakenhetBlokk = fellesformat.get()
+        val msgHead: XMLMsgHead = fellesformat.get()
+        val healthInformation: HelseOpplysningerArbeidsuforhet = fellesformat.get()
+
         val logValues = arrayOf(
-                keyValue("smId", fellesformat.get<XMLMottakenhetBlokk>().ediLoggId),
+                keyValue("smId", mottakenhetBlokk.ediLoggId),
                 keyValue("organizationNumber", extractOrganisationNumberFromSender(fellesformat)?.id),
-                keyValue("msgId", fellesformat.get<XMLMsgHead>().msgInfo.msgId)
+                keyValue("msgId", msgHead.msgInfo.msgId)
         )
 
         val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
@@ -42,7 +52,7 @@ fun Routing.registerRuleApi() {
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
         val results = listOf(
                 fellesformatValidationChain.executeFlow(fellesformat),
-                validationChain.executeFlow(fellesformat.get())
+                validationChain.executeFlow(healthInformation)
         ).flatMap { it }
 
         call.respond(ValidationResult(
