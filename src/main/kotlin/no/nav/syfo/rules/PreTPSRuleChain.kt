@@ -6,6 +6,7 @@ import no.nav.syfo.Diagnosekode
 import no.nav.syfo.OutcomeType
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleChain
+import no.nav.syfo.contains
 import no.nav.syfo.get
 import no.nav.syfo.validation.extractBornDate
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
@@ -35,7 +36,7 @@ val validationChain = RuleChain<HelseOpplysningerArbeidsuforhet>(
                         outcomeType = OutcomeType.INVALID_CODE_SYSTEM,
                         description = "Validates if the code system is one of the accepted ones"
                 ) {
-                    it.medisinskVurdering.hovedDiagnose.diagnosekode.s in Diagnosekode.values().map { it.kithCode }
+                    it.medisinskVurdering.hovedDiagnose.diagnosekode.s in Diagnosekode.values()
                 }
         ))
 
