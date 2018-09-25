@@ -51,7 +51,7 @@ val fellesformatValidationChain = RuleChain<XMLEIFellesformat>(
                 ) {
                     val mottakenhetBlokk: XMLMottakenhetBlokk = it.get()
                     val msgHead: XMLMsgHead = it.get()
-                    mottakenhetBlokk.mottattDatotid.toGregorianCalendar().toZonedDateTime().toLocalDateTime() > msgHead.msgInfo.genDate
+                    mottakenhetBlokk.mottattDatotid.toGregorianCalendar().toZonedDateTime().toLocalDateTime() < msgHead.msgInfo.genDate
                 }
         )
 )
