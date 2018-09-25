@@ -8,6 +8,7 @@ import io.ktor.routing.post
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
 import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
+import no.kith.xmlstds.msghead._2006_05_24.XMLRefDoc
 import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
@@ -37,7 +38,7 @@ fun Routing.registerRuleApi() {
 
         val mottakenhetBlokk: XMLMottakenhetBlokk = fellesformat.get()
         val msgHead: XMLMsgHead = fellesformat.get()
-        val healthInformation: HelseOpplysningerArbeidsuforhet = fellesformat.get()
+        val healthInformation: HelseOpplysningerArbeidsuforhet = extractHelseopplysninger(msgHead)
 
         val logValues = arrayOf(
                 keyValue("smId", mottakenhetBlokk.ediLoggId),
@@ -63,8 +64,10 @@ fun Routing.registerRuleApi() {
 }
 
 inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T
+inline fun <reified T> XMLRefDoc.Content.get() = this.any.find { it is T } as T
 
 fun extractOrganisationNumberFromSender(fellesformat: XMLEIFellesformat): XMLIdent? =
         fellesformat.get<XMLMsgHead>().msgInfo.sender.organisation.ident.find {
             it.typeId.v == "ENH"
         }
+fun extractHelseopplysninger(msgHead: XMLMsgHead) = msgHead.document[0].refDoc.content.get<HelseOpplysningerArbeidsuforhet>()
