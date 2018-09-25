@@ -36,7 +36,7 @@ val validationChain = RuleChain<HelseOpplysningerArbeidsuforhet>(
                         outcomeType = OutcomeType.INVALID_CODE_SYSTEM,
                         description = "Validates if the code system is one of the accepted ones"
                 ) {
-                    it.medisinskVurdering.hovedDiagnose.diagnosekode.s in Diagnosekode.values()
+                    it.medisinskVurdering.hovedDiagnose.diagnosekode.s !in Diagnosekode.values()
                 }
         ))
 
