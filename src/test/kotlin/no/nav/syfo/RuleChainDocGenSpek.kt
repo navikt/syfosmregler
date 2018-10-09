@@ -21,7 +21,7 @@ object RuleChainDocGenSpek : Spek({
                 val csvFile = basePath.resolve("${it.name}-rules.csv")
                 Files.write(
                         csvFile,
-                        arrayOf("Rule name;Outcome type;Rule ID;Description").union(it.rules.map { "${it.name};${it.outcomeType};${it.outcomeType.ruleId};${it.description}" }),
+                        arrayOf("Rule name;status;Rule ID;Description").union(it.rules.map { "${it.name};${it.status};${it.ruleId};${it.description}" }),
                         Charsets.UTF_8
                 )
             }

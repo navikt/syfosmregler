@@ -57,7 +57,7 @@ fun Routing.registerRuleApi() {
         ).flatMap { it }
 
         call.respond(ValidationResult(
-                status = results.map { it.outcomeType.status }.firstOrNull { it == Status.INVALID } ?: Status.OK,
+                status = results.map { it.status }.firstOrNull { it == Status.INVALID } ?: Status.OK,
                 ruleHits = results.map { RuleInfo(it.description) }
         ))
     }
