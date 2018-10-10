@@ -127,6 +127,33 @@ val periodLogicRuleChain = RuleChain<HelseOpplysningerArbeidsuforhet>(
                         }
                     }
                     false
+                },
+                Rule(
+                        name = "Backdated more then one year without any description",
+                        ruleId =  1206,
+                        status = Status.INVALID,
+                        description = "Checks if the period is backdated for more then one year without any activity"
+                ) {
+                    it.meldingTilNav == null && it.aktivitet.periode.any {
+                        it.periodeFOMDato.toGregorianCalendar().toZonedDateTime().isBefore(ZonedDateTime.now().minusYears(1))
+                    }
+                },
+                Rule(
+                        name = "Pending sick leave combined with other types",
+                        ruleId = 1240,
+                        status = Status.INVALID,
+                        description = "A pending sick leave can't be combined with other periods"
+                ) {
+                    it.aktivitet.periode.size > 1 && it.aktivitet.periode.any { it.avventendeSykmelding != null }
+                },
+                // TODO: Can we just update the schema for this?
+                Rule(
+                        name = "Missing additional information to employer in pending period",
+                        ruleId = 1241,
+                        status = Status.INVALID,
+                        description = "The field to the workplace for tilretteleging should be filled for pending sick leaves"
+                ) {
+                    it.aktivitet.periode.any { it.avventendeSykmelding != null && it.avventendeSykmelding.innspillTilArbeidsgiver == null }
                 }
         )
 )
