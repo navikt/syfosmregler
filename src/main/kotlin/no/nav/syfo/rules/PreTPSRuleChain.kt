@@ -132,10 +132,6 @@ val periodLogicRuleChain = RuleChain<HelseOpplysningerArbeidsuforhet>(
 )
 
 fun workdaysBetween(a: ZonedDateTime, b: ZonedDateTime): Int = (1..(ChronoUnit.DAYS.between(a, b) - 1))
-        .map {
-            println(it)
-            it
-        }
         .map { a.plusDays(it) }
         .filter { it.dayOfWeek !in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY) }
         .count()
