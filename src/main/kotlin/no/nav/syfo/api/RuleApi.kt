@@ -10,6 +10,7 @@ import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
 import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
 import no.kith.xmlstds.msghead._2006_05_24.XMLRefDoc
 import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
+import no.nav.syfo.Rule
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
@@ -18,8 +19,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import no.nav.syfo.get
 import no.nav.syfo.model.RuleInfo
-import no.nav.syfo.rules.fellesformatValidationChain
-import no.nav.syfo.rules.validationChain
+import no.nav.syfo.rules.PeriodLogicRuleChain
+import no.nav.syfo.rules.RuleData
+import no.nav.syfo.rules.ValidationRules
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 
@@ -51,14 +53,15 @@ fun Routing.registerRuleApi() {
         }
 
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
-        val results = listOf(
-                fellesformatValidationChain.executeFlow(fellesformat),
-                validationChain.executeFlow(healthInformation)
-        ).flatMap { it }
+        val ruleData = RuleData.fromFellesformat(fellesformat)
+        val results = listOf<List<Rule<RuleData>>>(
+                ValidationRules.values().toList(),
+                PeriodLogicRuleChain.values().toList()
+        ).flatten().filter { rule -> rule.predicate(ruleData) }
 
         call.respond(ValidationResult(
                 status = results.map { it.status }.firstOrNull { it == Status.INVALID } ?: Status.OK,
-                ruleHits = results.map { RuleInfo(it.description) }
+                ruleHits = results.map { RuleInfo(it.name) }
         ))
     }
 }
