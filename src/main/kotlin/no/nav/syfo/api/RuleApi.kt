@@ -22,7 +22,7 @@ import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadata
-import no.nav.syfo.rules.ValidationRules
+import no.nav.syfo.rules.ValidationRuleChain
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 
@@ -56,7 +56,7 @@ fun Routing.registerRuleApi() {
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
         val ruleData = RuleData.fromFellesformat(fellesformat)
         val results = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                ValidationRules.values().toList(),
+                ValidationRuleChain.values().toList(),
                 PeriodLogicRuleChain.values().toList()
         ).flatten().filter { rule -> rule.predicate(ruleData) }
 

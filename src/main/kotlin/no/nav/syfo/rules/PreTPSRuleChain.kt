@@ -4,14 +4,11 @@ import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
 import no.nav.model.sm2013.CV
 import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Description
-import no.nav.syfo.Diagnosekode
 import no.nav.syfo.Rule
 import no.nav.syfo.api.extractHelseopplysninger
 import no.nav.syfo.contains
 import no.nav.syfo.get
 import no.nav.syfo.model.Status
-import no.nav.syfo.validation.extractBornDate
-import no.nav.syfo.validation.validatePersonAndDNumber
 import no.nav.syfo.ICD10
 import no.nav.syfo.ICPC2
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat

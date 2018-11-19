@@ -1,6 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Description
 import no.nav.syfo.Rule
 import no.nav.syfo.model.Status
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person
