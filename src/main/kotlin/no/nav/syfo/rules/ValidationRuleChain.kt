@@ -80,7 +80,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
     // TODO: Endre navn på denne etter diskusjon med fag
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
-        true // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
+        false // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     }),
 
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")

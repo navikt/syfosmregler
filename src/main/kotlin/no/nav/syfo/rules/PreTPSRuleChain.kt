@@ -99,12 +99,12 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
     BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3) < healthInformation.kontaktMedPasient.behandletDato.toZoned()
+        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato.toZoned())
     }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
-        (healthInformation.kontaktMedPasient.begrunnIkkeKontakt == null)
+    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
+        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato.toZoned()) && (healthInformation.kontaktMedPasient.begrunnIkkeKontakt == null)
     }),
 
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
@@ -184,7 +184,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
     BACKDATING_SYKMELDING_EXTENSION(null, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first().minusMonths(1) < ruleMetadata.signatureDate
+        healthInformation.aktivitet.periode.sortedFOMDate().first().minusMonths(1) > ruleMetadata.signatureDate
     }),
 }
 
