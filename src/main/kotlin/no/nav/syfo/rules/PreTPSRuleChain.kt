@@ -146,7 +146,10 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     @Description("Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.")
     TOO_MANY_TREATMENT_DAYS(1250, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.any {
-            it.behandlingsdager.antallBehandlingsdagerUke > it.range().startedWeeksBetween()
+            when (it?.behandlingsdager?.antallBehandlingsdagerUke != null) {
+                true -> it.behandlingsdager.antallBehandlingsdagerUke > it.range().startedWeeksBetween()
+                else -> false
+            }
         }
     }),
 
