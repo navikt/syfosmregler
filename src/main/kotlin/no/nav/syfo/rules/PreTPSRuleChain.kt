@@ -6,7 +6,6 @@ import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Description
 import no.nav.syfo.Rule
 import no.nav.syfo.api.extractHelseopplysninger
-import no.nav.syfo.contains
 import no.nav.syfo.get
 import no.nav.syfo.model.Status
 import no.nav.syfo.ICD10
@@ -89,12 +88,14 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     }),
 
     // TODO: This is something the receiver system should do in the future.
+    /*
     @Description("Hvis førstegangs sykmelding er tilbakedatert mer enn 8 dager og dokumenterbar kontakt med pasient er mellom behandlet dato og signaturdato")
     FIRST_TIME_BACKDATED_MORE_THEN_8_DAYS(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
         (TODO("How can we figure out if its a first-time sykmelding?") &&
                 ruleMetadata.signatureDate.minusDays(8) < healthInformation.kontaktMedPasient.behandletDato.toZoned()) ||
                 healthInformation.kontaktMedPasient.behandletDato.toZoned() in healthInformation.kontaktMedPasient.kontaktDato.toZoned()..ruleMetadata.signatureDate
     }),
+    */
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
     BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, ruleMetadata) ->
