@@ -21,8 +21,8 @@ data class Environment(
     val applicationThreads: Int = config.getProperty("application.threads").toInt(),
     val personV3EndpointURL: String = config.getProperty("ws.personV3.endpoint.url"),
     val securityTokenServiceUrl: String = config.getProperty("ws.security.token.service.endpoint.url"),
-    val srvsyfosmreglerUsername: String = getEnvVar("SRVPALE_USERNAME"),
-    val srvsyfosmreglerPassword: String = getEnvVar("SRVPALE_PASSWORD")
+    val srvsyfosmreglerUsername: String = getEnvVar("SRVSYFOSMREGLER_USERNAME"),
+    val srvsyfosmreglerPassword: String = getEnvVar("SRVSYFOSMREGLER_PASSWORD")
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null) =
