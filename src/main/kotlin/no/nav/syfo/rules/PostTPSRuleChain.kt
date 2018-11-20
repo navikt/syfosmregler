@@ -15,12 +15,12 @@ enum class PostTPSRuleChain(override val ruleId: Int?, override val status: Stat
 
     @Description("Person er registrert utvandret i Folkeregisteret.")
     PATIENT_EMIGRATED(1304, Status.MANUAL_PROCESSING, { (_, _, pasientTPS) ->
-        pasientTPS.personstatus.personstatus.value == "UTVA"
+        pasientTPS.personstatus?.personstatus?.value == "UTVA"
     }),
 
     @Description("Pasient er registrert med sperrekode 6, sperret adresse, strengt fortrolig. Kode 6 overstyrer oppfølgingsregler. Melding går ikke til Arena.")
     PATIENT_HAS_SPERREKODE_6(1305, Status.MANUAL_PROCESSING, { (_, _, pasientTPS) ->
-        pasientTPS.diskresjonskode.kodeverksRef == "SPSF"
+        pasientTPS.diskresjonskode?.kodeverksRef == "SPSF"
     })
 
     // TODO: Utvandret: 1304
