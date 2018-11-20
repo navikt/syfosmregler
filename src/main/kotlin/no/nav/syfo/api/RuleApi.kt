@@ -23,6 +23,13 @@ import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
+import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonPersonIkkeFunnet
+import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Personidenter
+import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
 
@@ -34,7 +41,7 @@ val fellesformatJaxBContext: JAXBContext = JAXBContext.newInstance(
 )
 val fellesformatUnmarshaller: Unmarshaller = fellesformatJaxBContext.createUnmarshaller()
 
-fun Routing.registerRuleApi() {
+fun Routing.registerRuleApi(personV3: PersonV3) {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
         val fellesformat = fellesformatUnmarshaller.unmarshal(call.receiveStream()) as XMLEIFellesformat
@@ -42,6 +49,19 @@ fun Routing.registerRuleApi() {
         val mottakenhetBlokk: XMLMottakenhetBlokk = fellesformat.get()
         val msgHead: XMLMsgHead = fellesformat.get()
         val healthInformation: HelseOpplysningerArbeidsuforhet = extractHelseopplysninger(msgHead)
+
+        // TODO this is not good
+        var patientTPS = Person()
+
+        val patientIdent = extractPatientIdent(msgHead)
+
+        if (patientIdent?.id != null && patientIdent.typeId?.v != null) {
+            try {
+                patientTPS = hentPersonResponse(personV3, patientIdent)
+            } catch (e: HentPersonPersonIkkeFunnet) {
+                log.error("Pasient ikkje funnet i TPS")
+            }
+        }
 
         val logValues = arrayOf(
                 keyValue("smId", mottakenhetBlokk.ediLoggId),
@@ -75,3 +95,17 @@ fun extractOrganisationNumberFromSender(fellesformat: XMLEIFellesformat): XMLIde
             it.typeId.v == "ENH"
         }
 fun extractHelseopplysninger(msgHead: XMLMsgHead) = msgHead.document[0].refDoc.content.get<HelseOpplysningerArbeidsuforhet>()
+
+fun hentPersonResponse(personV3: PersonV3, ident: XMLIdent): Person =
+        personV3.hentPerson(HentPersonRequest()
+                .withAktoer(PersonIdent().withIdent(
+                        NorskIdent()
+                                .withIdent(ident.id)
+                                .withType(Personidenter().withValue(ident.typeId?.v))))).person
+
+fun extractPatientIdent(msgHead: XMLMsgHead): XMLIdent? =
+        msgHead.msgInfo.patient?.ident?.find {
+            it.typeId.v == "FNR"
+        } ?: msgHead.msgInfo.patient?.ident?.find {
+            it.typeId.v == "DNR"
+        }

@@ -1,3 +1,4 @@
+team: teamsykefravr
 name: "syfosmregler"
 image: "repo.adeo.no:5443/syfo/syfosmregler"
 replicas:
@@ -27,5 +28,6 @@ resources:
     cpu: 50m
     memory: 128Mi
 fasitResources:
-  exposed:
-used:
+  used:
+  - alias: srvsyfosmregler
+    resourceType: Credential

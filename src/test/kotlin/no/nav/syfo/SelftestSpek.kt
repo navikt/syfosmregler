@@ -6,8 +6,11 @@ import io.ktor.routing.routing
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import no.nav.syfo.api.registerNaisApi
+import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
+import org.apache.cxf.ext.logging.LoggingFeature
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
@@ -20,7 +23,13 @@ object SelftestSpek : Spek({
     describe("Calling selftest with successful liveness and readyness tests") {
         with(TestApplicationEngine()) {
             start()
-            application.initRouting(applicationState)
+            val personV3 = JaxWsProxyFactoryBean().apply {
+            address = "http://personv3/api"
+            features.add(LoggingFeature())
+            serviceClass = PersonV3::class.java
+        }.create() as PersonV3
+
+            application.initRouting(applicationState, personV3)
 
             it("Returns ok on is_alive") {
                 with(handleRequest(HttpMethod.Get, "/is_alive")) {
