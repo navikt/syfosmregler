@@ -10,6 +10,7 @@ import no.nav.syfo.get
 import no.nav.syfo.model.Status
 import no.nav.syfo.ICD10
 import no.nav.syfo.ICPC2
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import no.trygdeetaten.xml.eiff._1.XMLMottakenhetBlokk
 import java.time.DayOfWeek
@@ -20,10 +21,11 @@ import javax.xml.datatype.XMLGregorianCalendar
 
 data class RuleData<T>(
     val healthInformation: HelseOpplysningerArbeidsuforhet,
-    val metadata: T
+    val metadata: T,
+    val patientTPS: Person
 ) {
     companion object {
-        fun fromFellesformat(fellesformat: XMLEIFellesformat): RuleData<RuleMetadata> {
+        fun fromFellesformat(fellesformat: XMLEIFellesformat, patientTPS: Person): RuleData<RuleMetadata> {
             val msgHead = fellesformat.get<XMLMsgHead>()
             val mottakEnhetBlokk = fellesformat.get<XMLMottakenhetBlokk>()
             return RuleData(
@@ -31,7 +33,8 @@ data class RuleData<T>(
                     metadata = RuleMetadata(
                             signatureDate = msgHead.msgInfo.genDate.atZone(ZoneId.systemDefault()),
                             receivedDate = mottakEnhetBlokk.mottattDatotid.toZoned()
-                    )
+                    ),
+                    patientTPS = patientTPS
             )
         }
     }

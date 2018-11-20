@@ -22,6 +22,7 @@ import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadata
+import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonPersonIkkeFunnet
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
@@ -74,10 +75,11 @@ fun Routing.registerRuleApi(personV3: PersonV3) {
         }
 
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
-        val ruleData = RuleData.fromFellesformat(fellesformat)
+        val ruleData = RuleData.fromFellesformat(fellesformat, patientTPS)
         val results = listOf<List<Rule<RuleData<RuleMetadata>>>>(
                 ValidationRuleChain.values().toList(),
-                PeriodLogicRuleChain.values().toList()
+                PeriodLogicRuleChain.values().toList(),
+                PostTPSRuleChain.values().toList()
         ).flatten().filter { rule -> rule.predicate(ruleData) }
 
         call.respond(ValidationResult(

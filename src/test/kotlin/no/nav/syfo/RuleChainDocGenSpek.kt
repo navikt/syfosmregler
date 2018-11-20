@@ -2,7 +2,7 @@ package no.nav.syfo
 
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
-import no.nav.syfo.rules.TPSRuleChain
+import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -20,7 +20,7 @@ object RuleChainDocGenSpek : Spek({
     describe("Generate docs for rule chains") {
         val basePath = Paths.get("build/doc")
         Files.createDirectories(basePath)
-        val ruleCSV = arrayOf("Rule name;status;Rule ID;Description").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList(), PeriodLogicRuleChain.values().toList(), TPSRuleChain.values().toList(), HPRRuleChain.values().toList()).flatten()
+        val ruleCSV = arrayOf("Rule name;status;Rule ID;Description").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList(), PeriodLogicRuleChain.values().toList(), PostTPSRuleChain.values().toList(), HPRRuleChain.values().toList()).flatten()
                 .map { rule -> "${rule.name};${rule.status};${rule.ruleId ?: ""};${rule.enumAnnotationValue(Description::class, rule.name)?.description ?: ""}" })
         val csvFile = basePath.resolve("rules.csv")
         Files.write(csvFile, ruleCSV, Charsets.UTF_8)
