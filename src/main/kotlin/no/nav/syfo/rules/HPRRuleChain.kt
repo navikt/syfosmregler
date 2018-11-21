@@ -2,7 +2,9 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.Rule
 import no.nav.syfo.model.Status
-enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<Any>) -> Boolean) : Rule<RuleData<Any>> {
+import no.nhn.schemas.reg.hprv2.Person
+
+enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<Person>) -> Boolean) : Rule<RuleData<Person>> {
     // TODO: 1401, 1402, 1403, 1404: See spreadsheet
     // 1401: Behandler ikke registrert i HPR
     // Kommentar fra Camilla: Denne vil endres. I ny løsning skal vi slå opp mot HPR. Dersom behandler ikke ligger i HPR vil meldingen avvises.
