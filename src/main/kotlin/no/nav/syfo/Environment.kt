@@ -1,5 +1,6 @@
 package no.nav.syfo
 
+import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Properties
 
@@ -9,11 +10,10 @@ private val config = Properties().apply {
     putAll(Properties().apply {
         load(Environment::class.java.getResourceAsStream("/application.properties"))
     })
-    /* TODO
+
     if (Files.exists(vaultApplicationPropertiesPath)) {
         load(Files.newInputStream(vaultApplicationPropertiesPath))
     }
-    */
 }
 
 data class Environment(
@@ -21,9 +21,6 @@ data class Environment(
     val applicationThreads: Int = config.getProperty("application.threads").toInt(),
     val personV3EndpointURL: String = config.getProperty("ws.personV3.endpoint.url"),
     val securityTokenServiceUrl: String = config.getProperty("ws.security.token.service.endpoint.url"),
-    val srvsyfosmreglerUsername: String = getEnvVar("SRVSYFOSMREGLER_USERNAME"),
-    val srvsyfosmreglerPassword: String = getEnvVar("SRVSYFOSMREGLER_PASSWORD")
+    val srvsyfosmreglerUsername: String = config.getProperty("serviceuser.username"),
+    val srvsyfosmreglerPassword: String = config.getProperty("serviceuser.password")
 )
-
-fun getEnvVar(varName: String, defaultValue: String? = null) =
-        System.getenv(varName) ?: defaultValue ?: throw RuntimeException("Missing required variable \"$varName\"")
