@@ -61,7 +61,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
         val doctor = no.nhn.schemas.reg.hprv2.Person()
 
         try {
-           val doctor = helsepersonellv1.hentPersonMedPersonnummer(doctorPersonnumber, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+            val doctor = helsepersonellv1.hentPersonMedPersonnummer(doctorPersonnumber, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
         } catch (e: HentPersonPersonIkkeFunnet) {
             log.error("Pasient ikkje funnet i TPS")
         }

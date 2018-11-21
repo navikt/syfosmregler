@@ -7,10 +7,12 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import no.nav.syfo.api.registerNaisApi
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
+import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
 import org.apache.cxf.ext.logging.LoggingFeature
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
+import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
@@ -29,7 +31,14 @@ object SelftestSpek : Spek({
             serviceClass = PersonV3::class.java
         }.create() as PersonV3
 
-            application.initRouting(applicationState, personV3)
+            val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
+                address = "http://helsepersnolellv1/api"
+                features.add(LoggingFeature())
+                features.add(WSAddressingFeature())
+                serviceClass = IHPR2Service::class.java
+            }.create() as IHPR2Service
+
+            application.initRouting(applicationState, personV3, helsepersonellv1)
 
             it("Returns ok on is_alive") {
                 with(handleRequest(HttpMethod.Get, "/is_alive")) {
