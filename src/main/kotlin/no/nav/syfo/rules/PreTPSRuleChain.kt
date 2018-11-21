@@ -23,10 +23,11 @@ data class RuleData<T>(
     val healthInformation: HelseOpplysningerArbeidsuforhet,
     val metadata: T,
     val patientTPS: Person,
-    val doctorPersonnumber: String
+    val doctorPersonnumber: String,
+    val doctor: no.nhn.schemas.reg.hprv2.Person
 ) {
     companion object {
-        fun fromFellesformat(fellesformat: XMLEIFellesformat, patientTPS: Person, doctorPersonnumber: String): RuleData<RuleMetadata> {
+        fun fromFellesformat(fellesformat: XMLEIFellesformat, patientTPS: Person, doctorPersonnumber: String, doctor: no.nhn.schemas.reg.hprv2.Person): RuleData<RuleMetadata> {
             val msgHead = fellesformat.get<XMLMsgHead>()
             val mottakEnhetBlokk = fellesformat.get<XMLMottakenhetBlokk>()
             return RuleData(
@@ -36,7 +37,8 @@ data class RuleData<T>(
                             receivedDate = mottakEnhetBlokk.mottattDatotid.toZoned()
                     ),
                     patientTPS = patientTPS,
-                    doctorPersonnumber = doctorPersonnumber
+                    doctorPersonnumber = doctorPersonnumber,
+                    doctor = doctor
             )
         }
     }

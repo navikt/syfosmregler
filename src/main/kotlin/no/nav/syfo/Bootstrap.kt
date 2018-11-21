@@ -11,9 +11,11 @@ import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.ws.configureSTSFor
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
+import no.nhn.schemas.reg.hprv2.IHPR2Service
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import org.apache.cxf.ext.logging.LoggingFeature
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
+import org.apache.cxf.ws.addressing.WSAddressingFeature
 import java.util.concurrent.TimeUnit
 
 fun doReadynessCheck(): Boolean {
@@ -37,8 +39,17 @@ fun main(args: Array<String>) {
     configureSTSFor(personV3, env.srvsyfosmreglerUsername,
             env.srvsyfosmreglerPassword, env.securityTokenServiceUrl)
 
+    val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
+        address = env.helsepersonellv1EndpointUrl
+        features.add(LoggingFeature())
+        features.add(WSAddressingFeature())
+        serviceClass = IHPR2Service::class.java
+    }.create() as IHPR2Service
+    configureSTSFor(helsepersonellv1, env.srvsyfosmreglerUsername,
+    env.srvsyfosmreglerPassword, env.securityTokenServiceUrl)
+
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState, personV3)
+        initRouting(applicationState, personV3, helsepersonellv1)
     }.start(wait = true)
 
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -46,10 +57,10 @@ fun main(args: Array<String>) {
     })
 }
 
-fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3) {
+fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service) {
     routing {
         registerNaisApi(readynessCheck = ::doReadynessCheck, livenessCheck = { applicationState.running })
-        registerRuleApi(personV3)
+        registerRuleApi(personV3, helsepersonellv1)
     }
     install(ContentNegotiation) {
         jackson {}

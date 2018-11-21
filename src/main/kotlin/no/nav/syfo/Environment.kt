@@ -21,5 +21,6 @@ data class Environment(
     val personV3EndpointURL: String = config.getProperty("ws.personV3.endpoint.url"),
     val securityTokenServiceUrl: String = config.getProperty("ws.security.token.service.endpoint.url"),
     val srvsyfosmreglerUsername: String = config.getProperty("serviceuser.username"),
-    val srvsyfosmreglerPassword: String = config.getProperty("serviceuser.password")
+    val srvsyfosmreglerPassword: String = config.getProperty("serviceuser.password"),
+    val helsepersonellv1EndpointUrl: String = config.getProperty("ws.samhandler.helse.helsepersonellv1.endpoint.url")
 )

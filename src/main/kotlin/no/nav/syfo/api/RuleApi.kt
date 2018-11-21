@@ -31,8 +31,11 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Personidenter
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
+import no.nhn.schemas.reg.hprv2.IHPR2Service
+import java.util.GregorianCalendar
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
+import javax.xml.datatype.DatatypeFactory
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 val fellesformatJaxBContext: JAXBContext = JAXBContext.newInstance(
@@ -42,7 +45,9 @@ val fellesformatJaxBContext: JAXBContext = JAXBContext.newInstance(
 )
 val fellesformatUnmarshaller: Unmarshaller = fellesformatJaxBContext.createUnmarshaller()
 
-fun Routing.registerRuleApi(personV3: PersonV3) {
+val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
+
+fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
         val fellesformat = fellesformatUnmarshaller.unmarshal(call.receiveStream()) as XMLEIFellesformat
@@ -53,6 +58,14 @@ fun Routing.registerRuleApi(personV3: PersonV3) {
         val doctorPersonnumber = extractDoctorIdentFromSignature(mottakenhetBlokk)
 
         // TODO this is not good
+        val doctor = no.nhn.schemas.reg.hprv2.Person()
+
+        try {
+           val doctor = helsepersonellv1.hentPersonMedPersonnummer(doctorPersonnumber, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+        } catch (e: HentPersonPersonIkkeFunnet) {
+            log.error("Pasient ikkje funnet i TPS")
+        }
+
         var patientTPS = Person()
 
         val patientIdent = extractPatientIdent(msgHead)
@@ -76,7 +89,7 @@ fun Routing.registerRuleApi(personV3: PersonV3) {
         }
 
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
-        val ruleData = RuleData.fromFellesformat(fellesformat, patientTPS, doctorPersonnumber)
+        val ruleData = RuleData.fromFellesformat(fellesformat, patientTPS, doctorPersonnumber, doctor)
         val results = listOf<List<Rule<RuleData<RuleMetadata>>>>(
                 ValidationRuleChain.values().toList(),
                 PeriodLogicRuleChain.values().toList(),
