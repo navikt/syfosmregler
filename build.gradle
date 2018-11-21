@@ -32,6 +32,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.10'
     id("com.diffplug.gradle.spotless") version "3.14.0"
     id 'application'
+    id("no.nils.wsdl2java") version "0.10"
 }
 
 group 'no.nav.syfo'
@@ -140,8 +141,13 @@ compileKotlin() {
     dependsOn(generateDiagnoseCodes)
 }
 
+wsdl2java {
+    wsdlDir = file("$projectDir/src/main/resources/wsdl")
+    wsdlsToGenerate = [["$projectDir/src/main/resources/wsdl/helsepersonellregisteret.wsdl"]]
+}
+
 compileKotlin {
-    dependsOn generateJaxb2, generateDiagnoseCodes
+    dependsOn generateJaxb2, generateDiagnoseCodes, wsdl2java
     kotlinOptions.jvmTarget = "1.8"
 }
 
