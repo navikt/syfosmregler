@@ -49,7 +49,6 @@ fun Routing.registerRuleApi(personV3: PersonV3) {
 
         val mottakenhetBlokk: XMLMottakenhetBlokk = fellesformat.get()
         val msgHead: XMLMsgHead = fellesformat.get()
-        val healthInformation: HelseOpplysningerArbeidsuforhet = extractHelseopplysninger(msgHead)
 
         // TODO this is not good
         var patientTPS = Person()

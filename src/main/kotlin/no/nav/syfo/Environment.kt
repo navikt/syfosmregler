@@ -10,7 +10,6 @@ private val config = Properties().apply {
     putAll(Properties().apply {
         load(Environment::class.java.getResourceAsStream("/application.properties"))
     })
-
     if (Files.exists(vaultApplicationPropertiesPath)) {
         load(Files.newInputStream(vaultApplicationPropertiesPath))
     }
