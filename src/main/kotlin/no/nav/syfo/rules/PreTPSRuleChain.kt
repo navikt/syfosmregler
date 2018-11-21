@@ -22,10 +22,11 @@ import javax.xml.datatype.XMLGregorianCalendar
 data class RuleData<T>(
     val healthInformation: HelseOpplysningerArbeidsuforhet,
     val metadata: T,
-    val patientTPS: Person
+    val patientTPS: Person,
+    val doctorPersonnumber: String
 ) {
     companion object {
-        fun fromFellesformat(fellesformat: XMLEIFellesformat, patientTPS: Person): RuleData<RuleMetadata> {
+        fun fromFellesformat(fellesformat: XMLEIFellesformat, patientTPS: Person, doctorPersonnumber: String): RuleData<RuleMetadata> {
             val msgHead = fellesformat.get<XMLMsgHead>()
             val mottakEnhetBlokk = fellesformat.get<XMLMottakenhetBlokk>()
             return RuleData(
@@ -34,7 +35,8 @@ data class RuleData<T>(
                             signatureDate = msgHead.msgInfo.genDate.atZone(ZoneId.systemDefault()),
                             receivedDate = mottakEnhetBlokk.mottattDatotid.toZoned()
                     ),
-                    patientTPS = patientTPS
+                    patientTPS = patientTPS,
+                    doctorPersonnumber = doctorPersonnumber
             )
         }
     }

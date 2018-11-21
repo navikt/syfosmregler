@@ -50,6 +50,8 @@ fun Routing.registerRuleApi(personV3: PersonV3) {
         val mottakenhetBlokk: XMLMottakenhetBlokk = fellesformat.get()
         val msgHead: XMLMsgHead = fellesformat.get()
 
+        val doctorPersonnumber = extractDoctorIdentFromSignature(mottakenhetBlokk)
+
         // TODO this is not good
         var patientTPS = Person()
 
@@ -74,7 +76,7 @@ fun Routing.registerRuleApi(personV3: PersonV3) {
         }
 
         log.info("Received a SM2013, going to rules, $logKeys", *logValues)
-        val ruleData = RuleData.fromFellesformat(fellesformat, patientTPS)
+        val ruleData = RuleData.fromFellesformat(fellesformat, patientTPS, doctorPersonnumber)
         val results = listOf<List<Rule<RuleData<RuleMetadata>>>>(
                 ValidationRuleChain.values().toList(),
                 PeriodLogicRuleChain.values().toList(),
@@ -110,3 +112,6 @@ fun extractPatientIdent(msgHead: XMLMsgHead): XMLIdent? =
         } ?: msgHead.msgInfo.patient?.ident?.find {
             it.typeId.v == "DNR"
         }
+
+fun extractDoctorIdentFromSignature(mottakenhetBlokk: XMLMottakenhetBlokk): String =
+        mottakenhetBlokk.avsenderFnrFraDigSignatur

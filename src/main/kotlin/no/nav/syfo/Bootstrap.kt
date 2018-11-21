@@ -24,10 +24,7 @@ fun doReadynessCheck(): Boolean {
 data class ApplicationState(var running: Boolean = true)
 
 // TODO: WS calls required
-// TPS
-// kuhr-sar
-// Addresseregister
-// Fastlegeregister
+// HPR
 fun main(args: Array<String>) {
     val env = Environment()
     val applicationState = ApplicationState()
