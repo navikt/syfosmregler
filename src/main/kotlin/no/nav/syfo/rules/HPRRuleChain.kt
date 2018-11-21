@@ -8,6 +8,7 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     // TODO: 1401, 1402, 1403, 1404: See spreadsheet
     // 1401: Behandler ikke registrert i HPR
     // Kommentar fra Camilla: Denne vil endres. I ny løsning skal vi slå opp mot HPR. Dersom behandler ikke ligger i HPR vil meldingen avvises.
+    // Dersom det kommer soapfault, som har følgende faultstring: ArgumentException: Personnummer ikke funnet
     @Description("Behandler er ikke registrert i HPR.")
     BEHANDLER_NOT_IN_HPR(1401, Status.MANUAL_PROCESSING, { (_, _, _, _, doctor) ->
         doctor.fødselsdato.isNil

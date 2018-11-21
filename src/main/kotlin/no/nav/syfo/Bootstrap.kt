@@ -14,7 +14,9 @@ import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import org.apache.cxf.ext.logging.LoggingFeature
+import org.apache.cxf.interceptor.Interceptor
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
+import org.apache.cxf.message.Message
 import org.apache.cxf.ws.addressing.WSAddressingFeature
 import java.util.concurrent.TimeUnit
 
@@ -41,6 +43,20 @@ fun main(args: Array<String>) {
 
     val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
         address = env.helsepersonellv1EndpointUrl
+        // TODO: Contact someone about this hacky workaround
+        val interceptor = object : Interceptor<Message> {
+            override fun handleMessage(message: Message?) {
+                if (message != null)
+                    message[Message.CONTENT_TYPE] = "text/xml; UTF-8"
+            }
+
+            override fun handleFault(message: Message?) {
+                if (message != null)
+                    message[Message.CONTENT_TYPE] = "text/xml; UTF-8"
+            }
+        }
+        inInterceptors.add(interceptor)
+        inFaultInterceptors.add(interceptor)
         features.add(LoggingFeature())
         features.add(WSAddressingFeature())
         serviceClass = IHPR2Service::class.java
