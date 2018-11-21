@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
     val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
         address = env.helsepersonellv1EndpointUrl
         // TODO: Contact someone about this hacky workaround
-        val interceptor = object : AbstractSoapInterceptor(Phase.PRE_UNMARSHAL) {
+        val interceptor = object : AbstractSoapInterceptor(Phase.INVOKE) {
             override fun handleMessage(message: SoapMessage?) {
                 if (message != null)
                     message[Message.CONTENT_TYPE] = "text/xml; UTF-8"
