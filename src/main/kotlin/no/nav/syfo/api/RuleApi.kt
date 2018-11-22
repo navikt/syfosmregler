@@ -10,6 +10,7 @@ import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
 import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
 import no.kith.xmlstds.msghead._2006_05_24.XMLRefDoc
 import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
+import no.nav.syfo.RULE_HIT_COUNTER
 import no.nav.syfo.Rule
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
@@ -97,7 +98,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
                 PostTPSRuleChain.values().toList(),
                 HPRRuleChain.values().toList()
 
-        ).flatten().filter { rule -> rule.predicate(ruleData) }
+        ).flatten().filter { rule -> rule.predicate(ruleData) } .onEach { RULE_HIT_COUNTER.labels(it.name) }
 
         call.respond(ValidationResult(
                 status = results.map { it.status }.firstOrNull { it == Status.INVALID } ?: Status.OK,
