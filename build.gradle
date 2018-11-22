@@ -39,7 +39,7 @@ mainClassName = 'no.nav.syfo.BootstrapKt'
 
 wsdl2java {
     wsdlDir = file("$projectDir/src/main/resources/wsdl")
-    wsdlsToGenerate = [["$projectDir/src/main/resources/wsdl/helsepersonellregisteret.wsdl"]]
+    wsdlsToGenerate = [["-xjc", "-b", "$projectDir/src/main/resources/xjb/binding.xml", "$projectDir/src/main/resources/wsdl/helsepersonellregisteret.wsdl"]]
 }
 
 repositories {

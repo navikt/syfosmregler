@@ -30,7 +30,7 @@ fun doReadynessCheck(): Boolean {
 data class ApplicationState(var running: Boolean = true)
 
 // TODO: WS calls required
-// HPR
+// TSS leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
 fun main(args: Array<String>) {
     val env = Environment()
     val applicationState = ApplicationState()
@@ -46,6 +46,7 @@ fun main(args: Array<String>) {
     val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
         address = env.helsepersonellv1EndpointUrl
         // TODO: Contact someone about this hacky workaround
+        // talk to HDIR about HPR about they claim to send a ISO-8859-1 but its really UTF-8 payload
         val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
             override fun handleMessage(message: SoapMessage?) {
                 if (message != null)

@@ -19,6 +19,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import no.nav.syfo.get
 import no.nav.syfo.model.RuleInfo
+import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadata
@@ -58,10 +59,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
         val doctorPersonnumber = extractDoctorIdentFromSignature(mottakenhetBlokk)
 
         // TODO this is not good
-        val doctor = no.nhn.schemas.reg.hprv2.Person()
+        var doctor = no.nhn.schemas.reg.hprv2.Person()
 
         try {
-            val doctor = helsepersonellv1.hentPersonMedPersonnummer(doctorPersonnumber, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+            doctor = helsepersonellv1.hentPersonMedPersonnummer(doctorPersonnumber, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
         } catch (e: HentPersonPersonIkkeFunnet) {
             log.error("Pasient ikkje funnet i TPS")
         }
@@ -93,7 +94,9 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
         val results = listOf<List<Rule<RuleData<RuleMetadata>>>>(
                 ValidationRuleChain.values().toList(),
                 PeriodLogicRuleChain.values().toList(),
-                PostTPSRuleChain.values().toList()
+                PostTPSRuleChain.values().toList(),
+                HPRRuleChain.values().toList()
+
         ).flatten().filter { rule -> rule.predicate(ruleData) }
 
         call.respond(ValidationResult(

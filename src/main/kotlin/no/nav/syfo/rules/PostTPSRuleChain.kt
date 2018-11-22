@@ -6,6 +6,8 @@ import no.nav.syfo.model.Status
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Familierelasjon
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.syfo.RelationType
+import java.time.LocalDate
+import javax.xml.datatype.XMLGregorianCalendar
 
 // TODO: 1303, Hvis pasienten ikke finnes registrert i folkeregisteret returneres meldingen
 // Kan kanskje hentes fra aktørid register
@@ -31,12 +33,12 @@ enum class PostTPSRuleChain(override val ruleId: Int?, override val status: Stat
         pasientTPS.diskresjonskode?.kodeverksRef == "SPSF"
     }),
 
-    @Description("Pasient er registrert med sperrekode 6, sperret adresse, strengt fortrolig. Kode 6 overstyrer oppfølgingsregler. Melding går ikke til Arena.")
+    @Description("Pasienten er registrert død i Folkeregisteret ved sykmelding start")
     REGISTERED_DEAD_IN_TPS_BEFORE_SICKLAVE_START(1307, Status.INVALID, { (healthInformation, _, pasientTPS) ->
-        pasientTPS.doedsdato.doedsdato.toGregorianCalendar().toZonedDateTime().toLocalDate().isBefore(healthInformation.aktivitet.periode.first().periodeFOMDato.toGregorianCalendar().toZonedDateTime().toLocalDate())
+        pasientTPS.doedsdato != null && pasientTPS.doedsdato.doedsdato.toLocalDate().isBefore(healthInformation.aktivitet.periode.first().periodeFOMDato.toLocalDate())
     }),
 
-    @Description("Pasient er registrert med sperrekode 6, sperret adresse, strengt fortrolig. Kode 6 overstyrer oppfølgingsregler. Melding går ikke til Arena.")
+    @Description("Behandler er gift med pasient")
     MARRIED_TO_PATIENT(1310, Status.MANUAL_PROCESSING, { (_, _, pasientTPS, doctorPersonnumber) ->
         if (findDoctorInRelations(pasientTPS, doctorPersonnumber) != null) {
             RelationType.fromKodeverkValue(findDoctorInRelations(pasientTPS, doctorPersonnumber)!!.tilRolle.value) == RelationType.EKTEFELLE
@@ -85,3 +87,5 @@ fun findDoctorInRelations(patient: no.nav.tjeneste.virksomhet.person.v3.informas
             val aktoer = it.tilPerson.aktoer
             aktoer is PersonIdent && aktoer.ident.ident == doctorPersonnumber
         }
+
+fun XMLGregorianCalendar.toLocalDate(): LocalDate = toGregorianCalendar().toZonedDateTime().toLocalDate()
