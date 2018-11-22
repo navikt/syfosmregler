@@ -13,8 +13,12 @@ import no.nav.syfo.ws.configureSTSFor
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
+import org.apache.cxf.binding.soap.SoapMessage
+import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor
 import org.apache.cxf.ext.logging.LoggingFeature
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
+import org.apache.cxf.message.Message
+import org.apache.cxf.phase.Phase
 import org.apache.cxf.ws.addressing.WSAddressingFeature
 import java.util.concurrent.TimeUnit
 
@@ -42,17 +46,14 @@ fun main(args: Array<String>) {
     val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
         address = env.helsepersonellv1EndpointUrl
         // TODO: Contact someone about this hacky workaround
-        /*
         val interceptor = object : AbstractSoapInterceptor(Phase.POST_PROTOCOL) {
             override fun handleMessage(message: SoapMessage?) {
                 if (message != null)
-                    message[Message.CONTENT_TYPE] = "text/xml;UTF-8"
+                    message[Message.CONTENT_TYPE] = "text/xml;charset=UTF-8"
             }
         }
-
         inInterceptors.add(interceptor)
         inFaultInterceptors.add(interceptor)
-        */
         features.add(LoggingFeature())
         features.add(WSAddressingFeature())
         serviceClass = IHPR2Service::class.java

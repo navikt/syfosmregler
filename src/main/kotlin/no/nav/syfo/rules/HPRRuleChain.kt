@@ -16,14 +16,14 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
 
     // 1402: Behandler har ikke vært en gyldig behandler under konsultasjonstidspunktet. Ser ut som om dette gjelder behandlers autorisasjon
     // Kommentar fra Camilla: 13 i 2017. Denne må sees i sammenheng med 1317 - eller er dette knyttet mot behandlers autorisasjon?
-
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
     BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.MANUAL_PROCESSING, { (_, _, _, _, doctor) ->
-        doctor.godkjenninger.isNil
+        doctor.godkjenninger.value.godkjenning.any{
+            it.autorisasjon.value.isAktiv
+        }
     }),
     // 1403: Behandler er registrert med status kode OPPH, forkortelse for opphørt
     // Kommentar fra Camilla: Antar at denne skal være knyttet opp mot "trygdens rett til å sykmelde" + autoriasjon i HPR. Må sjekke hvilke status som ligger i HPR + samarbeide med Team registre for å finne ut hvordan vi ivaretar informasjon om egne data.
-
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
     BEHANDLER_NOT_AUTH_IN_HPR(1403, Status.MANUAL_PROCESSING, { (_, _, _, _, doctor) ->
         doctor.godkjenninger.isNil
