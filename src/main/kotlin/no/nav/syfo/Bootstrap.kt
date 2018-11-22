@@ -49,7 +49,7 @@ fun main(args: Array<String>) {
         val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
             override fun handleMessage(message: SoapMessage?) {
                 if (message != null)
-                    message[Message.CONTENT_TYPE] = "text/xml;utf-8"
+                    message[Message.CONTENT_TYPE] = "text/xml;UTF-8"
             }
         }
         inInterceptors.add(interceptor)
