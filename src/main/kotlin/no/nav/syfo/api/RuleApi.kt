@@ -98,7 +98,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
                 PostTPSRuleChain.values().toList(),
                 HPRRuleChain.values().toList()
 
-        ).flatten().filter { rule -> rule.predicate(ruleData) } .onEach { RULE_HIT_COUNTER.labels(it.name) }
+        ).flatten().filter { rule -> rule.predicate(ruleData) }.onEach { RULE_HIT_COUNTER.labels(it.name) }
 
         call.respond(ValidationResult(
                 status = results.map { it.status }.firstOrNull { it == Status.INVALID } ?: Status.OK,
