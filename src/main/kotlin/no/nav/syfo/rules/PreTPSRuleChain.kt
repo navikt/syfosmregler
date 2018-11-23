@@ -162,7 +162,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Hvis gradert sykmelding og reisetilskudd er oppgitt for samme periode sendes meldingen til manuell behandling.")
     GRADUAL_SYKMELDING_COMBINED_WITH_TRAVEL(1250, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.any { it.gradertSykmelding != null && it.isReisetilskudd }
+        healthInformation.aktivitet.periode.any { it.gradertSykmelding != null && it?.isReisetilskudd ?: false }
     }),
 
     @Description("Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen")
