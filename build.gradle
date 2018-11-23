@@ -39,6 +39,10 @@ jar.manifest {
     attributes("Main-Class" : "no.nav.syfo.BootstrapKt")
 }
 
+shadowJar {
+    mergeServiceFiles("META-INF/cxf")
+}
+
 wsdl2java {
     wsdlDir = file("$projectDir/src/main/resources/wsdl")
     wsdlsToGenerate = [["-xjc", "-b", "$projectDir/src/main/resources/xjb/binding.xml", "$projectDir/src/main/resources/wsdl/helsepersonellregisteret.wsdl"]]
