@@ -16,8 +16,8 @@ The application should be able to run locally in any IDE by just setting the env
 
 ### Building the application
 #### Compile and package application
-To build locally and run the integration tests you can simply run `./gradlew installDist` or  on windows 
-`gradlew.bat installDist`
+To build locally and run the integration tests you can simply run `./gradlew shadowJar` or  on windows 
+`gradlew.bat shadowJar`
 
 #### Creating a docker image
 Creating a docker image should be as simple as `docker build -t syfosmregler .`
