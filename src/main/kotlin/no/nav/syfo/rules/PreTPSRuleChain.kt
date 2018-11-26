@@ -101,11 +101,9 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
             healthInformation.kontaktMedPasient.behandletDato.toGregorianCalendar() == healthInformation.kontaktMedPasient.kontaktDato.toGregorianCalendar() &&
                     ruleMetadata.signatureDate.minusDays(8) < healthInformation.kontaktMedPasient.behandletDato.toZoned() ||
                     healthInformation.kontaktMedPasient.behandletDato.toZoned() in healthInformation.kontaktMedPasient.kontaktDato.toZoned()..ruleMetadata.signatureDate
-        }
-        else{
+        } else {
             false
         }
-
     }),
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
