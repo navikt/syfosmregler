@@ -97,9 +97,15 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     // TODO: This is something the receiver system should do in the future.
     @Description("Hvis førstegangs sykmelding er tilbakedatert mer enn 8 dager og dokumenterbar kontakt med pasient er mellom behandlet dato og signaturdato")
     FIRST_TIME_BACKDATED_MORE_THEN_8_DAYS(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.kontaktMedPasient.behandletDato.toGregorianCalendar() == healthInformation.kontaktMedPasient.kontaktDato.toGregorianCalendar() &&
-                ruleMetadata.signatureDate.minusDays(8) < healthInformation.kontaktMedPasient.behandletDato.toZoned() ||
-                healthInformation.kontaktMedPasient.behandletDato.toZoned() in healthInformation.kontaktMedPasient.kontaktDato.toZoned()..ruleMetadata.signatureDate
+        if (healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.kontaktDato != null) {
+            healthInformation.kontaktMedPasient.behandletDato.toGregorianCalendar() == healthInformation.kontaktMedPasient.kontaktDato.toGregorianCalendar() &&
+                    ruleMetadata.signatureDate.minusDays(8) < healthInformation.kontaktMedPasient.behandletDato.toZoned() ||
+                    healthInformation.kontaktMedPasient.behandletDato.toZoned() in healthInformation.kontaktMedPasient.kontaktDato.toZoned()..ruleMetadata.signatureDate
+        }
+        else{
+            false
+        }
+
     }),
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
