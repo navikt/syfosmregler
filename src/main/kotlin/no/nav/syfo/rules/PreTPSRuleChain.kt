@@ -164,12 +164,6 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         }
     }),
 
-    // TODO: Move to infotrygd rules?
-    @Description("Hvis gradert sykmelding og reisetilskudd er oppgitt for samme periode sendes meldingen til manuell behandling.")
-    GRADUAL_SYKMELDING_COMBINED_WITH_TRAVEL(1250, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.any { it.gradertSykmelding != null && it?.isReisetilskudd ?: false }
-    }),
-
     @Description("Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen")
     PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW(1251, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.any {
@@ -182,19 +176,6 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         healthInformation.aktivitet.periode.filter { it.gradertSykmelding != null }.any { it.gradertSykmelding.sykmeldingsgrad > 99 }
     }),
 
-    // TODO: Move to infotrygd?
-    // EI@ tekst "Enkeltstående behandlingsdager er angitt."
-    @Description("Hvis behandlingsdager er angitt sendes meldingen til manuell behandling.")
-    NUMBER_OF_TREATMENT_DAYS_SET(1260, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.any { it.behandlingsdager != null }
-    }),
-
-    // TODO: '1608','Kun reisetilskudd er angitt. Melding sendt til oppfølging i Arena, skal ikke registreres i Infotrygd.',3,'1' ???
-    // TODO: Move to infotrygd
-    @Description("Hvis sykmeldingen angir reisetilskudd går meldingen til manuell behandling.")
-    TRAVEL_SUBSIDY_SPECIFIED(1270, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.any { it.isReisetilskudd == true } // Can be null, so use equality
-    }),
 
     // TODO: Check persisted sykmelding if there is a gap of less then 16 days from the previous one
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
