@@ -9,13 +9,15 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     // 1401: Behandler ikke registrert i HPR
     // Kommentar fra Camilla: Denne vil endres. I ny løsning skal vi slå opp mot HPR. Dersom behandler ikke ligger i HPR vil meldingen avvises.
     // Dersom det kommer soapfault, som har følgende faultstring: ArgumentException: Personnummer ikke funnet
+    // TODO: Useless, throws exception
     @Description("Behandler er ikke registrert i HPR.")
-    BEHANDLER_NOT_IN_HPR(1401, Status.MANUAL_PROCESSING, { (_, _, _, _, doctor) ->
+    BEHANDLER_NOT_IN_HPR(1401, Status.INVALID, { (_, _, _, _, doctor) ->
         doctor.fødselsdato == null
     }),
 
     // 1402: Behandler har ikke vært en gyldig behandler under konsultasjonstidspunktet. Ser ut som om dette gjelder behandlers autorisasjon
     // Kommentar fra Camilla: 13 i 2017. Denne må sees i sammenheng med 1317 - eller er dette knyttet mot behandlers autorisasjon?
+    // Sjekk OID og Verdi
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
     BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.MANUAL_PROCESSING, { (_, _, _, _, doctor) ->
         !doctor.godkjenninger.godkjenning.any {

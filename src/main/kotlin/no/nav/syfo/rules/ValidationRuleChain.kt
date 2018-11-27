@@ -50,12 +50,14 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
                 healthInformation.medisinskVurdering.hovedDiagnose.let { it == null || it.diagnosekode == null || it.diagnosekode.v == null }
     }),
 
-    @Description("Hvis ICPC prosessdiagnose er oppgitt skal meldingen avvises")
-    ICPC_PROCESS_DIAGNOSIS(1142, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.isICPC2() &&
-                healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.v.startsWith("-")
-    }),
+    // TODO:
+    //@Description("Hvis ICPC prosessdiagnose er oppgitt skal meldingen avvises")
+    //ICPC_PROCESS_DIAGNOSIS(1142, Status.INVALID, { (healthInformation, _) ->
+    //    healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.isICPC2() &&
+    //            healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.v.startsWith("-")
+    //}),
 
+    // TODO: Add this for bidiagnoser too
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(1540, Status.INVALID, { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.let { cv ->

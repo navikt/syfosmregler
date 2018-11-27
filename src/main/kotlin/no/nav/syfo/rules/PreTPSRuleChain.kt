@@ -49,9 +49,10 @@ data class RuleMetadata(
 )
 
 enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
+    // TODO: gendate newer than signature date, check if emottak does this?
     @Description("Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.")
-    SIGNATURE_DATE_AFTER_RECEIVED_DATE(1110, Status.INVALID, { (_, ruleMetadata) ->
-        ruleMetadata.receivedDate < ruleMetadata.signatureDate
+    SIGNATURE_DATE_AFTER_RECEIVED_DATE(1110, Status.INVALID, { (healthInformation, ruleMetadata) ->
+        healthInformation.kontaktMedPasient.behandletDato.toZoned() > ruleMetadata.signatureDate
     }),
 
     @Description("Hvis ingen perioder er oppgitt skal sykmeldingen avvises.")
@@ -94,7 +95,9 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         false
     }),
 
+    // TODO: This is completely wrong
     // TODO: This is something the receiver system should do in the future.
+    // TODO: Figure how we can check if this is a first time sykmelding
     @Description("Hvis førstegangs sykmelding er tilbakedatert mer enn 8 dager og dokumenterbar kontakt med pasient er mellom behandlet dato og signaturdato")
     FIRST_TIME_BACKDATED_MORE_THEN_8_DAYS(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
         if (healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.kontaktDato != null) {
@@ -118,7 +121,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
     PRE_DATED(1209, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first() > ruleMetadata.signatureDate.plusDays(30)
+        healthInformation.aktivitet.periode.sortedFOMDate().first().plusDays(30) > ruleMetadata.signatureDate
     }),
 
     @Description("Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.")
@@ -126,9 +129,10 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         healthInformation.aktivitet.periode.sortedTOMDate().last() > ruleMetadata.receivedDate.plusYears(1)
     }),
 
+    // TODO: How should we handle this in paper sykemeldinger?
     @Description("Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen")
     RECEIVED_DATE_BEFORE_PROCESSED_DATE(1123, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.kontaktMedPasient.behandletDato.toZoned() > ruleMetadata.signatureDate
+        healthInformation.kontaktMedPasient.behandletDato.toZoned() > ruleMetadata.receivedDate.plusHours(2)
     }),
 
     // TODO: Is this even supposed to be here?
@@ -145,6 +149,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
                 .any { (it.avventendeSykmelding.innspillTilArbeidsgiver == null) }
     }),
 
+    // TODO: Figure if we need to check for the entire duration, not just whats specified in this sykmelding
     @Description("Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
     PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(1242, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode
@@ -155,13 +160,11 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     @Description("Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.")
     TOO_MANY_TREATMENT_DAYS(1250, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.any {
-            when (it?.behandlingsdager?.antallBehandlingsdagerUke != null) {
-                true -> it.behandlingsdager.antallBehandlingsdagerUke > it.range().startedWeeksBetween()
-                else -> false
-            }
+            it.behandlingsdager != null && it.behandlingsdager.antallBehandlingsdagerUke > it.range().startedWeeksBetween()
         }
     }),
 
+    // TODO: Move to infotrygd rules?
     @Description("Hvis gradert sykmelding og reisetilskudd er oppgitt for samme periode sendes meldingen til manuell behandling.")
     GRADUAL_SYKMELDING_COMBINED_WITH_TRAVEL(1250, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.any { it.gradertSykmelding != null && it?.isReisetilskudd ?: false }
@@ -174,11 +177,12 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         }
     }),
 
-    @Description("Hvis sykmeldingsgrad for høy for delvis sykmelding avvises meldingen")
+    @Description("Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen")
     PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(1252, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.filter { it.gradertSykmelding != null }.any { it.gradertSykmelding.sykmeldingsgrad > 99 }
     }),
 
+    // TODO: Move to infotrygd?
     // EI@ tekst "Enkeltstående behandlingsdager er angitt."
     @Description("Hvis behandlingsdager er angitt sendes meldingen til manuell behandling.")
     NUMBER_OF_TREATMENT_DAYS_SET(1260, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
@@ -186,11 +190,13 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     }),
 
     // TODO: '1608','Kun reisetilskudd er angitt. Melding sendt til oppfølging i Arena, skal ikke registreres i Infotrygd.',3,'1' ???
+    // TODO: Move to infotrygd
     @Description("Hvis sykmeldingen angir reisetilskudd går meldingen til manuell behandling.")
     TRAVEL_SUBSIDY_SPECIFIED(1270, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.any { it.isReisetilskudd == true } // Can be null, so use equality
     }),
 
+    // TODO: Check persisted sykmelding if there is a gap of less then 16 days from the previous one
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
     BACKDATING_SYKMELDING_EXTENSION(null, Status.INVALID, { (healthInformation, ruleMetadata) ->
         healthInformation.aktivitet.periode.sortedFOMDate().first().minusMonths(1) > ruleMetadata.signatureDate
