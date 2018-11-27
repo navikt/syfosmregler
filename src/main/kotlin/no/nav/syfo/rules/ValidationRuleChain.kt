@@ -5,6 +5,7 @@ import no.nav.syfo.Diagnosekode
 import no.nav.syfo.ICD10
 import no.nav.syfo.ICPC2
 import no.nav.syfo.Rule
+import no.nav.syfo.RuleData
 import no.nav.syfo.contains
 import no.nav.syfo.model.Status
 import no.nav.syfo.validation.extractBornDate
@@ -51,11 +52,11 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     }),
 
     // TODO:
-    //@Description("Hvis ICPC prosessdiagnose er oppgitt skal meldingen avvises")
-    //ICPC_PROCESS_DIAGNOSIS(1142, Status.INVALID, { (healthInformation, _) ->
-    //    healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.isICPC2() &&
-    //            healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.v.startsWith("-")
-    //}),
+    // @Description("Hvis ICPC prosessdiagnose er oppgitt skal meldingen avvises")
+    // ICPC_PROCESS_DIAGNOSIS(1142, Status.INVALID, { (healthInformation, _) ->
+    //     healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.isICPC2() &&
+    //             healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.v.startsWith("-")
+    // }),
 
     // TODO: Add this for bidiagnoser too
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")

@@ -5,12 +5,11 @@ import no.nav.model.sm2013.CV
 import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Description
 import no.nav.syfo.Rule
-import no.nav.syfo.api.extractHelseopplysninger
 import no.nav.syfo.get
 import no.nav.syfo.model.Status
 import no.nav.syfo.ICD10
 import no.nav.syfo.ICPC2
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person
+import no.nav.syfo.RuleData
 import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import no.trygdeetaten.xml.eiff._1.XMLMottakenhetBlokk
 import java.time.DayOfWeek
@@ -19,34 +18,21 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import javax.xml.datatype.XMLGregorianCalendar
 
-data class RuleData<T>(
-    val healthInformation: HelseOpplysningerArbeidsuforhet,
-    val metadata: T,
-    val patientTPS: Person,
-    val doctorPersonnumber: String,
-    val doctor: no.nhn.schemas.reg.hprv2.Person
+data class RuleMetadata(
+    val signatureDate: ZonedDateTime,
+    val receivedDate: ZonedDateTime
 ) {
     companion object {
-        fun fromFellesformat(fellesformat: XMLEIFellesformat, patientTPS: Person, doctorPersonnumber: String, doctor: no.nhn.schemas.reg.hprv2.Person): RuleData<RuleMetadata> {
+        fun from(fellesformat: XMLEIFellesformat): RuleMetadata {
             val msgHead = fellesformat.get<XMLMsgHead>()
             val mottakEnhetBlokk = fellesformat.get<XMLMottakenhetBlokk>()
-            return RuleData(
-                    healthInformation = extractHelseopplysninger(msgHead),
-                    metadata = RuleMetadata(
-                            signatureDate = msgHead.msgInfo.genDate.atZone(ZoneId.systemDefault()),
-                            receivedDate = mottakEnhetBlokk.mottattDatotid.toZoned()
-                    ),
-                    patientTPS = patientTPS,
-                    doctorPersonnumber = doctorPersonnumber,
-                    doctor = doctor
+            return RuleMetadata(
+                    signatureDate = msgHead.msgInfo.genDate.atZone(ZoneId.systemDefault()),
+                    receivedDate = mottakEnhetBlokk.mottattDatotid.toZoned()
             )
         }
     }
 }
-data class RuleMetadata(
-    val signatureDate: ZonedDateTime,
-    val receivedDate: ZonedDateTime
-)
 
 enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
@@ -175,7 +161,6 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(1252, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.filter { it.gradertSykmelding != null }.any { it.gradertSykmelding.sykmeldingsgrad > 99 }
     }),
-
 
     // TODO: Check persisted sykmelding if there is a gap of less then 16 days from the previous one
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
