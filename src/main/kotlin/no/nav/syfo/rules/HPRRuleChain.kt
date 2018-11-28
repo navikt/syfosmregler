@@ -53,7 +53,7 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     @Description("Behandler finnes i TSS men er ikke lege, kiropraktor, manuellterapeut eller tannlege")
     BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(1407, Status.MANUAL_PROCESSING, { (_, doctor) ->
         !doctor.godkjenninger.godkjenning.any {
-            it.autorisasjon.isAktiv && listOf("LE,KI,MT,TL").contains(it.helsepersonellkategori.verdi)
+            it.autorisasjon.isAktiv && it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "KI", "MT", "TL") }
         }
     }),
     // 1413: Hvis behanlder mangler autorisasjon for obligatorisk opplæring  avvises meldingen
