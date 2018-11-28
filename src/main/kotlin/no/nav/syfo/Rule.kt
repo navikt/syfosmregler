@@ -1,6 +1,6 @@
 package no.nav.syfo
 
-import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
+import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.model.Status
 
 data class RuleData<T>(val healthInformation: HelseOpplysningerArbeidsuforhet, val metadata: T)

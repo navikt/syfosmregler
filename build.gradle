@@ -3,15 +3,12 @@ import no.nav.codegen.CodegenTask
 buildscript {
     ext.coroutines_version = '1.0.0'
     ext.cxf_version = '3.2.7'
-    ext.fellesformat_version = '1.0'
     ext.jackson_version = '2.9.7'
     ext.jaxb_api_version = '2.1'
     ext.jaxb_basic_ant_version = '1.11.1'
     ext.jaxb_version = '2.3.0.1'
     ext.javax_activation_version = '1.1.1'
     ext.javax_jaxws_api_version = '2.2.1'
-    ext.kith_hodemelding_version = '1.1'
-    ext.kith_apprec_version = '1.1'
     ext.kluent_version = '1.39'
     ext.ktor_version = '1.0.0'
     ext.logback_version = '1.2.3'
@@ -19,9 +16,8 @@ buildscript {
     ext.prometheus_version = '0.5.0'
     ext.saaj_version = "1.4.0"
     ext.spek_version = "2.0.0-rc.1"
+    ext.sykmelding_version = "1.0-SNAPSHOT"
     ext.nav_person_v3_version = '3.2.0'
-
-    ext.jaxb2SourceDir = file("$buildDir/generated-sources/jaxb2")
 }
 
 plugins {
@@ -54,6 +50,7 @@ repositories {
     maven { url "https://dl.bintray.com/kotlin/ktor" }
     maven { url "https://kotlin.bintray.com/kotlinx" }
     maven { url 'https://repo.adeo.no/repository/maven-releases/' }
+    maven { url 'https://repo.adeo.no/repository/maven-snapshots/' }
     maven { url "https://dl.bintray.com/spekframework/spek-dev" }
 }
 
@@ -66,60 +63,9 @@ test {
     }
 }
 
-configurations {
-    generateJaxb2
-}
-
-class Jaxb2Task extends DefaultTask {
-    @OutputDirectory
-    File outputDir
-    @InputDirectory
-    File sourceDir
-
-    @TaskAction
-    def generateFiles() {
-        outputDir.deleteDir()
-        outputDir.mkdirs()
-        ant.taskdef(
-                'classpath': project.configurations.generateJaxb2.asPath,
-                'name': 'xjc',
-                'classname': 'org.jvnet.jaxb2_commons.xjc.XJC2Task'
-        )
-
-        ant.xjc(
-                'destdir': outputDir,
-                'package': 'no.nav.model.sm2013',
-                'schema': "$sourceDir/HelseOpplysningerArbeidsuforhet_2013-10-01.xsd",
-                'encoding': 'UTF-8',
-                'fork': 'true'
-        )
-        ant.xjc(
-                'destdir': outputDir,
-                'package': 'no.nav.model.kith',
-                'schema': "$sourceDir/kith.xsd",
-                'encoding': 'UTF-8',
-                'fork': 'true'
-        )
-        ant.xjc(
-                'destdir': outputDir,
-                'package': 'no.nav.model.felleskomponent1',
-                'schema': "$sourceDir/felleskomponent1.xsd",
-                'encoding': 'UTF-8',
-                'fork': 'true'
-        )
-
-    }
-}
-
-task generateJaxb2(type: Jaxb2Task) {
-    outputDir = jaxb2SourceDir
-    sourceDir = file("$projectDir/src/main/resources/xsd")
-}
-
 sourceSets {
     main {
         java {
-            srcDir jaxb2SourceDir
             srcDir "$buildDir/generated-sources"
         }
     }
@@ -132,18 +78,12 @@ task generateDiagnoseCodes(type: CodegenTask) {
 }
 
 compileKotlin {
-    dependsOn generateJaxb2, generateDiagnoseCodes, wsdl2java
+    dependsOn generateDiagnoseCodes, wsdl2java
     kotlinOptions.jvmTarget = "1.8"
 }
 
 
 dependencies {
-    generateJaxb2 "com.sun.xml.bind:jaxb-xjc:$jaxb_version"
-    generateJaxb2 "org.glassfish.jaxb:jaxb-runtime:$jaxb_version"
-    generateJaxb2 "javax.xml.bind:jaxb-api:$jaxb_api_version"
-    generateJaxb2 "org.jvnet.jaxb2_commons:jaxb2-basics-ant:$jaxb_basic_ant_version"
-    generateJaxb2 "javax.activation:activation:$javax_activation_version"
-
     wsdl2java "org.glassfish.jaxb:jaxb-runtime:$jaxb_version"
     wsdl2java "javax.xml.bind:jaxb-api:$jaxb_api_version"
     wsdl2java "org.jvnet.jaxb2_commons:jaxb2-basics-ant:$jaxb_basic_ant_version"
@@ -171,10 +111,7 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "net.logstash.logback:logstash-logback-encoder:$logstash_encoder_version"
 
-    implementation "no.nav.syfo.tjenester:fellesformat:$fellesformat_version"
-    implementation "no.nav.syfo.tjenester:kith-hodemelding:$kith_hodemelding_version"
-    implementation "no.nav.syfo.tjenester:kith-apprec:$kith_apprec_version"
-
+    implementation "no.nav.helse.xml:sm2013:$sykmelding_version"
     implementation "no.nav.tjenester:nav-person-v3-tjenestespesifikasjon:$nav_person_v3_version"
 
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:$cxf_version"
@@ -190,9 +127,6 @@ dependencies {
 
     testRuntimeOnly "org.spekframework.spek2:spek-runtime-jvm:$spek_version"
     testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spek_version"
-
-    implementation "no.nav.syfo.tjenester:fellesformat:$fellesformat_version"
-    implementation "no.nav.syfo.tjenester:kith-hodemelding:$kith_hodemelding_version"
 
     implementation "javax.xml.bind:jaxb-api:$jaxb_api_version"
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb_version"

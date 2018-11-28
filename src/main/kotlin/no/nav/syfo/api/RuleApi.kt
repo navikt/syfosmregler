@@ -10,7 +10,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.request.receiveStream
+import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
@@ -18,65 +18,50 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.kith.xmlstds.msghead._2006_05_24.XMLIdent
-import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
-import no.kith.xmlstds.msghead._2006_05_24.XMLRefDoc
-import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
+import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.executeFlow
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
-import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
-import no.trygdeetaten.xml.eiff._1.XMLMottakenhetBlokk
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import no.nav.syfo.get
+import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.Syketilfelle
+import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
+import no.nav.syfo.rules.toZoned
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Personidenter
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
+import java.time.LocalDateTime
+import java.time.ZoneId
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 import java.util.GregorianCalendar
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Unmarshaller
 import javax.xml.datatype.DatatypeFactory
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
-val fellesformatJaxBContext: JAXBContext = JAXBContext.newInstance(
-        XMLEIFellesformat::class.java,
-        XMLMsgHead::class.java,
-        HelseOpplysningerArbeidsuforhet::class.java
-)
-val fellesformatUnmarshaller: Unmarshaller = fellesformatJaxBContext.createUnmarshaller()
 
 val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
 
 fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
-        val fellesformat = fellesformatUnmarshaller.unmarshal(call.receiveStream()) as XMLEIFellesformat
 
-        val mottakenhetBlokk: XMLMottakenhetBlokk = fellesformat.get()
-        val msgHead: XMLMsgHead = fellesformat.get()
-        val healthInformation = extractHelseopplysninger(msgHead)
-
-        val doctorPersonnumber = extractDoctorIdentFromSignature(mottakenhetBlokk)
+        val receivedSykmelding: ReceivedSykmelding = call.receive()
 
         val logValues = arrayOf(
-                keyValue("smId", mottakenhetBlokk.ediLoggId),
-                keyValue("organizationNumber", extractOrganisationNumberFromSender(fellesformat)?.id),
-                keyValue("msgId", msgHead.msgInfo.msgId)
+                keyValue("smId", receivedSykmelding.navLogId),
+                keyValue("organizationNumber", receivedSykmelding.legekontorOrgNr),
+                keyValue("msgId", receivedSykmelding.msgId)
         )
 
         val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
@@ -88,13 +73,18 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
         val validationAndPeriodRuleResults: List<Rule<Any>> = listOf<List<Rule<RuleData<RuleMetadata>>>>(
                 ValidationRuleChain.values().toList(),
                 PeriodLogicRuleChain.values().toList()
-        ).flatten().executeFlow(healthInformation, RuleMetadata.from(fellesformat))
+        ).flatten().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
+                receivedDate = receivedSykmelding.mottattDato.atZone(ZoneId.systemDefault()),
+                signatureDate = receivedSykmelding.signaturDato.atZone(ZoneId.systemDefault())
+        ))
 
-        val doctor = fetchDoctor(helsepersonellv1, doctorPersonnumber)
-        val hprRuleResults = HPRRuleChain.values().executeFlow(healthInformation, doctor.await())
+        val syketilfelle = fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId))
 
-        val patient = fetchPerson(personV3, extractPatientIdent(msgHead)!!)
-        val tpsRuleResults = PostTPSRuleChain.values().executeFlow(healthInformation, patient.await())
+        val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege)
+        val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor.await())
+
+        val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
+        val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
         val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
 
@@ -111,15 +101,6 @@ fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): D
     hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
 }
 
-inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T
-inline fun <reified T> XMLRefDoc.Content.get() = this.any.find { it is T } as T
-
-fun extractOrganisationNumberFromSender(fellesformat: XMLEIFellesformat): XMLIdent? =
-        fellesformat.get<XMLMsgHead>().msgInfo.sender.organisation.ident.find {
-            it.typeId.v == "ENH"
-        }
-fun extractHelseopplysninger(msgHead: XMLMsgHead) = msgHead.document[0].refDoc.content.get<HelseOpplysningerArbeidsuforhet>()
-
 val httpClient = HttpClient(CIO) {
     install(JsonFeature) {
         serializer = JacksonSerializer {
@@ -128,7 +109,7 @@ val httpClient = HttpClient(CIO) {
     }
 }
 
-fun CoroutineScope.fetchSickLeavePeriod(input: List<Syketilfelle>): Deferred<Any> = async {
+fun CoroutineScope.fetchSyketilfelle(input: List<Syketilfelle>): Deferred<Any> = async {
     httpClient.post<Any>("/") {
         accept(ContentType.Application.Json)
         contentType(ContentType.Application.Json)
@@ -136,21 +117,30 @@ fun CoroutineScope.fetchSickLeavePeriod(input: List<Syketilfelle>): Deferred<Any
     }
 }
 
-fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: XMLIdent): Deferred<TPSPerson> = async {
+fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
+    Syketilfelle(
+            aktorId = aktoerId,
+            orgnummer = null,
+            inntruffet = received,
+            tags = listOf(SyketilfelleTag.SYKMELDING, SyketilfelleTag.PERIODE, when {
+                it.aktivitetIkkeMulig != null -> SyketilfelleTag.INGEN_AKTIVITET
+                it.isReisetilskudd == true -> SyketilfelleTag.INGEN_AKTIVITET
+                it.gradertSykmelding != null -> SyketilfelleTag.GRADERT_AKTIVITET
+                it.behandlingsdager != null -> SyketilfelleTag.BEHANDLINGSDAGER
+                it.avventendeSykmelding != null -> SyketilfelleTag.FULL_AKTIVITET
+                else -> throw RuntimeException("Could not find aktivitetstype, this should never happen")
+            }).joinToString(",") { tag -> tag.name },
+            ressursId = resourceId,
+            fom = it.periodeFOMDato.toZoned().toLocalDateTime(),
+            tom = it.periodeTOMDato.toZoned().toLocalDateTime()
+    )
+}
+
+fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
         personV3.hentPerson(HentPersonRequest()
                 .withAktoer(PersonIdent().withIdent(NorskIdent()
-                                .withIdent(ident.id)
-                                .withType(Personidenter().withValue(ident.typeId?.v)))
+                                .withIdent(ident)
+                ) // .withType(Personidenter().withValue("FNR"))) // TODO?
                 )
         ).person
 }
-
-fun extractPatientIdent(msgHead: XMLMsgHead): XMLIdent? =
-        msgHead.msgInfo.patient?.ident?.find {
-            it.typeId.v == "FNR"
-        } ?: msgHead.msgInfo.patient?.ident?.find {
-            it.typeId.v == "DNR"
-        }
-
-fun extractDoctorIdentFromSignature(mottakenhetBlokk: XMLMottakenhetBlokk): String =
-        mottakenhetBlokk.avsenderFnrFraDigSignatur

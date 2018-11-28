@@ -12,7 +12,6 @@ import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.ws.configureSTSFor
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
-import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
 import org.apache.cxf.binding.soap.SoapMessage
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor
 import org.apache.cxf.ext.logging.LoggingFeature
@@ -80,5 +79,3 @@ fun Application.initRouting(applicationState: ApplicationState, personV3: Person
         jackson {}
     }
 }
-
-inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T

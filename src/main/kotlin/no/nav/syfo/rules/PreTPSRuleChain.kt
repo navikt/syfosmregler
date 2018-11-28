@@ -1,19 +1,14 @@
 package no.nav.syfo.rules
 
-import no.kith.xmlstds.msghead._2006_05_24.XMLMsgHead
-import no.nav.model.sm2013.CV
-import no.nav.model.sm2013.HelseOpplysningerArbeidsuforhet
+import no.nav.helse.sm2013.CV
+import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Description
-import no.nav.syfo.Rule
-import no.nav.syfo.get
-import no.nav.syfo.model.Status
 import no.nav.syfo.ICD10
+import no.nav.syfo.Rule
+import no.nav.syfo.model.Status
 import no.nav.syfo.ICPC2
 import no.nav.syfo.RuleData
-import no.trygdeetaten.xml.eiff._1.XMLEIFellesformat
-import no.trygdeetaten.xml.eiff._1.XMLMottakenhetBlokk
 import java.time.DayOfWeek
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import javax.xml.datatype.XMLGregorianCalendar
@@ -21,18 +16,7 @@ import javax.xml.datatype.XMLGregorianCalendar
 data class RuleMetadata(
     val signatureDate: ZonedDateTime,
     val receivedDate: ZonedDateTime
-) {
-    companion object {
-        fun from(fellesformat: XMLEIFellesformat): RuleMetadata {
-            val msgHead = fellesformat.get<XMLMsgHead>()
-            val mottakEnhetBlokk = fellesformat.get<XMLMottakenhetBlokk>()
-            return RuleMetadata(
-                    signatureDate = msgHead.msgInfo.genDate.atZone(ZoneId.systemDefault()),
-                    receivedDate = mottakEnhetBlokk.mottattDatotid.toZoned()
-            )
-        }
-    }
-}
+)
 
 enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
