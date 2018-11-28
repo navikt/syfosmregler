@@ -104,10 +104,9 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
         ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato.toZoned()) && (healthInformation.kontaktMedPasient.begrunnIkkeKontakt == null)
     }),
-
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
     PRE_DATED(1209, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first().plusDays(30) > ruleMetadata.signatureDate
+        healthInformation.aktivitet.periode.sortedFOMDate().first() > ruleMetadata.signatureDate.plusDays(30)
     }),
 
     @Description("Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.")
