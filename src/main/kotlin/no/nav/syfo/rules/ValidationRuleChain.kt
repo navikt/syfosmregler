@@ -25,12 +25,12 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
     YOUNGER_THAN_13(1101, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.sortedTOMDate().last().toLocalDate() < extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(13)
+        healthInformation.aktivitet.periode.sortedTOMDate().last() < extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(13)
     }),
 
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
     PATIENT_OVER_70_YEARS(1102, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first().toLocalDate() > extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(70)
+        healthInformation.aktivitet.periode.sortedFOMDate().first() > extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(70)
     }),
 
     @Description("Ukjent diagnosekode type")

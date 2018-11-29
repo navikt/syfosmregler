@@ -35,7 +35,6 @@ import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
-import no.nav.syfo.rules.toZoned
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
@@ -43,7 +42,6 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import java.time.LocalDateTime
-import java.time.ZoneId
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 import java.util.GregorianCalendar
 import javax.xml.datatype.DatatypeFactory
@@ -74,8 +72,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
                 ValidationRuleChain.values().toList(),
                 PeriodLogicRuleChain.values().toList()
         ).flatten().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
-                receivedDate = receivedSykmelding.mottattDato.atZone(ZoneId.systemDefault()),
-                signatureDate = receivedSykmelding.signaturDato.atZone(ZoneId.systemDefault())
+                receivedDate = receivedSykmelding.mottattDato,
+                signatureDate = receivedSykmelding.signaturDato
         ))
 
         val syketilfelle = fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId))
@@ -131,8 +129,8 @@ fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(akt
                 else -> throw RuntimeException("Could not find aktivitetstype, this should never happen")
             }).joinToString(",") { tag -> tag.name },
             ressursId = resourceId,
-            fom = it.periodeFOMDato.toZoned().toLocalDateTime(),
-            tom = it.periodeTOMDato.toZoned().toLocalDateTime()
+            fom = it.periodeFOMDato.atStartOfDay(),
+            tom = it.periodeTOMDato.atStartOfDay()
     )
 }
 

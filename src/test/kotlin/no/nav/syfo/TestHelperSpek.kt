@@ -5,12 +5,11 @@ import no.nav.syfo.rules.workdaysBetween
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.LocalDate
 
 object TestHelperSpek : Spek({
     fun date(year: Int, month: Int, day: Int) =
-            LocalDateTime.of(year, month, day, 12, 0).atZone(ZoneId.systemDefault())
+            LocalDate.of(year, month, day)
     describe("Test helpers") {
         it("Monday to Sunday should return 4 week days") {
             workdaysBetween(date(2018, 10, 8), date(2018, 10, 14)) shouldEqual 4

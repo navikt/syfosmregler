@@ -9,20 +9,20 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.ICPC2
 import no.nav.syfo.RuleData
 import java.time.DayOfWeek
-import java.time.ZonedDateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import javax.xml.datatype.XMLGregorianCalendar
 
 data class RuleMetadata(
-    val signatureDate: ZonedDateTime,
-    val receivedDate: ZonedDateTime
+    val signatureDate: LocalDateTime,
+    val receivedDate: LocalDateTime
 )
 
 enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
     @Description("Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.")
     SIGNATURE_DATE_AFTER_RECEIVED_DATE(1110, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.kontaktMedPasient.behandletDato.toZoned() > ruleMetadata.signatureDate
+        healthInformation.kontaktMedPasient.behandletDato > ruleMetadata.signatureDate
     }),
 
     @Description("Hvis ingen perioder er oppgitt skal sykmeldingen avvises.")
@@ -33,7 +33,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     @Description("Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.")
     TO_DATE_BEFORE_FROM_DATE(1201, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode.any {
-            it.periodeFOMDato.toGregorianCalendar() > it.periodeTOMDato.toGregorianCalendar()
+            it.periodeFOMDato > it.periodeTOMDato
         }
     }),
 
@@ -45,7 +45,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
                         periodB != periodA
                     }
                     .any { periodB ->
-                        periodA.periodeFOMDato.toZoned() in periodB.range() || periodA.periodeTOMDato.toZoned() in periodB.range()
+                        periodA.periodeFOMDato in periodB.range() || periodA.periodeTOMDato in periodB.range()
                     }
         }
     }),
@@ -54,8 +54,8 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     GAP_BETWEEN_PERIODS(1203, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode
         val ranges = healthInformation.aktivitet.periode
-                .sortedBy { it.periodeFOMDato.toGregorianCalendar() }
-                .map { it.periodeFOMDato.toZoned() to it.periodeTOMDato.toZoned() }
+                .sortedBy { it.periodeFOMDato }
+                .map { it.periodeFOMDato to it.periodeTOMDato }
 
         for (i in 1..(ranges.size - 1)) {
             if (workdaysBetween(ranges[i - 1].first, ranges[i].second) > 0) {
@@ -71,9 +71,9 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     @Description("Hvis førstegangs sykmelding er tilbakedatert mer enn 8 dager og dokumenterbar kontakt med pasient er mellom behandlet dato og signaturdato")
     FIRST_TIME_BACKDATED_MORE_THEN_8_DAYS(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
         if (healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.kontaktDato != null) {
-            healthInformation.kontaktMedPasient.behandletDato.toGregorianCalendar() == healthInformation.kontaktMedPasient.kontaktDato.toGregorianCalendar() &&
-                    ruleMetadata.signatureDate.minusDays(8) < healthInformation.kontaktMedPasient.behandletDato.toZoned() ||
-                    healthInformation.kontaktMedPasient.behandletDato.toZoned() in healthInformation.kontaktMedPasient.kontaktDato.toZoned()..ruleMetadata.signatureDate
+            // healthInformation.kontaktMedPasient.behandletDato == healthInformation.kontaktMedPasient.kontaktDato &&
+                    ruleMetadata.signatureDate.minusDays(8) < healthInformation.kontaktMedPasient.behandletDato ||
+                    healthInformation.kontaktMedPasient.behandletDato in healthInformation.kontaktMedPasient.kontaktDato.atStartOfDay()..ruleMetadata.signatureDate
         } else {
             false
         }
@@ -81,27 +81,27 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
     BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato.toZoned())
+        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato)
     }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
     BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato.toZoned()) && (healthInformation.kontaktMedPasient.begrunnIkkeKontakt == null)
+        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.kontaktMedPasient.behandletDato) && (healthInformation.kontaktMedPasient.begrunnIkkeKontakt == null)
     }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
     PRE_DATED(1209, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first() > ruleMetadata.signatureDate.plusDays(30)
+        healthInformation.aktivitet.periode.sortedFOMDate().first().atStartOfDay() > ruleMetadata.signatureDate.plusDays(30)
     }),
 
     @Description("Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.")
     END_DATE(1211, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.aktivitet.periode.sortedTOMDate().last() > ruleMetadata.receivedDate.plusYears(1)
+        healthInformation.aktivitet.periode.sortedTOMDate().last().atStartOfDay() > ruleMetadata.receivedDate.plusYears(1)
     }),
 
     // TODO: How should we handle this in paper sykemeldinger?
     @Description("Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen")
     RECEIVED_DATE_BEFORE_PROCESSED_DATE(1123, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.kontaktMedPasient.behandletDato.toZoned() > ruleMetadata.receivedDate.plusHours(2)
+        healthInformation.kontaktMedPasient.behandletDato > ruleMetadata.receivedDate.plusHours(2)
     }),
 
     // TODO: Is this even supposed to be here?
@@ -123,7 +123,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(1242, Status.INVALID, { (healthInformation, _) ->
         healthInformation.aktivitet.periode
                 .filter { it.avventendeSykmelding != null }
-                .any { (it.periodeFOMDato.toZoned()..it.periodeTOMDato.toZoned()).daysBetween() > 16 }
+                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 16 }
     }),
 
     @Description("Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.")
@@ -148,29 +148,24 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     // TODO: Check persisted sykmelding if there is a gap of less then 16 days from the previous one
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
     BACKDATING_SYKMELDING_EXTENSION(null, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first().minusMonths(1) > ruleMetadata.signatureDate
+        healthInformation.aktivitet.periode.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadata.signatureDate
     }),
 }
 
-fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.sortedFOMDate(): List<ZonedDateTime> =
-        map { it.periodeFOMDato.toZoned() }.sorted()
-fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.sortedTOMDate(): List<ZonedDateTime> =
-        map { it.periodeTOMDato.toZoned() }.sorted()
+fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.sortedFOMDate(): List<LocalDate> =
+        map { it.periodeFOMDato }.sorted()
+fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.sortedTOMDate(): List<LocalDate> =
+        map { it.periodeTOMDato }.sorted()
 
-fun XMLGregorianCalendar.toZoned(): ZonedDateTime = toGregorianCalendar().toZonedDateTime()
-
-fun workdaysBetween(a: ZonedDateTime, b: ZonedDateTime): Int = (1..(ChronoUnit.DAYS.between(a, b) - 1))
+fun workdaysBetween(a: LocalDate, b: LocalDate): Int = (1..(ChronoUnit.DAYS.between(a, b) - 1))
         .map { a.plusDays(it) }
         .filter { it.dayOfWeek !in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY) }
         .count()
 
-fun ClosedRange<ZonedDateTime>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)
-fun ClosedRange<ZonedDateTime>.startedWeeksBetween(): Long = ChronoUnit.WEEKS.between(start, endInclusive) + 1
-fun HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.range(): ClosedRange<ZonedDateTime> =
-        periodeFOMDato.toZoned().rangeTo(periodeTOMDato.toZoned())
-
-operator fun ClosedRange<ZonedDateTime>.contains(v: XMLGregorianCalendar) =
-        v.toZoned() > start || v.toZoned() < endInclusive
+fun ClosedRange<LocalDate>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)
+fun ClosedRange<LocalDate>.startedWeeksBetween(): Long = ChronoUnit.WEEKS.between(start, endInclusive) + 1
+fun HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.range(): ClosedRange<LocalDate> =
+        periodeFOMDato.rangeTo(periodeTOMDato)
 
 fun CV.isICPC2(): Boolean = v == ICPC2.A01.oid
 
