@@ -13,7 +13,6 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.request.receive
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
@@ -58,7 +57,6 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
     registerModule(JavaTimeModule())
 }
-
 
 fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) {
     post("/v1/rules/validate") {
