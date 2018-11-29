@@ -1,5 +1,7 @@
 package no.nav.syfo
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
@@ -76,6 +78,9 @@ fun Application.initRouting(applicationState: ApplicationState, personV3: Person
         registerRuleApi(personV3, helsepersonellv1)
     }
     install(ContentNegotiation) {
-        jackson {}
+        jackson {
+            registerKotlinModule()
+            registerModule(JavaTimeModule())
+        }
     }
 }
