@@ -2,6 +2,8 @@ package no.nav.syfo.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -12,6 +14,7 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.request.receive
+import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
@@ -51,15 +54,22 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
 val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
 
+val objectMapper: ObjectMapper = ObjectMapper().apply {
+    registerKotlinModule()
+    registerModule(JavaTimeModule())
+}
+
+
 fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
 
-        val receivedSykmelding: ReceivedSykmelding = call.receive()
+        val receivedSykmeldingText = call.receiveText()
 
         if (log.isDebugEnabled) {
-            log.debug(ObjectMapper().writeValueAsString(receivedSykmelding))
+            log.debug(receivedSykmeldingText)
         }
+        val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(receivedSykmeldingText)
 
         val logValues = arrayOf(
                 keyValue("smId", receivedSykmelding.navLogId),
