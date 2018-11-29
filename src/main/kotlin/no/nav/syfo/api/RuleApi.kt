@@ -1,5 +1,6 @@
 package no.nav.syfo.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.call
 import io.ktor.client.HttpClient
@@ -55,6 +56,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service) 
         log.info("Got an request to validate rules")
 
         val receivedSykmelding: ReceivedSykmelding = call.receive()
+
+        if (log.isDebugEnabled) {
+            log.debug(ObjectMapper().writeValueAsString(receivedSykmelding))
+        }
 
         val logValues = arrayOf(
                 keyValue("smId", receivedSykmelding.navLogId),
