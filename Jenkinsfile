@@ -14,16 +14,7 @@ pipeline {
     stages {
         stage('initialize') {
             steps {
-                script {
-                    init action: 'default'
-                    sh './gradlew clean'
-                    applicationVersionGradle = sh(script: './gradlew -q printVersion', returnStdout: true).trim()
-                    env.APPLICATION_VERSION = "${applicationVersionGradle}"
-                    if (applicationVersionGradle.endsWith('-SNAPSHOT')) {
-                        env.APPLICATION_VERSION = "${applicationVersionGradle}.${env.BUILD_ID}-${env.COMMIT_HASH_SHORT}"
-                    }
-                    init action: 'updateStatus'
-                }
+                init action: 'gradle'
             }
         }
         stage('build') {
@@ -42,6 +33,11 @@ pipeline {
                 slackStatus status: 'passed'
             }
         }
+       stage('push docker image') {
+              steps {
+                  dockerUtils action: 'createPushImage'
+              }
+         }
         stage('Create kafka topics') {
             steps {
                 sh 'echo TODO'
