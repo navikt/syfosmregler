@@ -30,9 +30,9 @@ resources:
 secrets: true
 fasitResources:
   used:
-  - alias: virksomhet:Person_v3
-    resourceType: Webserviceendpoint
-  - alias: securityTokenService
-    resourceType: BaseUrl
-  - alias: ekstern:helse_helsepersonell_v1
-    resourceType: Webserviceendpoint
+    - alias: virksomhet:Person_v3
+      resourceType: Webserviceendpoint
+    - alias: securityTokenService
+      resourceType: BaseUrl
+    - alias: ekstern:helse_helsepersonell_v1
+      resourceType: Webserviceendpoint
