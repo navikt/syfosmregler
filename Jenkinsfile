@@ -48,14 +48,24 @@ pipeline {
                 // TODO
             }
         }
-        stage('deploy') {
+        stage('validate & upload nais.yaml to nexus m2internal') {
+             steps {
+                 nais action: 'validate'
+                 nais action: 'upload'
+             }
+         }
+        stage('deploy to preprod') {
+             steps {
+                     deployApp action: 'jiraPreprod'
+             }
+         }
+        stage('deploy to production') {
+            when { environment name: 'DEPLOY_TO', value: 'production' }
             steps {
-                dockerUtils action: 'createPushImage'
-                nais action: 'validate'
-                nais action: 'upload'
-                deployApp action: 'jiraPreprod'
+                deployApp action: 'jiraProd'
+                githubStatus action: 'tagRelease'
             }
-        }
+         }
     }
     post {
         always {

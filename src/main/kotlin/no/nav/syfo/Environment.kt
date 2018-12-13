@@ -15,12 +15,16 @@ private val config = Properties().apply {
     }
 }
 
+fun getEnvVar(varName: String, defaultValue: String? = null) =
+        System.getenv(varName) ?: defaultValue ?: throw RuntimeException("Missing required variable \"$varName\"")
+
 data class Environment(
     val applicationPort: Int = config.getProperty("application.port").toInt(),
     val applicationThreads: Int = config.getProperty("application.threads").toInt(),
-    val personV3EndpointURL: String = config.getProperty("ws.personV3.endpoint.url"),
-    val securityTokenServiceUrl: String = config.getProperty("ws.security.token.service.endpoint.url"),
     val srvsyfosmreglerUsername: String = config.getProperty("serviceuser.username"),
     val srvsyfosmreglerPassword: String = config.getProperty("serviceuser.password"),
-    val helsepersonellv1EndpointUrl: String = config.getProperty("ws.samhandler.helse.helsepersonellv1.endpoint.url")
+
+    val personV3EndpointURL: String = getEnvVar("VIRKSOMHET_PERSON_V3_ENDPOINTURL"),
+    val securityTokenServiceUrl: String = getEnvVar("SECURITYTOKENSERVICE_URL"),
+    val helsepersonellv1EndpointUrl: String = getEnvVar("EKSTERN_HELSE_HELSEPERSONELL_V1_ENDPOINTURL")
 )
