@@ -23,7 +23,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Fødselsnummer/D-nummer kan passerer ikke modulus 11")
     INVALID_FNR(1006, Status.INVALID, { (healthInformation, _) ->
-        validatePersonAndDNumber(healthInformation.pasient.fodselsnummer.id)
+        !validatePersonAndDNumber(healthInformation.pasient.fodselsnummer.id)
     }),
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
@@ -113,8 +113,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         val validdynaGruppe62 =
         if (timeGroup8Week || timeGroup17Week || timeGroup39Week) {
             validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
-        }
-        else {
+        } else {
             false
         }
 
