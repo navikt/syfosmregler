@@ -12,12 +12,13 @@ import no.nav.syfo.contains
 import no.nav.syfo.model.Status
 import no.nav.syfo.validation.extractBornDate
 import no.nav.syfo.validation.validatePersonAndDNumber
+import no.nav.syfo.validation.validatePersonAndDNumber11Digits
 
 enum class ValidationRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     // TODO: Use this ruleId for when the TPS SOAP call returns that the person is missing
     @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
     INVALID_FNR_SIZE(1002, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.pasient.fodselsnummer.id.length != 11
+        !validatePersonAndDNumber11Digits(healthInformation.pasient.fodselsnummer.id)
     }),
 
     @Description("Fødselsnummer/D-nummer kan passerer ikke modulus 11")
@@ -73,12 +74,15 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.any { cv ->
+        when (healthInformation.medisinskVurdering.biDiagnoser) {
+            null -> false
+            else -> healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.any { cv ->
             if (cv.isICPC2()) {
                 no.nav.syfo.ICPC2.values().any { it.codeValue == cv.v }
             } else {
                 no.nav.syfo.ICD10.values().any { it.codeValue == cv.v }
             }
+        }
         }
     }),
 
@@ -95,8 +99,8 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // TODO: Endre navn på denne etter diskusjon med fag
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
         val arsakBeskrivelseAktivitetIkkeMulig = healthInformation.aktivitet.periode.any {
-            it.aktivitetIkkeMulig.medisinskeArsaker.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig.medisinskeArsaker.arsakskode != null ||
-                    it.aktivitetIkkeMulig.arbeidsplassen.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig.arbeidsplassen.arsakskode != null
+            it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null ||
+                    it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null
         }
         val timeGroup8Week = healthInformation.aktivitet.periode
                 .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
@@ -106,9 +110,15 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
                 .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
 
         val rulesettversion = healthInformation.regelSettVersjon ?: ""
-        val validdynaGruppe62 = validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
+        val validdynaGruppe62 =
+        if (timeGroup8Week || timeGroup17Week || timeGroup39Week) {
+            validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
+        }
+        else {
+            false
+        }
 
-        !arsakBeskrivelseAktivitetIkkeMulig && kotlin.collections.listOf("", "1").contains(rulesettversion) && validdynaGruppe62 && timeGroup8Week || timeGroup17Week || timeGroup39Week
+        !arsakBeskrivelseAktivitetIkkeMulig && kotlin.collections.listOf("", "1").contains(rulesettversion) && validdynaGruppe62
         // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     }),
 
@@ -116,7 +126,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     INVALID_RULESET_VERSION(1708, Status.INVALID, { (healthInformation, _) ->
         val rulesettversion = healthInformation.regelSettVersjon ?: ""
         val validRulesettversions = listOf("", "1", "2")
-        validRulesettversions.contains(rulesettversion)
+        !validRulesettversions.contains(rulesettversion)
 
         // TODO: Denne trenger også en diskusjon med fag
     }),
@@ -124,8 +134,8 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7.17, 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(1709, Status.INVALID, { (healthInformation, _) ->
         val arsakBeskrivelseAktivitetIkkeMulig = !healthInformation.aktivitet.periode.any {
-            it.aktivitetIkkeMulig.medisinskeArsaker.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig.medisinskeArsaker.arsakskode != null ||
-                    it.aktivitetIkkeMulig.arbeidsplassen.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig.arbeidsplassen.arsakskode != null
+            it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null ||
+                    it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null
         }
 
         val timeGroup7Week = healthInformation.aktivitet.periode
