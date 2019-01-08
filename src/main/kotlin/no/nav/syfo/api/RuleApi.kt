@@ -17,6 +17,7 @@ import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
+import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -112,6 +113,7 @@ fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): D
     hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
 }
 
+@KtorExperimentalAPI
 val httpClient = HttpClient(CIO) {
     install(JsonFeature) {
         serializer = JacksonSerializer {

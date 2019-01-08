@@ -167,7 +167,7 @@ fun ClosedRange<LocalDate>.startedWeeksBetween(): Long = ChronoUnit.WEEKS.betwee
 fun HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.range(): ClosedRange<LocalDate> =
         periodeFOMDato.rangeTo(periodeTOMDato)
 
-fun CV.isICPC2(): Boolean = v == ICPC2.A01.oid
+fun CV.isICPC2(): Boolean = s == ICPC2.A01.oid
 
 fun CV.toICPC2(): List<ICPC2>? = if (isICPC2()) { listOfNotNull(ICPC2.values().find { it.codeValue == v }) } else { ICD10.values().find { it.codeValue == v }?.icpc2 }
 

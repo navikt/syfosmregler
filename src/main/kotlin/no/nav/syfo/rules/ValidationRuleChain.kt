@@ -38,14 +38,18 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Ukjent diagnosekode type")
     UNKNOWN_DIAGNOSECODE_TYPE(1137, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.s !in Diagnosekode.values()
+        when (healthInformation.medisinskVurdering?.hovedDiagnose?.diagnosekode?.s) {
+            null -> false
+            else -> healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.s !in Diagnosekode.values()
+        }
     }),
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
     ICPC_2_Z_DIAGNOSE(1132, Status.INVALID, { (healthInformation, _) ->
-        // To support not having a main diagnosis and avoid checking for invalid code here we allow null and compare
-        // with the equality operator
-        (healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.first()?.codeValue?.startsWith("Z") == true)
+        when (healthInformation.medisinskVurdering.hovedDiagnose) {
+            null -> false
+            else -> (healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.first()?.codeValue?.startsWith("Z") == true)
+        }
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
@@ -54,33 +58,30 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
                 healthInformation.medisinskVurdering.hovedDiagnose.let { it == null || it.diagnosekode == null || it.diagnosekode.v == null }
     }),
 
-    // TODO:
-    // @Description("Hvis ICPC prosessdiagnose er oppgitt skal meldingen avvises")
-    // ICPC_PROCESS_DIAGNOSIS(1142, Status.INVALID, { (healthInformation, _) ->
-    //     healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.isICPC2() &&
-    //             healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.v.startsWith("-")
-    // }),
-
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(1540, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.let { cv ->
-            if (cv.isICPC2()) {
-                ICPC2.values().any { it.codeValue == cv.v }
-            } else {
-                ICD10.values().any { it.codeValue == cv.v }
-            }
+        when (healthInformation.medisinskVurdering.hovedDiagnose) {
+            null -> false
+            else -> !healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.let { cv ->
+                    if (cv.isICPC2()) {
+                        ICPC2.values().any { it.codeValue == cv.v }
+                    } else {
+                        ICD10.values().any { it.codeValue == cv.v }
+                    }
+                }
         }
     }),
 
+    // Revurder regel når IT ikkje lenger skal brukes
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
         when (healthInformation.medisinskVurdering.biDiagnoser) {
             null -> false
-            else -> healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.any { cv ->
+            else -> !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.any { cv ->
             if (cv.isICPC2()) {
-                no.nav.syfo.ICPC2.values().any { it.codeValue == cv.v }
+                ICPC2.values().any { it.codeValue == cv.v }
             } else {
-                no.nav.syfo.ICD10.values().any { it.codeValue == cv.v }
+                ICD10.values().any { it.codeValue == cv.v }
             }
         }
         }
@@ -88,19 +89,26 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt og sykmeldingen ikke er \"forenklet\"")
     NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(1706, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true && !healthInformation.aktivitet.periode.all {
-            (it.gradertSykmelding == null || it.gradertSykmelding.sykmeldingsgrad == 100) &&
-                    it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null &&
-                    it.aktivitetIkkeMulig.medisinskeArsaker?.arsakskode != null
-        } == true
+        if (healthInformation.medisinskVurdering.hovedDiagnose != null) {
+            val simplifiedDiagnoseCode = healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true
+
+            !simplifiedDiagnoseCode &&
+                    !healthInformation.aktivitet.periode.all {
+                (it.gradertSykmelding == null || it.gradertSykmelding.sykmeldingsgrad == 100) &&
+                        it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null &&
+                        it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null
+            } == true
+        } else {
+            false
+        }
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
     // TODO: Endre navn på denne etter diskusjon med fag
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
         val arsakBeskrivelseAktivitetIkkeMulig = healthInformation.aktivitet.periode.any {
-            it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null ||
-                    it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null
+            !it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode.isNullOrEmpty() ||
+                    !it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode.isNullOrEmpty()
         }
         val timeGroup8Week = healthInformation.aktivitet.periode
                 .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
@@ -110,14 +118,19 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
                 .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
 
         val rulesettversion = healthInformation.regelSettVersjon ?: ""
+        val utdypendeOpplysninger = healthInformation.utdypendeOpplysninger != null
         val validdynaGruppe62 =
-        if (timeGroup8Week || timeGroup17Week || timeGroup39Week) {
-            validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
+        if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion)) {
+            if (utdypendeOpplysninger && arsakBeskrivelseAktivitetIkkeMulig) {
+                validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
+            } else {
+                false
+            }
         } else {
             false
         }
 
-        !arsakBeskrivelseAktivitetIkkeMulig && kotlin.collections.listOf("", "1").contains(rulesettversion) && validdynaGruppe62
+        !validdynaGruppe62
         // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     }),
 
@@ -147,9 +160,9 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         val rulesettversion2 = healthInformation.regelSettVersjon == "2"
 
         when {
-            timeGroup7Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && validateDynagruppe63(healthInformation.utdypendeOpplysninger.spmGruppe)
-            timeGroup17Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && validateDynagruppe64(healthInformation.utdypendeOpplysninger.spmGruppe)
-            timeGroup39Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && validateDynagruppe65(healthInformation.utdypendeOpplysninger.spmGruppe) || validateDynagruppe66(healthInformation.utdypendeOpplysninger.spmGruppe)
+            timeGroup7Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe63(healthInformation.utdypendeOpplysninger.spmGruppe)
+            timeGroup17Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe64(healthInformation.utdypendeOpplysninger.spmGruppe)
+            timeGroup39Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe65(healthInformation.utdypendeOpplysninger.spmGruppe) || !validateDynagruppe66(healthInformation.utdypendeOpplysninger.spmGruppe)
             else -> false
         }
     })
