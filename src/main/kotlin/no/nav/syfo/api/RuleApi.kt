@@ -122,6 +122,7 @@ val httpClient = HttpClient(CIO) {
     }
 }
 
+@KtorExperimentalAPI
 fun CoroutineScope.fetchSyketilfelle(input: List<Syketilfelle>): Deferred<Any> = async {
     httpClient.post<Any>("/") {
         accept(ContentType.Application.Json)
