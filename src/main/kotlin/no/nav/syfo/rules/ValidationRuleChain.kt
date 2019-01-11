@@ -18,22 +18,38 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // TODO: Use this ruleId for when the TPS SOAP call returns that the person is missing
     @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
     INVALID_FNR_SIZE(1002, Status.INVALID, { (healthInformation, _) ->
-        !validatePersonAndDNumber11Digits(healthInformation.pasient.fodselsnummer.id)
+        if (healthInformation.pasient?.fodselsnummer?.id != null) {
+            !validatePersonAndDNumber11Digits(healthInformation.pasient.fodselsnummer.id)
+        } else {
+            false
+        }
     }),
 
     @Description("Fødselsnummer/D-nummer kan passerer ikke modulus 11")
     INVALID_FNR(1006, Status.INVALID, { (healthInformation, _) ->
+        if (healthInformation.pasient?.fodselsnummer?.id != null) {
         !validatePersonAndDNumber(healthInformation.pasient.fodselsnummer.id)
+        } else {
+            false
+        }
     }),
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
     YOUNGER_THAN_13(1101, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.sortedTOMDate().last() < extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(13)
+        if (!healthInformation.aktivitet?.periode.isNullOrEmpty() && healthInformation.pasient?.fodselsnummer?.id != null) {
+            healthInformation.aktivitet.periode.sortedTOMDate().last() < extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(13)
+        } else {
+            false
+        }
     }),
 
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
     PATIENT_OVER_70_YEARS(1102, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.sortedFOMDate().first() > extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(70)
+        if (!healthInformation.aktivitet?.periode.isNullOrEmpty() && healthInformation.pasient?.fodselsnummer?.id != null) {
+            healthInformation.aktivitet.periode.sortedFOMDate().first() > extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(70)
+        } else {
+            false
+        }
     }),
 
     @Description("Ukjent diagnosekode type")
@@ -46,7 +62,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
     ICPC_2_Z_DIAGNOSE(1132, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering.hovedDiagnose) {
+        when (healthInformation.medisinskVurdering?.hovedDiagnose) {
             null -> false
             else -> (healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.first()?.codeValue?.startsWith("Z") == true)
         }
@@ -54,13 +70,13 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
     MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON(1133, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.annenFraversArsak == null &&
-                healthInformation.medisinskVurdering.hovedDiagnose.let { it == null || it.diagnosekode == null || it.diagnosekode.v == null }
+        healthInformation.medisinskVurdering?.annenFraversArsak == null &&
+                healthInformation.medisinskVurdering?.hovedDiagnose.let { it == null || it.diagnosekode == null || it.diagnosekode.v == null }
     }),
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(1540, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering.hovedDiagnose) {
+        when (healthInformation.medisinskVurdering?.hovedDiagnose) {
             null -> false
             else -> !healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.let { cv ->
                     if (cv.isICPC2()) {
@@ -75,7 +91,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // Revurder regel når IT ikkje lenger skal brukes
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering.biDiagnoser) {
+        when (healthInformation.medisinskVurdering?.biDiagnoser) {
             null -> false
             else -> !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.any { cv ->
             if (cv.isICPC2()) {
@@ -89,11 +105,9 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt og sykmeldingen ikke er \"forenklet\"")
     NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(1706, Status.INVALID, { (healthInformation, _) ->
-        if (healthInformation.medisinskVurdering.hovedDiagnose != null) {
+        if (healthInformation.medisinskVurdering?.hovedDiagnose != null && !healthInformation.aktivitet?.periode.isNullOrEmpty()) {
             val simplifiedDiagnoseCode = healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true
-
-            !simplifiedDiagnoseCode &&
-                    !healthInformation.aktivitet.periode.all {
+            !simplifiedDiagnoseCode && !healthInformation.aktivitet.periode.all {
                 (it.gradertSykmelding == null || it.gradertSykmelding.sykmeldingsgrad == 100) &&
                         it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null &&
                         it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null
@@ -106,32 +120,36 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
     // TODO: Endre navn på denne etter diskusjon med fag
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
-        val arsakBeskrivelseAktivitetIkkeMulig = healthInformation.aktivitet.periode.any {
-            !it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode.isNullOrEmpty() ||
-                    !it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode.isNullOrEmpty()
-        }
-        val timeGroup8Week = healthInformation.aktivitet.periode
-                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
-        val timeGroup17Week = healthInformation.aktivitet.periode
-                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 119 }
-        val timeGroup39Week = healthInformation.aktivitet.periode
-                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
-
-        val rulesettversion = healthInformation.regelSettVersjon ?: ""
-        val utdypendeOpplysninger = healthInformation.utdypendeOpplysninger != null
-        val validdynaGruppe62 =
-        if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion)) {
-            if (utdypendeOpplysninger && arsakBeskrivelseAktivitetIkkeMulig) {
-                validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
-            } else {
-                false
+        if (!healthInformation.aktivitet?.periode.isNullOrEmpty()) {
+            val arsakBeskrivelseAktivitetIkkeMulig = healthInformation.aktivitet.periode.any {
+                !it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode.isNullOrEmpty() ||
+                        !it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode.isNullOrEmpty()
             }
+            val timeGroup8Week = healthInformation.aktivitet.periode
+                    .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
+            val timeGroup17Week = healthInformation.aktivitet.periode
+                    .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 119 }
+            val timeGroup39Week = healthInformation.aktivitet.periode
+                    .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
+
+            val rulesettversion = healthInformation.regelSettVersjon ?: ""
+            val utdypendeOpplysninger = healthInformation.utdypendeOpplysninger != null
+            val validdynaGruppe62 =
+                    if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion)) {
+                        if (utdypendeOpplysninger && arsakBeskrivelseAktivitetIkkeMulig) {
+                            validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    }
+
+            !validdynaGruppe62
+            // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
         } else {
             false
         }
-
-        !validdynaGruppe62
-        // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     }),
 
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
@@ -145,6 +163,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7.17, 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(1709, Status.INVALID, { (healthInformation, _) ->
+        if (!healthInformation.aktivitet?.periode.isNullOrEmpty()) {
         val arsakBeskrivelseAktivitetIkkeMulig = !healthInformation.aktivitet.periode.any {
             it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null ||
                     it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null
@@ -164,6 +183,9 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
             timeGroup17Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe64(healthInformation.utdypendeOpplysninger.spmGruppe)
             timeGroup39Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe65(healthInformation.utdypendeOpplysninger.spmGruppe) || !validateDynagruppe66(healthInformation.utdypendeOpplysninger.spmGruppe)
             else -> false
+        }
+        } else {
+            false
         }
     })
 }
