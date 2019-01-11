@@ -17,8 +17,12 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     // Sjekk OID og Verdi
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
     BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.MANUAL_PROCESSING, { (_, doctor) ->
-        !doctor.godkjenninger.godkjenning.any {
-            it.autorisasjon.isAktiv
+        if (!doctor.godkjenninger.godkjenning.isNullOrEmpty()) {
+            !doctor.godkjenninger.godkjenning.any {
+                it.autorisasjon.isAktiv
+            }
+        } else {
+            false
         }
     }),
     // 1403: Behandler er registrert med status kode OPPH, forkortelse for opphørt
@@ -52,10 +56,18 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     // Kommentar fra Camilla: 596 i 2017. Er dette fysioterapeuter (også annet helsepersonell)? Bør sjekkes litt hva som kommer inn. I fremtiden sjekke mot HPR.
     @Description("Behandler finnes i TSS men er ikke lege, kiropraktor, manuellterapeut eller tannlege")
     BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(1407, Status.MANUAL_PROCESSING, { (_, doctor) ->
+        if (!doctor.godkjenninger?.godkjenning.isNullOrEmpty()) {
         !doctor.godkjenninger.godkjenning.any {
+            if (it?.helsepersonellkategori?.isAktiv != null && it.autorisasjon != null && !it.helsepersonellkategori.verdi.isNullOrEmpty()) {
             it.autorisasjon.isAktiv && it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "KI", "MT", "TL") }
+            } else {
+                false
+            }
         }
-    }),
+        } else {
+            false
+        }
+        }),
     // 1413: Hvis behanlder mangler autorisasjon for obligatorisk opplæring  avvises meldingen
     // Kommentar fra Camilla: Gjelder legene - har aldri vært i drift. Må ha lederforankring dersom denne skal fjernes (pga forskriften). Må være sjekk for kiropraktorer og manuell terapeuter
 
