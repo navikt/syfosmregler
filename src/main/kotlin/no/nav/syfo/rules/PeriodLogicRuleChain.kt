@@ -72,8 +72,8 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
             var gapBetweenPeriods = false
             for (i in 1..(ranges.size - 1)) {
-                        gapBetweenPeriods = workdaysBetween(ranges[i - 1].second, ranges[i].first) > 0
-             }
+                gapBetweenPeriods = workdaysBetween(ranges[i - 1].second, ranges[i].first) > 0
+                }
             gapBetweenPeriods
         } else {
             false

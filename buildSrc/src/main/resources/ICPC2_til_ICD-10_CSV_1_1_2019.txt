@@ -1,0 +1,736 @@
+--Konverteringsfil fra ICPC-2 til ICD-10.  Felles prosesskoder for alle kapitler (angitt med f.eks. -30, -31)
+--Filen er oppdatert 26.11.2018, og gjelder fra 1.1.2019
+--Filen er laget av Direktoratet for e-helse
+--Filen kan lastes ned fra https://ehelse.no/standarder-kodeverk-og-referansekatalog/helsefaglige-kodeverk/icpc-2-den-internasjonale-klassifikasjonen-for-primerhelsetjenesten
+--Filen inneholder 728 rader med koder
+--Kolonner: ICPC2_kode,ICPC2_korttekst,ICPC2_fulltekst,ICD10_KODE,ICD10_TEKST
+--Import starter på linje 8. (Fjern linje 1-7 før import)
+--------------------------------------------------------------------------------------------------
+-30;Medisinsk undersøkelse fullstendig;Medisinsk undersøkelse/helsevurdering generell/fullstendig;Z000;Kontakt med helsetjenesten for generell helseundersøkelse
+-31;Medisinsk undersøkelse målrettet;Medisinsk undersøkelse/helsevurdering målrettet/partiell;Z019;Kontakt med helsetjenesten for uspesifisert befolkningsundersøkelse hos person uten symptom eller registrert diagnose
+-32;Sensitivitetsprøve;Sensitivitetsprøve;Z015;Kontakt med helsetjenesten for diagnostisk hud- eller sensitivitetsprøve hos person uten symptom eller registrert diagnose
+-33;Mikrobiologisk/immunologisk prøve;Mikrobiologisk/immunologisk prøve;Z017;Kontakt med helsetjenesten for laboratorieundersøkelse hos person uten symptom eller registrert diagnose
+-34;Blodprøve IKA;Blodprøve IKA;Z017;Kontakt med helsetjenesten for laboratorieundersøkelse hos person uten symptom eller registrert diagnose
+-35;Urinprøve IKA;Urinprøve IKA;Z017;Kontakt med helsetjenesten for laboratorieundersøkelse hos person uten symptom eller registrert diagnose
+-36;Avføringsprøve IKA;Avføringsprøve IKA;Z017;Kontakt med helsetjenesten for laboratorieundersøkelse hos person uten symptom eller registrert diagnose
+-37;Histologisk/cytologisk prøve;Histologisk/cytologisk prøve;Z017;Kontakt med helsetjenesten for laboratorieundersøkelse hos person uten symptom eller registrert diagnose
+-38;Laboratorieprøve IKA;Laboratorieprøve IKA;Z017;Kontakt med helsetjenesten for laboratorieundersøkelse hos person uten symptom eller registrert diagnose
+-39;Fysisk funksjonsprøve;Fysisk funksjonsprøve;Z018;Kontakt med helsetjenesten for annen spesifisert undersøkelse hos person uten symptom eller registrert diagnose
+-40;Endoskopi;Endoskopi;Z018;Kontakt med helsetjenesten for annen spesifisert undersøkelse hos person uten symptom eller registrert diagnose
+-41;Billeddiagnostikk;Røntgen/annen billeddiagnostikk;Z016;Kontakt med helsetjenesten for radiologisk undersøkelse ikke klassifisert annet sted hos person uten symptom eller registrert diagnose
+-42;Biosignalundersøkelse IKA;Biosignalundersøkelse IKA;Z018;Kontakt med helsetjenesten for annen spesifisert undersøkelse hos person uten symptom eller registrert diagnose
+-43;Diagnostisk prosedyre IKA;Diagnostisk prosedyre IKA;Z048;Undersøkelse eller observasjon av annen spesifisert årsak
+-44;Forebyggende vaksinering/medikasjon;Forebyggende vaksinering/medisinering;Z299;Behov for ikke spesifisert forebyggende tiltak i forbindelse med smittsom sykdom
+-45;Helseopplysning/rådgivning;Observasjon/helseopplysning/rådgivning;Z719;Kontakt med helsetjenesten for uspesifisert rådgivning eller veiledning
+-46;Kontakt med primærhelsetjenesten;Kontakt med helsepersonell i primærhelsetjenesten;Z769;Kontakt med helsetjenesten under uspesifisert omstendighet
+-47;Kontakt med spesialist;Kontakt med spesialist;Z769;Kontakt med helsetjenesten under uspesifisert omstendighet
+-48;Vurdering av kontaktårsak/behov;Avklaring/diskusjon av pasientens behov/kontaktårsak;Z769;Kontakt med helsetjenesten under uspesifisert omstendighet
+-49;Forebyggende prosedyre IKA;Forebyggende prosedyre IKA;Z298;Behov for annet spesifisert forebyggende tiltak i forbindelse med smittsom sykdom
+-50;Legemiddelforskrivning/-administrasj;Legemiddelforskrivning/-administrasjon;Z768;Kontakt med helsetjenesten under annen spesifisert omstendighet
+-51;Incisjon/tapping/aspirasjon;Incisjon/tapping/aspirasjon;Z518;Kontakt med helsetjenesten for annet spesifisert behandlingstiltak
+-52;Fjerne vev/biopsi/kauterisasjon;Eksisjon/fjerning av vev/biopsi/skraping/kauterisasjon;Z518;Kontakt med helsetjenesten for annet spesifisert behandlingstiltak
+-53;Kateterisering/intub/dilatasjon;Instrumentering/kateterisering/intubasjon/dilatasjon;Z518;Kontakt med helsetjenesten for annet spesifisert behandlingstiltak
+-54;Fiksering/suturering/gips/protese;Reparasjon/fiksasjon med sutur/gips/protese påføring og fjerning;Z518;Kontakt med helsetjenesten for annet spesifisert behandlingstiltak
+-55;Lokal injeksjon/infiltrasjon;Lokal injeksjon/infiltrasjon;Z512;Kontakt med helsetjenesten for annen kjemoterapi
+-56;Bandasje/kompresjon/tamponade;Bandasjering/kompresjon/tamponade;Z518;Kontakt med helsetjenesten for annet spesifisert behandlingstiltak
+-57;Fysikalsk behandling/rehabilitering;Fysikalsk behandling/rehabilitering;Z509;Kontakt med helsetjenesten for behandling som omfatter bruk av uspesifisert rehabiliteringstiltak
+-58;Terapeutisk rådgivning/samtale;Terapeutisk rådgivning/samtale;Z719;Kontakt med helsetjenesten for uspesifisert rådgivning eller veiledning
+-59;Terapeutisk tiltak/småkirurgi IKA;Andre terapeutiske prosedyrer/småkirurgi IKA;Z768;Kontakt med helsetjenesten under annen spesifisert omstendighet
+-60;Resultat av prøve/prosedyre;Resultat av prøve/prosedyre;Z712;Kontakt for å få forklaring på undersøkelsesresultat
+-61;Resultat undersøkelse/epikrise;Resultat av undersøkelse/prøve ved journal/brev fra annen helsetjenesteyter;Z929;Opplysning om uspesifisert tidligere medisinsk behandling
+-62;Administrativ prosedyre;Administrativ prosedyre;Z029;Kontakt med helsetjenesten for uspesifisert undersøkelse for administrative formål
+-63;Observasjon/oppfølging IKA;Observasjon/oppfølgingskontakt IKA;Z048;Undersøkelse eller observasjon av annen spesifisert årsak
+-64;Kontakt forårsaket av helsepersonell;Kontakt/helseproblem initiert/formidlet av helsepersonell;Z099;Kontakt med helsetjenesten for etterunderøkelse etter uspesifisert behandling for annen tilstand
+-65;Kontakt forårsaket annen enn pasient;Kontakt/helseproblem initiert/formidlet av annen enn pasient/helsepersonell;Z099;Kontakt med helsetjenesten for etterunderøkelse etter uspesifisert behandling for annen tilstand
+-66;Henvisning annet helsepersonell IKA;Henvisning til annen primærhelsetjeneste/tjenesteyter;Z048;Undersøkelse eller observasjon av annen spesifisert årsak
+-67;Henvisning spesialist/sykehus;Henvisning til spesialist/sykehus;Z048;Undersøkelse eller observasjon av annen spesifisert årsak
+-68;Henvisning IKA;Henvisning IKA;Z048;Undersøkelse eller observasjon av annen spesifisert årsak
+-69;Kontaktårsak IKA;Kontaktårsak IKA;Z769;Kontakt med helsetjenesten under uspesifisert omstendighet
+A01;Smerte generell/flere steder;Smerte generell/flere steder;R529;Uspesifisert smerte
+A02;Frysninger;Frysninger;R688;Annet spesifisert generelt symptom eller tegn
+A03;Feber;Feber;R509;Uspesifisert feber
+A04;Slapphet/tretthet;Slapphet/tretthet;R53;Uvelhet eller tretthet
+A05;Sykdomsfølelse;Sykdomsfølelse;R53;Uvelhet eller tretthet
+A06;Besvimelse/synkope;Besvimelse/synkope;R55;Synkope eller kollaps
+A07;Bevisstløshet/koma;Bevisstløshet/koma;R402;Uspesifisert koma
+A08;Hevelse/oppfylning IKA;Hevelse/oppfylning IKA;R688;Annet spesifisert generelt symptom eller tegn
+A09;Svetteproblemer;Svetteproblemer;R619;Uspesifisert hyperhidrose
+A10;Blødning IKA;Blødning IKA;R58;Blødning ikke klassifisert annet sted
+A11;Brystsmerte IKA;Brystsmerte IKA;R074;Uspesifisert brystsmerte
+A13;Engstelig for behandling;Engstelig for behandling;Z711;Frykt for lidelse der ingen diagnose er stilt
+A16;Irritabelt/urolig spedbarn;Irritabelt/urolig spedbarn;R681;Uspesifikt symptom typisk for spedbarn
+A18;Bekymret/opptatt av utseende IKA;Bekymret/opptatt av utseende IKA;R468;Annet spesifisert symptom eller tegn med tilknytning til utseende eller atferd
+A20;Dødshjelp diskusjon/spørsmål om;Dødshjelp diskusjon/spørsmål om;Z718;Kontakt med helsetjenesten for annen spesifisert rådgivning eller veiledning
+A21;Økt risiko for ondartet svulst;Økt risiko for ondartet svulst;Z809;Opplysning om uspesifisert ondartet svulst i familieanamnesen
+A23;Risiko for sykdom IKA;Risiko for sykdom IKA;Z918;Opplysning om annen spesifisert risikofaktor i egen sykehistorie, ikke klassifisert annet sted
+A25;Engstelig for døden;Engstelig for døden;Z711;Frykt for lidelse der ingen diagnose er stilt
+A26;Engstelig for kreft IKA;Engstelig for kreft IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+A27;Engstelig for sykdom IKA;Engstelig for sykdom IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+A28;Redusert funksjonsevne IKA;Redusert funksjonsevne IKA;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+A29;Generelle symptomer/plager IKA;Generelle symptomer/plager IKA;R688;Annet spesifisert generelt symptom eller tegn
+A70;Tuberkulose;Tuberkulose;A169;Tuberkulose i uspesifisert åndedrettsorgan, uten nevnt bakteriologisk eller histologisk bekreftelse
+A71;Meslinger;Meslinger;B059;Meslinger uten komplikasjoner
+A72;Vannkopper;Vannkopper;B019;Varicella uten komplikasjoner
+A73;Malaria;Malaria;B54;Uspesifisert malaria
+A74;Røde hunder;Røde hunder;B069;Rubella uten komplikasjoner
+A75;Mononukleose;Mononukleose;B279;Uspesifisert mononukleose
+A76;Virussykdom med utslett IKA;Virussykdom med utslett IKA;B09;Uspesifisert virusinfeksjon kjennetegnet ved hud- eller slimhinnelesjon
+A77;Virussykdom IKA;Virussykdom IKA;B349;Uspesifisert virusinfeksjon
+A78;Infeksjonssykdom IKA;Infeksjonssykdom IKA;B99;Annen eller uspesifisert infeksjonssykdom
+A79;Ondartet svulst IKA;Ondartet svulst IKA;C809;Ondartet svulst med uspesifisert utgangspunkt
+A80;Skade/traume IKA;Skade/traume IKA;T149;Uspesifisert skade i uspesifisert kroppsregion
+A81;Multiple skader/traumer;Multiple skader/traumer;T07;Flere uspesifiserte skader
+A82;Følgetilstand skade/traume;Følgetilstand etter skade/traume;T941;Følgetilstand etter skade i uspesifisert kroppsregion
+A84;Legemiddelforgiftning;Legemiddelforgiftning;T4n;Forgiftning med terapeutisk legemiddel eller biologisk substans
+A85;Bivirkning legemiddel;Bivirkning av legemiddel;T887;Annen eller ikke spesifisert bivirkning av legemiddel
+A86;Toksisk virkning stoff IKA;Toksisk virkning av ikke-medisinsk stoff;T659;Toksisk virkning av uspesifisert stoff
+A87;Komplikasjon etter behandling;Komplikasjon etter medisinsk behandling;T889;Uspesifisert komplikasjon til kirurgisk eller medisinsk behandling
+A88;Skadevirkning av fysisk faktor;Skadevirkning av fysisk faktor;T758;Annen spesifisert skadevirkning av ytre påvirkning
+A89;Komplikasjoner/problemer med protese;Komplikasjoner/problemer med protese;T859;Uspesifisert komplikasjon ved innvendig protese, implantat eller transplantat
+A90;Medfødt feil IKA/multiple feil;Medfødt feil IKA/multiple medfødte feil;Q899;Uspesifisert medfødt misdannelse
+A91;Unormalt funn ved undersøkelse IKA;Unormalt resultat ved undersøkelse IKA;R899;Uspesifisert unormalt funn i prøve fra annet organ, system eller vev
+A92;Allergi/allergisk reaksjon IKA;Allergi/allergisk reaksjon IKA;T784;Uspesifisert allergi
+A93;Prematurt/immaturt levendefødt barn;Prematurt/immaturt født barn;P073;Annet for tidlig født barn
+A94;Perinatal sykelighet IKA;Perinatal sykelighet IKA;P969;Uspesifisert tilstand som oppstår i perinatalperioden
+A95;Perinatal død;Perinatal død;P95;Fosterdød av uspesifisert årsak
+A96;Død/dødsfall IKA;Død/dødsfall IKA;R99;Annen dårlig definert eller uspesifisert dødsårsak
+A97;Administrativ kontakt/undersøkelse;Kontakt/undersøkelse for administrativt formål;Z029;Kontakt med helsetjenesten for uspesifisert undersøkelse for administrative formål
+A98;Individforebyggende tiltak;Individforebyggende tiltak;Z518;Kontakt med helsetjenesten for annet spesifisert behandlingstiltak
+A981;Cytologi livmorhals screening;Cytologi livmorhals screening;Z014;Kontakt med helsetjenesten for generell eller rutinemessig gynekologisk undersøkelse hos person uten symptom eller registrert diagnose
+A99;Helseproblem/sykdom IKA;Helseproblem/sykdom ikke spesifisert/lokalisert;R69;Ukjent eller uspesifisert sykdomsårsak
+B02;Lymfeknuter forstørrede/smertefulle;Lymfeknuter forstørrede/smertefulle;R599;Uspesifiserte forstørrede lymfeknuter
+B04;Blod/blodsystemet symptomer/plager;Blod/blodsystemet symptomer/plager;R688;Annet spesifisert generelt symptom eller tegn
+B25;Engstelig for HIV/AIDS;Engstelig for HIV/AIDS;Z711;Frykt for lidelse der ingen diagnose er stilt
+B26;Engstelig for kreft blod/lymfesystem;Engstelig for kreft i blod- og lymfesystemet;Z711;Frykt for lidelse der ingen diagnose er stilt
+B27;Engstelig for blod/lymfe sykdom IKA;Engstelig for sykdom i blod- og lymfesystemet IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+B28;Redus funksjonsevne pga blod/lymfe;Redusert funksjonsevne pga blod/lymfe-problem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+B29;Blod/lymfesystem sympt/plager IKA;Blod/lymfesystem symptomer/plager IKA;R688;Annet spesifisert generelt symptom eller tegn
+B70;Lymfadenitt akutt;Lymfadenitt akutt;L049;Uspesifisert akutt lymfadenitt
+B71;Lymfadenitt kronisk/uspesifikk;Lymfadenitt kronisk/uspesifikk;I889;Lymfadenitt uten spesifisert varighet eller lokalisasjon
+B72;Hodgkins sykdom/lymfom;Hodgkins sykdom/lymfom;C819;Uspesifisert Hodgkins sykdom
+B73;Leukemi;Leukemi;C959;Uspesifisert leukemi
+B74;Ondartet svulst blod/lymfesystem IKA;Ondartet svulst i blod/lymfesystemet IKA;C969;Upesifisert ondartet svulst utgått fra lymfoid, hematopoetisk eller beslektet vev
+B75;Godartet/uspes svulst blod/lymfe;Godartet/uspesifisert svulst i blod/lymfesystemet;D479;Uspesifisert svulst med usikkert eller ukjent malignitetspotensial i lymfoid, hematopoetisk eller beslektet vev
+B76;Miltruptur traumatisk;Miltruptur traumatisk;S360;Skade på milt
+B77;Skade blod/lymfesystem IKA;Skade i blod/lymfesystemet IKA;T149;Uspesifisert skade i uspesifisert kroppsregion
+B78;Arvelig hemolytisk anemi;Arvelig hemolytisk anemi;D589;Uspesifisert arvelig hemolytisk anemi
+B79;Medfødt feil blod/lymfesystem IKA;Medfødt feil i blod/lymfesystemet IKA;Q898;Annen spesifisert medfødt misdannelse
+B80;Jernmangelanemi;Jernmangelanemi;D509;Uspesifisert jernmangelanemi
+B81;Anemi B12/folsyremangel;Anemi ved vitamin B12-/folsyremangel;D539;Uspesifisert mangelanemi
+B82;Anemi IKA;Anemi IKA;D649;Uspesifisert anemi
+B83;Purpura/koagulasjonsdefekt;Purpura/koagulasjonsdefekt;D699;Uspesifisert blødningstilstand
+B84;Unormale hvite blodceller;Unormale hvite blodceller;R72;Unormalt forhold ved hvite blodceller, ikke klassifisert annet sted
+B87;Forstørret milt;Forstørret milt;R161;Splenomegali, ikke klassifisert annet sted
+B90;HIV-sykdom/AIDS;HIV-sykdom/AIDS;B24;Uspesifisert humant immunsviktvirus-sykdom
+B99;Blod/lymfe/milt sykdom IKA;Blod/lymfe/milt sykdom IKA;D759;Uspesifisert sykdom i blod eller bloddannende organ
+D01;Abdominalsmerte/krampe generell;Abdominalsmerte/krampe generell;R104;Annen eller uspesifisert smerte i buk eller bekken
+D02;Abdominalsmerte epigastriet;Abdominalsmerte epigastriet;R101;Smerte lokalisert til øvre abdomen
+D03;Halsbrann;Halsbrann;R12;Halsbrann
+D04;Endetarmssmerte;Endetarmssmerte;R102;Smerte i bekken eller perineum
+D05;Perianal kløe;Perianal kløe;L290;Pruritus ani
+D06;Abdominalsmerte lokalisert IKA;Abdominalsmerte lokalisert IKA;R103;Smerte lokalisert til annen del av nedre abdomen
+D07;Dyspepsi/fordøyelsesbesvær;Dyspepsi/fordøyelsesbesvær;K30;Dyspepsi
+D08;Flatulens/oppblåsthet/raping;Flatulens/oppblåsthet/raping;R14;Flatulens eller beslektet tilstand
+D09;Kvalme;Kvalme;R11;Kvalme eller oppkast
+D10;Oppkast/brekninger;Oppkast/brekninger;R11;Kvalme eller oppkast
+D11;Diaré;Diaré;K591;Funksjonell diaré
+D12;Forstoppelse;Forstoppelse;K590;Forstoppelse
+D13;Gulsott;Gulsott;R17;Uspesifisert gulsott
+D14;Oppkast med blod/hematemese;Oppkast med blod/hematemese;K920;Hematemese
+D15;Melena;Melena;K921;Melena
+D16;Rektalblødning;Rektalblødning;K625;Blødning i endetarmsåpning, analkanal eller endetarm
+D17;Inkontinens avføring;Inkontinens avføring;R15;Ufrivillig avføring
+D18;Endring i avføring/avføringsvane;Endring i avføring/avføringsvane;R194;Forandring i avføringsvane
+D19;Tenner/tannkjøtt symptomer/plager;Tenner/tannkjøtt symptomer/plager;K089;Uspesifisert forstyrrelse i tann eller støttevev
+D20;Munn/tunge/lepper symptomer/plager;Munn/tunge/leppe symptomer/plager;R198;Annet spesifisert symptom eller tegn med tilknytning til fordøyelsessystemet eller buken
+D21;Svelgebesvær;Svelgebesvær;R13;Dysfagi
+D23;Forstørret lever;Forstørret lever;R160;Hepatomegali, ikke klassifisert annet sted
+D24;Abdominal oppfylling/kul IKA;Abdominal oppfylling/kul IKA;R190;Hevelse, oppfylling eller kul i buk eller bekken
+D25;Utspilt abdomen;Utspilt abdomen;R190;Hevelse, oppfylling eller kul i buk eller bekken
+D26;Engstelig for kreft fordøyelsesyst;Engstelig for kreft i fordøyelsessystemet;Z711;Frykt for lidelse der ingen diagnose er stilt
+D27;Engstelig for fordøyelsesykdom IKA;Engstelig for sykdom i fordøyelsessystemet IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+D28;Redusert funksjonsevne fordøy probl;Redusert funksjonsevne pga fordøyelsesproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+D29;Fordøyelsesyst symptomer/plager IKA;Fordøyelsessystemet symptomer/plager IKA;R198;Annet spesifisert symptom eller tegn med tilknytning til fordøyelsessystemet eller buken
+D70;Tarminfeksjon;Tarminfeksjon;A049;Uspesifisert bakteriell tarminfeksjon
+D71;Kusma;Kusma;B269;Kusma uten komplikasjoner
+D72;Virushepatitt;Virushepatitt;B199;Uspesifisert virushepatitt uten leverkoma
+D73;Gastroenteritt antatt infeksiøs;Gastroenteritt antatt infeksiøs;A090;Annen eller uspesifisert gastroenteritt eller kolitt av infeksiøs årsak
+D74;Ondartet svulst magesekk;Ondartet svulst i magesekk;C169;Ondartet svulst i uspesifisert del av magesekk
+D75;Ondartet svulst tykktarm/endetarm;Ondartet svulst i tykktarm/endetarm;C189;Ondartet svulst i uspesifisert del av tykktarm
+D76;Ondartet svulst bukspyttkjertel;Ondartet svulst i bukspyttkjertel;C259;Ondartet svulst i uspesifisert del av bukspyttkjertel
+D77;Ondartet svulst fordøyelsesyst IKA;Ondartet svulst i fordøyelsessystemet IKA;C269;Ondartet svulst med ufullstendig angitt lokalisasjon i fordøyelsessystemet
+D78;Godartet/uspes svulst fordøyelsessys;Godartet/uspesifisert svulst i fordøyelsesystemet;D139;Godartet svulst i ufullstendig angitt lokalisasjon innen fordøyelsessystemet
+D79;Fremmedlegeme fordøyelsessystemet;Fremmedlegeme i fordøyelsesystemet;T189;Fremmedlegeme i uspesifisert del av fordøyelseskanal
+D80;Skade fordøyelsesystemet IKA;Skade i fordøyelsessystemet IKA;S369;Skade på uspesifisert organ i bukhule
+D81;Medfødt feil fordøyelsesystem;Medfødt feil i fordøyelsessystemet;Q459;Uspesifisert medfødt misdannelse i fordøyelsessystem
+D82;Tenner/tannkjøtt sykdom;Tenner/tannkjøtt sykdom;K089;Uspesifisert forstyrrelse i tann eller støttevev
+D83;Munn/tunge/lepper sykdom;Munn/tunge/lepper sykdom;K137;Annen eller uspesifisert lesjon i munnslimhinne
+D84;Spiserørssykdom;Spiserørssykdom;K229;Uspesifisert sykdom i spiserør
+D85;Sår i tolvfingertarm;Sår i tolvfingertarm;K269;Sår som ikke er spesifisert som akutt eller kronisk i tolvfingertarm, uten blødning eller perforasjon
+D86;Magesår IKA;Magesår IKA;K279;Magesår som ikke er spesifisert som akutt eller kronisk i uspesifisert lokalisasjon, uten blødning eller perforasjon
+D87;Funksjonelle plager magesekk;Funksjonelle plager i magesekk;K299;Uspesifisert gastroduodenitt
+D88;Appendisitt;Appendisitt;K37;Uspesifisert appendisitt
+D89;Lyskebrokk;Lyskebrokk;K409;Enkeltsidig eller uspesifisert lyskebrokk uten obstruksjon eller gangren
+D90;Mellomgulvsbrokk;Mellomgulvsbrokk;K449;Mellomgulvsbrokk uten obstruksjon eller gangren
+D91;Abdominalt brokk IKA;Abdominalt brokk IKA;K469;Uspesifisert abdominalt brokk uten obstruksjon eller gangren
+D92;Divertikkelsykdom i tarm;Divertikkelsykdom i tarm;K579;Divertikkelsykdom i uspesifisert del av tarm uten perforasjon eller abscess
+D93;Irritabel tarm-syndrom;Irritabel tarm-syndrom;K589;Irritabel tarm-syndrom uten diaré
+D94;Kronisk enteritt/ulcerøs kolitt;Kronisk enteritt/ulcerøs kolitt;K529;Uspesifisert ikke-infeksiøs gastroenteritt eller kolitt
+D95;Analfissur/perianal abscess;Analfissur/perianal abscess;K639;Uspesifisert sykdom i tarm
+D96;Orme-/parasittsykdom;Orme-/parasittsykdom;B839;Uspesifisert ormesykdom
+D97;Leversykdom IKA;Leversykdom IKA;K769;Uspesifisert leversykdom
+D98;Galleveisbetennelse/gallesten;Galleveisbetennelse/gallesten;K839;Uspesifisert sykdom i galleveier
+D99;Sykdom i fordøyelsessystemet IKA;Sykdom i fordøyelsessystemet IKA;K929;Uspesifisert sykdom i fordøyelsessystemet
+F01;Øyesmerte;Øyesmerte;H571;Øyesmerter
+F02;Rødt øye;Rødt øye;H578;Annen spesifisert sykdom i øyet eller øyets omgivelser
+F03;Tåreflod/sekresjon øye;Tåreflod/sekresjon øye;H042;Tåreflod
+F04;Synlige flekker/tråder i synsfelt;Synlige flekker/tråder i synsfeltet;H531;Subjektiv synsforstyrrelse
+F05;Synsforstyrrelse IKA;Synsforstyrrelse IKA;H539;Uspesifisert synsforstyrrelse
+F13;Øye unormal følelse;Øye unormal følelse;H578;Annen spesifisert sykdom i øyet eller øyets omgivelser
+F14;Øye unormal bevegelse;Øye unormal bevegelse;H55;Nystagmus eller andre irregulære øyebevegelser
+F15;Øye unormalt utseende;Øye unormalt utseende;H578;Annen spesifisert sykdom i øyet eller øyets omgivelser
+F16;Øyelokk symptomer/plager;Øyelokk symptomer/plager;H029;Uspesifisert tilstand i øyelokk
+F17;Briller symptomer/plager;Briller symptomer/plager;Z460;Kontakt med helsetjenesten for tilpasning eller justering av briller eller kontaktlinser
+F18;Kontaktlinser symptomer/plager;Kontaktlinser symptomer/plager;Z460;Kontakt med helsetjenesten for tilpasning eller justering av briller eller kontaktlinser
+F27;Engstelig for øyesykdom;Engstelig for øyesykdom;Z711;Frykt for lidelse der ingen diagnose er stilt
+F28;Redusert funksjonsevne pga øyeprobl;Redusert funksjonsevne pga øyeproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+F29;Øye symptomer/plager IKA;Øye symptomer/plager IKA;H579;Uspesifisert sykdom i øyet eller øyets omgivelser
+F70;Infeksiøs konjunktivitt;Infeksiøs konjunktivitt;H109;Uspesifisert konjunktivitt
+F71;Allergisk konjunktivitt;Allergisk konjunktivitt;H101;Allergisk konjunktivitt
+F72;Øyelokkbetennelse;Øyelokkbetennelse;H019;Uspesifisert betennelse i øyelokk
+F73;Øye infeksjon/betennelse IKA;Øye infeksjon/betennelse IKA;H579;Uspesifisert sykdom i øyet eller øyets omgivelser
+F74;Svulst i øye/øyehule;Svulst i øye/øyehule;D487;Svulst med usikkert eller ukjent malignitetspotensial med annen spesifisert lokalisasjon
+F75;Kontusjon/blødning i øye;Kontusjon/blødning i øye;S001;Kontusjon av øyelokk og område omkring øye
+F76;Fremmedlegeme øye;Fremmedlegeme i øye;T159;Fremmedlegeme i uspesifisert del av fremre del av øye
+F79;Skade øye IKA;Skade i øye IKA;S059;Uspesifisert skade på øye og øyehule
+F80;Tåreveisstenose/atresi spedbarn;Tåreveisstenose/atresi hos spedbarn;Q105;Medfødt stenose eller striktur i tårekanal
+F81;Medfødt feil øye IKA;Medfødt feil i øye IKA;Q159;Uspesifisert medfødt misdannelse i øye
+F82;Netthinneløsning/rift;Netthinneløsning/rift;H332;Serøs netthinneløsning
+F83;Retinopati;Retinopati;H350;Bakgrunnsretinopati og karforandringer i netthinne
+F84;Makuladegenerasjon;Makuladegenerasjon;H353;Degenerasjon av makula eller bakre pol
+F85;Hornhinnesår;Hornhinnesår;H160;Ulcus i hornhinne
+F86;Trakom;Trakom;A719;Uspesifisert trakom
+F91;Brytningsforstyrrelse;Brytningsforstyrrelse;H527;Uspesifisert brytningsforstyrrelse
+F92;Grå stær/katarakt;Grå stær/katarakt;H269;Uspesifisert grå stær
+F93;Glaukom;Glaukom;H409;Uspesifisert glaukom
+F94;Blindhet;Blindhet;H543;Mild eller ingen synssvekkelse i begge øyne
+F95;Skjeling/strabisme;Skjeling/strabisme;H509;Uspesifisert skjeling
+F99;Øyesykdom IKA;Øyesykdom IKA;H578;Annen spesifisert sykdom i øyet eller øyets omgivelser
+H01;Øresmerte/øreverk;Øresmerte/øreverk;H920;Øreverk
+H02;Hørsel symptomer/plager;Hørsel symptomer/plager;H932;Annen unormal lydoppfatning
+H03;Øresus;Øresus;H931;Øresus
+H04;Øreflod/sekresjon;Øreflod/sekresjon;H921;Øreflod
+H05;Blødning øre;Blødning øre;H922;Øreblødning
+H13;Øreplugg/øretetthet;Øreplugg/øretetthet;H938;Annen spesifisert lidelse i øre
+H15;Bekymret/opptatt av ørenes utseende;Bekymret/opptatt av ørenes utseende;R468;Annet spesifisert symptom eller tegn med tilknytning til utseende eller atferd
+H27;Engstelig for øresykdom;Engstelig for hørselsproblemer/øresykdom;Z711;Frykt for lidelse der ingen diagnose er stilt
+H28;Redusert funksjonsevne pga øreprobl;Redusert funksjonsevne pga øreproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+H29;Øre symptomer/plager IKA;Øre symptomer/plager IKA;H939;Uspesifisert lidelse i øre
+H70;Ytre øre betennelse;Ytre øre betennelse;H609;Uspesifisert betennelse i ytre øre
+H71;Mellomørebetennelse akutt;Mellomørebetennelse akutt;H660;Akutt purulent mellomørebetennelse
+H72;Mellomørebetennelse serøs;Mellomørebetennelse serøs;H659;Uspesifisert ikke-purulent mellomørebetennelse
+H73;Tuba auditiva betennelse;Tuba auditiva betennelse;H681;Obstruksjon av tuba auditiva
+H74;Mellomørebetennelse kronisk;Mellomørebetennelse kronisk;H663;Annen kronisk purulent mellomørebetennelse
+H75;Svulst øre;Svulst i øre;D385;Svulst med usikkert eller ukjent malignitetspotensial i annet spesifisert åndedrettsorgan
+H76;Fremmedlegeme øre;Fremmedlegeme i øre;T16;Fremmedlegeme i øre
+H77;Perforert trommehinne IKA;Perforert trommehinne IKA;H729;Uspesifisert perforasjon i trommehinne
+H78;Overflateskade ytre øre;Overflateskade på ytre øre;S004;Overflateskade på øre
+H79;Skade øre IKA;Skade øre IKA;S099;Uspesifisert hodeskade
+H80;Medfødt feil øre;Medfødt feil i øre;Q179;Uspesifisert medfødt øremisdannelse
+H81;Ørevoks;Ørevoks;H612;Vokspropp
+H82;Svimmelhetssyndrom;Svimmelhetssyndrom;H819;Uspesifisert forstyrrelse i vestibularisfunksjonen
+H83;Otosklerose;Otosklerose;H809;Uspesifisert otosklerose
+H84;Hørselstap aldersbetinget;Hørselstap aldersbetinget;H911;Alderdomstunghørthet
+H85;Hørselstap støyskade;Hørselstap pga støyskade;H833;Virkninger av støy på indre øre
+H86;Døvhet/hørselstap IKA;Døvhet/hørselstap IKA;H919;Uspesifisert hørselstap
+H99;Øresykdom IKA;Øresykdom IKA;H938;Annen spesifisert lidelse i øre
+K01;Smerte relatert til hjertet;Smerte relatert til hjertet;R072;Prekordial smerte
+K02;Trykk/sammensnøring hjertet;Trykk/sammensnøring hjertet;R072;Prekordial smerte
+K03;Smerte relatert til kretsløpet IKA;Smerte relatert til kretsløpet IKA;R098;Annet spesifisert symptom eller tegn med tilknytning til sirkulasjons- eller åndedrettssystemet
+K04;Hjertebank;Hjertebank;R002;Palpitasjon
+K05;Uregelmessige hjerteslag IKA;Uregelmessige hjerteslag IKA;R008;Andre eller uspesifiserte unormale hjerteslag
+K06;Utvidede vener;Utvidede vener;I878;Annen spesifisert forstyrrelse i vene
+K07;Hovne ankler/ødem;Hovne ankler/ødem;R609;Uspesifisert ødem
+K22;Økt risiko for hjerte-karsykdom;Økt risiko for hjerte-karsykdom;Z824;Opplysning om iskemisk hjertesykdom eller annen sykdom i sirkulasjonssystemet i familieanamnesen
+K24;Engstelig for hjertesykdom;Engstelig for hjertesykdom;Z711;Frykt for lidelse der ingen diagnose er stilt
+K25;Engstelig for høyt blodtrykk;Engstelig for høyt blodtrykk;Z711;Frykt for lidelse der ingen diagnose er stilt
+K27;Engstelig for hjerte-karsykdom IKA;Engstelig for hjerte-karsykdom IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+K28;Redus funksjonsevne hjerte-karprobl;Redusert funksjonsevne pga hjerte-karproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+K29;Hjerte-karsyst symptomer/plager IKA;Hjerte-karsystemet symptomer/plager IKA;R098;Annet spesifisert symptom eller tegn med tilknytning til sirkulasjons- eller åndedrettssystemet
+K70;Infeksjon hjerte-karsystemet;Infeksjon i hjerte-karsystemet;I409;Uspesifisert akutt myokarditt
+K71;Reumatisk feber/hjertesykdom;Reumatisk feber/hjertesykdom;I099;Uspesifisert revmatisk hjertesykdom
+K72;Svulst i hjerte;Svulst i hjerte;D487;Svulst med usikkert eller ukjent malignitetspotensial med annen spesifisert lokalisasjon
+K73;Medfødt feil hjerte-karsystemet;Medfødt feil i hjerte-karsystemet;Q289;Uspesifisert medfødt misdannelse i sirkulasjonssystemet
+K74;Iskemisk hjertesykdom med angina;Iskemisk hjertesykdom med angina pectoris;I209;Uspesifisert angina pectoris
+K75;Akutt hjerteinfarkt;Akutt hjerteinfarkt;I219;Uspesifisert akutt hjerteinfarkt
+K76;Iskemisk hjertesykdom kronisk IKA;Iskemisk hjertesykdom kronisk IKA;I259;Uspesifisert kronisk iskemisk hjertesykdom
+K77;Hjertesvikt;Hjertesvikt;I509;Uspesifisert hjertesvikt
+K78;Atrieflimmer/flutter;Atrieflimmer/flutter;I489;Uspesifisert atrieflimmer eller atrieflutter
+K79;Paroksysmal takykardi;Paroksysmal takykardi;I479;Uspesifisert paroksysmal takykardi
+K80;Hjertearytmi IKA;Hjertearytmi IKA;I499;Uspesifisert hjertearytmi
+K81;Bilyd hjerte/arterier IKA;Bilyd hjerte/arterier IKA;R011;Uspesifisert bilyd
+K82;Pulmonal hjertesykdom;Pulmonal hjertesykdom;I279;Uspesifisert pulmonal hjertesykdom
+K83;Hjerteklaffesykdom IKA;Hjerteklaffesykdom IKA;I089;Uspesifisert affeksjon av flere klaffer
+K84;Hjertesykdom IKA;Hjertesykdom IKA;I519;Uspesifisert hjertesykdom
+K85;Forhøyet blodtrykk IKA;Forhøyet blodtrykk IKA;R030;Forhøyet blodtrykksmåling uten hypertensjonsdiagnose
+K86;Hypertensjon ukomplisert;Hypertensjon ukomplisert;I10;Essensiell hypertensjon
+K87;Hypertensjon med komplikasjoner;Hypertensjon med organkomplikasjoner;I139;Uspesifisert hypertensiv hjerte- og nyresykdom
+K88;Postural hypotensjon;Postural hypotensjon;I951;Ortostatisk hypotensjon
+K89;Forbigående cerebral iskemi;Anfall med forbigående cerebral iskemi;G459;Uspesifisert forbigående cerebralt iskemisk anfall
+K90;Hjerneslag;Hjerneslag;I64;Hjerneslag som ikke er spesifisert som blødning eller infarkt
+K91;Cerebrovaskulær sykdom;Cerebrovaskulær sykdom;I679;Uspesifisert hjernekarsykdom
+K92;Aterosklerose/perifer karsykdom;Aterosklerose/perifer karsykdom;I739;Uspesifisert sykdom i perifere kar
+K93;Lungeemboli;Lungeemboli;I269;Lungeemboli uten opplysning om akutt cor pulmonale
+K94;Årebetennelse;Årebetennelse;I809;Flebitt eller tromboflebitt med uspesifisert lokalisasjon
+K95;Åreknuter underekstremitet;Åreknuter på underekstremitet;I839;Åreknuter uten ulcus eller betennelse i underekstremitet
+K96;Hemoroider;Hemoroider;K649;Uspesifiserte hemoroider
+K99;Hjerte-karsykdom IKA;Hjerte-karsykdom IKA;I99;Annen eller uspesifisert forstyrrelse i sirkulasjonssystemet
+L01;Nakke symptomer/plager;Nakke symptomer/plager;M542;Smerte i nakke
+L02;Rygg symptomer/plager;Rygg symptomer/plager;M549;Uspesifisert ryggsmerte
+L03;Korsrygg symptomer/plager;Korsrygg symptomer/plager;M545;Lumbago
+L04;Brystkasse symptomer/plager;Brystkasse symptomer/plager;R298;Annet eller uspesifisert symptom eller tegn med tilknytning til nervesystemet eller muskel-skjelettsystemet
+L05;Flanke/armhule symptomer/plager;Flanke/armhule symptomer/plager;R298;Annet eller uspesifisert symptom eller tegn med tilknytning til nervesystemet eller muskel-skjelettsystemet
+L07;Kjeve symptomer/plager;Kjeve symptomer/plager;M255;Leddsmerte
+L08;Skulder symptomer/plager;Skulder symptomer/plager;M255;Leddsmerte
+L09;Arm symptomer/plager;Arm symptomer/plager;M796;Smerte i ekstremitet
+L10;Albue symptomer/plager;Albue symptomer/plager;M255;Leddsmerte
+L11;Håndledd symptomer/plager;Håndledd symptomer/plager;M255;Leddsmerte
+L12;Hånd/finger symptomer/plager;Hånd/finger symptomer/plager;M796;Smerte i ekstremitet
+L13;Hofte symptomer/plager;Hofte symptomer/plager;M255;Leddsmerte
+L14;Legg/lår symptomer/plager;Legg/lår symptomer/plager;M796;Smerte i ekstremitet
+L15;Kne symptomer/plager;Kne symptomer/plager;M255;Leddsmerte
+L16;Ankel symptomer/plager;Ankel symptomer/plager;M255;Leddsmerte
+L17;Fot/tå symptomer/plager;Fot/tå symptomer/plager;M796;Smerte i ekstremitet
+L18;Utbredte muskelsmerter/fibromyalgi;Utbredte muskelsmerter/fibromyalgi;M790;Uspesifisert revmatisme
+L19;Muskel symptomer/plager IKA;Muskel symptomer/plager IKA;M799;Uspesifisert bløtvevssykdom
+L20;Ledd symptomer/plager IKA;Ledd symptomer/plager IKA;M259;Uspesifisert leddtilstand
+L26;Engstelig for kreft muskel-skj-syst;Engstelig for kreft i muskel- og skjelettsystemet;Z711;Frykt for lidelse der ingen diagnose er stilt
+L27;Engstelig for sykd musk-skj-syst IKA;Engstelig for sykdom i muskel- og skjelettsystemet IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+L28;Redus funksjonsevne musk-skj-probl;Redusert funksjonsevne pga muskel-skjelettproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+L29;Muskel-skj-syst sympt/plager IKA;Muskel- og skjelettsystemet symptomer/plager IKA;R298;Annet eller uspesifisert symptom eller tegn med tilknytning til nervesystemet eller muskel-skjelettsystemet
+L70;Infeksjon muskel-skjelettsystemet;Infeksjon i muskel- og skjelettsystemet;M009;Uspesifisert pyogen artritt
+L71;Ondartet svulst muskel-skj-syst;Ondartet svulst i muskel- og skjelettsystemet;C419;Ondartet svulst i uspesifisert del av knokkel eller leddbrusk
+L72;Brudd underarm;Brudd underarm;S529;Brudd i uspesifisert del av underarm
+L73;Brudd legg/ankel;Brudd legg/ankel;S829;Brudd i uspesifisert del av legg
+L74;Brudd hånd/fot;Brudd hånd/fot;S628;Brudd i annen eller uspesifisert del av håndledd eller hånd
+L75;Brudd lårben/lårhals;Brudd lårben/lårhals;S729;Brudd i uspesifisert del av lårben
+L76;Brudd IKA;Brudd IKA;T142;Brudd i uspesifisert kroppsregion
+L77;Forstuving/forstrekking ankel;Forstuving/forstrekking ankel;S934;Forstuving eller forstrekking av ankelligament
+L78;Forstuving/forstrekking kne;Forstuving/forstrekking kne;S836;Forstuving, ruptur eller forstrekking av annen eller uspesifisert del av kne
+L79;Forstuving/forstrekking ledd IKA;Forstuving/forstrekking ledd IKA;T143;Dislokasjon, forstuving og forstrekking i uspesifisert kroppsregion
+L80;Dislokasjon/subluksasjon;Dislokasjon/subluksasjon;T143;Dislokasjon, forstuving og forstrekking i uspesifisert kroppsregion
+L81;Skade muskel-skj-syst IKA;Skade i muskel- og skjelettsystemet IKA;T146;Skade på sene eller muskel i uspesifisert kroppsregion
+L82;Medfødt feil muskel-skj-syst;Medfødt feil i muskel- og skjelettsystemet;Q799;Uspesifisert medfødt misdannelse i muskel-skjelettsystem
+L83;Nakkesyndrom;Nakkesyndrom;M489;Uspesifisert lidelse i ryggsøylen
+L84;Ryggsyndrom uten smerteutstråling;Ryggsyndrom uten smerteutstråling;M545;Lumbago
+L85;Ervervet deformitet ryggsøyle;Ervervet deformitet av ryggsøylen;M439;Uspesifisert deformerende rygglidelse
+L86;Ryggsyndrom med smerteutstråling;Ryggsyndrom med smerteutstråling;M543;Isjialgi
+L87;Bursitt/tendinitt/synovitt IKA;Bursitt/tendinitt/synovitt IKA;M779;Uspesifisert entesopati
+L88;Reumatoid artritt/reumatisk sykdom;Reumatoid artritt/reumatisk sykdom;M069;Uspesifisert revmatoid artritt
+L89;Hofteleddsartrose;Hofteleddsartrose;M169;Uspesifisert hofteleddsartrose
+L90;Kneleddsartrose;Kneleddsartrose;M179;Uspesifisert kneleddsartrose
+L91;Artrose IKA;Artrose IKA;M199;Uspesifisert artrose
+L92;Skuldersyndrom;Skuldersyndrom;M759;Uspesifisert skulderlidelse
+L93;Tennisalbue/lateral epikondylitt;Tennisalbue/lateral epikondylitt;M771;Lateral epikondylitt
+L94;Osteokondrose;Osteokondrose;M939;Uspesifisert osteokondropati
+L95;Osteoporose;Osteoporose;M819;Uspesifisert osteoporose
+L96;Akutt indre kneskade;Akutt indre kneskade;S832;Fersk skade i menisk
+L97;Godartet/uspes svulst musk-skj-syst;Godartet/uspesifisert svulst i muskel- og skjelettsystemet;D481;Svulst med usikkert eller ukjent malignitetspotensial i bindevev eller annet bløtvev
+L98;Ervervet deformitet ekstremitet;Ervervet deformitet av ekstremitet;M219;Uspesifisert ervervet deformitet i ekstremitet
+L99;Muskel-skjelettsykdom IKA;Muskel- og skjelettsykdom IKA;M999;Uspesifisert biomekanisk lesjon
+N01;Hodepine;Hodepine;R51;Hodepine
+N03;Ansiktssmerte;Ansiktssmerte;G501;Atypisk ansiktssmerte
+N04;Restless legs;Restless legs;G258;Annen spesifisert ekstrapyramidal tilstand eller bevegelsesforstyrrelse
+N05;Prikking/parestesi i hender/føtter;Prikking/parestesi i hender/føtter;R202;Parestesi i hud
+N06;Forstyrrelser i hudens følsomhet IKA;Forstyrrelser i hudens følsomhet IKA;R208;Annen eller uspesifisert forstyrrelse i hudens følsomhet
+N07;Krampeanfall/kramper;Krampeanfall/kramper;R568;Annen eller uspesifisert krampe
+N08;Unormale/ufrivillige bevegelser;Unormale/ufrivillige bevegelser;R258;Andre eller uspesifiserte unormale ufrivillige bevegelser
+N16;Forstyrrelse i lukt/smak;Forstyrrelse i lukt/smak;R438;Annen eller uspesifisert forstyrrelse i lukt og smak
+N17;Svimmelhet IKA;Svimmelhet IKA;R42;Svimmelhet
+N18;Lammelse/svakhet;Lammelse/svakhet;G98;Annen lidelse i nervesystemet, ikke klassifisert annet sted
+N19;Talevansker;Talevansker;R478;Annen eller uspesifisert taleforstyrrelse
+N26;Engstelig for kreft nervesystemet;Engstelig for kreft i nervesystemet;Z711;Frykt for lidelse der ingen diagnose er stilt
+N27;Engstelig for sykdom nervesyst IKA;Engstelig for sykdom i nervesystemet IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+N28;Redus funksjonsevne probl nervesyst;Redusert funksjonsevne pga problem i nervesystemet;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+N29;Nervesystem symptomer/plager IKA;Nervesystemet symptomer/plager IKA;R298;Annet eller uspesifisert symptom eller tegn med tilknytning til nervesystemet eller muskel-skjelettsystemet
+N70;Poliomyelitt;Poliomyelitt;A809;Uspesifisert akutt poliomyelitt
+N71;Meningitt/encefalitt;Meningitt/encefalitt;G039;Uspesifisert meningitt
+N72;Stivkrampe;Stivkrampe;A35;Annen stivkrampe
+N73;Infeksjon sentralnervesyst IKA;Infeksjon i sentralnervesystemet IKA;A89;Uspesifisert virusinfeksjon i sentralnervesystemet
+N74;Ondartet svulst nervesystemet;Ondartet svulst i nervesystemet;C729;Ondartet svulst med uspesifisert lokalisasjon i sentralnervesystem
+N75;Godartet svulst nervesystemet;Godartet svulst i nervesystemet;D339;Godartet svulst i uspesifisert del av sentralnervesystemet
+N76;Uspesifisert svulst nervesystemet;Uspesifisert svulst i nervesystemet;D439;Svulst med usikkert eller ukjent malignitetspotensial i uspesifisert del av sentralnervesystemet
+N79;Hjernerystelse;Hjernerystelse;S060;Hjernerystelse
+N80;Hodeskade IKA;Hodeskade IKA;S069;Uspesifisert intrakraniell skade
+N81;Skade nervesystemet IKA;Skade i nervesystemet IKA;T144;Skade på nerve i uspesifisert kroppsregion
+N85;Medfødt feil nervesystemet;Medfødt feil i nervesystemet;Q079;Uspesifisert medfødt misdannelse i nervesystemet
+N86;Multippel sklerose;Multippel sklerose;G35;Multippel sklerose
+N87;Parkinsonisme;Parkinsonisme;G20;Parkinsons sykdom
+N88;Epilepsi;Epilepsi;G409;Uspesifisert epilepsi
+N89;Migrene;Migrene;G439;Uspesifisert migrene
+N90;Cluster-hodepine;Cluster-hodepine;G440;Clusterhodepinesyndrom
+N91;Facialisparese;Facialisparese;G510;Bells parese
+N92;Trigeminusnevralgi;Trigeminusnevralgi;G500;Trigeminusnevralgi
+N93;Carpal tunnel syndrom;Carpal tunnel syndrom;G560;Karpaltunnelsyndrom
+N94;Perifer nevropati;Perifer nevropati;G629;Uspesifisert polynevropati
+N95;Tensjonshodepine;Tensjonshodepine;G442;Tensjonshodepine
+N99;Sykdom i nervesystemet IKA;Sykdom i nervesystemet IKA;G98;Annen lidelse i nervesystemet, ikke klassifisert annet sted
+P01;Følelse angst/nervøs/anspent;Følelse av angst/nervøsitet/anspenthet;R450;Nervøsitet
+P02;Psykisk ubalanse situasjonsbetinget;Psykisk ubalanse situasjonsbetinget;F439;Uspesifisert reaksjon på alvorlig belastning
+P03;Depresjonsfølelse;Depresjonsfølelse;R452;Ulykkelighet
+P04;Irritabel atferd/følelse;Irritabel atferd/følelse;R454;Irritabilitet eller sinne
+P05;Senilitet, atferd/følelse gammel;Senilitet, atferd/følelse gammel;R54;Senilitet
+P06;Søvnforstyrrelse;Søvnforstyrrelse;F519;Uspesifisert ikke-organisk søvnlidele
+P07;Seksuell drift/lyst hemmet;Seksuell drift/lyst hemmet;F520;Mangel på eller tap av seksuell lyst
+P08;Seksuell tilfredsstillelse hemmet;Seksuell tilfredsstillelse hemmet;F529;Uspesifisert seksuell dysfunksjon som ikke skyldes somatisk lidelse
+P09;Seksuell legning bekymret for;Seksuell legning bekymring for;F669;Uspesifisert psykoseksuell forstyrrelse
+P10;Stamming/tics;Stamming/tics;F985;Stamming
+P11;Spiseforstyrrelse hos barn;Spiseforstyrrelse hos barn;F982;Spiseforstyrrelse i barndommen
+P12;Sengevæting/enuresis IKA;Sengevæting/enuresis IKA;F980;Ikke-organisk enurese
+P13;Enkoprese;Enkoprese;F981;Ikke-organisk enkoprese
+P15;Kronisk alkoholmisbruk;Kronisk alkoholmisbruk;F101;Skadelig bruk av alkohol
+P16;Akutt alkoholmisbruk;Akutt alkoholmisbruk;F100;Akutt alkoholintoksikasjon
+P17;Tobakkmisbruk;Tobakkmisbruk;F171;Skadelig bruk av tobakk
+P18;Legemiddelmisbruk;Legemiddelmisbruk;F131;Skadelig bruk av sedativum eller hypnotikum
+P19;Stoffmisbruk;Stoffmisbruk;F191;Skadelig bruk av flere stoffer
+P20;Hukommelsesforstyrrelse;Hukommelsesforstyrrelse;R418;Annet eller uspesifisert symptom eller tegn med tilknytning til kognitiv funksjon eller bevissthet
+P22;Atferdsforstyrrelse barn;Atferdsforstyrrelse hos barn;F919;Uspesifisert atferdsforstyrrelse
+P23;Atferdsforstyrrelse ungdom;Atferdsforstyrrelse hos ungdom;F919;Uspesifisert atferdsforstyrrelse
+P24;Spesifikke utviklingsforstyrrelser;Spesifikke utviklingsforstyrrelser;F819;Uspesifisert utviklingsforstyrrelse i skoleferdighet
+P25;Livsfaseproblem voksen;Livsfaseproblem hos voksen;Z600;Problem med tilpasning til overgangsperiode i livssyklus
+P27;Engstelig for psykisk sykdom;Engstelig for psykisk sykdom;Z711;Frykt for lidelse der ingen diagnose er stilt
+P28;Redusert funksjonsevne psyk problem;Redusert funksjonsevne pga psykisk problem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+P29;Psykiske symptomer/plager IKA;Psykiske symptomer/plager IKA;R458;Annet spesifisert symptom eller tegn med tilknytning til emosjonell tilstand
+P70;Demens;Demens;F03;Annen eller uspesifisert demens
+P71;Organisk psykisk lidelse IKA;Organisk psykisk lidelse IKA;F069;Uspesifisert organisk psykisk lidelse
+P72;Schizofreni;Schizofreni;F209;Uspesifisert schizofreni
+P73;Affektiv lidelse;Affektiv lidelse;F319;Uspesifisert bipolar affektiv lidelse
+P74;Angstlidelse;Angstlidelse;F419;Uspesifisert angstlidelse
+P75;Dissosiativ/somatoform lidelse;Dissosiativ/somatoform lidelse;F459;Uspesifisert somatoform lidelse
+P76;Depressiv lidelse;Depressiv lidelse;F329;Uspesifisert depressiv episode
+P77;Selvmord/selvmordsforsøk;Selvmord/selvmordsforsøk;F99;Uspesifisert psykisk forstyrrelse eller lidelse
+P78;Nevrasteni;Nevrasteni;F480;Nevrasteni
+P79;Fobi/obsessiv-kompulsiv lidelse;Fobi/obsessiv-kompulsiv lidelse;F409;Uspesifisert fobisk angstlidelse
+P80;Personlighetsforstyrrelse;Personlighetsforstyrrelse;F609;Uspesifisert personlighetsforstyrrelse
+P81;Hyperkinetisk forstyrrelse;Hyperkinetisk forstyrrelse;F909;Uspesifisert hyperkinetisk forstyrrelse
+P82;Posttraumatisk stresslidelse;Posttraumatisk stresslidelse;F431;Posttraumatisk stresslidelse [PTSD]
+P85;Psykisk utviklingshemning;Psykisk utviklingshemning;F799;Uspesifisert psykisk utviklingshemming uten beskrivelse av atferdsproblem
+P86;Anorexia nervosa/bulimi;Anorexia nervosa/bulimi;F509;Uspesifisert spiseforstyrrelse
+P98;Psykose IKA;Psykose IKA;F29;Uspesifisert ikke-organisk psykose
+P99;Psykisk lidelse IKA;Psykisk lidelse IKA;F99;Uspesifisert psykisk forstyrrelse eller lidelse
+R01;Smerte luftveier;Smerte i luftveier;R071;Brystsmerte ved pusting
+R02;Kortpustethet/dyspné;Kortpustethet/dyspné;R060;Dyspné
+R03;Piping i brystet;Piping i brystet;R062;Hvesende respirasjon
+R04;Pusteproblem IKA;Pusteproblem IKA;R068;Annen eller uspesifisert åndedrettsabnormitet
+R05;Hoste;Hoste;R05;Hoste
+R06;Neseblødning;Neseblødning;R040;Epistaxis
+R07;Nysing/tetthet i nese;Nysing/tetthet i nese;R067;Nysing
+R08;Nese symptomer/plager IKA;Nese symptomer/plager IKA;J348;Annen spesifisert forstyrrelse i nese eller nesebihule
+R09;Bihule symptomer/plager IKA;Bihule symptomer/plager IKA;J348;Annen spesifisert forstyrrelse i nese eller nesebihule
+R21;Hals symptomer/plager;Hals symptomer/plager;R070;Smerte i svelg
+R23;Stemme symptomer/plager;Stemme symptomer/plager;R498;Annen eller uspesifisert stemmeforstyrrelse
+R24;Blodig oppspytt/hemoptyse;Blodig oppspytt/hemoptyse;R042;Hemoptyse
+R25;Unormalt oppspytt/ekspektorat;Unormalt oppspytt/ekspektorat;R093;Unormalt oppspytt
+R26;Engstelig for kreft luftveier;Engstelig for kreft i luftveiene;Z711;Frykt for lidelse der ingen diagnose er stilt
+R27;Engstelig for sykdom luftveier IKA;Engstelig for sykdom i luftveiene IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+R28;Redusert funksjonsevne luftveisprobl;Redusert funksjonsevne pga luftveisproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+R29;Luftveier symptomer/plager IKA;Luftveiene symptomer/plager IKA;R098;Annet spesifisert symptom eller tegn med tilknytning til sirkulasjons- eller åndedrettssystemet
+R71;Kikhoste;Kikhoste;A379;Uspesifisert kikhoste
+R72;Streptokokkhals;Streptokokkhals;J030;Streptokokktonsillitt
+R73;Nesebyll;Nesebyll;J340;Abscess, furunkel eller karbunkel i nese
+R74;Akutt øvre luftveisinfeksjon;Akutt øvre luftveisinfeksjon;J069;Uspesifisert akutt infeksjon i øvre luftveier
+R75;Bihulebetennelse;Bihulebetennelse;J019;Uspesifisert akutt sinusitt
+R76;Akutt tonsillitt;Akutt tonsillitt;J039;Uspesifisert akutt tonsillitt
+R77;Akutt laryngitt/trakeitt;Akutt laryngitt/trakeitt;J040;Akutt laryngitt
+R78;Akutt bronkitt/bronkiolitt;Akutt bronkitt/bronkiolitt;J22;Uspesifisert akutt infeksjon i nedre luftveier
+R79;Kronisk bronkitt;Kronisk bronkitt;J42;Uspesifisert kronisk bronkitt
+R80;Influensa;Influensa;J111;Influensa med annen luftveismanifestasjon, som skyldes uidentifisert virus
+R81;Lungebetennelse;Lungebetennelse;J189;Uspesifisert pneumoni
+R82;Pleuritt IKA;Pleuritt IKA;R091;Pleuritt
+R83;Luftveisinfeksjon IKA;Luftveisinfeksjon IKA;J311;Kronisk nasofaryngitt
+R84;Ondartet svulst bronkie/lunge;Ondartet svulst i bronkie/lunge;C349;Ondartet svulst i uspesifisert del av bronkie eller lunge
+R85;Ondartet svulst luftveier IKA;Ondartet svulst i luftveiene IKA;C399;Ondartet svulst med ufullstendig angitt lokalisasjon i åndedrettsorgan
+R86;Godartet svulst luftveier;Godartet svulst i luftveiene;D144;Godartet svulst i uspesifisert del av åndedrettsorgan
+R87;Fremmedlegeme i nese/larynks/bronkie;Fremmedlegeme i nese/larynks/bronkie;T179;Fremmedlegeme i uspesifisert del av luftveier
+R88;Skade luftveier IKA;Skade i luftveiene IKA;S279;Skade i uspesifisert intratorakalt organ
+R89;Medfødt feil luftveier;Medfødt feil i luftveiene;Q349;Uspesifisert medfødt misdannelse i åndedrettssystemet
+R90;Hypertrofi tonsiller/adenoid vev;Hypertrofi av tonsiller/adenoid vev;J359;Uspesifisert kronisk sykdom i mandel eller adenoid vev
+R92;Uspesifisert svulst luftveier;Uspesifisert svulst i luftveiene;D386;Svulst med usikkert eller ukjent malignitetspotensial i uspesifisert åndedrettsorgan
+R95;Kronisk obstruktiv lungesykdom;Kronisk obstruktiv lungesykdom;J449;Uspesifisert kronisk obstruktiv lungesykdom
+R96;Astma;Astma;J459;Uspesifisert astma
+R97;Allergisk rinitt;Allergisk rinitt;J304;Uspesifisert allergisk rinitt
+R98;Hyperventileringssyndrom;Hyperventileringssyndrom;R064;Hyperventilering
+R99;Luftveissykdom IKA;Luftveissykdom IKA;J989;Uspesifisert åndedrettsforstyrrelse
+S01;Smerte/ømhet hud;Smerte/ømhet i huden;R208;Annen eller uspesifisert forstyrrelse i hudens følsomhet
+S02;Hudkløe;Hudkløe;L299;Uspesifisert kløe
+S03;Vorter;Vorter;B07;Virusvorter
+S04;Lokalisert hevelse/kul hud;Lokalisert hevelse/kul i huden;R229;Uspesifisert lokalisert hevelse, oppfylling eller kul
+S05;Utbredte hevelser/kuler hud;Utbredte hevelser/kuler i huden;R227;Lokalisert hevelse, oppfylling eller kul med flere lokalisasjoner
+S06;Lokalisert utslett hud;Lokalisert utslett i huden;R21;Utslett eller annet uspesifikt hudutbrudd
+S07;Utbredt utslett hud;Utbredt utslett i huden;R21;Utslett eller annet uspesifikt hudutbrudd
+S08;Forandring av hudfarge IKA;Forandring av hudfargen IKA;R238;Annen eller uspesifisert hudforandring
+S09;Infeksjon finger/tå;Infeksjon i finger/tå;L030;Cellulitt på finger eller tå
+S10;Abscess/furunkel;Abscess/furunkel;L029;Uspesifisert kutan abscess, furunkel eller karbunkel
+S11;Hudinfeksjon posttraumatisk;Hudinfeksjon posttraumatisk;T793;Posttraumatisk sårinfeksjon ikke klassifisert annet sted
+S12;Insektstikk/bitt;Insektstikk/bitt;T140;Overflateskade på uspesifisert kroppsregion
+S13;Bitt av dyr/menneske;Bitt av dyr/menneske;T141;Åpent sår på uspesifisert kroppsregion
+S14;Forbrenning/skålding;Forbrenning/skålding;T300;Brannskade av uspesifiert grad i uspesifisert kroppsregion
+S15;Fremmedlegeme hud;Fremmedlegeme i huden;T141;Åpent sår på uspesifisert kroppsregion
+S16;Kontusjon/slag hud;Kontusjon/slag hud;T140;Overflateskade på uspesifisert kroppsregion
+S17;Skrubbsår/blemmer;Skrubbsår/blemmer;T140;Overflateskade på uspesifisert kroppsregion
+S18;Åpent sår/kutt;Åpent sår/kutt;T141;Åpent sår på uspesifisert kroppsregion
+S19;Skade hud/underhud IKA;Skade i hud/underhud IKA;T140;Overflateskade på uspesifisert kroppsregion
+S20;Liktorn/fortykket underhud;Liktorn/fortykket underhud;L84;Liktorner eller hornhud
+S21;Hudstruktur symptomer/plager;Hudstruktur symptomer/plager;R234;Forandring i hudstruktur
+S22;Negl symptomer/plager;Negl symptomer/plager;L609;Uspesifisert neglelidelse
+S23;Håravfall/skallethet;Håravfall/skallethet;L659;Uspesifisert hårtap uten arrdannelse
+S24;Hår/hodebunn symptomer/plager IKA;Hår/hodebunn symptomer/plager IKA;L679;Uspesifisert abnormitet ved hårfarge eller hårskaft
+S26;Engstelig for kreft hud;Engstelig for kreft i huden;Z711;Frykt for lidelse der ingen diagnose er stilt
+S27;Engstelig for hudsykdom IKA;Engstelig for hudsykdom IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+S28;Redusert funksjonsevne pga hudprobl;Redusert funksjonsevne pga hudproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+S29;Hud symptomer/plager IKA;Hud symptomer/plager IKA;R238;Annen eller uspesifisert hudforandring
+S70;Herpes zoster;Herpes zoster;B029;Herpes zoster uten komplikasjoner
+S71;Herpes simplex IKA;Herpes simplex IKA;B009;Uspesifisert herpesvirusinfeksjon
+S72;Infestasjon midd;Infestasjon av midd;B86;Skabb
+S73;Infestasjon parasitt IKA;Infestasjon av parasitt IKA;B889;Uspesifisert infestasjon
+S74;Ringorm/hudsopp IKA;Ringorm/hudsopp IKA;B359;Uspesifisert hudsoppsykdom
+S75;Candidainfeksjon hud;Candidainfeksjon i huden;B372;Candidainfeksjon på hud eller negl
+S76;Hudinfeksjon IKA;Hudinfeksjon IKA;L089;Uspesifisert lokal infeksjon i hud eller underhud
+S77;Ondartet svulst hud;Ondartet svulst i huden;C449;Odartet svulst med uspesifisert lokalisasjon i hud
+S78;Lipom;Lipom;D179;Lipom med uspesifisert lokalisasjon
+S79;Godartet/uspesifisert svulst hud IKA;Godartet/uspesifisert svulst i huden IKA;D239;Godartet svulst i hud med uspesifisert lokalisasjon
+S80;Solutløst keratose/solforbrenning;Solutløst keratose/solforbrenning;L569;Uspesifisert akutt hudforandring som skyldes ultrafiolett stråling
+S81;Hemangiom/lymfangiom;Hemangiom/lymfangiom;D180;Hemangiom med enhver lokalisasjon
+S82;Pigmentnevus;Pigmentnevus;D229;Melanocyttnevus med uspesifisert lokalisasjon
+S83;Medfødt feil hud/underhud IKA;Medfødt feil i hud/underhud IKA;Q849;Uspesifisert medfødt misdannelse i hud eller underhud
+S84;Brennkopper;Brennkopper;L010;Impetigo
+S85;Pilonidalcyste/-fistel;Pilonidalcyste/-fistel;L059;Pilonidalcyste uten abscess
+S86;Seboréisk dermatitt;Seboréisk dermatitt;L219;Uspesifisert seboréisk dermatitt
+S87;Atopisk dermatitt/eksem;Atopisk dermatitt/eksem;L209;Uspesifisert atopisk dermatitt
+S88;Kontakt-/allergisk dermatitt IKA;Kontaktdermatitt/allergisk dermatitt IKA;L309;Uspesifisert dermatitt
+S89;Bleiedermatitt;Bleiedermatitt;L22;Bleiedermatitt
+S90;Pityriasis rosea;Pityriasis rosea;L42;Pityriasis rosea
+S91;Psoriasis;Psoriasis;L409;Uspesifisert psoriasis
+S92;Svettekjertelsykdom;Svettekjertelsykdom;L749;Uspesifisert lidelse i eksokrine svettekjertler
+S93;Talgcyste;Talgcyste;L721;Retensjonscyste i talgkjertel eller hårsekk
+S94;Inngrodd negl;Inngrodd negl;L600;Inngrodd negl
+S95;Molluscum contagiosum;Molluscum contagiosum;B081;Molluscum contagiosum
+S96;Akne;Akne;L709;Uspesifisert akne
+S97;Kronisk hudsår;Kronisk hudsår;L984;Kronisk hudsår, ikke klassifisert annet sted
+S98;Urticaria;Urticaria;L509;Uspesifisert urticaria
+S99;Hud/underhud sykdom IKA;Hud/underhud sykdom IKA;L989;Uspesifisert lidelse i hud eller underhud
+T01;Økt tørste;Økt tørste;R631;Polydipsi
+T02;Økt matlyst;Økt matlyst;R632;Polyfagi
+T03;Nedsatt matlyst;Nedsatt matlyst;R630;Anoreksi
+T04;Ernæringsproblem barn;Ernæringsproblem hos spedbarn/barn;R633;Vanskeligheter med inntak eller tilførsel av mat
+T05;Ernæringsproblem voksen;Ernæringsproblem hos voksen;R633;Vanskeligheter med inntak eller tilførsel av mat
+T07;Vektøkning;Vektøkning;R635;Unormal vektøkning
+T08;Vekttap;Vekttap;R634;Unormalt vekttap
+T10;Forsinket vekst;Forsinket vekst;R629;Uspesifisert uteblivelse av forventet normal fysiologisk utvikling
+T11;Uttørring;Uttørring;E86;Væsketap
+T26;Engstelig for kreft endokrine system;Engstelig for kreft i det endokrine systemet;Z711;Frykt for lidelse der ingen diagnose er stilt
+T27;Engstelig endokr/metabol/ernær sykd;Engstelig for sykd endokr/metabolske syst/ernæringssykd IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+T28;Red funk evne endo/metab/ernær probl;Redusert funksjonsevne pga endokr/metabolsk/ernæringsproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+T29;Endok/metab/ernær sympt/plager IKA;Endokrin/metabolsk/ernæring symptomer/plager IKA;R638;Annet spesifisert symptom eller tegn med tilknytning til mat- eller væskeinntak
+T70;Infeksjon endokrine system;Infeksjon i det endokrine systemet;E060;Akutt tyreoiditt
+T71;Ondartet svulst tyreoidea;Ondartet svulst i tyreoidea;C73;Ondartet svulst i skjoldbruskkjertel
+T72;Godartet svulst tyreoidea;Godartet svulst i tyreoidea;D34;Godartet svulst i skjoldbruskkjertel
+T73;Svulst endokrine organ IKA;Svulst i endokrine organ IKA;D449;Svulst med usikkert eller ukjent malignitetspotensial i uspesifisert endokrin kjertel
+T78;Ductus/cystis tyreoglossus;Ductus/cystis tyreoglossus;Q892;Medfødt misdannelse i annen endokrin kjertel
+T80;Medfødt feil endokr/metabol syst IKA;Medfødt feil i endokrine/metabolske system IKA;Q892;Medfødt misdannelse i annen endokrin kjertel
+T81;Struma;Struma;E049;Uspesifisert ikke-toksisk struma
+T82;Fedme;Fedme;E669;Uspesifisert fedme
+T83;Overvekt;Overvekt;E669;Uspesifisert fedme
+T85;Hypertyreose/tyreotoksikose;Hypertyreose/tyreotoksikose;E059;Uspesifisert tyreotoksikose
+T86;Hypotyreose/myksødem;Hypotyreose/myksødem;E039;Uspesifisert hypotyreose
+T87;Hypoglykemi;Hypoglykemi;E162;Uspesifisert hypoglykemi
+T89;Diabetes type 1;Diabetes type 1;E109;Diabetes mellitus type I uten komplikasjon
+T90;Diabetes type 2;Diabets type 2;E119;Diabetes mellitus type II uten komplikasjon
+T91;Vitaminmangel/ernæringsforstyrrelse;Vitaminmangel/ernæringsforstyrrelse;E639;Uspesifisert mangelsykdom
+T92;Urinsyregikt;Urinsyregikt;M109;Uspesifisert urinsyregikt
+T93;Lipidstoffskifte forstyrrelse;Lipidstoffskifte forstyrrelse;E789;Uspesifisert forstyrrelse i lipoproteinmetabolismen
+T99;Endokrin/metabol/ernær sykd IKA;Endokrin/metabolsk/ernæringssykdom IKA;E349;Uspesifisert endokrin forstyrrelse
+U01;Smerte vannlating;Smerte ved vannlating;R309;Uspesifisert smertefull vannlating
+U02;Hyppig vannlating;Hyppig vannlating;R35;Polyuri
+U04;Urininkontinens;Urininkontinens;R32;Uspesifisert inkontinens
+U05;Vannlatingsproblemer IKA;Vannlatingsproblemer IKA;R391;Annet vannlatingsproblem
+U06;Hematuri;Hematuri;R31;Uspesifisert hematuri
+U07;Urin symptomer/plager IKA;Urin symptomer/plager IKA;R398;Annet eller uspesifisert symptom eller tegn med tilknytning til urinveiene
+U08;Urinretensjon;Urinretensjon;R33;Urinretensjon
+U13;Blære symptomer/plager IKA;Blære symptomer/plager IKA;R398;Annet eller uspesifisert symptom eller tegn med tilknytning til urinveiene
+U14;Nyre symptomer/plager;Nyre symptomer/plager;N23;Uspesifisert nyrekolikk
+U26;Engstelig for kreft urinveier;Engstelig for kreft i urinveiene;Z711;Frykt for lidelse der ingen diagnose er stilt
+U27;Engstelig for sykdom urinveier IKA;Engstelig for sykdom i urinveiene IKA;Z711;Frykt for lidelse der ingen diagnose er stilt
+U28;Redusert funksjonsevne urinveisprobl;Redusert funksjonsevne pga urinveisproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+U29;Urinveier symptomer/plager IKA;Urinveier symptomer/plager IKA;R398;Annet eller uspesifisert symptom eller tegn med tilknytning til urinveiene
+U70;Nyrebekkenbetennelse;Nyrebekkenbetennelse;N12;Tubulointerstitiell nefritt ikke spesifisert som akutt eller kronisk
+U71;Cystitt/urinveisinfeksjon IKA;Cystitt/urinveisinfeksjon IKA;N309;Uspesifisert cystitt
+U72;Uretritt;Uretritt;N341;Uspesifikk uretritt
+U75;Ondartet svulst nyre;Ondartet svulst i nyre;C64;Ondartet svulst i nyre unntatt nyrebekken
+U76;Ondartet svulst urinblære;Ondartet svulst i urinblære;C679;Ondartet svulst med uspesifisert lokalisasjon i urinblære
+U77;Ondartet svulst urinveier IKA;Ondartet svulst i urinveiene IKA;C689;Ondartet svulst med uspesifisert lokalisasjon i urinveisorgan
+U78;Godartet svulst urinveier;Godartet svulst i urinveiene;D309;Godartet svulst i uspesifisert urinveisorgan
+U79;Uspesifisert svulst urinveier;Uspesifisert svulst i urinveiene;D419;Svulst med usikkert eller ukjent malignitetspotensial i uspesifisert urinveisorgan
+U80;Skade urinveier;Skade i urinveiene;S370;Skade på nyre
+U85;Medfødt feil urinveier;Medfødt feil i urinveiene;Q649;Uspesifisert medfødt misdannelse i urinsystemet
+U88;Glomerulonefritt/nefropati;Glomerulonefritt/nefropati;N059;Uspesifisert nefrittisk syndrom med uspesifisert morfologisk lesjon
+U90;Ortostatisk proteinuri;Ortostatisk proteinuri;N392;Uspesifisert ortostatisk proteinuri
+U95;Sten i urinveier;Sten i urinveiene;N209;Sten i uspesifisert lokalisasjon i urinveier
+U98;Unormal urinprøve IKA;Unormal urinprøve IKA;R829;Annet eller uspesifisert unormalt funn i urin
+U99;Urinveissykdom IKA;Urinveissykdom IKA;N399;Uspesifisert forstyrrelse i urinsystemet
+W01;Spørsmål om svangerskap;Spørsmål om svangerskap;Z320;Graviditetsundersøkelse eller test uten bekreftet graviditet
+W02;Engstelig for svangerskap;Engstelig for svangerskap;Z711;Frykt for lidelse der ingen diagnose er stilt
+W03;Blødning svangerskap;Blødning i svangerskap;O469;Uspesifisert blødning før fødsel
+W05;Kvalme/brekninger svangerskap;Kvalme/brekninger i svangerskap;O219;Uspesifiserte svangerskapsbrekninger
+W10;Prevensjon postkoital antikonsepsjon;Prevensjon postkoital antikonsepsjon;Z303;Utskrapn. av endomet. v/forsinket mens (brukes ikke i Norge)
+W11;Prevensjon p-pille;Prevensjon p-pille;Z304;Kontakt med helsetjenesten for overvåkning av befruktningshindrende legemiddel
+W12;Prevensjon spiral;Prevensjon spiral;Z301;Kontakt med helsetjenesten for innsetting av spiral
+W13;Sterilisering (K);Sterilisering kvinne;Z302;Kontakt med helsetjenesten for sterilisering
+W14;Prevensjon IKA (K);Prevensjon IKA kvinne;Z308;Kontakt med helsetjenesten for annet spesifisert prevensjonstiltak
+W15;Infertilitet (K);Infertilitet kvinne;N979;Uspesifisert kvinnelig infertilitet
+W17;Blødning etter fødsel;Blødning etter fødsel;O721;Annen umiddelbar blødning etter fødsel
+W18;Postpartum symptomer/plager IKA;Postpartum symptomer/plager IKA;O909;Uspesifisert komplikasjon i barseltid
+W19;Amming symptomer/plager;Amming symptomer/plager;O927;Annen eller uspesifisert forstyrrelse i melkeproduksjon
+W21;Bekymret/opptatt av utseende sv skap;Bekymret/opptatt av utseende i svangerskap;R468;Annet spesifisert symptom eller tegn med tilknytning til utseende eller atferd
+W27;Engstelig for komplik sv skap/fødsel;Engstelig for komplikasjoner ved svangerskap/fødsel;Z711;Frykt for lidelse der ingen diagnose er stilt
+W28;Red funksjonsevne svangerskapsprobl;Redusert funksjonsevne pga svangerskapsproblem;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+W29;Sv skap/fødsel sympt/plager IKA;Svangerskap/fødsel symptomer/plager IKA;R688;Annet spesifisert generelt symptom eller tegn
+W70;Infeksjon/sepsis barseltid;Infeksjon/sepsis i barseltid;O85;Sepsis i barseltid
+W71;Infeksjon som kompliser sv skap IKA;Infeksjon som kompliserer svangerskap IKA;O989;Uspesifisert infeksjonssykdom eller parasittsykdom hos mor, som kompliserer svangerskap, fødsel eller barseltid
+W72;Ondartet svulst svangerskap;Ondartet svulst knyttet til svangerskap;C58;Ondartet svulst i morkake
+W73;Godartet/uspes svulst sv skap;Godartet/uspesifisert svulst knyttet til svangerskap;O019;Uspesifisert blæremola
+W75;Skade som kompliserer svangerskap;Skade som kompliserer svangerskap;T149;Uspesifisert skade i uspesifisert kroppsregion
+W76;Medfødt feil som kompliserer sv skap;Medfødt feil som kompliserer svangerskap;O998;Annen spesifisert sykdom eller tilstand som kompliserer svangerskap, fødsel eller barseltid
+W78;Svangerskap bekreftet;Svangerskap bekreftet;Z321;Graviditetsundersøkelse eller test med bekreftet graviditet
+W781;Svangerskapskontroll;Svangerskapskontroll;Z349;Kontroll av normalt svangerskap, uspesifisert om første eller senere svangerskap
+W79;Uønsket svangerskap;Uønsket svangerskap;Z321;Graviditetsundersøkelse eller test med bekreftet graviditet
+W80;Ekstrauterint svangerskap;Ekstrauterint svangerskap;O009;Uspesifisert svangerskap utenfor livmoren
+W81;Svangerskapsforgiftning;Svangerskapsforgiftning;O149;Uspesifisert preeklampsi
+W82;Abort spontan;Abort spontan;O039;Spontan komplett eller uspesifisert abort uten komplikasjon
+W83;Abort fremkalt;Abort fremkalt;O049;Legal komplett eller uspesifisert abort, uten komplikasjon
+W84;Svangerskap høyrisiko;Svangerskap høyrisiko;Z359;Kontroll av høyrisikosvangerskap av uspesifisert årsak
+W85;Svangerskapsdiabetes;Svangerskapsdiabetes;O244;Diabetes mellitus som oppstår under svangerskap
+W90;Ukomplisert fødsel levendefødt barn;Ukomplisert fødsel levendefødt barn;Z370;Enkeltfødsel med levendfødt barn
+W91;Ukomplisert fødsel dødfødt barn;Ukomplisert fødsel dødfødt barn;Z371;Enkeltfødsel med dødfødt barn
+W92;Komplisert fødsel levendefødt barn;Komplisert fødsel levendefødt barn;O759;Uspesifisert komplikasjon ved fødsel eller forløsning
+W93;Komplisert fødsel dødfødt barn;Komplisert fødsel dødfødt barn;O759;Uspesifisert komplikasjon ved fødsel eller forløsning
+W94;Mastitt i barseltid;Mastitt i barseltid;O912;Ikke-purulent mastitt i forbindelse med fødsel
+W95;Brystsykdom i sv skap/barseltid IKA;Brystsykdom i svangerskap/barseltid IKA;O927;Annen eller uspesifisert forstyrrelse i melkeproduksjon
+W96;Komplikasjoner i barseltid IKA;Komplikasjoner i barseltid IKA;O909;Uspesifisert komplikasjon i barseltid
+W99;Svangersk/føds/barsel sykd IKA;Svangerskap/fødsel/barseltid sykdom IKA;O269;Uspesifisert svangerskapsrelatert tilstand
+X01;Smerte kjønnsorgan (K);Smerte i kjønnsorgan kvinne;R102;Smerte i bekken eller perineum
+X02;Menstruasjonssmerter;Menstruasjonssmerter;N946;Uspesifisert dysmenoré
+X03;Intermenstruelle smerter;Intermenstruelle smerter;N940;«Mittelschmerz»
+X04;Smerte samleie (K);Smerte ved samleie kvinne;N941;Dyspareuni
+X05;Menstruasjon sparsom/sjelden;Menstruasjon sparsom/sjelden;N915;Uspesifisert oligomenoré
+X06;Menstruasjon kraftig;Menstruasjon kraftig;N920;Kraftig eller hyppig menstruasjon med regelmessig syklus
+X07;Menstruasjon uregelmessig/hyppig;Menstruasjon uregelmessig/hyppig;N921;Kraftig eller hyppig menstruasjon med uregelmessig syklus
+X08;Intermenstruell blødning;Intermenstruell blødning;N923;Ovulasjonsblødning
+X09;Premenstruelle symptomer/plager;Premenstruelle symptomer/plager;N949;Uspesifisert tilstand med tilknytning til kvinnelige kjønnsorganer eller menstruasjonssyklus
+X10;Forskyvning menstruasjon;Forskyvning av menstruasjon;Z309;Kontakt med helsetjenesten for uspesifisert prevensjonstiltak
+X11;Klimakterium symptomer/plager;Klimakterium symptomer/plager;N959;Uspesifisert forstyrrelse i klimakterium eller senere
+X12;Postmenopausal blødning;Postmenopausal blødning;N950;Postmenopausal blødning
+X13;Blødning etter samleie;Blødning etter samleie;N930;Postkoital blødning eller kontaktblødning
+X14;Utflod fra skjeden;Utflod fra skjeden;N898;Annen spesifisert ikke-inflammatorisk lidelse i skjede
+X15;Skjede symptomer/plager IKA;Skjede symptomer/plager IKA;N899;Uspesifisert ikke-inflammatorisk lidelse i skjede
+X16;Vulva symptomer/plager;Vulva symptomer/plager;N909;Uspesifisert ikke-inflammatorisk lidelse i ytre kvinnelige kjønnsorganer eller perineum
+X17;Underliv symptomer/plager (K);Underliv symptomer/plager kvinne;N949;Uspesifisert tilstand med tilknytning til kvinnelige kjønnsorganer eller menstruasjonssyklus
+X18;Smerte bryst (K);Smerte i bryst kvinne;N644;Mastodyni
+X19;Kul i bryst IKA (K);Kul i bryst IKA kvinne;N63;Uspesifisert klump i bryst
+X20;Brystvorte symptomer/plager (K);Brystvorte symptomer/plager kvinne;N645;Annet tegn eller symptom i bryst
+X21;Bryst symptomer/plager IKA (K);Bryst symptomer/plager IKA kvinne;N649;Uspesifisert tilstand i bryst
+X22;Bekymret/oppt av utseende bryst (K);Bekymret/opptatt av brystenes utseende kvinne;R468;Annet spesifisert symptom eller tegn med tilknytning til utseende eller atferd
+X23;Engstelig for kjønnssykdom (K);Engstelig for kjønnssykdom kvinne;Z711;Frykt for lidelse der ingen diagnose er stilt
+X24;Engstelig for seksuell dysfunk (K);Engstelig for seksuell dysfunksjon kvinne;Z711;Frykt for lidelse der ingen diagnose er stilt
+X25;Engstelig for kreft kjønnsorgan (K);Engstelig for kreft i kjønnsorgan kvinne;Z711;Frykt for lidelse der ingen diagnose er stilt
+X26;Engstelig for brystkreft (K);Engstelig for brystkreft kvinne;Z711;Frykt for lidelse der ingen diagnose er stilt
+X27;Engstelig sykd kj org/bryst IKA (K);Engstelig for sykdom i kjønnsorgan/bryst IKA kvinne;Z711;Frykt for lidelse der ingen diagnose er stilt
+X28;Red funksjonevne probl kjønnsorg (K);Redusert funksjonsevne pga problem i kjønnsorgan kvinne;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+X29;Kjønnsorgan sympt/plager IKA (K);Kjønnsorgan symptomer/plager IKA kvinne;N949;Uspesifisert tilstand med tilknytning til kvinnelige kjønnsorganer eller menstruasjonssyklus
+X70;Syfilis (K);Syfilis kvinne;A539;Uspesifisert syfilis
+X71;Gonokokkinfeksjon (K);Gonokokkinfeksjon kvinne;A549;Uspesifisert gonokokkinfeksjon
+X72;Candidainfeksjon urogenitalt (K);Candidainfeksjon urogenitalt kvinne;B373;Candidainfeksjon i ytre kvinnelige kjønnsorganer eller skjede
+X73;Trikomonasinfeksjon urogenitalt (K);Trikomonasinfeksjon urogenitalt kvinne;A590;Urogenital trikomonasinfeksjon
+X74;Underlivsinfeksjon IKA (K);Underlivsinfeksjon IKA kvinne;N739;Uspesifisert betennelsestilstand i kvinnelig bekkenorgan
+X75;Ondartet svulst livmorhals;Ondartet svulst i livmorhals;C539;Ondartet svulst med uspesifisert lokalisasjon i livmorhals
+X76;Ondartet svulst bryst (K);Ondartet svulst i bryst kvinne;C509;Ondartet svulst med uspesifisert lokalisasjon i bryst
+X77;Ondartet svulst kjønnsorg IKA (K);Ondartet svulst i kvinnelige kjønnsorgan IKA;C577;Ondartet svulst i annen spesifisert del av kvinnelige kjønnsorganer
+X78;Godartet svulst livmor;Godartet svulst i livmor;D259;Leiomyom med uspesifisert lokalisasjon i livmor
+X79;Godartet svulst bryst (K);Godartet svulst i bryst kvinne;D24;Godartet svulst i bryst
+X80;Godartet svulst kjønnsorg IKA (K);Godartet svulst i kvinnelige kjønnsorgan IKA;D289;Godartet svulst i uspesifisert kvinnelig kjønnsorgan
+X81;Uspes svulst kjønnsorg IKA (K);Uspesifisert svulst i kvinnelige kjønnsorgan IKA;D397;Svulst med usikkert eller ukjent malignitetspotensial i annet spesifisert kvinnelig kjønnsorgan
+X82;Skade kjønnsorgan (K);Skade i kvinnelige kjønnsorgan;S314;Åpent sår i skjede eller på ytre kvinnelige kjønnsorganer
+X83;Medfødt feil kjønnsorgan (K);Medfødt feil i kvinnelige kjønnsorgan;Q529;Uspesifisert medfødt misdannelse i kvinnelige kjønnsorganer
+X84;Vaginitt/vulvitt IKA;Vaginitt/vulvitt IKA;N768;Annen spesifisert betennelse i skjede eller ytre kvinnelige kjønnsorganer
+X85;Sykdom i livmorhals IKA;Sykdom i livmorhals IKA;N889;Uspesifisert ikke-inflammatorisk lidelse i livmorhals
+X86;Cytologi livmorhals unormal;Cytologi livmorhals unormal;N879;Uspesifisert dysplasi i livmorhals
+X87;Fremfall kjønnsorgan (K);Fremfall av kvinnelige kjønnsorgan;N819;Uspesifisert fremfall av kvinnelige kjønnsorganer
+X88;Godartet mammadysplasi;Godartet mammadysplasi;N609;Uspesifisert godartet mammadysplasi
+X89;Premenstruelt tensjonssyndrom;Premenstruelt tensjonssyndrom;N943;Premenstruelt tensjonssyndrom (PMS)
+X90;Genital herpesvirusinfeksjon (K);Genital herpesvirusinfeksjon kvinne;A609;Uspesifisert anogenital herpesvirusinfeksjon
+X91;Condylomata acuminata (K);Condylomata acuminata kvinne;A630;Anogenital venerisk vorte
+X92;Klamydiainfeksjon urogenitalt (K);Klamydiainfeksjon urogenitalt kvinne;A562;Uspesifisert klamydiainfeksjon i kjønnsorganer eller urinveier
+X99;Kjønnsorgan sykdom IKA (K);Sykdom i kvinnelige kjønnsorgan IKA;N948;Annen spesifisert tilstand med tilknytning til kvinnelige kjønnsorganer eller menstruasjonssyklus
+Y01;Smerte penis;Smerte i penis;R102;Smerte i bekken eller perineum
+Y02;Smerte testikkel/skrotum;Smerte i testikkel/skrotum;R102;Smerte i bekken eller perineum
+Y03;Utflod urinrør/penis;Utflod fra urinrør/penis;R36;Utflod fra urinrøret
+Y04;Penis symptomer/plager IKA;Penis symptomer/plager IKA;N489;Uspesifisert penisforstyrrelse
+Y05;Skrotum/testikkel sympt/plager IKA;Skrotum/testikkel symptomer/plager IKA;N509;Uspesifisert forstyrrelse i mannlige kjønnsorganer
+Y06;Prostata symptomer/plager;Prostata symptomer/plager;N429;Uspesifisert forstyrrelse i blærehalskjertel
+Y07;Impotens organisk betinget;Impotens organisk betinget;N484;Impotens med organisk årsak
+Y08;Seksuelt problem IKA (M);Seksuelt problem IKA mann;N489;Uspesifisert penisforstyrrelse
+Y10;Infertilitet (M);Infertilitet mann;N46;Infertilitet hos mann
+Y13;Sterilisering (M);Sterilisering mann;Z302;Kontakt med helsetjenesten for sterilisering
+Y14;Prevensjon IKA (M);Prevensjon IKA mann;Z308;Kontakt med helsetjenesten for annet spesifisert prevensjonstiltak
+Y16;Bryst symptomer/plager (M);Bryst symptomer/plager mann;N645;Annet tegn eller symptom i bryst
+Y24;Engstelig for seksuell dysfunk (M);Engstelig for seksuell dysfunksjon mann;Z711;Frykt for lidelse der ingen diagnose er stilt
+Y25;Engstelig for kjønnsykdom (M);Engstelig for kjønnssykdom mann;Z711;Frykt for lidelse der ingen diagnose er stilt
+Y26;Engstelig for kreft kjønnsorgan (M);Engstelig for kreft i kjønnsorgan mann;Z711;Frykt for lidelse der ingen diagnose er stilt
+Y27;Engstelig for sykd kjønnsorg IKA (M);Engstelig for sykdom i kjønnsorgan IKA mann;Z711;Frykt for lidelse der ingen diagnose er stilt
+Y28;Red funksjonsevne prob kjønnsorg (M);Redusert funksjonsevne pga problem i kjønnsorgan mann;Z736;Problem i forbindelse med begrensning i aktivitet grunnet uførhet
+Y29;Kjønnsorgan sympt/plager IKA (M);Kjønnsorgan symptomer/plager IKA mann;N509;Uspesifisert forstyrrelse i mannlige kjønnsorganer
+Y70;Syfilis (M);Syfilis mann;A539;Uspesifisert syfilis
+Y71;Gonokokkinfeksjon (M);Gonokokkinfeksjon mann;A549;Uspesifisert gonokokkinfeksjon
+Y72;Genital herpesvirusinfeksjon (M);Genital herpesvirusinfeksjon mann;A609;Uspesifisert anogenital herpesvirusinfeksjon
+Y73;Prostatitt/vesikulitt;Prostatitt/vesikulitt;N419;Uspesifisert infeksjonssykdom i blærehalskjertel
+Y74;Orkitt/epididymitt;Orkitt/epididymitt;N459;Orkitt, epididymitt eller epididymo-orkitt uten abscess
+Y75;Balanopostitt;Balanopostitt;N481;Balanopostitt
+Y76;Condylomata acuminata (M);Condylomata acuminata mann;A630;Anogenital venerisk vorte
+Y77;Ondartet svulst prostata;Ondartet svulst i prostata;C61;Ondartet svulst i blærehalskjertel
+Y78;Ondartet svulst kjønnsorg IKA (M);Ondartet svulst i mannlige kjønnsorgan IKA;C639;Ondartet svulst med uspesifisert lokalisasjon i mannlige kjønnsorganer
+Y79;Godartet/uspes svulst kjønnsorg (M);Godartet/uspesifisert svulst i mannlige kjønnsorgan;D409;Svulst med usikkert eller ukjent malignitetspotensial i uspesifisert mannlig kjønnsorgan
+Y80;Skade kjønnsorgan (M);Skade i mannlige kjønnsorgan;S379;Skade på uspesifisert bekkenorgan
+Y81;Fimose/overflødig forhud;Fimose/overflødig forhud;N47;Overflødig forhud, fimose eller parafimose
+Y82;Hypospadi;Hypospadi;Q549;Uspesifisert hypospadi
+Y83;Ikke-descendert testikkel;Ikke-descendert testikkel;Q539;Uspesifisert ikke-descendert testikkel
+Y84;Medfødt feil kjønnsorgan IKA (M);Medfødt feil i mannlige kjønnsorgan IKA;Q559;Uspesifisert medfødt misdannelse i mannlige kjønnsorganer
+Y85;Prostatahyperplasi;Prostatahyperplasi;N40;Benign prostataobstruksjon
+Y86;Hydrocele;Hydrocele;N433;Uspesifisert hydrocele
+Y99;Kjønnsorgan sykdom IKA (M);Sykdom i mannlige kjønnsorgan IKA;N509;Uspesifisert forstyrrelse i mannlige kjønnsorganer
+Z01;Problem økonomi/fattigdom;Problem med økonomi/fattigdom;Z596;Problem med lav inntekt
+Z02;Problem drikkevann/mat;Problem med drikkevann/mat;Z594;Problem med mangel på fullverdig mat
+Z03;Problem bolig/nabolag;Problem med bolig/nabolag;Z599;Uspesifisert problem i forbindelse med boforhold eller økonomiske forhold
+Z04;Problem sosialt/kulturelt;Problem sosialt/kulturelt;Z609;Uspesifisert problem i forbindelse med sosialt miljø
+Z05;Problem arbeidsforhold/yrke;Problem med arbeidsforhold/yrke;Z567;Annet eller uspesifisert problem i forbindelse med arbeidsliv
+Z06;Problem arbeidsledighet;Problem med arbeidsledighet;Z560;Problem i forbindelse med uspesifisert arbeidsledighet
+Z07;Problem utdannelse;Problem med utdannelse;Z559;Uspesifisert problem i forbindelse med utdannelse eller lese- eller skriveferdighet
+Z08;Problem sosial velferd/trygd;Problem med sosial velferd/trygd;Z597;Problem med utilstrekkelig trygd eller stønad
+Z09;Problem jus/politi;Problem med jus/politi;Z653;Problem i forbindelse med annet rettslig forhold
+Z10;Problem helsetjen/tilgjengelighet;Problem med helsetjenester/tilgjengelighet;Z759;Uspesifisert problem i forbindelse med behov for helsetjeneste eller omsorgstilbud
+Z11;Problem det å være syk/compliance;Problem med det å være syk/compliance;Z759;Uspesifisert problem i forbindelse med behov for helsetjeneste eller omsorgstilbud
+Z12;Problem mellom samlivspartnere;Problemer mellom samlivspartnere;Z630;Problem i forhold til ektefelle eller partner
+Z13;Problem atferd samlivspartner;Problem med atferd til samlivspartner;Z630;Problem i forhold til ektefelle eller partner
+Z14;Problem sykdom hos partner;Problem med sykdom hos samlivspartner;Z636;Problem i forbindelse med hjelpeløs slektning som trenger pleie hjemme
+Z15;Problem tap/dødsfall av partner;Problem ved tap/dødsfall av samlivspartner;Z634;Problem i forbindelse med familiemedlem som forsvinner eller dør
+Z16;Problem med/i forhold til barn;Problem med/i forhold til barn;Z629;Uspesifisert problem i forbindelse med oppfostring
+Z18;Problem sykdom hos barn;Problem med sykdom hos barn;Z636;Problem i forbindelse med hjelpeløs slektning som trenger pleie hjemme
+Z19;Problem tap/dødsfall av barn;Problem ved tap/dødsfall av barn;Z634;Problem i forbindelse med familiemedlem som forsvinner eller dør
+Z20;Problem forhold til foreldre/familie;Problem med forhold til foreldre/familiemedlem;Z631;Problem i forhold til foreldre eller svigerforeldre
+Z21;Problem atferd foreldre/familie;Problem med atferd til forelde/familiemedlem;Z639;Uspesifisert problem i forbindelse med primærkontakt
+Z22;Problem med sykdom hos foreldre/fam;Problem med sykdom hos foreldre/familiemedlem;Z637;Problem i forbindelse med annen stressende livsopplevelse som påvirker familie eller husstand
+Z23;Problem tap/dødsfall av foreldre/fam;Problem ved tap/dødsfall av foreldre/familiemedlem;Z634;Problem i forbindelse med familiemedlem som forsvinner eller dør
+Z24;Problem med forhold til venner;Problem med forhold til venner;Z639;Uspesifisert problem i forbindelse med primærkontakt
+Z25;Problem vold/traumatisk hendelse;Problem som følge av vold/traumatisk hendelse;T749;Uspesifisert mishandlingssyndrom
+Z27;Engstelig for sosialt problem;Engstelig for sosialt problem;Z711;Frykt for lidelse der ingen diagnose er stilt
+Z28;Redusert funksjonsevne sosialt probl;Redusert funksjonsevne pga sosialt problem;Z734;Problem i forbindelse med mangelfulle sosiale ferdigheter, ikke klassifisert annet sted
+Z29;Sosialt problem IKA;Sosialt problem IKA;Z658;Annet spesifisert problem i forbindelse med psykososialt forhold

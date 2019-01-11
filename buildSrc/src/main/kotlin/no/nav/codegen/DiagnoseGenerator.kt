@@ -9,6 +9,8 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 
+import java.io.InputStream
+
 data class Entry(
         val icpc2CodeValue: String,
         val icpc2FullText: String,
@@ -18,16 +20,27 @@ data class Entry(
     val icpc2EnumName = icpc2CodeValue.replace("-", "NEGATIVE_")
 }
 
-// TODO, should get a permanant way of getting the diagnosecode from e helse
+// Filen kan lastes ned fra https://ehelse.no/standarder-kodeverk-og-referansekatalog/helsefaglige-kodeverk/icpc-2-den-internasjonale-klassifikasjonen-for-primerhelsetjenesten
 fun generateDiagnoseCodes(outputDirectory: Path) {
-    val connection = URL("https://ehelse.no/Documents/Helsefaglig%20kodeverk/ICPC-2n-v42%20ICD10%20to%20ICPC2%20CSV%202015.txt").openConnection() as HttpURLConnection
+    try {
+        val connection= URL("https://ehelse.no/Documents/Helsefaglig%20kodeverk/Konverteringsfil%20ICPC-2%20til%20ICD-10.txt").openConnection() as HttpURLConnection
+        readAndWriteDiagnoses(outputDirectory, connection.inputStream )
+        connection.disconnect()
 
-    val entries = BufferedReader(InputStreamReader(connection.inputStream)).use { reader ->
+    } catch (e: Exception){
+        println("Cloud not get diagnoses from ehelse: ${e.printStackTrace()}")
+        readAndWriteDiagnoses(outputDirectory, Entry::class.java.getResourceAsStream("/ICPC2_til_ICD-10_CSV_1_1_2019.txt"))
+    }
+
+}
+
+fun readAndWriteDiagnoses(outputDirectory: Path,input: InputStream ) {
+    val entries = BufferedReader(InputStreamReader(input)).use { reader ->
         reader.readLines()
                 .filter { !it.matches(Regex(".?--.+")) }
                 .map { CSVParser.parse(it, CSVFormat.DEFAULT.withDelimiter(';')) }.flatMap { it.records }
                 .map {
-                    Entry (icpc2CodeValue = it[0], icpc2FullText = it[1], icd10CodeValue = it[3], icd10Text = it[4])
+                    Entry (icpc2CodeValue = it[0], icpc2FullText = it[2], icd10CodeValue = it[3], icd10Text = it[4])
                 }
     }
 
@@ -57,5 +70,4 @@ fun generateDiagnoseCodes(outputDirectory: Path) {
         writer.write("}\n")
         writer.close()
     }
-    connection.disconnect()
 }
