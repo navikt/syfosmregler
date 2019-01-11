@@ -18,8 +18,9 @@ data class Entry(
     val icpc2EnumName = icpc2CodeValue.replace("-", "NEGATIVE_")
 }
 
+// TODO, should get a permanant way of getting the diagnosecode from e helse
 fun generateDiagnoseCodes(outputDirectory: Path) {
-    val connection = URL("https://ehelse.no/Documents/Helsefaglig%20kodeverk/ICPC-2%20til%20ICD-10%20konverteringsfil%20%28txt%29.TXT").openConnection() as HttpURLConnection
+    val connection = URL("https://ehelse.no/Documents/Helsefaglig%20kodeverk/ICPC-2n-v42%20ICD10%20to%20ICPC2%20CSV%202015.txt").openConnection() as HttpURLConnection
 
     val entries = BufferedReader(InputStreamReader(connection.inputStream)).use { reader ->
         reader.readLines()
