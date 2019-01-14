@@ -66,6 +66,7 @@ pipeline {
     post {
         always {
             postProcess action: 'always'
+            archiveArtifacts artifacts: 'build/reports/rules.csv', allowEmptyArchive: true
         }
         success {
             postProcess action: 'success'
