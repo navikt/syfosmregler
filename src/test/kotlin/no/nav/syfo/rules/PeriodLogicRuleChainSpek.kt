@@ -282,7 +282,7 @@ object PeriodLogicRuleChainSpek : Spek({
         it("Should check rule BACKDATED_MORE_THEN_3_YEARS, should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 kontaktMedPasient = HelseOpplysningerArbeidsuforhet.KontaktMedPasient().apply {
-                    behandletDato = LocalDateTime.now().minusYears(3)
+                    behandletDato = LocalDateTime.now().minusYears(3).minusDays(1)
                 }
             }
 
