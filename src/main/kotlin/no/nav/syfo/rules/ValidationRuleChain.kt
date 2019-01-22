@@ -134,8 +134,8 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
             val rulesettversion = healthInformation.regelSettVersjon ?: ""
             val utdypendeOpplysninger = healthInformation.utdypendeOpplysninger != null
-                    if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion) && arsakBeskrivelseAktivitetIkkeMulig) {
-                        if (utdypendeOpplysninger) {
+                    if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion)) {
+                        if (utdypendeOpplysninger && arsakBeskrivelseAktivitetIkkeMulig) {
                             !validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
                         } else {
                             true
