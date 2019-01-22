@@ -118,7 +118,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
-    // TODO: Endre navn på denne etter diskusjon med fag
+    // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
         if (!healthInformation.aktivitet?.periode.isNullOrEmpty()) {
             val arsakBeskrivelseAktivitetIkkeMulig = healthInformation.aktivitet.periode.any {
@@ -134,19 +134,15 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
             val rulesettversion = healthInformation.regelSettVersjon ?: ""
             val utdypendeOpplysninger = healthInformation.utdypendeOpplysninger != null
-            val validdynaGruppe62 =
-                    if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion)) {
-                        if (utdypendeOpplysninger && arsakBeskrivelseAktivitetIkkeMulig) {
-                            validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
+                    if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion) && arsakBeskrivelseAktivitetIkkeMulig) {
+                        if (utdypendeOpplysninger) {
+                            !validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
                         } else {
-                            false
+                            true
                         }
                     } else {
                         false
                     }
-
-            !validdynaGruppe62
-            // TODO: Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
         } else {
             false
         }

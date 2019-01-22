@@ -16,7 +16,7 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     // Kommentar fra Camilla: 13 i 2017. Denne må sees i sammenheng med 1317 - eller er dette knyttet mot behandlers autorisasjon?
     // Sjekk OID og Verdi
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
-    BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.MANUAL_PROCESSING, { (_, doctor) ->
+    BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.INVALID, { (_, doctor) ->
         if (!doctor.godkjenninger.godkjenning.isNullOrEmpty()) {
             !doctor.godkjenninger.godkjenning.any {
                 it.autorisasjon.isAktiv
