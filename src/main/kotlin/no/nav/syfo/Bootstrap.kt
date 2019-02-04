@@ -1,6 +1,9 @@
 package no.nav.syfo
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -21,6 +24,7 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 import org.apache.cxf.message.Message
 import org.apache.cxf.phase.Phase
 import org.apache.cxf.ws.addressing.WSAddressingFeature
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 fun doReadynessCheck(): Boolean {
@@ -30,22 +34,29 @@ fun doReadynessCheck(): Boolean {
 
 data class ApplicationState(var running: Boolean = true)
 
+val objectMapper: ObjectMapper = ObjectMapper().apply {
+    registerKotlinModule()
+    registerModule(JavaTimeModule())
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+}
+
 // TODO: WS calls required
 // TSS leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
 fun main(args: Array<String>) {
-    val env = Environment()
+    val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
+    val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
     val applicationState = ApplicationState()
 
     val personV3 = JaxWsProxyFactoryBean().apply {
-        address = env.personV3EndpointURL
+        address = config.personV3EndpointURL
         features.add(LoggingFeature())
         serviceClass = PersonV3::class.java
     }.create() as PersonV3
-    configureSTSFor(personV3, env.srvsyfosmreglerUsername,
-            env.srvsyfosmreglerPassword, env.securityTokenServiceUrl)
+    configureSTSFor(personV3, credentials.serviceuserUsername,
+            credentials.serviceuserPassword, config.securityTokenServiceUrl)
 
     val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
-        address = env.helsepersonellv1EndpointUrl
+        address = config.helsepersonellv1EndpointUrl
         // TODO: Contact someone about this hacky workaround
         // talk to HDIR about HPR about they claim to send a ISO-8859-1 but its really UTF-8 payload
         val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
@@ -60,10 +71,10 @@ fun main(args: Array<String>) {
         features.add(WSAddressingFeature())
         serviceClass = IHPR2Service::class.java
     }.create() as IHPR2Service
-    configureSTSFor(helsepersonellv1, env.srvsyfosmreglerUsername,
-    env.srvsyfosmreglerPassword, env.securityTokenServiceUrl)
+    configureSTSFor(helsepersonellv1, credentials.serviceuserUsername,
+            credentials.serviceuserPassword, config.securityTokenServiceUrl)
 
-    val applicationServer = embeddedServer(Netty, env.applicationPort) {
+    val applicationServer = embeddedServer(Netty, config.applicationPort) {
         initRouting(applicationState, personV3, helsepersonellv1)
     }.start(wait = true)
 
