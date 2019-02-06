@@ -1,5 +1,6 @@
 {
   "personV3EndpointURL" : "https://wasapp.adeo.no/tpsws/ws/Person/v3",
   "helsepersonellv1EndpointUrl" : "https://pep-gw.oera.no:9443/samhandler/helse/helsepersonell/v1",
-  "securityTokenServiceUrl" : "https://sts.adeo.no/SecurityTokenServiceProvider/"
+  "securityTokenServiceUrl" : "https://sts.adeo.no/SecurityTokenServiceProvider/",
+  "syketilfelleEndpointUrl" : "https://syfosyketilfelle.nais.adeo.no"
 }

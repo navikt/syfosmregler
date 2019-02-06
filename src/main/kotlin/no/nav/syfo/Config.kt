@@ -14,7 +14,7 @@ data class ApplicationConfig(
     val helsepersonellv1EndpointUrl: String,
     val legeSuspensjonEndpointUrl: String = "http://legesuspensjoner",
     val stsRestEndpointUrl: String = "http://security-token-service",
-    val syketilfelleEndpointUrl: String = "http://syfosyketilfelle"
+    val syketilfelleEndpointUrl: String
 )
 
 data class VaultCredentials(
