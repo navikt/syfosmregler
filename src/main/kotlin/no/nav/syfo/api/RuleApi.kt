@@ -84,6 +84,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 signatureDate = receivedSykmelding.signaturDato
         ))
 
+        // TODO no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage: ArgumentException: Personnummer ikke funnet
+        // add rule 1401 when this happens
         val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege)
         val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor.await())
 
