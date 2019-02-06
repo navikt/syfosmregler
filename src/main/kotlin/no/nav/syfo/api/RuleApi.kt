@@ -90,7 +90,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
         val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
-        val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId))
+        val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId), receivedSykmelding.aktoerIdPasient)
 
         // TODO remove after api i ready leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
         // val signaturDatoString = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(receivedSykmelding.signaturDato)
