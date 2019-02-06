@@ -1,11 +1,23 @@
 package no.nav.syfo
 
+import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.OK
+import io.ktor.response.respondTextWriter
+import io.ktor.routing.get
 import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
+import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.api.LegeSuspensjonClient
+import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.model.OidcToken
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.amshove.kluent.shouldEqual
@@ -15,12 +27,34 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.net.ServerSocket
+import java.util.concurrent.TimeUnit
 
+@KtorExperimentalAPI
 object SelftestSpek : Spek({
     val applicationState = ApplicationState()
+    val mockHttpServerPort = ServerSocket(0).use { it.localPort }
+    val mockHttpServerUrl = "http://localhost:$mockHttpServerPort"
+    suspend fun ApplicationCall.respondJson(input: Any) {
+        respondTextWriter(ContentType.Application.Json) {
+            objectMapper.writeValue(this, input)
+        }
+    }
+    val mockServer = embeddedServer(Netty, mockHttpServerPort) {
+        routing {
+            get("/rest/v1/sts/token") {
+                call.respondJson(OidcToken("", "", 1L))
+            }
+
+            get("/v1/rules/v1/validate") {
+                call.respondJson(true)
+            }
+        }
+    }.start()
 
     afterGroup {
         applicationState.running = false
+        mockServer.stop(1L, 10L, TimeUnit.SECONDS)
     }
     describe("Calling selftest with successful liveness and readyness tests") {
         with(TestApplicationEngine()) {
@@ -38,7 +72,11 @@ object SelftestSpek : Spek({
                 serviceClass = IHPR2Service::class.java
             }.create() as IHPR2Service
 
-            application.initRouting(applicationState, personV3, helsepersonellv1)
+            val credentials = VaultCredentials("", "")
+            val oidcClient = StsOidcClient(mockHttpServerUrl, "username", "password")
+            val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
+
+            application.initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient)
 
             it("Returns ok on is_alive") {
                 with(handleRequest(HttpMethod.Get, "/is_alive")) {

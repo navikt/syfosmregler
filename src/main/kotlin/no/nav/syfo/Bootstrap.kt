@@ -12,6 +12,8 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import no.nav.syfo.api.LegeSuspensjonClient
+import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.ws.configureSTSFor
@@ -74,8 +76,11 @@ fun main(args: Array<String>) {
     configureSTSFor(helsepersonellv1, credentials.serviceuserUsername,
             credentials.serviceuserPassword, config.securityTokenServiceUrl)
 
+    val oidcClient = StsOidcClient(config.stsRestEndpointUrl, credentials.serviceuserUsername, credentials.serviceuserPassword)
+    val legeSuspensjonClient = LegeSuspensjonClient(config.legeSuspensjonEndpointUrl, credentials, oidcClient)
+
     val applicationServer = embeddedServer(Netty, config.applicationPort) {
-        initRouting(applicationState, personV3, helsepersonellv1)
+        initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient)
     }.start(wait = true)
 
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -83,10 +88,10 @@ fun main(args: Array<String>) {
     })
 }
 
-fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service) {
+fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient) {
     routing {
         registerNaisApi(readynessCheck = ::doReadynessCheck, livenessCheck = { applicationState.running })
-        registerRuleApi(personV3, helsepersonellv1)
+        registerRuleApi(personV3, helsepersonellv1, legeSuspensjonClient)
     }
     install(ContentNegotiation) {
         jackson {

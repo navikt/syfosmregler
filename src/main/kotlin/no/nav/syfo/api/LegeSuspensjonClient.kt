@@ -3,16 +3,18 @@ package no.nav.syfo.api
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.config
-import io.ktor.client.features.auth.basic.BasicAuth
-import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.post
+import io.ktor.client.request.accept
+import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.client.request.parameter
+import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.ApplicationConfig
 import no.nav.syfo.VaultCredentials
 
 @KtorExperimentalAPI
-class LegeSuspensjonClient(credentials: VaultCredentials) {
+class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient) {
     private val client = HttpClient(CIO.config {
         maxConnectionsCount = 1000 // Maximum number of socket connections.
         endpoint.apply {
@@ -23,21 +25,23 @@ class LegeSuspensjonClient(credentials: VaultCredentials) {
             connectRetryAttempts = 5
         }
     }) {
-        install(BasicAuth) {
-            username = credentials.serviceuserUsername
-            password = credentials.serviceuserPassword
-        }
         install(JsonFeature) {
-            serializer = GsonSerializer()
+            serializer = JacksonSerializer()
         }
     }
 
-    suspend fun executeRuleValidation(config: ApplicationConfig, payload: String): Boolean = client.post {
-        body = payload
+    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Boolean =
+        client.get("$endpointUrl/v1/rules/v1/validate") {
+            accept(ContentType.Application.Json)
+            val oidcToken = stsClient.oidcToken()
+            headers {
+                append("Nav-Call-Id", ediloggid)
+                append("Nav-Consumer-Id", credentials.serviceuserUsername)
+                append("Nav-Personident", therapistId)
 
-        url {
-            host = config.legeSuspesnsjon
-            path("v1", "rules", "validate")
+            // TODO is this the corret security???
+                append("Authorization", "Bearer ${oidcToken.access_token}")
+            }
+            parameter("oppslagsdato", oppslagsdato)
         }
-    }
 }

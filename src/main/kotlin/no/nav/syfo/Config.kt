@@ -10,9 +10,10 @@ data class ApplicationConfig(
     val applicationThreads: Int = 1,
 
     val personV3EndpointURL: String,
-    val securityTokenServiceUrl: String = "sts",
+    val securityTokenServiceUrl: String,
     val helsepersonellv1EndpointUrl: String,
-    val legeSuspesnsjon: String = "legesuspensjoner"
+    val legeSuspensjonEndpointUrl: String = "http://legesuspensjoner",
+    val stsRestEndpointUrl: String = "http://security-token-service"
 
 )
 
