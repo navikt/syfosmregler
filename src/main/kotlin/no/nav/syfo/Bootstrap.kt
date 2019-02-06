@@ -12,8 +12,10 @@ import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.StsOidcClient
+import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.ws.configureSTSFor
@@ -42,8 +44,7 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
 
-// TODO: WS calls required
-// TSS leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
+@KtorExperimentalAPI
 fun main(args: Array<String>) {
     val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
     val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
@@ -78,9 +79,10 @@ fun main(args: Array<String>) {
 
     val oidcClient = StsOidcClient(config.stsRestEndpointUrl, credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(config.legeSuspensjonEndpointUrl, credentials, oidcClient)
+    val syketilfelleClient = SyketilfelleClient(config.syketilfelleEndpointUrl, oidcClient)
 
     val applicationServer = embeddedServer(Netty, config.applicationPort) {
-        initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient)
+        initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
     }.start(wait = true)
 
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -88,10 +90,11 @@ fun main(args: Array<String>) {
     })
 }
 
-fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient) {
+@KtorExperimentalAPI
+fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient, syketilfelleClient: SyketilfelleClient) {
     routing {
         registerNaisApi(readynessCheck = ::doReadynessCheck, livenessCheck = { applicationState.running })
-        registerRuleApi(personV3, helsepersonellv1, legeSuspensjonClient)
+        registerRuleApi(personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
     }
     install(ContentNegotiation) {
         jackson {

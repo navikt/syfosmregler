@@ -5,14 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.accept
 import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
@@ -60,7 +53,7 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
 }
 
 @KtorExperimentalAPI
-fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient) {
+fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient, syketilfelleClient: SyketilfelleClient) {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
 
@@ -91,15 +84,15 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 signatureDate = receivedSykmelding.signaturDato
         ))
 
-        val syketilfelle = fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId))
-
         val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege)
         val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor.await())
 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
         val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
-        // TODO remove after api i ready
+        val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId))
+
+        // TODO remove after api i ready leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
         // val signaturDatoString = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(receivedSykmelding.signaturDato)
         // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString)
         // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
@@ -117,24 +110,6 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 
 fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> = async {
     hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
-}
-
-@KtorExperimentalAPI
-val httpClient = HttpClient(CIO) {
-    install(JsonFeature) {
-        serializer = JacksonSerializer {
-            registerModule(JavaTimeModule())
-        }
-    }
-}
-
-@KtorExperimentalAPI
-fun CoroutineScope.fetchSyketilfelle(input: List<Syketilfelle>): Deferred<Any> = async {
-    httpClient.post<Any>("/") {
-        accept(ContentType.Application.Json)
-        contentType(ContentType.Application.Json)
-        body = input
-    }
 }
 
 fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
@@ -159,8 +134,7 @@ fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(akt
 fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
         personV3.hentPerson(HentPersonRequest()
                 .withAktoer(PersonIdent().withIdent(NorskIdent()
-                                .withIdent(ident)
-                ) // .withType(Personidenter().withValue("FNR"))) // TODO?
+                                .withIdent(ident))
                 )
         ).person
 }
