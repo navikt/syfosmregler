@@ -35,7 +35,6 @@ import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.rules.HPRRuleChain
-import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.PostTPSRuleChain
@@ -100,10 +99,12 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
         val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
-        val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, receivedSykmelding.signaturDato.toString())
-        val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
-
-        val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
+        // TODO remove after api i ready
+        // val signaturDatoString = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(receivedSykmelding.signaturDato)
+        // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString)
+        // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
+        // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
+        val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
 
         call.respond(ValidationResult(
                 status = results
