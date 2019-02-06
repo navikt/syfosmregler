@@ -12,6 +12,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.model.Syketilfelle
 import java.time.LocalDate
@@ -40,6 +41,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
     suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>): Oppfolgingstilfelle =
             client.post("$endpointUrl/syfosoknad/oppfolgingstilfelle/beregn/") {
                 accept(ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
                 val oidcToken = stsClient.oidcToken()
                 headers {
                     append("Authorization", "Bearer ${oidcToken.access_token}")
