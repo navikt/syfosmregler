@@ -46,7 +46,7 @@ object SelftestSpek : Spek({
                 call.respondJson(OidcToken("", "", 1L))
             }
 
-            get("/v1/rules/v1/validate") {
+            get("/api/v1/suspensjon/status") {
                 call.respondJson(true)
             }
         }

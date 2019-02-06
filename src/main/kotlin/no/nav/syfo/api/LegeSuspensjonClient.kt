@@ -31,7 +31,7 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
     }
 
     suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Boolean =
-        client.get("$endpointUrl/v1/rules/v1/validate") {
+        client.get("$endpointUrl/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
             headers {
