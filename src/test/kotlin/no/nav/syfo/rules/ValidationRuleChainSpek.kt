@@ -15,7 +15,6 @@ import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.SpmId
 import no.nav.syfo.UtdypendeOpplysninger
-import no.nav.syfo.executeFlow
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -29,10 +28,6 @@ val fairy: Fairy = Fairy.create(Locale("no", "NO"))
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
 object ValidationRuleChainSpek : Spek({
-
-    fun deafaultRuleMetadata() = RuleMetadata(receivedDate = LocalDateTime.now(),
-            signatureDate = LocalDateTime.now())
-
     fun Kodeverk.toCV() = CV().apply {
         dn = text
         s = oid
@@ -190,13 +185,7 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.PATIENT_OVER_70_YEARS } shouldEqual true
+            ValidationRuleChain.PATIENT_OVER_70_YEARS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PATIENT_OVER_70_YEARS,should NOT trigger rule") {
@@ -204,31 +193,25 @@ object ValidationRuleChainSpek : Spek({
                     PersonProperties.ageBetween(13, 70))
 
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-            pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                fodselsnummer = Ident().apply {
-                    id = generatePersonNumber(person.dateOfBirth, false)
-                    typeId = CV().apply {
-                        dn = "Fødselsnummer"
-                        s = "2.16.578.1.12.4.1.1.8116"
-                        v = "FNR"
+                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
+                    fodselsnummer = Ident().apply {
+                        id = generatePersonNumber(person.dateOfBirth, false)
+                        typeId = CV().apply {
+                            dn = "Fødselsnummer"
+                            s = "2.16.578.1.12.4.1.1.8116"
+                            v = "FNR"
+                        }
                     }
                 }
-            }
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
                         periodeFOMDato = LocalDate.now()
                         periodeTOMDato = LocalDate.now()
                     })
                 }
-        }
+            }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.PATIENT_OVER_70_YEARS } shouldEqual false
+            ValidationRuleChain.PATIENT_OVER_70_YEARS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule ICPC_2_Z_DIAGNOSE,should trigger rule") {
@@ -301,7 +284,6 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule INVALID_KODEVERK_FOR_MAIN_DIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-
                 medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
                     hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
                         diagnosekode = CV().apply {
@@ -378,61 +360,21 @@ object ValidationRuleChainSpek : Spek({
                         periodeTOMDato = LocalDate.of(2018, 1, 9)
                     })
                 }
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
                 medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
                     hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
-                    }
-                    biDiagnoser = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.BiDiagnoser().apply {
-                        diagnosekode.add(CV().apply {
-                            dn = "Problem med jus/politi"
-                            v = "Z09"
-                        })
+                        diagnosekode = ICPC2.Z09.toCV()
                     }
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS } shouldEqual true
+            ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no workplace related resons") {
+        it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no workplace related reasons") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
                 medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
                     hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
+                        diagnosekode = ICPC2.Z09.toCV()
                     }
                 }
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
@@ -451,34 +393,15 @@ object ValidationRuleChainSpek : Spek({
                     })
                 }
             }
-            val ruleMetadata = deafaultRuleMetadata()
 
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS } shouldEqual true
+            ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, missing utdypendeOpplysninger") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
                 medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
                     hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
+                        diagnosekode = ICPC2.Z09.toCV()
                     }
                 }
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
@@ -498,36 +421,11 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS } shouldEqual true
+            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, missing dynaRegelgruppe 6.2") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
-                medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
-                    hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
-                    }
-                }
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
                         aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
@@ -551,52 +449,26 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS } shouldEqual true
+            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, should NOT trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
-                medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
-                    hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
-                    }
-                }
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
                         aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
-                                medisinskeArsaker = ArsakType().apply {
-                                    arsakskode.add(CS().apply {
-                                        dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
-                                        v = "1"
-                                    })
-                                    beskriv = "Tungt arbeid"
-                                }
+                            medisinskeArsaker = ArsakType().apply {
+                                arsakskode.add(CS().apply {
+                                    dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
+                                    v = "1"
+                                })
+                                beskriv = "Tungt arbeid"
                             }
+                        }
                         periodeFOMDato = LocalDate.of(2018, 1, 7)
-                        periodeTOMDato = LocalDate.of(2018, 9, 9)
+                        periodeTOMDato = LocalDate.of(2018, 1, 9)
                     })
                 }
-
                 utdypendeOpplysninger = HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger().apply {
                     spmGruppe.add(HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe().apply {
                         spmGruppeId = UtdypendeOpplysninger.DYNAGRUPPE6_2.spmGruppeId
@@ -652,13 +524,7 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS } shouldEqual false
+            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule INVALID_RULESET_VERSION, should trigger rule") {
@@ -679,26 +545,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2, should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
                 regelSettVersjon = "2"
-                medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
-                    hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
-                    }
-                }
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
                         aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
@@ -744,37 +591,12 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2 } shouldEqual true
+            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2, should NOT trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-                pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
-                    fodselsnummer = Ident().apply {
-                        id = "3006310441"
-                        typeId = CV().apply {
-                            dn = "Fødselsnummer"
-                            s = "2.16.578.1.12.4.1.1.8116"
-                            v = "FNR"
-                        }
-                    }
-                }
                 regelSettVersjon = "2"
-                medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
-                    hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
-                        diagnosekode = CV().apply {
-                            dn = "Problem med jus/politi"
-                            s = "2.16.578.1.12.4.1.1.7170"
-                            v = "Z09"
-                        }
-                    }
-                }
 
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
@@ -823,13 +645,7 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = deafaultRuleMetadata()
-
-            val validationRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    ValidationRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            validationRuleChainResults.any { it == ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2 } shouldEqual false
+            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(ruleData(healthInformation)) shouldEqual false
         }
     }
 })

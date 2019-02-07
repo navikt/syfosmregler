@@ -33,27 +33,17 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
     PATIENT_OVER_70_YEARS(1102, Status.INVALID, { (healthInformation, _) ->
-        if (!healthInformation.aktivitet?.periode.isNullOrEmpty() && healthInformation.pasient?.fodselsnummer?.id != null) {
-            healthInformation.aktivitet.periode.sortedFOMDate().first() > extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(70)
-        } else {
-            false
-        }
+        healthInformation.aktivitet.periode.sortedFOMDate().first() > extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(70)
     }),
 
     @Description("Ukjent diagnosekode type")
     UNKNOWN_DIAGNOSECODE_TYPE(1137, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering?.hovedDiagnose?.diagnosekode?.s) {
-            null -> false
-            else -> healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.s !in Diagnosekode.values()
-        }
+        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.s !in Diagnosekode.values()
     }),
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
     ICPC_2_Z_DIAGNOSE(1132, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering?.hovedDiagnose) {
-            null -> false
-            else -> (healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.first()?.codeValue?.startsWith("Z") == true)
-        }
+        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.first()?.codeValue?.startsWith("Z") == true
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
@@ -79,30 +69,21 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // Revurder regel når IT ikkje lenger skal brukes
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering?.biDiagnoser) {
-            null -> false
-            else -> !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.any { cv ->
-            if (cv.isICPC2()) {
-                ICPC2.values().any { it.codeValue == cv.v }
-            } else {
-                ICD10.values().any { it.codeValue == cv.v }
-            }
-        }
-        }
+           !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.all { cv ->
+               if (cv.isICPC2()) {
+                   ICPC2.values().any { it.codeValue == cv.v }
+               } else {
+                   ICD10.values().any { it.codeValue == cv.v }
+               }
+           }
     }),
 
     @Description("Hvis medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt og sykmeldingen ikke er \"forenklet\"")
     NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(1706, Status.INVALID, { (healthInformation, _) ->
-        if (healthInformation.medisinskVurdering?.hovedDiagnose != null && !healthInformation.aktivitet?.periode.isNullOrEmpty()) {
-            val simplifiedDiagnoseCode = healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true
-            !simplifiedDiagnoseCode && !healthInformation.aktivitet.periode.all {
-                (it.gradertSykmelding == null || it.gradertSykmelding.sykmeldingsgrad == 100) &&
-                        it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null &&
-                        it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null
-            }
-        } else {
-            false
-        }
+            healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true
+                    && healthInformation.aktivitet.periode
+                    .mapNotNull { it.aktivitetIkkeMulig }
+                    .any { it.arbeidsplassen.arsakskode == null && it.medisinskeArsaker.arsakskode == null }
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
