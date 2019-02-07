@@ -47,7 +47,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
     }
 
     suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): OppfolgingstilfelleDTO =
-            client.post("$endpointUrl/syfosoknad/oppfolgingstilfelle/beregn/$aktorId") {
+            client.post("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
                 accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 val oidcToken = stsClient.oidcToken()
