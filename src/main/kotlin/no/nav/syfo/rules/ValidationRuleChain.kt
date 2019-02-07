@@ -54,15 +54,12 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(1540, Status.INVALID, { (healthInformation, _) ->
-        when (healthInformation.medisinskVurdering?.hovedDiagnose) {
-            null -> false
-            else -> !healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.let { cv ->
-                    if (cv.isICPC2()) {
-                        ICPC2.values().any { it.codeValue == cv.v }
-                    } else {
-                        ICD10.values().any { it.codeValue == cv.v }
-                    }
-                }
+        !healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.let { cv ->
+            if (cv.isICPC2()) {
+                ICPC2.values().any { it.codeValue == cv.v }
+            } else {
+                ICD10.values().any { it.codeValue == cv.v }
+            }
         }
     }),
 
@@ -111,7 +108,6 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7.17, 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(1709, Status.INVALID, { (healthInformation, _) ->
-        if (!healthInformation.aktivitet?.periode.isNullOrEmpty()) {
         val arsakBeskrivelseAktivitetIkkeMulig = !healthInformation.aktivitet.periode.any {
             it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null ||
                     it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null
@@ -131,9 +127,6 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
             timeGroup17Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe64(healthInformation.utdypendeOpplysninger.spmGruppe)
             timeGroup39Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe65(healthInformation.utdypendeOpplysninger.spmGruppe) || !validateDynagruppe66(healthInformation.utdypendeOpplysninger.spmGruppe)
             else -> false
-        }
-        } else {
-            false
         }
     })
 }
