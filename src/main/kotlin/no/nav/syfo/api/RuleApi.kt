@@ -38,6 +38,7 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
+import no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage
 import java.time.LocalDateTime
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 import java.util.GregorianCalendar
@@ -86,8 +87,13 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 
         // TODO no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage: ArgumentException: Personnummer ikke funnet
         // add rule 1401 when this happens
-        val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege)
-        val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor.await())
+        val doctor =
+                try {
+                    fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
+                } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
+                    no.nhn.schemas.reg.hprv2.Person()
+                }
+        val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
         val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())

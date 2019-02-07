@@ -50,5 +50,86 @@ object HPRRuleChainSpek : Spek({
 
             hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_VALDIG_IN_HPR } shouldEqual false
         }
+
+        it("Should check rule BEHANDLER_NOT_IN_HPR, should trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
+            val person = no.nhn.schemas.reg.hprv2.Person()
+
+            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
+
+            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_IN_HPR } shouldEqual true
+        }
+
+        it("Should check rule BEHANDLER_NOT_IN_HPR, should NOT trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                nin = "1234324"
+            }
+
+            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
+
+            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_IN_HPR } shouldEqual false
+        }
+
+        it("Should check rule BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR, should trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            isAktiv = true
+                            oid = 7704
+                            verdi = "5"
+                        }
+                    })
+                }
+            }
+
+            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
+
+            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR } shouldEqual true
+        }
+
+        it("Should check rule BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR, should trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "PL"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
+
+            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR } shouldEqual true
+        }
+
+        it("Should check rule BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR, should NOT trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "LE"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
+
+            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR } shouldEqual false
+        }
     }
 })

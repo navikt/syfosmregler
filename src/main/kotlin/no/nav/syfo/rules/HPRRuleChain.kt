@@ -7,14 +7,14 @@ import no.nav.syfo.model.Status
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<HPRPerson>) -> Boolean) : Rule<RuleData<HPRPerson>> {
-    // TODO: 1401
-    // 1401: Behandler ikke registrert i HPR
-    // Kommentar fra Camilla: Denne vil endres. I ny løsning skal vi slå opp mot HPR. Dersom behandler ikke ligger i HPR vil meldingen avvises.
-    // Dersom det kommer soapfault, som har følgende faultstring: ArgumentException: Personnummer ikke funnet
+    @Description(" Behandler ikke registrert i HPR")
+    BEHANDLER_NOT_IN_HPR(1401, Status.INVALID, { (_, doctor) ->
+        doctor.nin.isNullOrEmpty()
+    }),
 
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
     BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.INVALID, { (_, doctor) ->
-        if (!doctor.godkjenninger.godkjenning.isNullOrEmpty()) {
+        if (!doctor.godkjenninger?.godkjenning.isNullOrEmpty()) {
             !doctor.godkjenninger.godkjenning.any {
                 it.autorisasjon.isAktiv
             }
@@ -24,9 +24,13 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     }),
 
     @Description("Behandler har ikkje gylding autorisasjon i HPR")
-    BEHANDLER_OPP_IN_HPR(1403, Status.INVALID, { (_, doctor) ->
-        !doctor.godkjenninger.godkjenning.any {
-            it.autorisasjon.isAktiv && it.autorisasjon.oid == 7704 && ("1,17,4,3,2,14").contains(it.autorisasjon.verdi)
+    BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(1403, Status.INVALID, { (_, doctor) ->
+        if (!doctor.godkjenninger?.godkjenning.isNullOrEmpty()) {
+            !doctor.godkjenninger.godkjenning.any {
+                it.autorisasjon.isAktiv && it.autorisasjon.oid == 7704 && ("1,17,4,3,2,14").contains(it.autorisasjon.verdi)
+            }
+        } else {
+            false
         }
     }),
 
