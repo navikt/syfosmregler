@@ -10,6 +10,7 @@ interface Rule<in T> {
     val ruleId: Int?
     val status: Status
     val predicate: (T) -> Boolean
+    operator fun invoke(input: T) = predicate(input)
 }
 
 inline fun <reified T, reified R : Rule<RuleData<T>>> List<R>.executeFlow(healthInformation: HelseOpplysningerArbeidsuforhet, value: T): List<Rule<Any>> =

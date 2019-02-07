@@ -18,29 +18,17 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // TODO: Use this ruleId for when the TPS SOAP call returns that the person is missing
     @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
     INVALID_FNR_SIZE(1002, Status.INVALID, { (healthInformation, _) ->
-        if (healthInformation.pasient?.fodselsnummer?.id != null) {
-            !validatePersonAndDNumber11Digits(healthInformation.pasient.fodselsnummer.id)
-        } else {
-            false
-        }
+        !validatePersonAndDNumber11Digits(healthInformation.pasient.fodselsnummer.id)
     }),
 
     @Description("Fødselsnummer/D-nummer kan passerer ikke modulus 11")
     INVALID_FNR(1006, Status.INVALID, { (healthInformation, _) ->
-        if (healthInformation.pasient?.fodselsnummer?.id != null) {
         !validatePersonAndDNumber(healthInformation.pasient.fodselsnummer.id)
-        } else {
-            false
-        }
     }),
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
     YOUNGER_THAN_13(1101, Status.INVALID, { (healthInformation, _) ->
-        if (!healthInformation.aktivitet?.periode.isNullOrEmpty() && healthInformation.pasient?.fodselsnummer?.id != null) {
-            healthInformation.aktivitet.periode.sortedTOMDate().last() < extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(13)
-        } else {
-            false
-        }
+        healthInformation.aktivitet.periode.sortedTOMDate().last() < extractBornDate(healthInformation.pasient.fodselsnummer.id).plusYears(13)
     }),
 
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
@@ -111,7 +99,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
                 (it.gradertSykmelding == null || it.gradertSykmelding.sykmeldingsgrad == 100) &&
                         it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null &&
                         it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null
-            } == true
+            }
         } else {
             false
         }
@@ -120,41 +108,24 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
     // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
-        if (!healthInformation.aktivitet?.periode.isNullOrEmpty()) {
-            val arsakBeskrivelseAktivitetIkkeMulig = healthInformation.aktivitet.periode.any {
-                !it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode.isNullOrEmpty() ||
-                        !it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && !it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode.isNullOrEmpty()
-            }
-            val timeGroup8Week = healthInformation.aktivitet.periode
-                    .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
-            val timeGroup17Week = healthInformation.aktivitet.periode
-                    .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 119 }
-            val timeGroup39Week = healthInformation.aktivitet.periode
-                    .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
+        healthInformation.regelSettVersjon in arrayOf(null, "", "1") &&
+                (healthInformation.utdypendeOpplysninger == null || !validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe))
+    }),
 
-            val rulesettversion = healthInformation.regelSettVersjon ?: ""
-            val utdypendeOpplysninger = healthInformation.utdypendeOpplysninger != null
-                    if (timeGroup8Week || timeGroup17Week || timeGroup39Week && kotlin.collections.listOf("", "1").contains(rulesettversion)) {
-                        if (utdypendeOpplysninger && arsakBeskrivelseAktivitetIkkeMulig) {
-                            !validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe)
-                        } else {
-                            true
-                        }
-                    } else {
-                        false
-                    }
-        } else {
-            false
-        }
+    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
+    // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
+    MISSING_REQUIRED_MEDICAL_REASON(1707, Status.INVALID, { (healthInformation, _) ->
+        healthInformation.regelSettVersjon in arrayOf(null, "", "1") && (healthInformation.aktivitet?.periode ?: listOf())
+                .filter { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
+                .none {
+                    it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode.isNullOrEmpty() ||
+                            it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode.isNullOrEmpty()
+                }
     }),
 
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
     INVALID_RULESET_VERSION(1708, Status.INVALID, { (healthInformation, _) ->
-        val rulesettversion = healthInformation.regelSettVersjon ?: ""
-        val validRulesettversions = listOf("", "1", "2")
-        !validRulesettversions.contains(rulesettversion)
-
-        // TODO: Denne trenger også en diskusjon med fag
+        healthInformation.regelSettVersjon !in arrayOf(null, "", "1", "2")
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7.17, 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
