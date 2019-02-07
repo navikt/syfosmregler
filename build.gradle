@@ -19,6 +19,7 @@ buildscript {
     ext.sykmelding_version = "1.1-SNAPSHOT"
     ext.nav_person_v3_version = '3.2.0'
     ext.jfairy_version = '0.6.2'
+    ext.sykepengesoknad_version = "1"
 }
 
 plugins {
@@ -116,6 +117,7 @@ dependencies {
 
     implementation "no.nav.helse.xml:sm2013:$sykmelding_version"
     implementation "no.nav.tjenester:nav-person-v3-tjenestespesifikasjon:$nav_person_v3_version"
+    implementation "no.nav.syfo.kafka:sykepengesoknad:$sykepengesoknad_version"
 
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:$cxf_version"
     implementation "org.apache.cxf:cxf-rt-features-logging:$cxf_version"
