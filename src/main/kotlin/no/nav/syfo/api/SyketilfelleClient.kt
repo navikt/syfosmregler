@@ -18,8 +18,8 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.kafka.sykepengesoknad.dto.SykepengesoknadDTO
 import no.nav.syfo.model.Syketilfelle
+import java.time.LocalDate
 
 @KtorExperimentalAPI
 class SyketilfelleClient(private val endpointUrl: String, private val stsClient: StsOidcClient) {
@@ -46,7 +46,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): SykepengesoknadDTO =
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): OppfolgingstilfelleDTO =
             client.post("$endpointUrl/syfosoknad/oppfolgingstilfelle/beregn/$aktorId") {
                 accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
@@ -57,3 +57,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
                 body = syketilfelleList
             }
 }
+
+data class OppfolgingstilfelleDTO(val arbeidsgiverPeriode: PeriodeDTO?)
+
+data class PeriodeDTO(val fom: LocalDate, val tom: LocalDate)

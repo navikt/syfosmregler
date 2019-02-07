@@ -12,9 +12,9 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.model.OidcToken
 
+@KtorExperimentalAPI
 class StsOidcClient(private val endpointUrl: String, username: String, password: String) {
     private var tokenExpires: Long = 0
-    @UseExperimental(KtorExperimentalAPI::class)
     private val oidcClient = HttpClient(CIO.config {
         maxConnectionsCount = 1000 // Maximum number of socket connections.
         endpoint.apply {

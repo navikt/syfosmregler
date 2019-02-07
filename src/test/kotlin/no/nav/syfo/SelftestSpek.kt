@@ -5,7 +5,6 @@ import io.ktor.application.call
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -16,10 +15,11 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.api.LegeSuspensjonClient
+import no.nav.syfo.api.OppfolgingstilfelleDTO
+import no.nav.syfo.api.PeriodeDTO
 import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
-import no.nav.syfo.kafka.sykepengesoknad.dto.SykepengesoknadDTO
 import no.nav.syfo.model.OidcToken
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
@@ -31,6 +31,7 @@ import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.net.ServerSocket
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 @KtorExperimentalAPI
@@ -54,7 +55,7 @@ object SelftestSpek : Spek({
             }
 
             post("syfosoknad/oppfolgingstilfelle/beregn/") {
-                call.respondJson(SykepengesoknadDTO.builder())
+                call.respondJson(OppfolgingstilfelleDTO(PeriodeDTO(LocalDate.now(), LocalDate.now())))
             }
         }
     }.start()
