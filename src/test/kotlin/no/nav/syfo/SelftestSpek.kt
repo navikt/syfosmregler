@@ -15,8 +15,9 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.api.LegeSuspensjonClient
-import no.nav.syfo.api.OppfolgingstilfelleDTO
-import no.nav.syfo.api.PeriodeDTO
+import no.nav.syfo.api.Oppfolgingstilfelle
+import no.nav.syfo.api.Periode
+
 import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
@@ -55,7 +56,7 @@ object SelftestSpek : Spek({
             }
 
             post("syfosoknad/oppfolgingstilfelle/beregn/") {
-                call.respondJson(OppfolgingstilfelleDTO(PeriodeDTO(LocalDate.now(), LocalDate.now())))
+                call.respondJson(Oppfolgingstilfelle(1, false, Periode(LocalDate.now(), LocalDate.now())))
             }
         }
     }.start()
