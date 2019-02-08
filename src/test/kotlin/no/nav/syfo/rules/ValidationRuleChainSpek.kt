@@ -188,7 +188,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule PATIENT_OVER_70_YEARS,should NOT trigger rule") {
             val person = fairy.person(
-                    PersonProperties.ageBetween(13, 70))
+                    PersonProperties.ageBetween(13, 69))
 
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 pasient = HelseOpplysningerArbeidsuforhet.Pasient().apply {
