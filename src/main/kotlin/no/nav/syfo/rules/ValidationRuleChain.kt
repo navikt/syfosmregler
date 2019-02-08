@@ -66,7 +66,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // Revurder regel når IT ikkje lenger skal brukes
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
-        !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.all { cv ->
+        healthInformation.medisinskVurdering.biDiagnoser != null && !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.all { cv ->
             if (cv.isICPC2()) {
                 ICPC2.values().any { it.codeValue == cv.v }
             } else {
