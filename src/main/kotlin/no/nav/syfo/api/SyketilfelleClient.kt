@@ -46,7 +46,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): OppfolgingstilfelleDTO =
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Oppfolgingstilfelle =
             client.post("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
                 accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
@@ -58,6 +58,6 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
             }
 }
 
-data class OppfolgingstilfelleDTO(val arbeidsgiverPeriode: PeriodeDTO?)
+data class Oppfolgingstilfelle(val antallBrukteDager: Int, val oppbruktArbeidsgvierperiode: Boolean, val arbeidsgiverPeriode: Periode?)
 
-data class PeriodeDTO(val fom: LocalDate, val tom: LocalDate)
+data class Periode(val fom: LocalDate, val tom: LocalDate)
