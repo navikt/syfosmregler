@@ -66,19 +66,19 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // Revurder regel når IT ikkje lenger skal brukes
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
-           !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.all { cv ->
-               if (cv.isICPC2()) {
-                   ICPC2.values().any { it.codeValue == cv.v }
-               } else {
-                   ICD10.values().any { it.codeValue == cv.v }
-               }
-           }
+        !healthInformation.medisinskVurdering.biDiagnoser.diagnosekode.all { cv ->
+            if (cv.isICPC2()) {
+                ICPC2.values().any { it.codeValue == cv.v }
+            } else {
+                ICD10.values().any { it.codeValue == cv.v }
+            }
+        }
     }),
 
     @Description("Hvis medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt og sykmeldingen ikke er \"forenklet\"")
     NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(1706, Status.INVALID, { (healthInformation, _) ->
-            healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true
-                    && healthInformation.aktivitet.periode
+            healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true &&
+                    healthInformation.aktivitet.periode
                     .mapNotNull { it.aktivitetIkkeMulig }
                     .any { it.arbeidsplassen.arsakskode == null && it.medisinskeArsaker.arsakskode == null }
     }),

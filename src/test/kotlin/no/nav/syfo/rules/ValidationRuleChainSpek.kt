@@ -11,7 +11,6 @@ import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.helse.sm2013.Ident
 import no.nav.syfo.ICPC2
 import no.nav.syfo.Kodeverk
-import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.SpmId
 import no.nav.syfo.UtdypendeOpplysninger
@@ -39,7 +38,6 @@ object ValidationRuleChainSpek : Spek({
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now()
     ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate))
-
 
     describe("Testing validation rules and checking the rule outcomes") {
 
