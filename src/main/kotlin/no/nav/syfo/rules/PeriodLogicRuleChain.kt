@@ -62,7 +62,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Hvis fom dato i varighet er lik start dato på sykdomtilfelle og første konsultasjon er mer enn 8 dager fra start dato men ikke over et år")
     BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED(1204, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.aktivitet.periode.any {
+        healthInformation.kontaktMedPasient.kontaktDato != null && healthInformation.aktivitet.periode.any {
             it.periodeFOMDato == healthInformation.syketilfelleStartDato &&
                     healthInformation.kontaktMedPasient.kontaktDato > it.periodeFOMDato.plusDays(7) &&
                     healthInformation.kontaktMedPasient.kontaktDato <= it.periodeFOMDato.plusYears(1).minusDays(1)
@@ -76,7 +76,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
     BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isBefore(healthInformation.kontaktMedPasient.behandletDato) &&
+        healthInformation.kontaktMedPasient.behandletDato != null && ruleMetadata.signatureDate.minusYears(3).isBefore(healthInformation.kontaktMedPasient.behandletDato) &&
                 !healthInformation.kontaktMedPasient.begrunnIkkeKontakt.isNullOrEmpty()
     }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
@@ -91,7 +91,7 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
 
     @Description("Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen")
     RECEIVED_DATE_BEFORE_PROCESSED_DATE(1123, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        healthInformation.kontaktMedPasient.behandletDato > ruleMetadata.receivedDate.plusHours(2)
+        healthInformation.kontaktMedPasient.behandletDato != null && healthInformation.kontaktMedPasient.behandletDato > ruleMetadata.receivedDate.plusHours(2)
     }),
 
     // TODO: Is this even supposed to be here?
