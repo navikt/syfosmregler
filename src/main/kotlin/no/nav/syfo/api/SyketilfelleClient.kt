@@ -58,6 +58,6 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
             }
 }
 
-data class Oppfolgingstilfelle(val antallBrukteDager: Int, val oppbruktArbeidsgvierperiode: Boolean, val arbeidsgiverperiode: Periode?)
+data class Oppfolgingstilfelle(val antallBrukteDager: Int, val oppbruktArbeidsgvierperiode: Boolean, val arbeidsgiverPeriode: Periode?)
 
 data class Periode(val fom: LocalDate, val tom: LocalDate)
