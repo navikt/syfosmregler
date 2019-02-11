@@ -12,8 +12,8 @@ import no.nav.helse.sm2013.Ident
 import no.nav.syfo.ICPC2
 import no.nav.syfo.Kodeverk
 import no.nav.syfo.RuleData
-import no.nav.syfo.SpmId
-import no.nav.syfo.UtdypendeOpplysninger
+import no.nav.syfo.QuestionId
+import no.nav.syfo.QuestionGroup
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -469,51 +469,51 @@ object ValidationRuleChainSpek : Spek({
                 }
                 utdypendeOpplysninger = HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger().apply {
                     spmGruppe.add(HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe().apply {
-                        spmGruppeId = UtdypendeOpplysninger.DYNAGRUPPE6_2.spmGruppeId
-                        spmGruppeTekst = UtdypendeOpplysninger.DYNAGRUPPE6_2.spmGruppeTekst
+                        spmGruppeId = QuestionGroup.GROUP_6_2.spmGruppeId
+                        spmGruppeTekst = QuestionGroup.GROUP_6_2.spmGruppeTekst
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_2_1.spmId
-                            spmTekst = SpmId.SpmId6_2_1.spmTekst
+                            spmId = QuestionId.ID_6_2_1.spmId
+                            spmTekst = QuestionId.ID_6_2_1.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_2_1.restriksjon.text
-                                    v = SpmId.SpmId6_2_1.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_2_1.restriksjon.text
+                                    v = QuestionId.ID_6_2_1.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
                         })
 
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_2_2.spmId
-                            spmTekst = SpmId.SpmId6_2_2.spmTekst
+                            spmId = QuestionId.ID_6_2_2.spmId
+                            spmTekst = QuestionId.ID_6_2_2.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_2_2.restriksjon.text
-                                    v = SpmId.SpmId6_2_2.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_2_2.restriksjon.text
+                                    v = QuestionId.ID_6_2_2.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
                         })
 
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_2_3.spmId
-                            spmTekst = SpmId.SpmId6_2_3.spmTekst
+                            spmId = QuestionId.ID_6_2_3.spmId
+                            spmTekst = QuestionId.ID_6_2_3.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_2_3.restriksjon.text
-                                    v = SpmId.SpmId6_2_3.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_2_3.restriksjon.text
+                                    v = QuestionId.ID_6_2_3.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
                         })
 
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_2_4.spmId
-                            spmTekst = SpmId.SpmId6_2_4.spmTekst
+                            spmId = QuestionId.ID_6_2_4.spmId
+                            spmTekst = QuestionId.ID_6_2_4.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_2_4.restriksjon.text
-                                    v = SpmId.SpmId6_2_4.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_2_4.restriksjon.text
+                                    v = QuestionId.ID_6_2_4.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
@@ -561,27 +561,27 @@ object ValidationRuleChainSpek : Spek({
                 }
                 utdypendeOpplysninger = HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger().apply {
                     spmGruppe.add(HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe().apply {
-                        spmGruppeId = UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeId
-                        spmGruppeTekst = UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeTekst
+                        spmGruppeId = QuestionGroup.GROUP_6_3.spmGruppeId
+                        spmGruppeTekst = QuestionGroup.GROUP_6_3.spmGruppeTekst
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_3_1.spmId
-                            spmTekst = SpmId.SpmId6_3_1.spmTekst
+                            spmId = QuestionId.ID_6_3_1.spmId
+                            spmTekst = QuestionId.ID_6_3_1.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_3_1.restriksjon.text
-                                    v = SpmId.SpmId6_3_1.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_3_1.restriksjon.text
+                                    v = QuestionId.ID_6_3_1.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
                         })
 
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_3_2.spmId
-                            spmTekst = SpmId.SpmId6_3_2.spmTekst
+                            spmId = QuestionId.ID_6_3_2.spmId
+                            spmTekst = QuestionId.ID_6_3_2.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_3_2.restriksjon.text
-                                    v = SpmId.SpmId6_3_2.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_3_2.restriksjon.text
+                                    v = QuestionId.ID_6_3_2.restriksjon.codeValue
                                 })
                             }
                         })
@@ -614,27 +614,27 @@ object ValidationRuleChainSpek : Spek({
 
                 utdypendeOpplysninger = HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger().apply {
                     spmGruppe.add(HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe().apply {
-                        spmGruppeId = UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeId
-                        spmGruppeTekst = UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeTekst
+                        spmGruppeId = QuestionGroup.GROUP_6_3.spmGruppeId
+                        spmGruppeTekst = QuestionGroup.GROUP_6_3.spmGruppeTekst
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_3_1.spmId
-                            spmTekst = SpmId.SpmId6_3_1.spmTekst
+                            spmId = QuestionId.ID_6_3_1.spmId
+                            spmTekst = QuestionId.ID_6_3_1.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_3_1.restriksjon.text
-                                    v = SpmId.SpmId6_3_1.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_3_1.restriksjon.text
+                                    v = QuestionId.ID_6_3_1.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
                         })
 
                         spmSvar.add(DynaSvarType().apply {
-                            spmId = SpmId.SpmId6_3_2.spmId
-                            spmTekst = SpmId.SpmId6_3_2.spmTekst
+                            spmId = QuestionId.ID_6_3_2.spmId
+                            spmTekst = QuestionId.ID_6_3_2.spmTekst
                             restriksjon = DynaSvarType.Restriksjon().apply {
                                 restriksjonskode.add(CS().apply {
-                                    dn = SpmId.SpmId6_3_2.restriksjon.text
-                                    v = SpmId.SpmId6_3_2.restriksjon.codeValue
+                                    dn = QuestionId.ID_6_3_2.restriksjon.text
+                                    v = QuestionId.ID_6_3_2.restriksjon.codeValue
                                 })
                             }
                             svarTekst = "Pasienten har vært meget syk, og er ofte syk"
