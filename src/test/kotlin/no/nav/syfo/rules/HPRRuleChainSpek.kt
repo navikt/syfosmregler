@@ -1,10 +1,11 @@
 package no.nav.syfo.rules
 
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
-import no.nav.syfo.executeFlow
+import no.nav.syfo.RuleData
 import no.nhn.schemas.reg.common.no.Kode
 import no.nhn.schemas.reg.hprv2.ArrayOfGodkjenning
 import no.nhn.schemas.reg.hprv2.Godkjenning
+import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -12,6 +13,8 @@ import org.spekframework.spek2.style.specification.describe
 object HPRRuleChainSpek : Spek({
 
     describe("Testing validation rules and checking the rule outcomes") {
+        fun ruleData(healthInformation: HelseOpplysningerArbeidsuforhet, person: HPRPerson) =
+                RuleData(healthInformation, person)
 
         it("Should check rule BEHANDLER_NOT_VALDIG_IN_HPR, should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet()
@@ -27,9 +30,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_VALDIG_IN_HPR } shouldEqual true
+            HPRRuleChain.BEHANDLER_NOT_VALDIG_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_NOT_VALDIG_IN_HPR, should NOT trigger rule") {
@@ -46,18 +47,14 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_VALDIG_IN_HPR } shouldEqual false
+            HPRRuleChain.BEHANDLER_NOT_VALDIG_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_NOT_IN_HPR, should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet()
-            val person = no.nhn.schemas.reg.hprv2.Person()
+            val person = HPRPerson()
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_IN_HPR } shouldEqual true
+            HPRRuleChain.BEHANDLER_NOT_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_NOT_IN_HPR, should NOT trigger rule") {
@@ -66,9 +63,7 @@ object HPRRuleChainSpek : Spek({
                 nin = "1234324"
             }
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_IN_HPR } shouldEqual false
+            HPRRuleChain.BEHANDLER_NOT_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR, should trigger rule") {
@@ -85,9 +80,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR } shouldEqual true
+            HPRRuleChain.BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR, should trigger rule") {
@@ -106,9 +99,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR } shouldEqual true
+            HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR, should NOT trigger rule") {
@@ -127,9 +118,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            val hprRuleChainResults = HPRRuleChain.values().toList().executeFlow(healthInformation, person)
-
-            hprRuleChainResults.any { it == HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR } shouldEqual false
+            HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
         }
     }
 })
