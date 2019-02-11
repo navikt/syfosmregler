@@ -80,7 +80,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
             healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } == true &&
                     healthInformation.aktivitet.periode
                     .mapNotNull { it.aktivitetIkkeMulig }
-                    .any { it.arbeidsplassen.arsakskode == null && it.medisinskeArsaker.arsakskode == null }
+                    .any { it.arbeidsplassen?.arsakskode == null && it.medisinskeArsaker?.arsakskode == null }
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")

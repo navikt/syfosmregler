@@ -368,6 +368,33 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual false
         }
 
+        it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no medical related resons") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
+                aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
+                    periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
+                        aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
+                            medisinskeArsaker = ArsakType().apply {
+                                arsakskode.add(CS().apply {
+                                    dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
+                                    v = "1"
+                                })
+                                beskriv = "Tungt arbeid"
+                            }
+                        }
+                        periodeFOMDato = LocalDate.of(2018, 1, 7)
+                        periodeTOMDato = LocalDate.of(2018, 1, 9)
+                    })
+                    medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
+                        hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
+                            diagnosekode = ICPC2.Z09.toCV()
+                        }
+                    }
+                }
+            }
+
+            ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual false
+        }
+
         it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no workplace related reasons") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
