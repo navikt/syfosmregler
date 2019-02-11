@@ -21,7 +21,7 @@ data class RuleMetadata(
 enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
     @Description("Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.")
-    SIGNATURE_DATE_AFTER_RECEIVED_DATE(1110, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    SIGNATURE_DATE_AFTER_RECEIVED_DATE(1123, Status.INVALID, { (healthInformation, ruleMetadata) ->
         if (healthInformation.kontaktMedPasient?.behandletDato != null) {
             healthInformation.kontaktMedPasient.behandletDato > ruleMetadata.signatureDate
         } else {
