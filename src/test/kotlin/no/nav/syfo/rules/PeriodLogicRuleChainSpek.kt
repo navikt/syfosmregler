@@ -1,9 +1,7 @@
 package no.nav.syfo.rules
 
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
-import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
-import no.nav.syfo.executeFlow
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -11,6 +9,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object PeriodLogicRuleChainSpek : Spek({
+    fun ruleData(
+        healthInformation: HelseOpplysningerArbeidsuforhet,
+        receivedDate: LocalDateTime = LocalDateTime.now(),
+        signatureDate: LocalDateTime = LocalDateTime.now()
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate))
 
     describe("Testing validation rules and checking the rule outcomes") {
 
@@ -21,14 +24,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now().minusDays(2))
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.SIGNATURE_DATE_AFTER_RECEIVED_DATE } shouldEqual true
+            PeriodLogicRuleChain.SIGNATURE_DATE_AFTER_RECEIVED_DATE(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusDays(2))) shouldEqual true
         }
 
         it("Should check rule SIGNATURE_DATE_AFTER_RECEIVED_DATE, should NOT trigger rule") {
@@ -38,27 +34,13 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.SIGNATURE_DATE_AFTER_RECEIVED_DATE } shouldEqual false
+            PeriodLogicRuleChain.SIGNATURE_DATE_AFTER_RECEIVED_DATE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule NO_PERIOD_PROVIDED, should trigger rule") {
-            val healthInformation = HelseOpplysningerArbeidsuforhet().apply {}
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.NO_PERIOD_PROVIDED } shouldEqual true
+            PeriodLogicRuleChain.NO_PERIOD_PROVIDED(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule NO_PERIOD_PROVIDED, should NOT trigger rule") {
@@ -71,54 +53,33 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.NO_PERIOD_PROVIDED } shouldEqual false
+            PeriodLogicRuleChain.NO_PERIOD_PROVIDED(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule TO_DATE_BEFORE_FROM_DATE, should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
-            aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
-                periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
-                    periodeFOMDato = LocalDate.of(2018, 1, 9)
-                    periodeTOMDato = LocalDate.of(2018, 1, 7)
-                })
+                aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
+                    periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
+                        periodeFOMDato = LocalDate.of(2018, 1, 9)
+                        periodeTOMDato = LocalDate.of(2018, 1, 7)
+                    })
+                }
             }
-        }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.TO_DATE_BEFORE_FROM_DATE } shouldEqual true
+            PeriodLogicRuleChain.TO_DATE_BEFORE_FROM_DATE(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule TO_DATE_BEFORE_FROM_DATE, should NOT trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
-                periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
-                    periodeFOMDato = LocalDate.of(2018, 1, 7)
-                    periodeTOMDato = LocalDate.of(2018, 1, 9)
-                })
+                    periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
+                        periodeFOMDato = LocalDate.of(2018, 1, 7)
+                        periodeTOMDato = LocalDate.of(2018, 1, 9)
+                    })
+                }
             }
-            }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.TO_DATE_BEFORE_FROM_DATE } shouldEqual false
+            PeriodLogicRuleChain.TO_DATE_BEFORE_FROM_DATE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule OVERLAPPING_PERIODS, should trigger rule") {
@@ -136,14 +97,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.OVERLAPPING_PERIODS } shouldEqual true
+            PeriodLogicRuleChain.OVERLAPPING_PERIODS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule OVERLAPPING_PERIODS, should NOT trigger rule") {
@@ -161,14 +115,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.OVERLAPPING_PERIODS } shouldEqual false
+            PeriodLogicRuleChain.OVERLAPPING_PERIODS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule GAP_BETWEEN_PERIODS, should trigger rule") {
@@ -196,14 +143,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.GAP_BETWEEN_PERIODS } shouldEqual true
+            PeriodLogicRuleChain.GAP_BETWEEN_PERIODS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule GAP_BETWEEN_PERIODS, should NOT trigger rule") {
@@ -221,14 +161,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.GAP_BETWEEN_PERIODS } shouldEqual false
+            PeriodLogicRuleChain.GAP_BETWEEN_PERIODS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED, should trigger rule") {
@@ -245,14 +178,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 syketilfelleStartDato = LocalDate.of(2018, 1, 1)
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED } shouldEqual true
+            PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED, should NOT trigger rule") {
@@ -269,14 +195,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 syketilfelleStartDato = LocalDate.of(2018, 1, 1)
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED } shouldEqual false
+            PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule BACKDATED_MORE_THEN_3_YEARS, should trigger rule") {
@@ -286,14 +205,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATED_MORE_THEN_3_YEARS } shouldEqual true
+            PeriodLogicRuleChain.BACKDATED_MORE_THEN_3_YEARS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule BACKDATED_MORE_THEN_3_YEARS, should NOT trigger rule") {
@@ -303,14 +215,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATED_MORE_THEN_3_YEARS } shouldEqual false
+            PeriodLogicRuleChain.BACKDATED_MORE_THEN_3_YEARS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule BACKDATED_WITH_REASON, should trigger rule") {
@@ -321,14 +226,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATED_WITH_REASON } shouldEqual true
+            PeriodLogicRuleChain.BACKDATED_WITH_REASON(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule BACKDATED_WITH_REASON, should NOT trigger rule") {
@@ -338,14 +236,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATED_WITH_REASON } shouldEqual false
+            PeriodLogicRuleChain.BACKDATED_WITH_REASON(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule PRE_DATED, should trigger rule") {
@@ -358,14 +249,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PRE_DATED } shouldEqual true
+            PeriodLogicRuleChain.PRE_DATED(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PRE_DATED, should NOT trigger rule") {
@@ -378,14 +262,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PRE_DATED } shouldEqual false
+            PeriodLogicRuleChain.PRE_DATED(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule END_DATE, should trigger rule") {
@@ -401,14 +278,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.END_DATE } shouldEqual true
+            PeriodLogicRuleChain.END_DATE(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule END_DATE, should NOT trigger rule") {
@@ -424,14 +294,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.END_DATE } shouldEqual false
+            PeriodLogicRuleChain.END_DATE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule RECEIVED_DATE_BEFORE_PROCESSED_DATE, should trigger rule") {
@@ -441,14 +304,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.RECEIVED_DATE_BEFORE_PROCESSED_DATE } shouldEqual true
+            PeriodLogicRuleChain.RECEIVED_DATE_BEFORE_PROCESSED_DATE(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule RECEIVED_DATE_BEFORE_PROCESSED_DATE, should NOT trigger rule") {
@@ -458,14 +314,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.RECEIVED_DATE_BEFORE_PROCESSED_DATE } shouldEqual false
+            PeriodLogicRuleChain.RECEIVED_DATE_BEFORE_PROCESSED_DATE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule PENDING_SICK_LEAVE_COMBINED, should trigger rule") {
@@ -486,14 +335,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PENDING_SICK_LEAVE_COMBINED } shouldEqual true
+            PeriodLogicRuleChain.PENDING_SICK_LEAVE_COMBINED(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PENDING_SICK_LEAVE_COMBINED, should NOT trigger rule") {
@@ -509,14 +351,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PENDING_SICK_LEAVE_COMBINED } shouldEqual false
+            PeriodLogicRuleChain.PENDING_SICK_LEAVE_COMBINED(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule MISSING_INSPILL_TIL_ARBEIDSGIVER, should trigger rule") {
@@ -531,14 +366,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.MISSING_INSPILL_TIL_ARBEIDSGIVER } shouldEqual true
+            PeriodLogicRuleChain.MISSING_INSPILL_TIL_ARBEIDSGIVER(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule MISSING_INSPILL_TIL_ARBEIDSGIVER, should NOT trigger rule") {
@@ -554,14 +382,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.MISSING_INSPILL_TIL_ARBEIDSGIVER } shouldEqual false
+            PeriodLogicRuleChain.MISSING_INSPILL_TIL_ARBEIDSGIVER(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID, should trigger rule") {
@@ -577,14 +398,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID } shouldEqual true
+            PeriodLogicRuleChain.PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID, should NOT trigger rule") {
@@ -600,14 +414,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID } shouldEqual false
+            PeriodLogicRuleChain.PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule TOO_MANY_TREATMENT_DAYS, should trigger rule") {
@@ -623,14 +430,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.TOO_MANY_TREATMENT_DAYS } shouldEqual true
+            PeriodLogicRuleChain.TOO_MANY_TREATMENT_DAYS(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule TOO_MANY_TREATMENT_DAYS, should NOT trigger rule") {
@@ -646,14 +446,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.TOO_MANY_TREATMENT_DAYS } shouldEqual false
+            PeriodLogicRuleChain.TOO_MANY_TREATMENT_DAYS(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW, should trigger rule") {
@@ -669,14 +462,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW } shouldEqual true
+            PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW, should NOT trigger rule") {
@@ -692,14 +478,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW } shouldEqual false
+            PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE, should trigger rule") {
@@ -715,14 +494,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE } shouldEqual true
+            PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE, should NOT trigger rule") {
@@ -738,14 +510,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now())
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE } shouldEqual false
+            PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule BACKDATING_SYKMELDING_EXTENSION, should trigger rule") {
@@ -758,14 +523,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now().minusMonths(1).minusDays(1))
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION } shouldEqual true
+            PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusMonths(1).minusDays(1))) shouldEqual true
         }
 
         it("Should check rule BACKDATING_SYKMELDING_EXTENSION, should NOT trigger rule") {
@@ -778,14 +536,7 @@ object PeriodLogicRuleChainSpek : Spek({
                 }
             }
 
-            val ruleMetadata = RuleMetadata(receivedDate = LocalDateTime.now(),
-                    signatureDate = LocalDateTime.now().minusMonths(1))
-
-            val periodLogicRuleChainResults = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                    PeriodLogicRuleChain.values().toList()
-            ).flatten().executeFlow(healthInformation, ruleMetadata)
-
-            periodLogicRuleChainResults.any { it == PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION } shouldEqual false
+            PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusMonths(1))) shouldEqual false
         }
     }
 })
