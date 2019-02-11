@@ -589,7 +589,7 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(ruleData(healthInformation)) shouldEqual true
+            ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2, should NOT trigger rule") {
@@ -643,7 +643,7 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(ruleData(healthInformation)) shouldEqual false
         }
     }
 })

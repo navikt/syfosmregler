@@ -87,7 +87,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
         healthInformation.regelSettVersjon in arrayOf(null, "", "1") &&
-                (healthInformation.utdypendeOpplysninger == null || !validateDynagruppe62(healthInformation.utdypendeOpplysninger.spmGruppe))
+                (healthInformation.utdypendeOpplysninger == null || !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(UtdypendeOpplysninger.DYNAGRUPPE6_2))
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
@@ -106,93 +106,30 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         healthInformation.regelSettVersjon !in arrayOf(null, "", "1", "2")
     }),
 
-    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7.17, 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-    MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2(1709, Status.INVALID, { (healthInformation, _) ->
-        val arsakBeskrivelseAktivitetIkkeMulig = !healthInformation.aktivitet.periode.any {
-            it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode != null ||
-                    it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode != null
-        }
+    // Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7.17, 39 uker etter innføring av regelsettversjon "2" så skal sykmeldingen avvises
+    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
+    MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(1709, Status.INVALID, { (healthInformation, _) ->
+        healthInformation.regelSettVersjon in arrayOf("2")
+                && healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 49 }
+                && !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(UtdypendeOpplysninger.DYNAGRUPPE6_3)
+    }),
 
-        val timeGroup7Week = healthInformation.aktivitet.periode
-                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 49 }
-        val timeGroup17Week = healthInformation.aktivitet.periode
-                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 119 }
-        val timeGroup39Week = healthInformation.aktivitet.periode
-                .any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
+    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
+    MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(1709, Status.INVALID, { (healthInformation, _) ->
+        healthInformation.regelSettVersjon in arrayOf("2")
+                && healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 119 }
+                && !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(UtdypendeOpplysninger.DYNAGRUPPE6_4)
+    }),
 
-        val rulesettversion2 = healthInformation.regelSettVersjon == "2"
-
-        when {
-            timeGroup7Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe63(healthInformation.utdypendeOpplysninger.spmGruppe)
-            timeGroup17Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe64(healthInformation.utdypendeOpplysninger.spmGruppe)
-            timeGroup39Week -> arsakBeskrivelseAktivitetIkkeMulig && rulesettversion2 && !validateDynagruppe65(healthInformation.utdypendeOpplysninger.spmGruppe) || !validateDynagruppe66(healthInformation.utdypendeOpplysninger.spmGruppe)
-            else -> false
-        }
-    })
+    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
+    MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_39(1709, Status.INVALID, { (healthInformation, _) ->
+        healthInformation.regelSettVersjon in arrayOf("2")
+                && healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 }
+                && !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(UtdypendeOpplysninger.DYNAGRUPPE6_5)
+    }),
 }
 
-fun validateDynagruppe62(spmgruppe: List<HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe>): Boolean {
-        val spmGruppe62 = spmgruppe.find {
-                    it.spmGruppeId == UtdypendeOpplysninger.DYNAGRUPPE6_2.spmGruppeId &&
-                    it.spmGruppeTekst == UtdypendeOpplysninger.DYNAGRUPPE6_2.spmGruppeTekst
-    }
+fun List<HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe>.containsAnswersFor(group: UtdypendeOpplysninger): Boolean =
+    firstOrNull { it.spmGruppeId == group.spmGruppeId }?.spmSvar?.map { it.spmId } == group.spmsvar.map { it.spmId }
 
-    return spmGruppe62?.spmSvar?.size == UtdypendeOpplysninger.DYNAGRUPPE6_2.spmsvar.size &&
-        UtdypendeOpplysninger.DYNAGRUPPE6_2.spmsvar.map { it.spmId } == spmGruppe62.spmSvar.map { it.spmId } &&
-        UtdypendeOpplysninger.DYNAGRUPPE6_2.spmsvar.map { it.restriksjon.codeValue } == spmGruppe62.spmSvar.map { it.restriksjon.restriksjonskode.first().v } &&
-        UtdypendeOpplysninger.DYNAGRUPPE6_2.spmsvar.map { it.spmTekst } == spmGruppe62.spmSvar.map { it.spmTekst } &&
-        !spmGruppe62.spmSvar.any { it.svarTekst.isNullOrEmpty() }
-}
-
-fun validateDynagruppe63(spmgruppe: List<HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe>): Boolean {
-    val spmGruppe63 = spmgruppe.find {
-        it.spmGruppeId == UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeId &&
-                it.spmGruppeTekst == UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeTekst
-    }
-
-    return spmGruppe63?.spmSvar?.size == UtdypendeOpplysninger.DYNAGRUPPE6_3.spmsvar.size &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_3.spmsvar.map { it.spmId } == spmGruppe63.spmSvar.map { it.spmId } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_3.spmsvar.map { it.restriksjon.codeValue } == spmGruppe63.spmSvar.map { it.restriksjon.restriksjonskode.first().v } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_3.spmsvar.map { it.spmTekst } == spmGruppe63.spmSvar.map { it.spmTekst } &&
-            !spmGruppe63.spmSvar.any { it.svarTekst.isNullOrEmpty() }
-}
-
-fun validateDynagruppe64(spmgruppe: List<HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe>): Boolean {
-    val spmGruppe64 = spmgruppe.find {
-        it.spmGruppeId == UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeId &&
-                it.spmGruppeTekst == UtdypendeOpplysninger.DYNAGRUPPE6_3.spmGruppeTekst
-    }
-
-    return spmGruppe64?.spmSvar?.size == UtdypendeOpplysninger.DYNAGRUPPE6_4.spmsvar.size &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_4.spmsvar.map { it.spmId } == spmGruppe64.spmSvar.map { it.spmId } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_4.spmsvar.map { it.restriksjon.codeValue } == spmGruppe64.spmSvar.map { it.restriksjon.restriksjonskode.first().v } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_4.spmsvar.map { it.spmTekst } == spmGruppe64.spmSvar.map { it.spmTekst } &&
-            !spmGruppe64.spmSvar.any { it.svarTekst.isNullOrEmpty() }
-}
-
-fun validateDynagruppe65(spmgruppe: List<HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe>): Boolean {
-    val spmGruppe65 = spmgruppe.find {
-        it.spmGruppeId == UtdypendeOpplysninger.DYNAGRUPPE6_5.spmGruppeId &&
-                it.spmGruppeTekst == UtdypendeOpplysninger.DYNAGRUPPE6_5.spmGruppeTekst
-    }
-
-    return spmGruppe65?.spmSvar?.size == UtdypendeOpplysninger.DYNAGRUPPE6_5.spmsvar.size &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_5.spmsvar.map { it.spmId } == spmGruppe65.spmSvar.map { it.spmId } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_5.spmsvar.map { it.restriksjon.codeValue } == spmGruppe65.spmSvar.map { it.restriksjon.restriksjonskode.first().v } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_5.spmsvar.map { it.spmTekst } == spmGruppe65.spmSvar.map { it.spmTekst } &&
-            !spmGruppe65.spmSvar.any { it.svarTekst.isNullOrEmpty() }
-}
-
-// TODO merker at denne ikkje er obligatorisk, slik som dei andre
-fun validateDynagruppe66(spmgruppe: List<HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe>): Boolean {
-    val spmGruppe66 = spmgruppe.find {
-        it.spmGruppeId == UtdypendeOpplysninger.DYNAGRUPPE6_6.spmGruppeId &&
-                it.spmGruppeTekst == UtdypendeOpplysninger.DYNAGRUPPE6_6.spmGruppeTekst
-    }
-
-    return spmGruppe66?.spmSvar?.size == UtdypendeOpplysninger.DYNAGRUPPE6_6.spmsvar.size &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_6.spmsvar.map { it.spmId } == spmGruppe66.spmSvar.map { it.spmId } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_6.spmsvar.map { it.restriksjon.codeValue } == spmGruppe66.spmSvar.map { it.restriksjon.restriksjonskode.first().v } &&
-            UtdypendeOpplysninger.DYNAGRUPPE6_6.spmsvar.map { it.spmTekst } == spmGruppe66.spmSvar.map { it.spmTekst } &&
-            !spmGruppe66.spmSvar.any { it.svarTekst.isNullOrEmpty() }
-}
+// TODO Figure out what to do about group 6.6
