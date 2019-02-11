@@ -52,7 +52,6 @@ fun main(args: Array<String>) {
 
     val personV3 = JaxWsProxyFactoryBean().apply {
         address = config.personV3EndpointURL
-        features.add(LoggingFeature())
         serviceClass = PersonV3::class.java
     }.create() as PersonV3
     configureSTSFor(personV3, credentials.serviceuserUsername,
@@ -70,7 +69,6 @@ fun main(args: Array<String>) {
         }
         inInterceptors.add(interceptor)
         inFaultInterceptors.add(interceptor)
-        features.add(LoggingFeature())
         features.add(WSAddressingFeature())
         serviceClass = IHPR2Service::class.java
     }.create() as IHPR2Service
