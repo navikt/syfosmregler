@@ -111,21 +111,21 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(1709, Status.INVALID, { (healthInformation, _) ->
         healthInformation.utdypendeOpplysninger != null && healthInformation.regelSettVersjon in arrayOf("2") &&
                 healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 49 } &&
-                !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(QuestionGroup.GROUP_6_3)
+                healthInformation.utdypendeOpplysninger?.spmGruppe?.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(1709, Status.INVALID, { (healthInformation, _) ->
         healthInformation.utdypendeOpplysninger != null && healthInformation.regelSettVersjon in arrayOf("2") &&
                 healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 119 } &&
-                !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(QuestionGroup.GROUP_6_4)
+                healthInformation.utdypendeOpplysninger?.spmGruppe?.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_39(1709, Status.INVALID, { (healthInformation, _) ->
         healthInformation.utdypendeOpplysninger != null && healthInformation.regelSettVersjon in arrayOf("2") &&
                 healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 273 } &&
-                !healthInformation.utdypendeOpplysninger.spmGruppe.containsAnswersFor(QuestionGroup.GROUP_6_5)
+                healthInformation.utdypendeOpplysninger?.spmGruppe?.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
     }),
 }
 

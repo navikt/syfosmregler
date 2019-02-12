@@ -672,6 +672,30 @@ object ValidationRuleChainSpek : Spek({
 
             ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(ruleData(healthInformation)) shouldEqual false
         }
+
+        it("MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7 should trigger on missing UtdypendeOpplysninger") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
+                regelSettVersjon = "2"
+
+                aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
+                    periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
+                        aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
+                            medisinskeArsaker = ArsakType().apply {
+                                arsakskode.add(CS().apply {
+                                    dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
+                                    v = "1"
+                                })
+                                beskriv = "Tungt arbeid"
+                            }
+                        }
+                        periodeFOMDato = LocalDate.of(2018, 1, 7)
+                        periodeTOMDato = LocalDate.of(2018, 9, 9)
+                    })
+                }
+            }
+
+            ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(ruleData(healthInformation)) shouldEqual true
+        }
     }
 })
 
