@@ -101,6 +101,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
         // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
         val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
+        log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
         call.respond(ValidationResult(
                 status = results
