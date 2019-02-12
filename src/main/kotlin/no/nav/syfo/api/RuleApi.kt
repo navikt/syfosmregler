@@ -38,6 +38,7 @@ import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.GregorianCalendar
 import javax.xml.datatype.DatatypeFactory
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
@@ -95,8 +96,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         // val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId), receivedSykmelding.aktoerIdPasient)
 
         // TODO remove after api i ready leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
-        // val signaturDatoString = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(receivedSykmelding.signaturDato)
-        // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString)
+        val signaturDatoString = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(receivedSykmelding.signaturDato)
+        val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString)
         // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
         // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
         val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
