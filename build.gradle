@@ -72,8 +72,6 @@ sourceSets {
     }
 }
 
-sourceSets["main"].java.srcDirs()
-
 task generateDiagnoseCodes(type: CodegenTask) {
     outputDirectory = file("${project.buildDir}/generated-sources")
 }
