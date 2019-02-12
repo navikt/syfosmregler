@@ -341,19 +341,30 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.INVALID_KODEVERK_FOR_BI_DIAGNOSE(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no medical related resons") {
+        it("NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS should not trigger on missing workplace and medical related reasons whenver the diagnosis code is simplified") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
-                        aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
-                            arbeidsplassen = ArsakType().apply {
-                                arsakskode.add(CS().apply {
-                                    dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
-                                    v = "1"
-                                })
-                                beskriv = "Tungt arbeid"
-                            }
-                        }
+                        aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig()
+                        periodeFOMDato = LocalDate.of(2018, 1, 7)
+                        periodeTOMDato = LocalDate.of(2018, 1, 9)
+                    })
+                }
+                medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
+                    hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
+                        diagnosekode = ICPC2.F73.toCV()
+                    }
+                }
+            }
+
+            ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual false
+        }
+
+        it("NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS should trigger on missing workplace and medical related reasons") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
+                aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
+                    periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
+                        aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig()
                         periodeFOMDato = LocalDate.of(2018, 1, 7)
                         periodeTOMDato = LocalDate.of(2018, 1, 9)
                     })
@@ -365,15 +376,15 @@ object ValidationRuleChainSpek : Spek({
                 }
             }
 
-            ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no medical related resons") {
+        it("Should check rule NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS, no medical related reasons") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
                     periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
                         aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
-                            medisinskeArsaker = ArsakType().apply {
+                            arbeidsplassen = ArsakType().apply {
                                 arsakskode.add(CS().apply {
                                     dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
                                     v = "1"
