@@ -1,5 +1,8 @@
 package no.nav.syfo.api
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
@@ -21,7 +24,11 @@ import no.nav.syfo.VaultCredentials
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient) {
     private val client = HttpClient(CIO) {
         install(JsonFeature) {
-            serializer = JacksonSerializer()
+            serializer = JacksonSerializer {
+                registerKotlinModule()
+                registerModule(JavaTimeModule())
+                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            }
         }
         install(Logging) {
             logger = Logger.DEFAULT
@@ -29,7 +36,7 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
         }
     }
 
-    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Boolean = REST_CALL_SUMMARY.labels("lege_suspansjon").startTimer().use {
+    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Suspendert = REST_CALL_SUMMARY.labels("lege_suspansjon").startTimer().use {
         client.get("$endpointUrl/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
@@ -44,3 +51,5 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
         }
     }
 }
+
+data class Suspendert(val suspendert: Boolean)
