@@ -38,7 +38,6 @@ import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.GregorianCalendar
 import javax.xml.datatype.DatatypeFactory
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
@@ -93,11 +92,12 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
         val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
+        // TODO remove after api i ready in prod
         // val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId), receivedSykmelding.aktoerIdPasient)
 
-        // TODO remove after api i ready leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
-        val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
-        val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
+        // TODO remove after api i ready in prod https://jira.adeo.no/browse/REG-1397
+        // val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
+        // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
         // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
         // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
         val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
