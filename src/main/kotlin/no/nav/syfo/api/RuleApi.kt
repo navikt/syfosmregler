@@ -96,7 +96,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         // val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId), receivedSykmelding.aktoerIdPasient)
 
         // TODO remove after api i ready leger som har mistet rett se https://jira.adeo.no/browse/REG-1397
-        val signaturDatoString = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(receivedSykmelding.signaturDato)
+        val signaturDatoString = DateTimeFormatter.ofPattern("YYYY-MM-DD").format(receivedSykmelding.signaturDato)
         val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString)
         // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
         // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
