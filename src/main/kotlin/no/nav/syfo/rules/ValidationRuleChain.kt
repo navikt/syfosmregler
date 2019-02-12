@@ -91,17 +91,6 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
                 healthInformation.utdypendeOpplysninger?.spmGruppe?.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
     }),
 
-    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
-    // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
-    MISSING_REQUIRED_MEDICAL_REASON(1707, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.regelSettVersjon in arrayOf(null, "", "1") && (healthInformation.aktivitet?.periode ?: listOf())
-                .filter { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
-                .none {
-                    it.aktivitetIkkeMulig?.medisinskeArsaker?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.medisinskeArsaker?.arsakskode.isNullOrEmpty() ||
-                            it.aktivitetIkkeMulig?.arbeidsplassen?.beskriv.isNullOrBlank() && it.aktivitetIkkeMulig?.arbeidsplassen?.arsakskode.isNullOrEmpty()
-                }
-    }),
-
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
     INVALID_RULESET_VERSION(1708, Status.INVALID, { (healthInformation, _) ->
         healthInformation.regelSettVersjon !in arrayOf(null, "", "1", "2")
