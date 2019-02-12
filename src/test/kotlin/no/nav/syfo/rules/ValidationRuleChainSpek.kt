@@ -488,6 +488,34 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual true
         }
 
+        it("MISSING_REQUIRED_DYNAMIC_QUESTIONS should not hit whenever there is no period longer then 8 weeks") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
+                aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {
+                    periode.add(HelseOpplysningerArbeidsuforhet.Aktivitet.Periode().apply {
+                        aktivitetIkkeMulig = HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.AktivitetIkkeMulig().apply {
+                            medisinskeArsaker = ArsakType().apply {
+                                arsakskode.add(CS().apply {
+                                    dn = "Helsetilstanden hindrer pasienten i å være i aktivitet"
+                                    v = "1"
+                                })
+                                beskriv = "Tungt arbeid"
+                            }
+                        }
+                        periodeFOMDato = LocalDate.of(2018, 1, 7)
+                        periodeTOMDato = LocalDate.of(2018, 1, 9)
+                    })
+                }
+
+                utdypendeOpplysninger = HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger().apply {
+                    spmGruppe.add(HelseOpplysningerArbeidsuforhet.UtdypendeOpplysninger.SpmGruppe().apply {
+                        spmGruppeId = "6.3"
+                    })
+                }
+            }
+
+            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual false
+        }
+
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, should NOT trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
                 aktivitet = HelseOpplysningerArbeidsuforhet.Aktivitet().apply {

@@ -87,7 +87,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
         healthInformation.regelSettVersjon in arrayOf(null, "", "1") &&
-                healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 }
+                healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 56 } &&
                 healthInformation.utdypendeOpplysninger?.spmGruppe?.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
     }),
 
