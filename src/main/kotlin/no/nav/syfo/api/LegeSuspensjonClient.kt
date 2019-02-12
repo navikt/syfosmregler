@@ -15,30 +15,22 @@ import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.REST_CALL_SUMMARY
 import no.nav.syfo.VaultCredentials
 
 @KtorExperimentalAPI
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient) {
-    private val client = HttpClient(CIO.config {
-        maxConnectionsCount = 1000 // Maximum number of socket connections.
-        endpoint.apply {
-            maxConnectionsPerRoute = 100
-            pipelineMaxSize = 20
-            keepAliveTime = 5000
-            connectTimeout = 5000
-            connectRetryAttempts = 5
-        }
-    }) {
+    private val client = HttpClient() {
         install(JsonFeature) {
             serializer = JacksonSerializer()
         }
         install(Logging) {
             logger = Logger.DEFAULT
-            level = LogLevel.ALL
+            level = LogLevel.INFO
         }
     }
 
-    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Boolean =
+    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Boolean = REST_CALL_SUMMARY.labels("lege_suspansjon").startTimer().use {
         client.get("$endpointUrl/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
@@ -47,9 +39,9 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
                 append("Nav-Consumer-Id", credentials.serviceuserUsername)
                 append("Nav-Personident", therapistId)
 
-            // TODO is this the corret security???
                 append("Authorization", "Bearer ${oidcToken.access_token}")
             }
             parameter("oppslagsdato", oppslagsdato)
         }
+    }
 }

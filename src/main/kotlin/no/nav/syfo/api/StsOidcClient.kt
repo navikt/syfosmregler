@@ -10,21 +10,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.REST_CALL_SUMMARY
 import no.nav.syfo.model.OidcToken
 
 @KtorExperimentalAPI
 class StsOidcClient(private val endpointUrl: String, username: String, password: String) {
     private var tokenExpires: Long = 0
-    private val oidcClient = HttpClient(CIO.config {
-        maxConnectionsCount = 1000 // Maximum number of socket connections.
-        endpoint.apply {
-            maxConnectionsPerRoute = 100
-            pipelineMaxSize = 20
-            keepAliveTime = 5000
-            connectTimeout = 5000
-            connectRetryAttempts = 5
-        }
-    }) {
+    private val oidcClient = HttpClient(CIO) {
         install(BasicAuth) {
             this.username = username
             this.password = password
@@ -44,8 +36,10 @@ class StsOidcClient(private val endpointUrl: String, username: String, password:
         return oidcToken
     }
 
-    private suspend fun newOidcToken(): OidcToken = oidcClient.get("$endpointUrl/rest/v1/sts/token") {
-        parameter("grant_type", "client_credentials")
-        parameter("scope", "openid")
+    private suspend fun newOidcToken(): OidcToken = REST_CALL_SUMMARY.labels("oidc").startTimer().use {
+        oidcClient.get("$endpointUrl/rest/v1/sts/token") {
+            parameter("grant_type", "client_credentials")
+            parameter("scope", "openid")
+        }
     }
 }

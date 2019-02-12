@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
-import io.ktor.client.request.post
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
@@ -18,31 +17,31 @@ import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
+import no.nav.syfo.SOAP_CALL_SUMMARY
 import no.nav.syfo.executeFlow
-import no.nav.syfo.model.Status
-import no.nav.syfo.model.ValidationResult
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
+import no.nav.syfo.model.Status
 import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
+import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
-import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.PostTPSRuleChain
+import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
-import no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 import java.util.GregorianCalendar
 import javax.xml.datatype.DatatypeFactory
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
+import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
@@ -87,12 +86,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 
         // TODO no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage: ArgumentException: Personnummer ikke funnet
         // add rule 1401 when this happens
-        val doctor =
-                try {
-                    fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
-                } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
-                    no.nhn.schemas.reg.hprv2.Person()
-                }
+        val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
         val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
@@ -117,7 +111,9 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 }
 
 fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> = async {
-    hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+    SOAP_CALL_SUMMARY.labels("hpr_hent_person_med_personnummer").startTimer().use {
+        hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+    }
 }
 
 fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
@@ -140,9 +136,11 @@ fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(akt
 }
 
 fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
+    SOAP_CALL_SUMMARY.labels("tps_hent_person").startTimer().use {
         personV3.hentPerson(HentPersonRequest()
                 .withAktoer(PersonIdent().withIdent(NorskIdent()
-                                .withIdent(ident))
+                        .withIdent(ident))
                 )
         ).person
+    }
 }

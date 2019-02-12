@@ -18,21 +18,13 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.REST_CALL_SUMMARY
 import no.nav.syfo.model.Syketilfelle
 import java.time.LocalDate
 
 @KtorExperimentalAPI
 class SyketilfelleClient(private val endpointUrl: String, private val stsClient: StsOidcClient) {
-    private val client = HttpClient(CIO.config {
-        maxConnectionsCount = 1000 // Maximum number of socket connections.
-        endpoint.apply {
-            maxConnectionsPerRoute = 100
-            pipelineMaxSize = 20
-            keepAliveTime = 5000
-            connectTimeout = 5000
-            connectRetryAttempts = 5
-        }
-    }) {
+    private val client = HttpClient(CIO) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 registerKotlinModule()
@@ -42,20 +34,21 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
         install(Logging) {
             logger = Logger.DEFAULT
-            level = LogLevel.ALL
+            level = LogLevel.INFO
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Oppfolgingstilfelle =
-            client.post("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
-                accept(ContentType.Application.Json)
-                contentType(ContentType.Application.Json)
-                val oidcToken = stsClient.oidcToken()
-                headers {
-                    append("Authorization", "Bearer ${oidcToken.access_token}")
-                }
-                body = syketilfelleList
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Oppfolgingstilfelle = REST_CALL_SUMMARY.labels("syketilfelle").startTimer().use {
+        client.post("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
+            accept(ContentType.Application.Json)
+            contentType(ContentType.Application.Json)
+            val oidcToken = stsClient.oidcToken()
+            headers {
+                append("Authorization", "Bearer ${oidcToken.access_token}")
             }
+            body = syketilfelleList
+        }
+    }
 }
 
 data class Oppfolgingstilfelle(val antallBrukteDager: Int, val oppbruktArbeidsgvierperiode: Boolean, val arbeidsgiverPeriode: Periode?)
