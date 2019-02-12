@@ -31,8 +31,12 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 import org.apache.cxf.message.Message
 import org.apache.cxf.phase.Phase
 import org.apache.cxf.ws.addressing.WSAddressingFeature
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
+
+val log: Logger = LoggerFactory.getLogger("sm-rules")
 
 fun doReadynessCheck(): Boolean {
     // Do validation
@@ -107,6 +111,7 @@ fun Application.initRouting(applicationState: ApplicationState, personV3: Person
         exception<Throwable> { cause ->
             call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
 
+            log.error("Caught exception while trying to validate against rules", cause)
             throw cause
         }
     }
