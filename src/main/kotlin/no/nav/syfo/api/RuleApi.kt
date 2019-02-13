@@ -1,5 +1,6 @@
 package no.nav.syfo.api
 
+import com.ctc.wstx.exc.WstxEOFException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -17,7 +18,7 @@ import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
-import no.nav.syfo.SOAP_CALL_SUMMARY
+import no.nav.syfo.NETWORK_CALL_SUMMARY
 import no.nav.syfo.executeFlow
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -25,6 +26,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.model.ValidationResult
+import no.nav.syfo.retryAsync
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
@@ -37,6 +39,7 @@ import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.time.LocalDateTime
 import java.util.GregorianCalendar
 import javax.xml.datatype.DatatypeFactory
@@ -112,11 +115,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
     }
 }
 
-fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> = async {
-    SOAP_CALL_SUMMARY.labels("hpr_hent_person_med_personnummer").startTimer().use {
-        hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
-    }
-}
+fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> =
+        retryAsync("hpr_hent_person_med_personnummer", IOException::class, WstxEOFException::class) {
+            hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+        }
 
 fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
     Syketilfelle(
@@ -137,12 +139,9 @@ fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(akt
     )
 }
 
-fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
-    SOAP_CALL_SUMMARY.labels("tps_hent_person").startTimer().use {
-        personV3.hentPerson(HentPersonRequest()
-                .withAktoer(PersonIdent().withIdent(NorskIdent()
-                        .withIdent(ident))
-                )
-        ).person
-    }
-}
+fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> =
+        retryAsync("tps_hent_person", IOException::class, WstxEOFException::class) {
+            personV3.hentPerson(HentPersonRequest()
+                    .withAktoer(PersonIdent().withIdent(NorskIdent().withIdent(ident)))
+            ).person
+        }
