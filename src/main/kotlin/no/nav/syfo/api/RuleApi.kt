@@ -15,6 +15,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
+import no.nav.syfo.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.SOAP_CALL_SUMMARY
@@ -103,12 +104,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
         log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
-        call.respond(ValidationResult(
-                status = results
-                        .map { status -> status.status }
-                        .firstOrNull { status -> status == Status.INVALID } ?: Status.OK,
-                ruleHits = results.map { rule -> RuleInfo(rule.name) }
-        ))
+        val validationResult = validationResult(results)
+        RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
+
+        call.respond(validationResult)
     }
 }
 
@@ -146,3 +145,11 @@ fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSP
         ).person
     }
 }
+
+fun validationResult(results: List<Rule<Any>>): ValidationResult =
+    ValidationResult(
+            status = results
+                    .map { status -> status.status }
+                    .firstOrNull { status -> status == Status.INVALID } ?: Status.OK,
+            ruleHits = results.map { rule -> RuleInfo(rule.name) }
+    )

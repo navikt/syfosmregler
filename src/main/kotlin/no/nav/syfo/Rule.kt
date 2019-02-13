@@ -17,7 +17,6 @@ inline fun <reified T, reified R : Rule<RuleData<T>>> List<R>.executeFlow(health
         filter { it.predicate(RuleData(healthInformation, value)) }
                 .map { it as Rule<Any> }
                 .onEach { RULE_HIT_COUNTER.labels(it.name).inc() }
-                .onEach { RULE_HIT_STATUS_COUNTER.labels(it.status.name).inc() }
 
 inline fun <reified T, reified R : Rule<RuleData<T>>> Array<R>.executeFlow(healthInformation: HelseOpplysningerArbeidsuforhet, value: T): List<Rule<Any>> = toList().executeFlow(healthInformation, value)
 
