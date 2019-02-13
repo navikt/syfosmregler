@@ -17,8 +17,9 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.REST_CALL_SUMMARY
+import kotlinx.coroutines.Deferred
 import no.nav.syfo.model.Syketilfelle
+import no.nav.syfo.retryAsync
 import java.time.LocalDate
 
 @KtorExperimentalAPI
@@ -37,8 +38,8 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Oppfolgingstilfelle = REST_CALL_SUMMARY.labels("syketilfelle").startTimer().use {
-        client.post("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Deferred<Oppfolgingstilfelle> = client.retryAsync("syketilfelle") {
+        client.post<Oppfolgingstilfelle>("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()

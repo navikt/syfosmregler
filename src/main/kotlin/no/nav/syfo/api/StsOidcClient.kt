@@ -8,9 +8,10 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.REST_CALL_SUMMARY
 import no.nav.syfo.model.OidcToken
+import no.nav.syfo.retryAsync
 
 @KtorExperimentalAPI
 class StsOidcClient(private val endpointUrl: String, username: String, password: String) {
@@ -29,14 +30,14 @@ class StsOidcClient(private val endpointUrl: String, username: String, password:
 
     suspend fun oidcToken(): OidcToken {
         if (tokenExpires < System.currentTimeMillis()) {
-            oidcToken = newOidcToken()
+            oidcToken = newOidcToken().await()
             tokenExpires = System.currentTimeMillis() + (oidcToken.expires_in - 600) * 1000
         }
         return oidcToken
     }
 
-    private suspend fun newOidcToken(): OidcToken = REST_CALL_SUMMARY.labels("oidc").startTimer().use {
-        oidcClient.get("$endpointUrl/rest/v1/sts/token") {
+    private suspend fun newOidcToken(): Deferred<OidcToken> = oidcClient.retryAsync("oidc") {
+        oidcClient.get<OidcToken>("$endpointUrl/rest/v1/sts/token") {
             parameter("grant_type", "client_credentials")
             parameter("scope", "openid")
         }

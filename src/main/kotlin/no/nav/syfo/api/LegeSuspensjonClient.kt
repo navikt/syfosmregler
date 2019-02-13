@@ -17,8 +17,9 @@ import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.REST_CALL_SUMMARY
+import kotlinx.coroutines.Deferred
 import no.nav.syfo.VaultCredentials
+import no.nav.syfo.retryAsync
 
 @KtorExperimentalAPI
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient) {
@@ -36,8 +37,8 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
         }
     }
 
-    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Suspendert = REST_CALL_SUMMARY.labels("lege_suspansjon").startTimer().use {
-        client.get("$endpointUrl/api/v1/suspensjon/status") {
+    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Deferred<Suspendert> = client.retryAsync("lege_suspansjon") {
+        client.get<Suspendert>("$endpointUrl/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
             headers {
