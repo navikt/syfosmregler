@@ -13,12 +13,10 @@ import io.ktor.routing.post
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
-import no.nav.syfo.NETWORK_CALL_SUMMARY
 import no.nav.syfo.executeFlow
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo

@@ -13,7 +13,7 @@ inline fun <reified T> CoroutineScope.retryAsync(
     exceptionCausedByDepth: Int = 3,
     retryIntervals: Array<Long> = arrayOf(500, 1000, 3000, 5000, 10000),
     crossinline block: suspend () -> T
-) : Deferred<T> = async {
+): Deferred<T> = async {
     for (interval in retryIntervals) {
         try {
             return@async timed(callName) { block() }
@@ -42,5 +42,3 @@ fun isCausedBy(throwable: Throwable, depth: Int, legalExceptions: Array<out KCla
     }
     return false
 }
-
-
