@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit
 @KtorExperimentalAPI
 object SelftestSpek : Spek({
     val applicationState = ApplicationState()
+    applicationState.ready = true
     val mockHttpServerPort = ServerSocket(0).use { it.localPort }
     val mockHttpServerUrl = "http://localhost:$mockHttpServerPort"
     suspend fun ApplicationCall.respondJson(input: Any) {
