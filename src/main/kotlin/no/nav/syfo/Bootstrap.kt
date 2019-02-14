@@ -89,7 +89,7 @@ fun main(args: Array<String>) {
     Runtime.getRuntime().addShutdownHook(Thread {
         // Kubernetes polls every 5 seconds for liveness, mark as not ready and wait 5 seconds for a new readyness check
         applicationState.ready = false
-        Thread.sleep(5000)
+        Thread.sleep(10000)
         applicationServer.stop(10, 10, TimeUnit.SECONDS)
     })
 }
