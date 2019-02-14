@@ -1,11 +1,12 @@
 package no.nav.syfo
 
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.http.ContentType
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respondTextWriter
+import io.ktor.jackson.jackson
+import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
@@ -41,23 +42,21 @@ object SelftestSpek : Spek({
     applicationState.ready = true
     val mockHttpServerPort = ServerSocket(0).use { it.localPort }
     val mockHttpServerUrl = "http://localhost:$mockHttpServerPort"
-    suspend fun ApplicationCall.respondJson(input: Any) {
-        respondTextWriter(ContentType.Application.Json) {
-            objectMapper.writeValue(this, input)
-        }
-    }
     val mockServer = embeddedServer(Netty, mockHttpServerPort) {
+        install(ContentNegotiation) {
+            jackson {}
+        }
         routing {
             get("/rest/v1/sts/token") {
-                call.respondJson(OidcToken("", "", 1L))
+                call.respond(OidcToken("", "", 1L))
             }
 
             get("/api/v1/suspensjon/status") {
-                call.respondJson(true)
+                call.respond(true)
             }
 
             post("syfosoknad/oppfolgingstilfelle/beregn/") {
-                call.respondJson(Oppfolgingstilfelle(1, false, Periode(LocalDate.now(), LocalDate.now())))
+                call.respond(Oppfolgingstilfelle(1, false, Periode(LocalDate.now(), LocalDate.now())))
             }
         }
     }.start()
