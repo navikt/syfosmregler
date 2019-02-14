@@ -38,12 +38,7 @@ import java.util.concurrent.TimeUnit
 
 val log: Logger = LoggerFactory.getLogger("sm-rules")
 
-fun doReadynessCheck(): Boolean {
-    // Do validation
-    return true
-}
-
-data class ApplicationState(var running: Boolean = true)
+data class ApplicationState(var ready: Boolean = false, var running: Boolean = true)
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -88,11 +83,12 @@ fun main(args: Array<String>) {
 
     val applicationServer = embeddedServer(Netty, config.applicationPort) {
         initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+        applicationState.ready = true
     }.start(wait = true)
 
     Runtime.getRuntime().addShutdownHook(Thread {
         // Kubernetes polls every 5 seconds for liveness, mark as not ready and wait 5 seconds for a new readyness check
-        applicationState.running = false
+        applicationState.ready = false
         Thread.sleep(5000)
         applicationServer.stop(10, 10, TimeUnit.SECONDS)
     })
@@ -101,7 +97,7 @@ fun main(args: Array<String>) {
 @KtorExperimentalAPI
 fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient, syketilfelleClient: SyketilfelleClient) {
     routing {
-        registerNaisApi(readynessCheck = ::doReadynessCheck, livenessCheck = { applicationState.running })
+        registerNaisApi(readynessCheck = { applicationState.ready }, livenessCheck = { applicationState.running })
         registerRuleApi(personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
     }
     install(ContentNegotiation) {
