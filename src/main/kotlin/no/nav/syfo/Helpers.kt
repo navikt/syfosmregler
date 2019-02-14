@@ -21,7 +21,7 @@ inline fun <reified T> CoroutineScope.retryAsync(
             if (!isCausedBy(e, exceptionCausedByDepth, legalExceptions)) {
                 throw e
             }
-            log.warn("Failed to ", e)
+            log.warn("Failed to execute call $callName, retrying in $interval ms", e)
         }
         delay(interval)
     }
