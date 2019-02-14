@@ -75,14 +75,6 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         }
     }),
 
-    @Description("Hvis medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt og sykmeldingen ikke er \"forenklet\"")
-    NO_MEDICAL_OR_WORKPLACE_RELATED_REASONS(1706, Status.INVALID, { (healthInformation, _) ->
-            healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.any { icpc2 -> icpc2 in diagnoseCodesSimplified } != true &&
-                    healthInformation.aktivitet.periode
-                    .mapNotNull { it.aktivitetIkkeMulig }
-                    .any { it.arbeidsplassen?.arsakskode == null && it.medisinskeArsaker?.arsakskode == null }
-    }),
-
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
     // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, _) ->
