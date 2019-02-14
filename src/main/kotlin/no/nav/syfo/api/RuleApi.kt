@@ -1,6 +1,6 @@
 package no.nav.syfo.api
 
-import com.ctc.wstx.exc.WstxEOFException
+import com.ctc.wstx.exc.WstxException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -113,7 +113,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 }
 
 fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> =
-        retryAsync("hpr_hent_person_med_personnummer", IOException::class, WstxEOFException::class) {
+        retryAsync("hpr_hent_person_med_personnummer", IOException::class, WstxException::class) {
             hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
         }
 
@@ -137,7 +137,7 @@ fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(akt
 }
 
 fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> =
-        retryAsync("tps_hent_person", IOException::class, WstxEOFException::class) {
+        retryAsync("tps_hent_person", IOException::class, WstxException::class) {
             personV3.hentPerson(HentPersonRequest()
                     .withAktoer(PersonIdent().withIdent(NorskIdent().withIdent(ident)))
             ).person
