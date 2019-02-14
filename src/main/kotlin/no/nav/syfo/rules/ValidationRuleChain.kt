@@ -43,7 +43,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
     ICPC_2_Z_DIAGNOSE(1132, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.first()?.codeValue?.startsWith("Z") == true
+        healthInformation.medisinskVurdering.hovedDiagnose.diagnosekode.toICPC2()?.firstOrNull()?.codeValue?.startsWith("Z") == true
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")

@@ -236,6 +236,22 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldEqual false
         }
 
+        it("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet().apply {
+                medisinskVurdering = HelseOpplysningerArbeidsuforhet.MedisinskVurdering().apply {
+                    hovedDiagnose = HelseOpplysningerArbeidsuforhet.MedisinskVurdering.HovedDiagnose().apply {
+                        diagnosekode = CV().apply {
+                            dn = "ADMINISTRATIV PROSEDYRE"
+                            s = "2.16.578.1.12.4.1.1.7170"
+                            v = "A62"
+                        }
+                    }
+                }
+            }
+
+            ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldEqual false
+        }
+
         it("Should check rule MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON,should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet()
 
