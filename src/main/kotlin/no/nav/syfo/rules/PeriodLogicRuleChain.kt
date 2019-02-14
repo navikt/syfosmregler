@@ -160,7 +160,3 @@ fun HelseOpplysningerArbeidsuforhet.Aktivitet.Periode.range(): ClosedRange<Local
 fun CV.isICPC2(): Boolean = s == ICPC2.A01.oid
 
 fun CV.toICPC2(): List<ICPC2>? = if (isICPC2()) { listOfNotNull(ICPC2.values().find { it.codeValue == v }) } else { ICD10.values().find { it.codeValue == v }?.icpc2 }
-
-val diagnoseCodesSimplified = listOf(
-        ICPC2.D70, ICPC2.D73, ICPC2.F70, ICPC2.F73, ICPC2.H71, ICPC2.R72, ICPC2.R74, ICPC2.R75, ICPC2.R76, ICPC2.R77, ICPC2.R78, ICPC2.R80, ICPC2.R81, ICPC2.U71
-)
