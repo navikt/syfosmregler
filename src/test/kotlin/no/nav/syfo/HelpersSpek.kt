@@ -33,6 +33,21 @@ object HelpersSpek : Spek({
             }
             result shouldEqual "I'm OK"
         }
+        it("Subclass of exception should be caught") {
+            class SubIOException : IOException("Connection timed out")
+            val result = runBlocking {
+                var exceptionCount = 1
+                retryAsync("test_call") {
+                    if (exceptionCount <= 0) {
+                        "I'm OK"
+                    } else {
+                        exceptionCount --
+                        throw SubIOException()
+                    }
+                }.await()
+            }
+            result shouldEqual "I'm OK"
+        }
         it("Returns result on single IOException") {
             var exceptionCount = 3
             val result = runBlocking {
