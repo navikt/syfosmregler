@@ -27,6 +27,7 @@ import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.retryAsync
 import no.nav.syfo.rules.HPRRuleChain
+import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.RuleMetadata
@@ -40,6 +41,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.GregorianCalendar
 import javax.xml.datatype.DatatypeFactory
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
@@ -97,12 +99,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         // TODO remove after api i ready in prod
         // val syketilfelle = syketilfelleClient.fetchSyketilfelle(receivedSykmelding.sykmelding.aktivitet.periode.intoSyketilfelle(receivedSykmelding.aktoerIdPasient, receivedSykmelding.mottattDato, receivedSykmelding.msgId), receivedSykmelding.aktoerIdPasient)
 
-        // TODO remove after api i ready in prod https://jira.adeo.no/browse/REG-1397
-        // val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
-        // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
-        // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
-        // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
-        val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults).flatten()
+        val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
+        val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
+        val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
+        val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
         log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
         val validationResult = validationResult(results)
