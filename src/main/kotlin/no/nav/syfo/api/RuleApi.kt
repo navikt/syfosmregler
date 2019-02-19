@@ -37,6 +37,7 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
+import no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -90,7 +91,12 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 
         // TODO no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage: ArgumentException: Personnummer ikke funnet
         // add rule 1401 when this happens
-        val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
+        val doctor = try {
+            fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
+        } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
+            HPRPerson()
+        }
+        // val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
         val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)

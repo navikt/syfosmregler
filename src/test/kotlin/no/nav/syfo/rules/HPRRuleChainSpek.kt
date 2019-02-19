@@ -83,6 +83,13 @@ object HPRRuleChainSpek : Spek({
             HPRRuleChain.BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
         }
 
+        it("Should check rule BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR, should NOT trigger rule") {
+            val healthInformation = HelseOpplysningerArbeidsuforhet()
+            val person = no.nhn.schemas.reg.hprv2.Person()
+
+            HPRRuleChain.BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
+        }
+
         it("Should check rule BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR, should trigger rule") {
             val healthInformation = HelseOpplysningerArbeidsuforhet()
             val person = no.nhn.schemas.reg.hprv2.Person().apply {
