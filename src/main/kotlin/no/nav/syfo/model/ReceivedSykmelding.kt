@@ -1,10 +1,9 @@
 package no.nav.syfo.model
 
-import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import java.time.LocalDateTime
 
 data class ReceivedSykmelding(
-    val sykmelding: HelseOpplysningerArbeidsuforhet,
+    val sykmelding: Sykmelding,
     val aktoerIdPasient: String,
     val personNrPasient: String,
     val aktoerIdLege: String,
@@ -17,6 +16,7 @@ data class ReceivedSykmelding(
     val legekontorOrgName: String,
     val mottattDato: LocalDateTime,
     val signaturDato: LocalDateTime,
+    val rulesetVersion: String?,
     /**
      * Full fellesformat as a XML payload, this is only used for infotrygd compat and should be removed in thefuture
      */

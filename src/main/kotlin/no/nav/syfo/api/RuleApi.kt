@@ -14,11 +14,11 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.executeFlow
+import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.Status
@@ -86,7 +86,9 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 PeriodLogicRuleChain.values().toList()
         ).flatten().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
-                signatureDate = receivedSykmelding.signaturDato
+                signatureDate = receivedSykmelding.signaturDato,
+                patientPersonNumber = receivedSykmelding.personNrPasient,
+                rulesetVersion = receivedSykmelding.rulesetVersion
         ))
 
         // TODO no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage: ArgumentException: Personnummer ikke funnet
@@ -123,22 +125,22 @@ fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): D
             hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
         }
 
-fun List<HelseOpplysningerArbeidsuforhet.Aktivitet.Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
+fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
     Syketilfelle(
             aktorId = aktoerId,
             orgnummer = null,
             inntruffet = received,
             tags = listOf(SyketilfelleTag.SYKMELDING, SyketilfelleTag.PERIODE, when {
                 it.aktivitetIkkeMulig != null -> SyketilfelleTag.INGEN_AKTIVITET
-                it.isReisetilskudd == true -> SyketilfelleTag.INGEN_AKTIVITET
-                it.gradertSykmelding != null -> SyketilfelleTag.GRADERT_AKTIVITET
+                it.reisetilskudd -> SyketilfelleTag.INGEN_AKTIVITET
+                it.gradert != null -> SyketilfelleTag.GRADERT_AKTIVITET
                 it.behandlingsdager != null -> SyketilfelleTag.BEHANDLINGSDAGER
-                it.avventendeSykmelding != null -> SyketilfelleTag.FULL_AKTIVITET
+                it.avventendeInnspillTilArbeidsgiver != null -> SyketilfelleTag.FULL_AKTIVITET
                 else -> throw RuntimeException("Could not find aktivitetstype, this should never happen")
             }).joinToString(",") { tag -> tag.name },
             ressursId = resourceId,
-            fom = it.periodeFOMDato.atStartOfDay(),
-            tom = it.periodeTOMDato.atStartOfDay()
+            fom = it.fom.atStartOfDay(),
+            tom = it.tom.atStartOfDay()
     )
 }
 

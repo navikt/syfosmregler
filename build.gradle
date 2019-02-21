@@ -110,7 +110,6 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "net.logstash.logback:logstash-logback-encoder:$logstash_encoder_version"
 
-    implementation "no.nav.helse.xml:sm2013:$sykmelding_version"
     implementation "no.nav.tjenester:nav-person-v3-tjenestespesifikasjon:$nav_person_v3_version"
 
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws:$cxf_version"
