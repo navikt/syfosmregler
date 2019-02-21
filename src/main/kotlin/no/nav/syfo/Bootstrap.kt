@@ -17,6 +17,7 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
+import io.prometheus.client.hotspot.DefaultExports
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.SyketilfelleClient
@@ -52,6 +53,7 @@ fun main(args: Array<String>) {
     val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
     val applicationState = ApplicationState()
 
+    DefaultExports.initialize()
     val personV3 = JaxWsProxyFactoryBean().apply {
         address = config.personV3EndpointURL
         serviceClass = PersonV3::class.java
