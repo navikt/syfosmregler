@@ -4,9 +4,7 @@ import java.time.LocalDateTime
 
 data class ReceivedSykmelding(
     val sykmelding: Sykmelding,
-    val aktoerIdPasient: String,
     val personNrPasient: String,
-    val aktoerIdLege: String,
     val personNrLege: String,
     val navLogId: String,
     val msgId: String,

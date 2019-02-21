@@ -14,10 +14,10 @@ import java.time.LocalDateTime
 
 object PeriodLogicRuleChainSpek : Spek({
     fun ruleData(
-            healthInformation: Sykmelding,
-            receivedDate: LocalDateTime = LocalDateTime.now(),
-            signatureDate: LocalDateTime = LocalDateTime.now(),
-            patientPersonNumber: String = "1234567891"
+        healthInformation: Sykmelding,
+        receivedDate: LocalDateTime = LocalDateTime.now(),
+        signatureDate: LocalDateTime = LocalDateTime.now(),
+        patientPersonNumber: String = "1234567891"
     ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, "1"))
 
     describe("Testing validation rules and checking the rule outcomes") {
@@ -128,7 +128,6 @@ object PeriodLogicRuleChainSpek : Spek({
                             fom = LocalDate.of(2018, 2, 1),
                             tom = LocalDate.of(2018, 5, 1)
                     )))
-
 
             PeriodLogicRuleChain.GAP_BETWEEN_PERIODS(ruleData(healthInformation)) shouldEqual false
         }

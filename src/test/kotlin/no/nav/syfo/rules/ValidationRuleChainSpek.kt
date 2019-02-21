@@ -8,8 +8,6 @@ import no.nav.syfo.Kodeverk
 import no.nav.syfo.RuleData
 import no.nav.syfo.QuestionId
 import no.nav.syfo.QuestionGroup
-import no.nav.syfo.RestrictionCode
-import no.nav.syfo.generateDiagnose
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
@@ -24,20 +22,19 @@ import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-val fairy: Fairy = Fairy.create()//(Locale("no", "NO"))
+val fairy: Fairy = Fairy.create() // (Locale("no", "NO"))
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
 object ValidationRuleChainSpek : Spek({
     fun Kodeverk.toDiagnose() = Diagnose(system = oid, kode = codeValue)
 
     fun ruleData(
-            healthInformation: Sykmelding,
-            receivedDate: LocalDateTime = LocalDateTime.now(),
-            signatureDate: LocalDateTime = LocalDateTime.now(),
-            patientPersonNumber: String = "1234567891",
-            rulesetVersion: String = "1"
+        healthInformation: Sykmelding,
+        receivedDate: LocalDateTime = LocalDateTime.now(),
+        signatureDate: LocalDateTime = LocalDateTime.now(),
+        patientPersonNumber: String = "1234567891",
+        rulesetVersion: String = "1"
     ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, rulesetVersion))
 
     describe("Testing validation rules and checking the rule outcomes") {
