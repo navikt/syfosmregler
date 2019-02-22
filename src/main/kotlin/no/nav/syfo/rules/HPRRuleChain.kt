@@ -42,4 +42,6 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
                     it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "KI", "MT", "TL") }
         }
     }),
+    // TODO we need to approv FT see: https://www.nav.no/rettskildene-intern/forskrift/F20051221-1668
+    // New rule???
 }
