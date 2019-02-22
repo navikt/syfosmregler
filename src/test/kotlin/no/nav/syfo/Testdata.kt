@@ -70,7 +70,7 @@ fun generateMedisinskVurdering(
     annenFraversArsak: AnnenFraversArsak? = null
 ) = MedisinskVurdering(
         hovedDiagnose = hovedDiagnose,
-        bidiagnoser = bidiagnoser,
+        biDiagnoser = bidiagnoser,
         svangerskap = svangerskap,
         yrkesskade = yrkesskade,
         yrkesskadeDato = yrkesskadeDato,
@@ -138,7 +138,7 @@ fun generatePrognose(
     erIkkeIArbeid: ErIkkeIArbeid? = null
 ) = Prognose(
     arbeidsforEtterPeriode = arbeidsforEtterPeriode,
-        hennsynArbeidsplassen = hennsynArbeidsplassen,
+        hensynArbeidsplassen = hennsynArbeidsplassen,
         erIArbeid = erIArbeid,
         erIkkeIArbeid = erIkkeIArbeid
 )
