@@ -82,7 +82,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(1707, Status.INVALID, { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
-                healthInformation.utdypendeOpplysninger?.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
+                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
     }),
 
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
@@ -95,21 +95,21 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(1709, Status.INVALID, { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
-                healthInformation.utdypendeOpplysninger?.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
+                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(1709, Status.INVALID, { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
-                healthInformation.utdypendeOpplysninger?.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
+                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_39(1709, Status.INVALID, { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
-                healthInformation.utdypendeOpplysninger?.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
+                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
     }),
 }
 
