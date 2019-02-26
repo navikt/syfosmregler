@@ -14,6 +14,7 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import net.logstash.logback.argument.StructuredArguments.keyValue
+import no.nav.syfo.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.executeFlow
@@ -113,7 +114,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
         val validationResult = validationResult(results)
-
+        RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
         call.respond(validationResult)
     }
 }
