@@ -14,7 +14,6 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.nav.syfo.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.executeFlow
@@ -114,7 +113,6 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
         val validationResult = validationResult(results)
-        RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
 
         call.respond(validationResult)
     }
@@ -154,7 +152,10 @@ fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSP
 fun validationResult(results: List<Rule<Any>>): ValidationResult =
         ValidationResult(
                 status = results
-                        .map { status -> status.status }
-                        .firstOrNull { status -> status == Status.INVALID } ?: Status.OK,
+                        .map { status -> status.status }.let {
+                            it.firstOrNull { status -> status == Status.INVALID }
+                            ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
+                            ?: Status.OK
+                        },
                 ruleHits = results.map { rule -> RuleInfo(rule.name) }
         )
