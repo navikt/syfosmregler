@@ -3,6 +3,10 @@
 pipeline {
     agent any
 
+    tools {
+            jdk 'openjdk11'
+        }
+
     environment {
         APPLICATION_NAME = 'syfosmregler'
         DOCKER_SLUG='syfo'
