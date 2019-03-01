@@ -9,7 +9,7 @@ version = "1.0.10"
 
 val coroutinesVersion = "1.0.0"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.9.7"
+val jacksonVersion = "2.9.8"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kluentVersion = "1.39"
@@ -84,18 +84,20 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
 
+    implementation ("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation ("io.ktor:ktor-jackson:$ktorVersion")
+
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-basic:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("no.nav.helse.xml:sm2013:$sykmeldingVersion")
     implementation("no.nav.tjenester:nav-person-v3-tjenestespesifikasjon:$navPersonv3Version")
@@ -141,10 +143,9 @@ sourceSets {
     }
 }
 
-val generateDiagnoseCodes = tasks.withType<CodegenTask> {
+tasks.create<CodegenTask>("generateDiagnoseCodes") {
     outputDirectory = file("${project.buildDir}/generated-sources")
 }
-
 
 tasks {
     create("printVersion") {
