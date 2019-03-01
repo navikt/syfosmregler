@@ -5,12 +5,12 @@ plugins {
     `kotlin-dsl`
 }
 
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
+}
+
 repositories {
     jcenter()
-    mavenCentral()
-    maven {
-        url = uri("https://plugins.gradle.org/m2/")
-    }
 }
 
 dependencies {
