@@ -100,7 +100,6 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         * */
         val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
 
-        // val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
         val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
 
         val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
