@@ -7,11 +7,6 @@ import no.nav.syfo.model.Status
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<HPRPerson>) -> Boolean) : Rule<RuleData<HPRPerson>> {
-    @Description(" Behandler ikke registrert i HPR")
-    BEHANDLER_NOT_IN_HPR(1401, Status.INVALID, { (_, doctor) ->
-        doctor.nin.isNullOrEmpty()
-    }),
-
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
     BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.INVALID, { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
