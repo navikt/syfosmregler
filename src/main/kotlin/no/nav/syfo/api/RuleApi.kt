@@ -95,7 +95,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         // add rule 1401 when this happens
         val doctor = try {
             fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
-        } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
+        } catch (e: Exception) {
+            log.error("Docotor not found")
             HPRPerson()
         }
         // val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
