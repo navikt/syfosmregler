@@ -15,26 +15,28 @@ spec:
   liveness:
     path: /is_alive
     initialDelay: 5
-    periodSeconds: 5
-    failureThreshold: 30
+    timeout: 1
+    periodSeconds: 10
+    failureThreshold: 5
   readiness:
     path: /is_ready
-    initialDelay: 30
-    periodSeconds: 5
-    timeout: 5
+    initialDelay: 5
+    timeout: 1
+    periodSeconds: 10
   prometheus:
     enabled: true
     path: /prometheus
   resources:
     limits:
-      cpu: 250m
+      cpu: 2000m
       memory: 1Gi
     requests:
       cpu: 100m
       memory: 128Mi
-  secrets: true
   vault:
     enabled: true
+  ingress:
+    disabled: false
   env:
     - name: CONFIG_FILE
       value: "config-preprod.json"
