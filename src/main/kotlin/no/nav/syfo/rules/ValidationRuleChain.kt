@@ -66,6 +66,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     }),
 
     // Revurder regel når IT ikkje lenger skal brukes
+    // Denne regelen bør flyttes til syfosminfotrygd
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
         !healthInformation.medisinskVurdering.biDiagnoser.all { diagnose ->
