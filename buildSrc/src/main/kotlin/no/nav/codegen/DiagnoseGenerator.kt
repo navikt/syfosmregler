@@ -10,6 +10,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 import java.io.InputStream
+import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.usermodel.DataFormatter
 
 data class Entry(
         val icpc2CodeValue: String,
@@ -20,22 +22,31 @@ data class Entry(
     val icpc2EnumName = icpc2CodeValue.replace("-", "NEGATIVE_")
 }
 
-// Filen kan lastes ned fra https://ehelse.no/standarder-kodeverk-og-referansekatalog/helsefaglige-kodeverk/icpc-2-den-internasjonale-klassifikasjonen-for-primerhelsetjenesten
+// Filen icd10 kan lastes ned fra https://ehelse.no/standarder-kodeverk-og-referansekatalog/helsefaglige-kodeverk/kodeverket-icd-10-og-icd-11
+// Filen ipc2withicd10 kan lastes ned fra https://ehelse.no/standarder-kodeverk-og-referansekatalog/helsefaglige-kodeverk/icpc-2-den-internasjonale-klassifikasjonen-for-primerhelsetjenesten
 fun generateDiagnoseCodes(outputDirectory: Path) {
     try {
-        val connection= URL("https://ehelse.no/Documents/Helsefaglig%20kodeverk/Konverteringsfil%20ICPC-2%20til%20ICD-10.txt").openConnection() as HttpURLConnection
-        readAndWriteDiagnoses(outputDirectory, connection.inputStream )
-        connection.disconnect()
+        val icd10connection= URL(
+                "https://ehelse.no/Documents/Helsefaglig%20kodeverk/Kodeliste%20ICD-10%202019%20%28Excel%29.xlsx").openConnection() as HttpURLConnection
+        val ipc2withicd10connection= URL(
+                "https://ehelse.no/Documents/Helsefaglig%20kodeverk/Konverteringsfil%20ICPC-2%20til%20ICD-10.txt").openConnection() as HttpURLConnection
+        readAndWriteDiagnoses(outputDirectory, icd10connection.inputStream, ipc2withicd10connection.inputStream)
+        icd10connection.disconnect()
+        ipc2withicd10connection.disconnect()
 
     } catch (e: Exception){
         println("Cloud not get diagnoses from ehelse: ${e.printStackTrace()}")
-        readAndWriteDiagnoses(outputDirectory, Entry::class.java.getResourceAsStream("/ICPC2_til_ICD-10_CSV_1_1_2019.txt"))
+        readAndWriteDiagnoses(
+                outputDirectory,
+                Entry::class.java.getResourceAsStream("/ICD-10_2019.xlsx"),
+                Entry::class.java.getResourceAsStream("/ICPC2_til_ICD-10_CSV_1_1_2019.txt"))
     }
 
 }
 
-fun readAndWriteDiagnoses(outputDirectory: Path,input: InputStream ) {
-    val entries = BufferedReader(InputStreamReader(input)).use { reader ->
+fun readAndWriteDiagnoses(outputDirectory: Path, icd10Input: InputStream, ipc2withicd10Input: InputStream ) {
+
+    val entries = BufferedReader(InputStreamReader(ipc2withicd10Input)).use { reader ->
         reader.readLines()
                 .filter { !it.matches(Regex(".?--.+")) }
                 .map { CSVParser.parse(it, CSVFormat.DEFAULT.withDelimiter(';')) }.flatMap { it.records }
@@ -70,4 +81,18 @@ fun readAndWriteDiagnoses(outputDirectory: Path,input: InputStream ) {
         writer.write("}\n")
         writer.close()
     }
+
+
+    WorkbookFactory.create(icd10Input).use { workbook ->
+        val alleGyldigeKodersheet = workbook.getSheetAt(1)
+        val dataFormatter = DataFormatter()
+
+        alleGyldigeKodersheet.forEach { row ->
+            row.forEach { cell ->
+                val cellValue = dataFormatter.formatCellValue(cell)
+            }
+        }
+    }
+
+
 }
