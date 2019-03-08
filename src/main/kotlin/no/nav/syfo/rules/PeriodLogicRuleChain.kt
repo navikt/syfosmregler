@@ -68,14 +68,21 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         }
     }),
 
+    
+    // Bør sammenlikne mottatt-dato med første periode sin fom-dato
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
     BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.behandletTidspunkt)
+        ruleMetadata.receivedDate.minusYears(3).isAfter(healthInformation.perioder.sortedFOMDate().first().atStartOfDay())
     }),
 
+    // Her er det også fom-dato vi skal se på
+    // Denne regelen vil vel også gi utslag på alle sykmeldinger der det er skrevet en begrunnelse selv om det er kun noen dager tilbakedatering
+    // Bør det strupes noe? Kan vi f.eks prøve:
+    // ruleMetadata.receivedDate.minusYears(3).plusDays(8) osv?
+    // Ser i grafana at denne slår ut unaturlig ofte
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
     BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isBefore(healthInformation.behandletTidspunkt) &&
+        ruleMetadata.receivedDate.minusYears(3).isBefore(healthInformation.perioder.sortedFOMDate().first().atStartOfDay()) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
     }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
