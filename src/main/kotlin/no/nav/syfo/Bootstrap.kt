@@ -52,6 +52,7 @@ fun main(args: Array<String>) {
     val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
     val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
     val applicationState = ApplicationState()
+    Diagnosekoder.icd10 // Just make sure the singleton is loaded and we fail early
 
     DefaultExports.initialize()
     val personV3 = JaxWsProxyFactoryBean().apply {
