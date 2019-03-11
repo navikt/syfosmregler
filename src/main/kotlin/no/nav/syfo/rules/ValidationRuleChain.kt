@@ -2,15 +2,15 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.Description
 import no.nav.syfo.Diagnosekode
-import no.nav.syfo.ICD10
-import no.nav.syfo.ICPC2
+import no.nav.syfo.Diagnosekoder
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.contains
-import no.nav.syfo.model.Diagnose
+import no.nav.syfo.isICPC2
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
+import no.nav.syfo.toICPC2
 import no.nav.syfo.validation.extractBornDate
 import no.nav.syfo.validation.validatePersonAndDNumber
 import no.nav.syfo.validation.validatePersonAndDNumber11Digits
@@ -45,7 +45,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
     ICPC_2_Z_DIAGNOSE(1132, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.codeValue?.startsWith("Z") == true
+        healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
@@ -56,11 +56,12 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(1540, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose?.let { cv ->
-            if (cv.isICPC2()) {
-                ICPC2.values().any { it.codeValue == cv.kode }
+        healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
+                healthInformation.medisinskVurdering.hovedDiagnose?.let { diagnose ->
+            if (diagnose.isICPC2()) {
+                Diagnosekoder.icpc2.containsKey(diagnose.kode)
             } else {
-                ICD10.values().any { it.codeValue == cv.kode }
+                Diagnosekoder.icd10.containsKey(diagnose.kode)
             }
         } != true
     }),
@@ -70,9 +71,9 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(1541, Status.INVALID, { (healthInformation, _) ->
         !healthInformation.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {
-                ICPC2.values().any { it.codeValue == diagnose.kode }
+                Diagnosekoder.icpc2.containsKey(diagnose.kode)
             } else {
-                ICD10.values().any { it.codeValue == diagnose.kode }
+                Diagnosekoder.icd10.containsKey(diagnose.kode)
             }
         }
     }),
@@ -119,7 +120,3 @@ fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: Que
         }
 
 // TODO Figure out what to do about group 6.6
-
-fun Diagnose.isICPC2(): Boolean = system == ICPC2.A01.oid
-
-fun Diagnose.toICPC2(): List<ICPC2>? = if (isICPC2()) { listOfNotNull(ICPC2.values().find { it.codeValue == kode }) } else { ICD10.values().find { it.codeValue == kode }?.icpc2 }

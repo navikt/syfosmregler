@@ -27,6 +27,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.random.Random
 
+fun Diagnosekoder.Diagnosekode.toDiagnose() = Diagnose(system = oid, kode = code)
+
 fun generateSykmelding(
     id: String = UUID.randomUUID().toString(),
     pasientAktoerId: String = UUID.randomUUID().toString(),
@@ -81,9 +83,7 @@ fun generateMedisinskVurdering(
         annenFraversArsak = annenFraversArsak
 )
 
-fun generateDiagnose() = ICPC2.values()[Random.nextInt(ICPC2.values().size)].toDiagnose()
-
-fun Kodeverk.toDiagnose() = Diagnose(system = oid, kode = codeValue)
+fun generateDiagnose() = Diagnosekoder.icpc2.values.stream().skip(Random.nextInt(Diagnosekoder.icpc2.values.size).toLong()).findFirst().get().toDiagnose()
 
 fun generatePeriode(
     fom: LocalDate = LocalDate.now(),
@@ -113,7 +113,7 @@ fun generateAktivitetIkkeMulig(
 
 fun generateArbeidsrelatertArsak(
     beskrivelse: String = "test data",
-    arsak: List<ArbeidsrelatertArsakType> = listOf(ArbeidsrelatertArsakType.values()[Random.nextInt(ICPC2.values().size)])
+    arsak: List<ArbeidsrelatertArsakType> = listOf(ArbeidsrelatertArsakType.values()[Random.nextInt(ArbeidsrelatertArsakType.values().size)])
 ) = ArbeidsrelatertArsak(
         beskrivelse = beskrivelse,
         arsak = arsak

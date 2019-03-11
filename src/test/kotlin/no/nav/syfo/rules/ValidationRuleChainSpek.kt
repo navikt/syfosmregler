@@ -3,8 +3,7 @@ package no.nav.syfo.rules
 import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
-import no.nav.syfo.ICPC2
-import no.nav.syfo.Kodeverk
+import no.nav.syfo.Diagnosekoder
 import no.nav.syfo.RuleData
 import no.nav.syfo.QuestionId
 import no.nav.syfo.QuestionGroup
@@ -15,6 +14,7 @@ import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.SvarRestriksjon
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.toDiagnose
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -27,8 +27,6 @@ val fairy: Fairy = Fairy.create() // (Locale("no", "NO"))
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
 object ValidationRuleChainSpek : Spek({
-    fun Kodeverk.toDiagnose() = Diagnose(system = oid, kode = codeValue)
-
     fun ruleData(
         healthInformation: Sykmelding,
         receivedDate: LocalDateTime = LocalDateTime.now(),
@@ -96,7 +94,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule ICPC_2_Z_DIAGNOSE,should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = ICPC2.Z09.toDiagnose()
+                    hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose()
             ))
 
             ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldEqual true
@@ -104,7 +102,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = ICPC2.A09.toDiagnose()
+                    hovedDiagnose = Diagnosekoder.icpc2["A09"]!!.toDiagnose()
             ))
 
             ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldEqual false

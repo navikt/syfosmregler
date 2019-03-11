@@ -2,7 +2,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 import no.nils.wsdl2java.Wsdl2JavaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import no.nav.codegen.CodegenTask
 
 group = "no.nav.syfo"
 version = "1.0.10"
@@ -135,25 +134,13 @@ dependencies {
 
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir("$buildDir/generated-sources")
-        }
-    }
-}
-
-tasks.create<CodegenTask>("generateDiagnoseCodes") {
-    outputDirectory = file("${project.buildDir}/generated-sources")
-}
-
 tasks {
     create("printVersion") {
         println(project.version)
     }
 
     withType<KotlinCompile> {
-        dependsOn("generateDiagnoseCodes","wsdl2java")
+        dependsOn("wsdl2java")
     }
 
     withType<Wsdl2JavaTask> {
