@@ -8,6 +8,7 @@ import no.nav.syfo.RuleData
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.contains
 import no.nav.syfo.isICPC2
+import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
 import no.nav.syfo.toICPC2
@@ -111,6 +112,11 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
                 healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
+    }),
+
+    @Description("Organisjoansnummer som er oppgitt er ikke 9 tegn.")
+    INVALID_ORGNR_SIZE(9999, Status.INVALID, { (_, metadata) ->
+        metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
     }),
 }
 

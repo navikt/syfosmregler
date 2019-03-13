@@ -5,6 +5,7 @@ import no.nav.syfo.generateGradert
 import no.nav.syfo.generateKontaktMedPasient
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -18,7 +19,7 @@ object PeriodLogicRuleChainSpek : Spek({
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
         patientPersonNumber: String = "1234567891"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, "1"))
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, "1", "123456789"))
 
     describe("Testing validation rules and checking the rule outcomes") {
 

@@ -11,6 +11,7 @@ import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
+import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.SvarRestriksjon
 import no.nav.syfo.model.Sykmelding
@@ -32,8 +33,9 @@ object ValidationRuleChainSpek : Spek({
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
         patientPersonNumber: String = "1234567891",
-        rulesetVersion: String = "1"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, rulesetVersion))
+        rulesetVersion: String = "1",
+        legekontorOrgNr: String = "123456789"
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, rulesetVersion, legekontorOrgNr))
 
     describe("Testing validation rules and checking the rule outcomes") {
 
@@ -259,6 +261,18 @@ object ValidationRuleChainSpek : Spek({
             )
 
             ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
+        }
+
+        it("INVALID_ORGNR_SIZE should trigger on when orgnr lengt is not 9") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.INVALID_ORGNR_SIZE(ruleData(healthInformation, legekontorOrgNr = "1234567890")) shouldEqual true
+        }
+
+        it("INVALID_ORGNR_SIZE should not trigger on when orgnr is 9") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.INVALID_ORGNR_SIZE(ruleData(healthInformation, legekontorOrgNr = "123456789")) shouldEqual false
         }
     }
 })

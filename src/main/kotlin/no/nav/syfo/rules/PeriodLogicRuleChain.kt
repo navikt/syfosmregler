@@ -5,17 +5,10 @@ import no.nav.syfo.Rule
 import no.nav.syfo.model.Status
 import no.nav.syfo.RuleData
 import no.nav.syfo.model.Periode
+import no.nav.syfo.model.RuleMetadata
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-
-data class RuleMetadata(
-    val signatureDate: LocalDateTime,
-    val receivedDate: LocalDateTime,
-    val patientPersonNumber: String,
-    val rulesetVersion: String?
-)
 
 enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
