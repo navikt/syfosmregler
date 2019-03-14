@@ -52,15 +52,6 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         gapBetweenPeriods
     }),
 
-    @Description("Hvis fom dato i varighet er lik start dato på sykdomtilfelle og første konsultasjon er mer enn 8 dager fra start dato men ikke over et år")
-    BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED(1204, Status.INVALID, { (healthInformation, _) ->
-        healthInformation.kontaktMedPasient.kontaktDato != null && healthInformation.perioder.any {
-            // TODO: ? it.periodeFOMDato == healthInformation.syketilfelleStartDato &&
-                    healthInformation.kontaktMedPasient.kontaktDato > it.fom.plusDays(7) &&
-                    healthInformation.kontaktMedPasient.kontaktDato <= it.fom.plusYears(1).minusDays(1)
-        }
-    }),
-
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
     BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, ruleMetadata) ->
         ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.behandletTidspunkt)

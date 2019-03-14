@@ -133,32 +133,6 @@ object PeriodLogicRuleChainSpek : Spek({
             PeriodLogicRuleChain.GAP_BETWEEN_PERIODS(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED, should trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2018, 1, 1),
-                            tom = LocalDate.of(2018, 2, 1)
-                    )),
-                    kontaktMedPasient = generateKontaktMedPasient(kontaktDato = LocalDate.of(2018, 1, 9)))
-
-            PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED(ruleData(healthInformation)) shouldEqual true
-        }
-
-        it("Should check rule BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(
-                    perioder = listOf(
-                            generatePeriode(
-                                    fom = LocalDate.of(2018, 1, 1),
-                                    tom = LocalDate.of(2018, 2, 1)
-                            )
-                    ),
-                    kontaktMedPasient = generateKontaktMedPasient(kontaktDato = LocalDate.of(2018, 1, 8))
-                    // syketilfelleStartDato = LocalDate.of(2018, 1, 1)
-            )
-
-            PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_AND_UNDER_1_YEAR_BACKDATED(ruleData(healthInformation)) shouldEqual false
-        }
-
         it("Should check rule BACKDATED_MORE_THEN_3_YEARS, should trigger rule") {
             val healthInformation = generateSykmelding(
                     behandletTidspunkt = LocalDateTime.now().minusYears(3).minusDays(1)
