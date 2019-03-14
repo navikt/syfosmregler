@@ -22,7 +22,7 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
                     it.autorisasjon?.oid != null
                     it.autorisasjon.oid == 7704 &&
                     it.autorisasjon?.verdi != null &&
-                    it.autorisasjon.verdi in arrayOf("1", "17", "4", "3", "2", "14")
+                    it.autorisasjon.verdi in arrayOf("1", "17", "4", "3", "2", "14", "18")
         }
     }),
 
