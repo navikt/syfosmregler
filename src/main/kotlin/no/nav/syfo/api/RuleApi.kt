@@ -37,6 +37,7 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import no.nhn.schemas.reg.hprv2.IHPR2Service
+import no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -91,40 +92,40 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 legekontorOrgnr = receivedSykmelding.legekontorOrgNr
         ))
 
-        // TODO no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage: ArgumentException: Personnummer ikke funnet
-        // add rule 1401 when this happens
-        /*
-            @Description(" Behandler ikke registrert i HPR")
-            BEHANDLER_NOT_IN_HPR(1401, Status.INVALID, { (_, doctor) ->
-            doctor.nin.isNullOrEmpty()
-            }),
-        * */
-        val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
+        try {
+            val doctor = fetchDoctor(helsepersonellv1, receivedSykmelding.personNrLege).await()
 
-        val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
+            val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
 
-        val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
-        val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
+            val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
+            val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
-        // TODO remove when in ready in pro
-        /* val syketilfelle = syketilfelleClient.fetchSyketilfelle(
+            // TODO remove when in ready in pro
+            /* val syketilfelle = syketilfelleClient.fetchSyketilfelle(
                 receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
                         receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
                 receivedSykmelding.sykmelding.pasientAktoerId).await() */
 
-        val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
-        val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
-        val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
-        // TODO remove when in ready in pro
-        // val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding)
-        // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
-        val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
+            val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
+            val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
+            val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
+            // TODO remove when in ready in pro
+            // val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding)
+            // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
+            val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
 
-        log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
+            log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
-        val validationResult = validationResult(results)
-        RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
-        call.respond(validationResult)
+            val validationResult = validationResult(results)
+            RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
+            call.respond(validationResult)
+        } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
+            val validationResult = ValidationResult(
+                    status = Status.INVALID,
+                    ruleHits = listOf(RuleInfo(ruleMessage = "BEHANDLER_NOT_IN_HPR"))
+            )
+            call.respond(validationResult)
+        }
     }
 }
 
