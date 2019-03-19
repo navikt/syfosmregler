@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
+import io.ktor.client.features.BadResponseStatusException
+import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
@@ -101,19 +103,27 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
-            // TODO remove when in ready in pro
-            val syketilfelle = syketilfelleClient.fetchSyketilfelle(
-                receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
-                        receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
-                receivedSykmelding.sykmelding.pasientAktoerId).await()
-
             val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
             val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
-            // TODO remove when in ready in pro
-            val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
+
+            // TODO fix this, how should we handle http 204 from syketille
+            var syketilfelleResults: List<Rule<Any>>
+            try {
+                val syketilfelle = syketilfelleClient.fetchSyketilfelle(
+                        receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
+                                receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
+                        receivedSykmelding.sykmelding.pasientAktoerId).await()
+                syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
+            } catch (e: BadResponseStatusException) {
+                when (e.statusCode) {
+                    NoContent -> syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding,
+                            Oppfolgingstilfelle(0, false, null))
+                    else -> throw e
+                }
+            }
+
             val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
-            // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
 
             log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
@@ -142,7 +152,7 @@ fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, re
             inntruffet = received,
             tags = listOf(SyketilfelleTag.SYKMELDING, SyketilfelleTag.PERIODE, when {
                 it.aktivitetIkkeMulig != null -> SyketilfelleTag.INGEN_AKTIVITET
-                it.reisetilskudd -> SyketilfelleTag.INGEN_AKTIVITET
+                it.reisetilskudd -> SyketilfelleTag.FULL_AKTIVITET
                 it.gradert != null -> SyketilfelleTag.GRADERT_AKTIVITET
                 it.behandlingsdager != null -> SyketilfelleTag.BEHANDLINGSDAGER
                 it.avventendeInnspillTilArbeidsgiver != null -> SyketilfelleTag.FULL_AKTIVITET
