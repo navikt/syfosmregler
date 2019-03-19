@@ -12,8 +12,8 @@ data class ApplicationConfig(
     val personV3EndpointURL: String,
     val securityTokenServiceUrl: String,
     val helsepersonellv1EndpointUrl: String,
-    val legeSuspensjonEndpointUrl: String = "http://btsys",
-    val stsRestEndpointUrl: String = "http://security-token-service",
+    val legeSuspensjonEndpointUrl: String,
+    val stsRestEndpointUrl: String,
     val syketilfelleEndpointUrl: String
 )
 
