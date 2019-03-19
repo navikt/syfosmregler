@@ -116,11 +116,21 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                         receivedSykmelding.sykmelding.pasientAktoerId).await()
                 syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
             } catch (e: BadResponseStatusException) {
-                when (e.statusCode) {
-                    NoContent -> syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding,
+                if (e.statusCode == NoContent) {
+                    syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(
+                            receivedSykmelding.sykmelding,
                             Oppfolgingstilfelle(0, false, null))
-                    else -> throw e
-                }
+
+                    val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
+
+                    log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
+
+                    val validationResult = validationResult(results)
+                    RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
+                    call.respond(validationResult)
+                } else {
+                        throw e
+                    }
             }
 
             val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
