@@ -31,6 +31,7 @@ import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
+import no.nav.syfo.rules.SyketillfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
@@ -101,18 +102,18 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
             // TODO remove when in ready in pro
-            /* val syketilfelle = syketilfelleClient.fetchSyketilfelle(
+            val syketilfelle = syketilfelleClient.fetchSyketilfelle(
                 receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
                         receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
-                receivedSykmelding.sykmelding.pasientAktoerId).await() */
+                receivedSykmelding.sykmelding.pasientAktoerId).await()
 
             val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
             val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
             // TODO remove when in ready in pro
-            // val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding)
-            // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
-            val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
+            val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
+            val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
+            // val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
 
             log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
