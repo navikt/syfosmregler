@@ -6,8 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
-import io.ktor.client.features.BadResponseStatusException
-import io.ktor.http.HttpStatusCode.Companion.NoContent
+import io.ktor.client.call.ReceivePipelineException
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
@@ -121,8 +120,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 val validationResult = validationResult(results)
                 RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
                 call.respond(validationResult)
-            } catch (e: BadResponseStatusException) {
-                if (e.statusCode == NoContent) {
+            } catch (e: ReceivePipelineException) {
                     val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(
                             receivedSykmelding.sykmelding,
                             Oppfolgingstilfelle(0, false, null))
@@ -134,9 +132,6 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                     val validationResult = validationResult(results)
                     RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
                     call.respond(validationResult)
-                } else {
-                        throw e
-                    }
             }
         } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
             val validationResult = ValidationResult(
