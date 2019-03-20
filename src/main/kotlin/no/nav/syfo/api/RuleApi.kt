@@ -120,7 +120,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 val validationResult = validationResult(results)
                 RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
                 call.respond(validationResult)
-            } catch (e: ReceivePipelineException) {
+            } catch (e: Exception) {
+                log.error("Exception occured with call to syketilfelleClient", e)
                     val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(
                             receivedSykmelding.sykmelding,
                             Oppfolgingstilfelle(0, false, null))
