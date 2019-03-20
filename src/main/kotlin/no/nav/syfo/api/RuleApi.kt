@@ -121,11 +121,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 call.respond(validationResult)
             } catch (e: Exception) {
                 log.error("Exception occured with call to syketilfelleClient", e)
-                    val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(
-                            receivedSykmelding.sykmelding,
-                            Oppfolgingstilfelle(0, false, null))
-
-                    val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
+                    val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
 
                     log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
