@@ -16,3 +16,19 @@ enum class SyketillfelleRuleChain(override val ruleId: Int?, override val status
         }
     }),
 }
+
+enum class SyketillfelleRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<Oppfolgingstilfelle?>) -> Boolean) : Rule<RuleData<Oppfolgingstilfelle?>> {
+    @Description("Hvis første gangs sykmelding er tilbakedatert mer enn 8 dager før første konsultasjon uten begrunnelse eller kontaktdato i perioden")
+    BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK_LEAVE (1204, Status.INVALID, { (healthInformation, _) ->
+       //sjekker først om det er tilbakedatering uten begrunnelse
+       healthInformation.perioder.sortedFOMDate().first() < ruleMetadata.signaturDate && 
+                                    healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() {
+           // Skal avvises hvis mer enn 8 dager tilbakedatert eller kontaktdato ikke er i perioden. 
+          healthInformation.perioder.sortedFOMDate().first().plusDays(8) < ruleMetadata.signaturDate ||
+                                    healthInformation.kontaktMedPasient.kontaktDato > ruleMetadata.signaturDate ||
+                                       healthInformation.kontaktMedPasient.kontaktDato.plusDays(8) < ruleMetadata.signaturDate 
+                                       
+        
+        }
+    }),
+}
