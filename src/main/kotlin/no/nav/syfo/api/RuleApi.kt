@@ -105,30 +105,24 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
-            // TODO fix this, how should we handle http 204 from syketille
-            try {
-                val syketilfelle = syketilfelleClient.fetchSyketilfelle(
-                        receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
-                                receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
-                        receivedSykmelding.sykmelding.pasientAktoerId).await()
-                val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
-                val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
+            val syketilfelle = syketilfelleClient.fetchSyketilfelle(
+                    receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
+                            receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
+                    receivedSykmelding.sykmelding.pasientAktoerId).await()
+            val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
+            val results = listOf(
+                    validationAndPeriodRuleResults,
+                    tpsRuleResults,
+                    hprRuleResults,
+                    doctorRuleResults,
+                    syketilfelleResults
+            ).flatten()
 
-                log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
+            log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
-                val validationResult = validationResult(results)
-                RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
-                call.respond(validationResult)
-            } catch (e: Exception) {
-                log.error("Exception occured with call to syketilfelleClient", e)
-                    val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults).flatten()
-
-                    log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
-
-                    val validationResult = validationResult(results)
-                    RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
-                    call.respond(validationResult)
-            }
+            val validationResult = validationResult(results)
+            RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
+            call.respond(validationResult)
         } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
             val validationResult = ValidationResult(
                     status = Status.INVALID,

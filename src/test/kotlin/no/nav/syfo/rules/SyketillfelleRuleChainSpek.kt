@@ -18,7 +18,7 @@ object SyketillfelleRuleChainSpek : Spek({
         antallBrukteDager: Int = 10,
         oppbruktArbeidsgvierperiode: Boolean = true,
         arbeidsgiverPeriode: Periode? = Periode(fom = LocalDate.now(), tom = LocalDate.now().plusDays(1))
-    ): RuleData<Oppfolgingstilfelle> = RuleData(healthInformation, Oppfolgingstilfelle(antallBrukteDager, oppbruktArbeidsgvierperiode, arbeidsgiverPeriode))
+    ): RuleData<Oppfolgingstilfelle?> = RuleData(healthInformation, Oppfolgingstilfelle(antallBrukteDager, oppbruktArbeidsgvierperiode, arbeidsgiverPeriode))
 
     describe("Testing validation rules and checking the rule outcomes") {
 

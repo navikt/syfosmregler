@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
@@ -14,8 +15,11 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.accept
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
+import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.Deferred
 import no.nav.syfo.model.Syketilfelle
@@ -38,8 +42,8 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Deferred<Oppfolgingstilfelle> = client.retryAsync("syketilfelle") {
-        client.post<Oppfolgingstilfelle>("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Deferred<Oppfolgingstilfelle?> = client.retryAsync("syketilfelle") {
+        val syketilfelle = client.post<HttpResponse>("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
@@ -47,6 +51,12 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
                 append("Authorization", "Bearer ${oidcToken.access_token}")
             }
             body = syketilfelleList
+        }
+
+        when {
+            syketilfelle.status == HttpStatusCode.NoContent -> null
+            syketilfelle.status.isSuccess() -> syketilfelle.receive<Oppfolgingstilfelle>()
+            else -> throw RuntimeException("Failed to fetch syketilfelle ${syketilfelle.receive<String>()}")
         }
     }
 }
