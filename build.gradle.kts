@@ -4,7 +4,7 @@ import no.nils.wsdl2java.Wsdl2JavaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
-version = "1.0.13"
+version = "1.0.14"
 
 val coroutinesVersion = "1.0.0"
 val javaxActivationVersion = "1.1.1"
