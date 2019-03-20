@@ -6,7 +6,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
-import io.ktor.client.call.ReceivePipelineException
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Routing
