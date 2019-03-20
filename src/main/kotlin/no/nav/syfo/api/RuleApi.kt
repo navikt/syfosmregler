@@ -108,16 +108,22 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
             // TODO fix this, how should we handle http 204 from syketille
-            var syketilfelleResults: List<Rule<Any>>
             try {
                 val syketilfelle = syketilfelleClient.fetchSyketilfelle(
                         receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
                                 receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
                         receivedSykmelding.sykmelding.pasientAktoerId).await()
-                syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
+                val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)
+                val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
+
+                log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
+
+                val validationResult = validationResult(results)
+                RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
+                call.respond(validationResult)
             } catch (e: BadResponseStatusException) {
                 if (e.statusCode == NoContent) {
-                    syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(
+                    val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(
                             receivedSykmelding.sykmelding,
                             Oppfolgingstilfelle(0, false, null))
 
@@ -132,14 +138,6 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                         throw e
                     }
             }
-
-            val results = listOf(validationAndPeriodRuleResults, tpsRuleResults, hprRuleResults, doctorRuleResults, syketilfelleResults).flatten()
-
-            log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
-
-            val validationResult = validationResult(results)
-            RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
-            call.respond(validationResult)
         } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
             val validationResult = ValidationResult(
                     status = Status.INVALID,
