@@ -71,9 +71,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(receivedSykmeldingText)
 
         val logValues = arrayOf(
-                keyValue("smId", receivedSykmelding.navLogId),
+                keyValue("mottakId", receivedSykmelding.navLogId),
                 keyValue("organizationNumber", receivedSykmelding.legekontorOrgNr),
-                keyValue("msgId", receivedSykmelding.msgId)
+                keyValue("msgId", receivedSykmelding.msgId),
+                keyValue("sykmeldingId", receivedSykmelding.sykmelding.id)
         )
 
         val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
