@@ -16,8 +16,9 @@ enum class SyketillfelleRuleChain(override val ruleId: Int?, override val status
         }
     }),
 }
-
+// Camillas forsøk på å skrive kode:
 enum class SyketillfelleRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<Oppfolgingstilfelle?>) -> Boolean) : Rule<RuleData<Oppfolgingstilfelle?>> {
+    
     @Description("Hvis første gangs sykmelding er tilbakedatert mer enn 8 dager før første konsultasjon uten begrunnelse eller kontaktdato i perioden")
     BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK_LEAVE (1204, Status.INVALID, { (healthInformation, _) ->
        //sjekker først om det er tilbakedatering uten begrunnelse
@@ -31,4 +32,20 @@ enum class SyketillfelleRuleChain(override val ruleId: Int?, override val status
         
         }
     }),
+    
+    
+    // 1. Sjekke om begrunnIkkeKontakt er utfylt
+    // 2. Sjekke om sykmelding er ny eller forlengelse og at den er tilbakedatert
+    // 3. Hvis ny sykmelding - bruke 8-dagers regel, dvs utover 8 dager -> manuell behandling
+    // 4. Hvis forlenget - bruke 1 mnd regel, dvs tilbakedatering utover 1 mnd -> manuell behandling
+    // Skal være første fom i sykmeldingen
+
+    @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
+    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
+        !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+        ruleMetadata.signatureDate.minusYears(3).isBefore(healthInformation.perioder.sortedFOMDate().first().atStartOfDay()) 
+            If !forlengelse healthInformation.signatureDate < it.periodeFOMDato.plusDays(8)
+            else healthInformation.signatureDate < it.periodeFOMDato.plusDays(30)
+        }
+   }), 
 }
