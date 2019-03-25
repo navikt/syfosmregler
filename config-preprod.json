@@ -3,6 +3,5 @@
   "helsepersonellv1EndpointUrl" : "https://pep-gw-q1.oera-q.local:9443/samhandler/helse/helsepersonell/v1",
   "securityTokenServiceUrl" : "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "legeSuspensjonEndpointUrl" : "http://btsys",
-  "stsRestEndpointUrl" : "http://security-token-service",
   "syketilfelleEndpointUrl" : "http://syfosyketilfelle"
 }

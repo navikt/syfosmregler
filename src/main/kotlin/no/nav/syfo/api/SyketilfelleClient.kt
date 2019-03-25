@@ -28,7 +28,7 @@ import java.time.LocalDate
 
 @KtorExperimentalAPI
 class SyketilfelleClient(private val endpointUrl: String, private val stsClient: StsOidcClient) {
-    private val client = HttpClient(CIO) {
+    private val httpClient = HttpClient(CIO) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 registerKotlinModule()
@@ -42,8 +42,9 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Deferred<Oppfolgingstilfelle?> = client.retryAsync("syketilfelle") {
-        val syketilfelle = client.post<HttpResponse>("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Deferred<Oppfolgingstilfelle?> = httpClient.retryAsync("syketilfelle") {
+        // TODO: Remove this workaround whenever ktor issue #1009 is fixed
+        httpClient.post<HttpResponse>("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
@@ -51,16 +52,14 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
                 append("Authorization", "Bearer ${oidcToken.access_token}")
             }
             body = syketilfelleList
-        }
-
-        syketilfelle.use {
+        }.use {
             when {
-                syketilfelle.status.value == HttpStatusCode.NoContent.value -> null
-                syketilfelle.status.isSuccess() -> syketilfelle.call.receive<Oppfolgingstilfelle>()
-                else -> throw RuntimeException("Failed to fetch syketilfelle ${syketilfelle.call.receive<String>()}")
+                it.status.value == HttpStatusCode.NoContent.value -> null
+                it.status.isSuccess() -> it.call.receive<Oppfolgingstilfelle>()
+                else -> throw RuntimeException("Failed to fetch syketilfelle ${it.call.receive<String>()}")
             }
         }
-    }
+        }
 }
 
 data class Oppfolgingstilfelle(val antallBrukteDager: Int, val oppbruktArbeidsgvierperiode: Boolean, val arbeidsgiverperiode: Periode?)

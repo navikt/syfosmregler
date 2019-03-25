@@ -83,7 +83,7 @@ fun main(args: Array<String>) {
     configureSTSFor(helsepersonellv1, credentials.serviceuserUsername,
             credentials.serviceuserPassword, config.securityTokenServiceUrl)
 
-    val oidcClient = StsOidcClient(config.stsRestEndpointUrl, credentials.serviceuserUsername, credentials.serviceuserPassword)
+    val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(config.legeSuspensjonEndpointUrl, credentials, oidcClient)
     val syketilfelleClient = SyketilfelleClient(config.syketilfelleEndpointUrl, oidcClient)
 

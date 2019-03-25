@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
@@ -11,6 +12,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
+import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.Deferred
@@ -19,7 +21,7 @@ import no.nav.syfo.retryAsync
 
 @KtorExperimentalAPI
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient) {
-    private val client = HttpClient(CIO) {
+    private val httpClient = HttpClient(CIO) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 registerKotlinModule()
@@ -29,8 +31,9 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
         }
     }
 
-    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Deferred<Suspendert> = client.retryAsync("lege_suspansjon") {
-        client.get<Suspendert>("$endpointUrl/api/v1/suspensjon/status") {
+    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Deferred<Suspendert> = httpClient.retryAsync("lege_suspansjon") {
+        // TODO: Remove this workaround whenever ktor issue #1009 is fixed
+        httpClient.get<HttpResponse>("$endpointUrl/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
             headers {
@@ -41,7 +44,7 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
                 append("Authorization", "Bearer ${oidcToken.access_token}")
             }
             parameter("oppslagsdato", oppslagsdato)
-        }
+        }.use { it.call.response.receive<Suspendert>() }
     }
 }
 

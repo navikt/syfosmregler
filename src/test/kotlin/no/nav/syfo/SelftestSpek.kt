@@ -18,7 +18,6 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.Oppfolgingstilfelle
 import no.nav.syfo.api.Periode
-
 import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
@@ -82,7 +81,7 @@ object SelftestSpek : Spek({
             }.create() as IHPR2Service
 
             val credentials = VaultCredentials("", "")
-            val oidcClient = StsOidcClient(mockHttpServerUrl, "username", "password")
+            val oidcClient = StsOidcClient("username", "password", "$mockHttpServerUrl/rest/v1/sts/token")
             val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
 
