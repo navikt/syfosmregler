@@ -53,13 +53,13 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     }),
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
-    BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isAfter(healthInformation.behandletTidspunkt)
+    BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, _) ->
+        healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
     }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
-        ruleMetadata.signatureDate.minusYears(3).isBefore(healthInformation.behandletTidspunkt) &&
+    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
+        healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(healthInformation.behandletTidspunkt) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
     }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
