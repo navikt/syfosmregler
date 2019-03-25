@@ -59,7 +59,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
                 else -> throw RuntimeException("Failed to fetch syketilfelle ${it.call.receive<String>()}")
             }
         }
-        }
+    }
 }
 
 data class Oppfolgingstilfelle(val antallBrukteDager: Int, val oppbruktArbeidsgvierperiode: Boolean, val arbeidsgiverperiode: Periode?)
