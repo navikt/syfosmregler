@@ -53,10 +53,12 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
             body = syketilfelleList
         }
 
-        when {
-            syketilfelle.status.value == HttpStatusCode.NoContent.value -> null
-            syketilfelle.status.isSuccess() -> syketilfelle.call.receive<Oppfolgingstilfelle>()
-            else -> throw RuntimeException("Failed to fetch syketilfelle ${syketilfelle.call.receive<String>()}")
+        syketilfelle.use {
+            when {
+                syketilfelle.status.value == HttpStatusCode.NoContent.value -> null
+                syketilfelle.status.isSuccess() -> syketilfelle.call.receive<Oppfolgingstilfelle>()
+                else -> throw RuntimeException("Failed to fetch syketilfelle ${syketilfelle.call.receive<String>()}")
+            }
         }
     }
 }
