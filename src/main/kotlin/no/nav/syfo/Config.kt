@@ -13,7 +13,6 @@ data class ApplicationConfig(
     val securityTokenServiceUrl: String,
     val helsepersonellv1EndpointUrl: String,
     val legeSuspensjonEndpointUrl: String,
-    val stsRestEndpointUrl: String,
     val syketilfelleEndpointUrl: String
 )
 
