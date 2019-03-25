@@ -38,7 +38,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
         install(Logging) {
             logger = Logger.DEFAULT
-            level = LogLevel.ALL
+            level = LogLevel.INFO
         }
     }
 
