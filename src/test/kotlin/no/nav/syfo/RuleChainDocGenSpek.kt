@@ -4,7 +4,6 @@ import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
-import no.nav.syfo.rules.SyketillfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -23,7 +22,7 @@ object RuleChainDocGenSpek : Spek({
         it("Generates a CSV file with rule chain") {
             val basePath = Paths.get("build", "reports")
             Files.createDirectories(basePath)
-            val ruleCSV = arrayOf("Rule name;status;Rule ID;Description").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList(), PeriodLogicRuleChain.values().toList(), PostTPSRuleChain.values().toList(), HPRRuleChain.values().toList(), LegesuspensjonRuleChain.values().toList(), SyketillfelleRuleChain.values().toList()).flatten()
+            val ruleCSV = arrayOf("Rule name;status;Rule ID;Description").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList(), PeriodLogicRuleChain.values().toList(), PostTPSRuleChain.values().toList(), HPRRuleChain.values().toList(), LegesuspensjonRuleChain.values().toList()).flatten()
                     .map { rule ->
                         "${rule.name};${rule.status};${rule.ruleId
                                 ?: ""};${rule.enumAnnotationValue(Description::class, rule.name)?.description ?: ""}"

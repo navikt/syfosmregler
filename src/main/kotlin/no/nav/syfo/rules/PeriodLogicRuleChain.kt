@@ -57,9 +57,23 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
     }),
 
+    BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
+        // TODO sjekke om førstegangs sykmelding, fra syketilfelle appen
+        ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
+                healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+    }),
+
+    BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
+        // TODO sjekke om førstegangs sykmelding, i syketilfelle appen
+        ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
+        healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+        healthInformation.kontaktMedPasient.kontaktDato != null &&
+        ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato.atStartOfDay()
+    }),
+
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, _) ->
-        healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(healthInformation.behandletTidspunkt) &&
+    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
+        healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(ruleMetadata.signatureDate) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
     }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
