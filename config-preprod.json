@@ -1,7 +1,0 @@
-{
-  "personV3EndpointURL" : "https://wasapp-q1.adeo.no/tpsws/ws/Person/v3",
-  "helsepersonellv1EndpointUrl" : "https://pep-gw-q1.oera-q.local:9443/samhandler/helse/helsepersonell/v1",
-  "securityTokenServiceUrl" : "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
-  "legeSuspensjonEndpointUrl" : "http://btsys",
-  "syketilfelleEndpointUrl" : "http://syfosyketilfelle"
-}

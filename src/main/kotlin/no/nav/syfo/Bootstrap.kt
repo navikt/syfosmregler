@@ -34,10 +34,10 @@ import org.apache.cxf.phase.Phase
 import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
+import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 
-val log: Logger = LoggerFactory.getLogger("sm-rules")
+val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
 data class ApplicationState(var ready: Boolean = false, var running: Boolean = true)
 
@@ -49,8 +49,8 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
 
 @KtorExperimentalAPI
 fun main(args: Array<String>) {
-    val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
-    val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
+    val env = Environment()
+    val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
 
     if (Diagnosekoder.icd10.isEmpty() || Diagnosekoder.icpc2.isEmpty()) {
@@ -59,14 +59,14 @@ fun main(args: Array<String>) {
 
     DefaultExports.initialize()
     val personV3 = JaxWsProxyFactoryBean().apply {
-        address = config.personV3EndpointURL
+        address = env.personV3EndpointURL
         serviceClass = PersonV3::class.java
     }.create() as PersonV3
     configureSTSFor(personV3, credentials.serviceuserUsername,
-            credentials.serviceuserPassword, config.securityTokenServiceUrl)
+            credentials.serviceuserPassword, env.securityTokenServiceURL)
 
     val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
-        address = config.helsepersonellv1EndpointUrl
+        address = env.helsepersonellv1EndpointURL
         // TODO: Contact someone about this hacky workaround
         // talk to HDIR about HPR about they claim to send a ISO-8859-1 but its really UTF-8 payload
         val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
@@ -81,13 +81,13 @@ fun main(args: Array<String>) {
         serviceClass = IHPR2Service::class.java
     }.create() as IHPR2Service
     configureSTSFor(helsepersonellv1, credentials.serviceuserUsername,
-            credentials.serviceuserPassword, config.securityTokenServiceUrl)
+            credentials.serviceuserPassword, env.securityTokenServiceURL)
 
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
-    val legeSuspensjonClient = LegeSuspensjonClient(config.legeSuspensjonEndpointUrl, credentials, oidcClient)
-    val syketilfelleClient = SyketilfelleClient(config.syketilfelleEndpointUrl, oidcClient)
+    val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
+    val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
 
-    val applicationServer = embeddedServer(Netty, config.applicationPort) {
+    val applicationServer = embeddedServer(Netty, env.applicationPort) {
         initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
         applicationState.ready = true
     }.start(wait = true)

@@ -8,20 +8,24 @@ This project contains just the rules for validating whether or not a user is sup
 * Spek
 * Jackson
 
+#### Requirements
+
+* JDK 11
 
 ## Getting started
-## Running locally
-The application should be able to run locally in any IDE by just setting the environment variables
-`SRVSYFOSYKEMELDINGREGLER_USERNAME` and `SYFOSYKEMELDINGREGLER_PASSWORD`
+#### Running locally
+`./gradlew run`
 
 ### Building the application
 #### Compile and package application
-To build locally and run the integration tests you can simply run `./gradlew shadowJar` or  on windows 
+To build locally and run the integration tests you can simply run `./gradlew shadowJar` or on windows 
 `gradlew.bat shadowJar`
 
 #### Creating a docker image
 Creating a docker image should be as simple as `docker build -t syfosmregler .`
 
+#### Running a docker image
+`docker run --rm -it -p 8080:8080 syfosmregler`
 
 ## Contact us
 ### Code/project related questions can be sent to
