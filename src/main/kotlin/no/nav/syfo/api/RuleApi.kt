@@ -125,7 +125,10 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
         } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
             val validationResult = ValidationResult(
                     status = Status.INVALID,
-                    ruleHits = listOf(RuleInfo(ruleMessage = "BEHANDLER_NOT_IN_HPR"))
+                    ruleHits = listOf(RuleInfo(
+                            ruleName = "BEHANDLER_NOT_IN_HPR",
+                            textToTreater = "Behandler er ikkje register i HPR",
+                            textToUser = "Behandler er ikkje register i HPR"))
             )
             call.respond(validationResult)
         }
@@ -171,5 +174,5 @@ fun validationResult(results: List<Rule<Any>>): ValidationResult =
                             ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
                             ?: Status.OK
                         },
-                ruleHits = results.map { rule -> RuleInfo(rule.name) }
+                ruleHits = results.map { rule -> RuleInfo(rule.name, rule.textToUser, rule.textToTreater) }
         )

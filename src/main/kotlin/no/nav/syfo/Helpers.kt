@@ -1,6 +1,7 @@
 package no.nav.syfo
 
 import io.ktor.client.engine.cio.ConnectException
+import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -8,6 +9,7 @@ import kotlinx.coroutines.delay
 import java.io.IOException
 import kotlin.reflect.KClass
 
+@KtorExperimentalAPI
 inline fun <reified T> CoroutineScope.retryAsync(
     callName: String,
     vararg legalExceptions: KClass<out Throwable> = arrayOf(IOException::class, ConnectException::class),
