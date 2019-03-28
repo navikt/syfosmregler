@@ -22,10 +22,10 @@ object RuleChainDocGenSpek : Spek({
         it("Generates a CSV file with rule chain") {
             val basePath = Paths.get("build", "reports")
             Files.createDirectories(basePath)
-            val ruleCSV = arrayOf("Rule name;status;Rule ID;Description").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList(), PeriodLogicRuleChain.values().toList(), PostTPSRuleChain.values().toList(), HPRRuleChain.values().toList(), LegesuspensjonRuleChain.values().toList()).flatten()
+            val ruleCSV = arrayOf("Regel navn;Status;Regel ID;Beskrivelse;Tekst til bruker;Tekst til behandler").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList(), PeriodLogicRuleChain.values().toList(), PostTPSRuleChain.values().toList(), HPRRuleChain.values().toList(), LegesuspensjonRuleChain.values().toList()).flatten()
                     .map { rule ->
                         "${rule.name};${rule.status};${rule.ruleId
-                                ?: ""};${rule.enumAnnotationValue(Description::class, rule.name)?.description ?: ""}"
+                                ?: ""};${rule.enumAnnotationValue(Description::class, rule.name)?.description ?: ""};${rule.textToUser};${rule.textToTreater}"
                     })
             val csvFile = basePath.resolve("rules.csv")
             Files.write(csvFile, ruleCSV, Charsets.UTF_8)

@@ -6,16 +6,30 @@ import no.nav.syfo.RuleData
 import no.nav.syfo.model.Status
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
-enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<HPRPerson>) -> Boolean) : Rule<RuleData<HPRPerson>> {
-    @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt..")
-    BEHANDLER_NOT_VALDIG_IN_HPR(1402, Status.INVALID, { (_, doctor) ->
+enum class HPRRuleChain(
+    override val ruleId: Int?,
+    override val status: Status,
+    override val textToUser: String,
+    override val textToTreater: String,
+    override val predicate: (RuleData<HPRPerson>) -> Boolean
+) : Rule<RuleData<HPRPerson>> {
+    @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
+    BEHANDLER_NOT_VALDIG_IN_HPR(
+            1402,
+            Status.INVALID,
+            "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt",
+            "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
             it?.autorisasjon?.isAktiv != null && it.autorisasjon.isAktiv
         }
     }),
 
     @Description("Behandler har ikkje gylding autorisasjon i HPR")
-    BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(1403, Status.INVALID, { (_, doctor) ->
+    BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(
+            1403,
+            Status.INVALID,
+            "Behandler har ikkje gylding autorisasjon i HPR",
+            "Behandler har ikkje gylding autorisasjon i HPR", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
             it?.autorisasjon?.isAktiv != null &&
             it.autorisasjon.isAktiv &&
@@ -27,7 +41,11 @@ enum class HPRRuleChain(override val ruleId: Int?, override val status: Status, 
     }),
 
     @Description("Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege")
-    BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(1407, Status.MANUAL_PROCESSING, { (_, doctor) ->
+    BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(
+            1407,
+            Status.MANUAL_PROCESSING,
+            "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege",
+            "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null &&
                 !doctor.godkjenninger.godkjenning.any {
                     it?.helsepersonellkategori?.isAktiv != null &&

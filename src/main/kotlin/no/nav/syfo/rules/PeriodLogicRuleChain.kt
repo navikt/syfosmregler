@@ -10,25 +10,51 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: Status, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
+enum class PeriodLogicRuleChain(
+    override val ruleId: Int?,
+    override val status: Status,
+    override val textToUser: String,
+    override val textToTreater: String,
+    override val predicate: (RuleData<RuleMetadata>) -> Boolean
+) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
     @Description("Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.")
-    SIGNATURE_DATE_AFTER_RECEIVED_DATE(1123, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    SIGNATURE_DATE_AFTER_RECEIVED_DATE(
+            1123,
+            Status.INVALID,
+            "Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.",
+            "Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.",
+            { (healthInformation, ruleMetadata) ->
         healthInformation.behandletTidspunkt > ruleMetadata.signatureDate
     }),
 
     @Description("Hvis ingen perioder er oppgitt skal sykmeldingen avvises.")
-    NO_PERIOD_PROVIDED(1200, Status.INVALID, { (healthInformation, _) ->
+    NO_PERIOD_PROVIDED(
+            1200,
+            Status.INVALID,
+            "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
+            "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
+            { (healthInformation, _) ->
         healthInformation.perioder.isNullOrEmpty()
     }),
 
     @Description("Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.")
-    TO_DATE_BEFORE_FROM_DATE(1201, Status.INVALID, { (healthInformation, _) ->
+    TO_DATE_BEFORE_FROM_DATE(
+            1201,
+            Status.INVALID,
+            "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
+            "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
+            { (healthInformation, _) ->
         healthInformation.perioder.any { it.fom.isAfter(it.tom) }
     }),
 
     @Description("Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.")
-    OVERLAPPING_PERIODS(1202, Status.INVALID, { (healthInformation, _) ->
+    OVERLAPPING_PERIODS(
+            1202,
+            Status.INVALID,
+            "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
+            "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
+            { (healthInformation, _) ->
         healthInformation.perioder.any { periodA ->
             healthInformation.perioder
                     .filter { periodB -> periodB != periodA }
@@ -38,9 +64,13 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
         }
     }),
 
-    // TODO
     @Description("Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.")
-    GAP_BETWEEN_PERIODS(1203, Status.INVALID, { (healthInformation, _) ->
+    GAP_BETWEEN_PERIODS(
+            1203,
+            Status.INVALID,
+            "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
+            "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
+            { (healthInformation, _) ->
         val ranges = healthInformation.perioder
                 .sortedBy { it.fom }
                 .map { it.fom to it.tom }
@@ -53,17 +83,34 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     }),
 
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
-    BACKDATED_MORE_THEN_3_YEARS(1206, Status.INVALID, { (healthInformation, _) ->
+    BACKDATED_MORE_THEN_3_YEARS(
+            1206,
+            Status.INVALID,
+            "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
+            "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
+            { (healthInformation, _) ->
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
     }),
 
-    BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    @Description("Sykmeldinges er tilbakedater mer enn 8 dager tilbake i tid.")
+    BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(
+            1204,
+            Status.INVALID,
+            "Sykmeldinges er tilbakedater mer enn 8 dager tilbake i tid.",
+            "Sykmeldinges er tilbakedater mer enn 8 dager tilbake i tid.",
+            { (healthInformation, ruleMetadata) ->
         // TODO sjekke om førstegangs sykmelding, fra syketilfelle appen
         ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
     }),
 
-    BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(1204, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    @Description("Sykmeldinges er tilbakedater mindre enn 8 dager tilbake i tid.")
+    BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(
+            1204,
+            Status.INVALID,
+            "Sykmeldinges er tilbakedater mindre enn 8 dager tilbake i tid.",
+            "Sykmeldinges er tilbakedater mindre enn 8 dager tilbake i tid.",
+            { (healthInformation, ruleMetadata) ->
         // TODO sjekke om førstegangs sykmelding, i syketilfelle appen
         ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
         healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
@@ -72,68 +119,123 @@ enum class PeriodLogicRuleChain(override val ruleId: Int?, override val status: 
     }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON(1207, Status.MANUAL_PROCESSING, { (healthInformation, ruleMetadata) ->
+    BACKDATED_WITH_REASON(
+            1207,
+            Status.MANUAL_PROCESSING,
+            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            { (healthInformation, ruleMetadata) ->
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(ruleMetadata.signatureDate) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
     }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
-    PRE_DATED(1209, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    PRE_DATED(
+            1209,
+            Status.INVALID,
+            "Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.",
+            "Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.",
+            { (healthInformation, ruleMetadata) ->
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay() > ruleMetadata.signatureDate.plusDays(30)
     }),
 
     @Description("Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.")
-    END_DATE(1211, Status.INVALID, { (healthInformation, _) ->
+    END_DATE(
+            1211,
+            Status.INVALID,
+            "Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.",
+            "Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.",
+            { (healthInformation, _) ->
         healthInformation.perioder.sortedTOMDate().last().atStartOfDay() > healthInformation.behandletTidspunkt.plusYears(1)
     }),
 
     @Description("Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen")
-    RECEIVED_DATE_BEFORE_PROCESSED_DATE(1123, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    RECEIVED_DATE_BEFORE_PROCESSED_DATE(
+            1123,
+            Status.INVALID,
+            "Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen",
+            "Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen",
+            { (healthInformation, ruleMetadata) ->
         healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusHours(2)
     }),
 
     // TODO: Is this even supposed to be here?
     // NOPE pål would delete this one
     @Description("Hvis avventende sykmelding er funnet og det finnes mer enn en periode")
-    PENDING_SICK_LEAVE_COMBINED(1240, Status.INVALID, { (healthInformation, _) ->
+    PENDING_SICK_LEAVE_COMBINED(
+            1240,
+            Status.INVALID,
+            "Hvis avventende sykmelding er funnet og det finnes mer enn en periode",
+            "Hvis avventende sykmelding er funnet og det finnes mer enn en periode",
+            { (healthInformation, _) ->
         val numberOfPendingPeriods = healthInformation.perioder.count { it.avventendeInnspillTilArbeidsgiver != null }
         numberOfPendingPeriods != 0 && healthInformation.perioder.size > 1
     }),
 
     @Description("Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen")
-    MISSING_INSPILL_TIL_ARBEIDSGIVER(1241, Status.INVALID, { (healthInformation, _) ->
+    MISSING_INSPILL_TIL_ARBEIDSGIVER(
+            1241,
+            Status.INVALID,
+            "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
+            "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
+            { (healthInformation, _) ->
         healthInformation.perioder
                 .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver.trim().isEmpty() }
     }),
 
     @Description("Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
-    PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(1242, Status.INVALID, { (healthInformation, _) ->
+    PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(
+            1242,
+            Status.INVALID,
+            "Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
+            "Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
+            { (healthInformation, _) ->
         healthInformation.perioder
                 .filter { it.avventendeInnspillTilArbeidsgiver != null }
                 .any { (it.fom..it.tom).daysBetween() > 16 }
     }),
 
     @Description("Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.")
-    TOO_MANY_TREATMENT_DAYS(1250, Status.INVALID, { (healthInformation, _) ->
+    TOO_MANY_TREATMENT_DAYS(
+            1250,
+            Status.INVALID,
+            "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
+            "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
+            { (healthInformation, _) ->
         healthInformation.perioder.any {
             it.behandlingsdager != null && it.behandlingsdager > it.range().startedWeeksBetween()
         }
     }),
 
     @Description("Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen")
-    PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW(1251, Status.INVALID, { (healthInformation, _) ->
+    PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW(
+            1251,
+            Status.INVALID,
+            "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
+            "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
+            { (healthInformation, _) ->
         healthInformation.perioder.any {
             it.gradert != null && it.gradert.grad < 20
         }
     }),
 
     @Description("Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen")
-    PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(1252, Status.INVALID, { (healthInformation, _) ->
+    PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(
+            1252,
+            Status.INVALID,
+            "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
+            "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
+            { (healthInformation, _) ->
         healthInformation.perioder.mapNotNull { it.gradert }.any { it.grad > 99 }
     }),
 
     // TODO: Check persisted sykmelding if there is a gap of less then 16 days from the previous one
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
-    BACKDATING_SYKMELDING_EXTENSION(null, Status.INVALID, { (healthInformation, ruleMetadata) ->
+    BACKDATING_SYKMELDING_EXTENSION(
+            null,
+            Status.INVALID,
+            "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.",
+            "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.",
+            { (healthInformation, ruleMetadata) ->
         healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadata.signatureDate
     }),
 }
