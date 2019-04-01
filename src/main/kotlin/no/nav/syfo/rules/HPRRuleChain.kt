@@ -4,6 +4,7 @@ import no.nav.syfo.Description
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.model.Status
+import no.nav.syfo.toICPC2
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 enum class HPRRuleChain(
@@ -13,6 +14,25 @@ enum class HPRRuleChain(
     override val textToTreater: String,
     override val predicate: (RuleData<HPRPerson>) -> Boolean
 ) : Rule<RuleData<HPRPerson>> {
+    @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")
+    BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(
+            1143,
+            Status.INVALID,
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
+            { (healthInformation, doctor) ->
+
+        healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
+        doctor.godkjenninger?.godkjenning != null &&
+                doctor.godkjenninger.godkjenning.any {
+                    it?.helsepersonellkategori?.isAktiv != null &&
+                            it.autorisasjon?.isAktiv == true &&
+                            it.helsepersonellkategori.isAktiv != null &&
+                            it.helsepersonellkategori.verdi != null &&
+                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in kotlin.collections.listOf("KI", "MT", "FT") }
+                }
+    }),
+
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
     BEHANDLER_NOT_VALDIG_IN_HPR(
             1402,
@@ -55,6 +75,22 @@ enum class HPRRuleChain(
                     it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "KI", "MT", "TL") }
         }
     }),
-    // TODO we need to approv FT see: https://www.nav.no/rettskildene-intern/forskrift/F20051221-1668
-    // New rule???
+
+    @Description("Hvis en sykmelding fra manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag skal meldingen avvises")
+    BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS(
+            1519,
+            Status.INVALID,
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag",
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
+
+        healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
+                doctor.godkjenninger?.godkjenning != null &&
+                doctor.godkjenninger.godkjenning.any {
+                    it?.helsepersonellkategori?.isAktiv != null &&
+                            it.autorisasjon?.isAktiv == true &&
+                            it.helsepersonellkategori.isAktiv != null &&
+                            it.helsepersonellkategori.verdi != null &&
+                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in kotlin.collections.listOf("KI", "MT", "FT") }
+                }
+    }),
 }
