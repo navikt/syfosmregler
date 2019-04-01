@@ -95,7 +95,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
+            HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_FT_IN_HPR(ruleData(healthInformation, person)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR, should NOT trigger rule") {
@@ -114,7 +114,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
+            HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_FT_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should trigger rule") {
