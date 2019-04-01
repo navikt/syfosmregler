@@ -19,16 +19,15 @@ import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.syfo.api.LegeSuspensjonClient
-import no.nav.syfo.api.StsOidcClient
 import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
-import no.nav.syfo.ws.configureSTSFor
+import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.ws.createPort
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.apache.cxf.binding.soap.SoapMessage
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 import org.apache.cxf.message.Message
 import org.apache.cxf.phase.Phase
 import org.apache.cxf.ws.addressing.WSAddressingFeature
@@ -48,7 +47,7 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
 }
 
 @KtorExperimentalAPI
-fun main(args: Array<String>) {
+fun main() {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
@@ -58,37 +57,35 @@ fun main(args: Array<String>) {
     }
 
     DefaultExports.initialize()
-    val personV3 = JaxWsProxyFactoryBean().apply {
-        address = env.personV3EndpointURL
-        serviceClass = PersonV3::class.java
-    }.create() as PersonV3
-    configureSTSFor(personV3, credentials.serviceuserUsername,
-            credentials.serviceuserPassword, env.securityTokenServiceURL)
+    val personV3 = createPort<PersonV3>(env.personV3EndpointURL) {
+        port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
+    }
 
-    val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
-        address = env.helsepersonellv1EndpointURL
-        // TODO: Contact someone about this hacky workaround
-        // talk to HDIR about HPR about they claim to send a ISO-8859-1 but its really UTF-8 payload
-        val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
-            override fun handleMessage(message: SoapMessage?) {
-                if (message != null)
-                    message[Message.ENCODING] = "utf-8"
+    val helsepersonellV1 = createPort<IHPR2Service>(env.helsepersonellv1EndpointURL) {
+        proxy {
+            // TODO: Contact someone about this hacky workaround
+            // talk to HDIR about HPR about they claim to send a ISO-8859-1 but its really UTF-8 payload
+            val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
+                override fun handleMessage(message: SoapMessage?) {
+                    if (message != null)
+                        message[Message.ENCODING] = "utf-8"
+                }
             }
+
+            inInterceptors.add(interceptor)
+            inFaultInterceptors.add(interceptor)
+            features.add(WSAddressingFeature())
         }
-        inInterceptors.add(interceptor)
-        inFaultInterceptors.add(interceptor)
-        features.add(WSAddressingFeature())
-        serviceClass = IHPR2Service::class.java
-    }.create() as IHPR2Service
-    configureSTSFor(helsepersonellv1, credentials.serviceuserUsername,
-            credentials.serviceuserPassword, env.securityTokenServiceURL)
+
+        port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
+    }
 
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
 
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+        initRouting(applicationState, personV3, helsepersonellV1, legeSuspensjonClient, syketilfelleClient)
         applicationState.ready = true
     }.start(wait = true)
 

@@ -1,6 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.RuleData
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Sykmelding
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Diskresjonskoder

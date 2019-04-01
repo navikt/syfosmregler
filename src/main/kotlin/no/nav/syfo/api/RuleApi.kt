@@ -13,11 +13,10 @@ import io.ktor.routing.post
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.syfo.RULE_HIT_STATUS_COUNTER
-import no.nav.syfo.Rule
-import no.nav.syfo.RuleData
-import no.nav.syfo.executeFlow
+import no.nav.syfo.helpers.retry
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -26,12 +25,14 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.model.ValidationResult
-import no.nav.syfo.retryAsync
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
+import no.nav.syfo.rules.Rule
+import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.ValidationRuleChain
+import no.nav.syfo.rules.executeFlow
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
@@ -102,7 +103,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
             val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
-            val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).await().suspendert
+            val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
             /*val syketilfelle = syketilfelleClient.fetchSyketilfelle(
@@ -127,18 +128,19 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                     status = Status.INVALID,
                     ruleHits = listOf(RuleInfo(
                             ruleName = "BEHANDLER_NOT_IN_HPR",
-                            textToTreater = "Behandler er ikkje register i HPR",
-                            textToUser = "Behandler er ikkje register i HPR"))
+                            messageForSender = "Behandler er ikke register i HPR",
+                            messageForUser = "Behandler er ikke register i HPR"))
             )
             call.respond(validationResult)
         }
     }
 }
 
-fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> =
-        retryAsync("hpr_hent_person_med_personnummer", IOException::class, WstxException::class) {
-            hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
-        }
+fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> = async {
+    retry("hpr_hent_person_med_personnummer", IOException::class, WstxException::class) {
+        hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
+    }
+}
 
 fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
     Syketilfelle(
@@ -159,12 +161,13 @@ fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, re
     )
 }
 
-fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> =
-        retryAsync("tps_hent_person", IOException::class, WstxException::class) {
-            personV3.hentPerson(HentPersonRequest()
-                    .withAktoer(PersonIdent().withIdent(NorskIdent().withIdent(ident)))
-            ).person
-        }
+fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
+    retry("tps_hent_person", IOException::class, WstxException::class) {
+        personV3.hentPerson(HentPersonRequest()
+                .withAktoer(PersonIdent().withIdent(NorskIdent().withIdent(ident)))
+        ).person
+    }
+}
 
 fun validationResult(results: List<Rule<Any>>): ValidationResult =
         ValidationResult(
@@ -174,5 +177,5 @@ fun validationResult(results: List<Rule<Any>>): ValidationResult =
                             ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
                             ?: Status.OK
                         },
-                ruleHits = results.map { rule -> RuleInfo(rule.name, rule.textToUser, rule.textToTreater) }
+                ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForUser!!, rule.messageForSender!!) }
         )

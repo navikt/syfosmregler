@@ -1,6 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.RuleData
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding

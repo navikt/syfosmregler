@@ -1,8 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Description
-import no.nav.syfo.Rule
-import no.nav.syfo.RuleData
 import no.nav.syfo.model.Status
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
 
@@ -11,8 +8,8 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person as TPSPerson
 enum class PostTPSRuleChain(
     override val ruleId: Int?,
     override val status: Status,
-    override val textToUser: String,
-    override val textToTreater: String,
+    override val messageForUser: String,
+    override val messageForSender: String,
     override val predicate: (RuleData<TPSPerson>) -> Boolean
 ) : Rule<RuleData<TPSPerson>> {
     // TODO: Hvordan skal vi håndtere dette om vi ikke sender til Arena? Hvordan kan vi hente ut informasjonen uten å kalle TPS?

@@ -15,9 +15,9 @@ import io.ktor.client.request.parameter
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.Deferred
 import no.nav.syfo.VaultCredentials
-import no.nav.syfo.retryAsync
+import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient) {
@@ -31,7 +31,7 @@ class LegeSuspensjonClient(private val endpointUrl: String, private val credenti
         }
     }
 
-    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Deferred<Suspendert> = httpClient.retryAsync("lege_suspansjon") {
+    suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String): Suspendert = retry("lege_suspansjon") {
         // TODO: Remove this workaround whenever ktor issue #1009 is fixed
         httpClient.get<HttpResponse>("$endpointUrl/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)

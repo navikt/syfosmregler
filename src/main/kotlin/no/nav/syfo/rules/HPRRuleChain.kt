@@ -1,8 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Description
-import no.nav.syfo.Rule
-import no.nav.syfo.RuleData
 import no.nav.syfo.model.Status
 import no.nav.syfo.toICPC2
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
@@ -10,8 +7,8 @@ import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 enum class HPRRuleChain(
     override val ruleId: Int?,
     override val status: Status,
-    override val textToUser: String,
-    override val textToTreater: String,
+    override val messageForUser: String,
+    override val messageForSender: String,
     override val predicate: (RuleData<HPRPerson>) -> Boolean
 ) : Rule<RuleData<HPRPerson>> {
     @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")

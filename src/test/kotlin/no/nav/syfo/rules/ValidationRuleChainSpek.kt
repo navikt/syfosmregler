@@ -4,7 +4,6 @@ import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
 import no.nav.syfo.Diagnosekoder
-import no.nav.syfo.RuleData
 import no.nav.syfo.QuestionId
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.generateMedisinskVurdering

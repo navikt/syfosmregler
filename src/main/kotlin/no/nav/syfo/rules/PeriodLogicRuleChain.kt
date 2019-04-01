@@ -1,9 +1,6 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Description
-import no.nav.syfo.Rule
 import no.nav.syfo.model.Status
-import no.nav.syfo.RuleData
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import java.time.DayOfWeek
@@ -13,8 +10,8 @@ import java.time.temporal.ChronoUnit
 enum class PeriodLogicRuleChain(
     override val ruleId: Int?,
     override val status: Status,
-    override val textToUser: String,
-    override val textToTreater: String,
+    override val messageForUser: String,
+    override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
     // TODO: gendate newer than signature date, check if emottak does this?
@@ -115,7 +112,7 @@ enum class PeriodLogicRuleChain(
         ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
         healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
         healthInformation.kontaktMedPasient.kontaktDato != null &&
-        ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato.atStartOfDay()
+        ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato?.atStartOfDay()
     }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
@@ -179,7 +176,7 @@ enum class PeriodLogicRuleChain(
             "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
             { (healthInformation, _) ->
         healthInformation.perioder
-                .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver.trim().isEmpty() }
+                .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty() }
     }),
 
     @Description("Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
@@ -202,7 +199,7 @@ enum class PeriodLogicRuleChain(
             "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
             { (healthInformation, _) ->
         healthInformation.perioder.any {
-            it.behandlingsdager != null && it.behandlingsdager > it.range().startedWeeksBetween()
+            it.behandlingsdager != null && it.behandlingsdager!! > it.range().startedWeeksBetween()
         }
     }),
 
@@ -214,7 +211,7 @@ enum class PeriodLogicRuleChain(
             "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
             { (healthInformation, _) ->
         healthInformation.perioder.any {
-            it.gradert != null && it.gradert.grad < 20
+            it.gradert != null && it.gradert!!.grad < 20
         }
     }),
 
@@ -251,5 +248,5 @@ fun workdaysBetween(a: LocalDate, b: LocalDate): Int = (1..(ChronoUnit.DAYS.betw
         .count()
 
 fun ClosedRange<LocalDate>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)
-fun ClosedRange<LocalDate>.startedWeeksBetween(): Long = ChronoUnit.WEEKS.between(start, endInclusive) + 1
+fun ClosedRange<LocalDate>.startedWeeksBetween(): Int = ChronoUnit.WEEKS.between(start, endInclusive).toInt() + 1
 fun Periode.range(): ClosedRange<LocalDate> = fom.rangeTo(tom)

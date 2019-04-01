@@ -16,6 +16,7 @@ val ktorVersion = "1.1.3"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
+val smCommonVersion = "1.0.3"
 val spekVersion = "2.0.0-rc.1"
 val sykmeldingVersion = "1.1-SNAPSHOT"
 val navPersonv3Version = "3.2.0"
@@ -93,6 +94,12 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
     implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
 
+    implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-ws:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-rules:$smCommonVersion")
+
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
@@ -143,6 +150,8 @@ tasks {
 
     withType<KotlinCompile> {
         dependsOn("wsdl2java")
+
+        kotlinOptions.jvmTarget = "1.8"
     }
 
     withType<Wsdl2JavaTask> {

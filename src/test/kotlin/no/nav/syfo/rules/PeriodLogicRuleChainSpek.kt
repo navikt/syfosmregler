@@ -1,6 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.RuleData
 import no.nav.syfo.generateGradert
 import no.nav.syfo.generateKontaktMedPasient
 import no.nav.syfo.generatePeriode

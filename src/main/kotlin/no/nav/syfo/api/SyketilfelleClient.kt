@@ -21,9 +21,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.Deferred
+import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.helpers.retry
 import no.nav.syfo.model.Syketilfelle
-import no.nav.syfo.retryAsync
 import java.time.LocalDate
 
 @KtorExperimentalAPI
@@ -42,7 +42,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         }
     }
 
-    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Deferred<Oppfolgingstilfelle?> = httpClient.retryAsync("syketilfelle") {
+    suspend fun fetchSyketilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Oppfolgingstilfelle? = retry("syketilfelle") {
         // TODO: Remove this workaround whenever ktor issue #1009 is fixed
         httpClient.post<HttpResponse>("$endpointUrl/oppfolgingstilfelle/beregn/$aktorId") {
             accept(ContentType.Application.Json)

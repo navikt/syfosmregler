@@ -1,10 +1,7 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Description
 import no.nav.syfo.Diagnosekode
 import no.nav.syfo.Diagnosekoder
-import no.nav.syfo.Rule
-import no.nav.syfo.RuleData
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.contains
 import no.nav.syfo.isICPC2
@@ -19,8 +16,8 @@ import no.nav.syfo.validation.validatePersonAndDNumber11Digits
 enum class ValidationRuleChain(
     override val ruleId: Int?,
     override val status: Status,
-    override val textToUser: String,
-    override val textToTreater: String,
+    override val messageForUser: String,
+    override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
 
@@ -64,10 +61,10 @@ enum class ValidationRuleChain(
     UNKNOWN_DIAGNOSECODE_TYPE(
             1137,
             Status.INVALID,
-            "Ukjent houved diagnosekode type",
-            "Ukjent houved diagnosekode type", { (healthInformation, _) ->
+            "Ukjent hoved diagnosekode type",
+            "Ukjent hoved diagnosekode type", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose != null &&
-            healthInformation.medisinskVurdering.hovedDiagnose.system !in Diagnosekode.values()
+            healthInformation.medisinskVurdering.hovedDiagnose?.system !in Diagnosekode.values()
     }),
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
