@@ -43,7 +43,7 @@ enum class HPRRuleChain(
     @Description("Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege")
     BEHANDLER_NOT_LE_KI_MT_TL_IN_HPR(
             1407,
-            Status.MANUAL_PROCESSING,
+            Status.INVALID,
             "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege",
             "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null &&
