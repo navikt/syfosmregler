@@ -1,7 +1,8 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.executeFlow
+import no.nav.syfo.RuleData
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.model.Sykmelding
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Diskresjonskoder
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Person
 import org.amshove.kluent.shouldEqual
@@ -9,6 +10,11 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 object PostTPSRuleChainSpek : Spek({
+
+    fun ruleData(
+        healthInformation: Sykmelding,
+        person: Person
+    ): RuleData<Person> = RuleData(healthInformation, person)
 
     describe("Testing validation rules and checking the rule outcomes") {
 
@@ -20,9 +26,14 @@ object PostTPSRuleChainSpek : Spek({
                 }
             }
 
-            val postTPSRuleChainResults = PostTPSRuleChain.values().toList().executeFlow(healthInformation, tpsPerson)
+            PostTPSRuleChain.PATIENT_HAS_SPERREKODE_6(ruleData(healthInformation, tpsPerson)) shouldEqual true
+        }
 
-            postTPSRuleChainResults.any { it == PostTPSRuleChain.PATIENT_HAS_SPERREKODE_6 } shouldEqual true
+        it("Should check rule PATIENT_HAS_SPERREKODE_6, should NOT trigger rule") {
+            val healthInformation = generateSykmelding()
+            val tpsPerson = Person()
+
+            PostTPSRuleChain.PATIENT_HAS_SPERREKODE_6(ruleData(healthInformation, tpsPerson)) shouldEqual false
         }
     }
 })
