@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.nav.syfo.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
@@ -121,12 +120,6 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
             val validationResult = validationResult(results)
-
-            when (validationResult.status) {
-                Status.INVALID -> RULE_HIT_STATUS_COUNTER.labels(Status.INVALID.name).inc()
-                Status.MANUAL_PROCESSING -> RULE_HIT_STATUS_COUNTER.labels(Status.MANUAL_PROCESSING.name).inc()
-                Status.OK -> RULE_HIT_STATUS_COUNTER.labels(Status.OK.name).inc()
-            }
 
             call.respond(validationResult)
         } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
