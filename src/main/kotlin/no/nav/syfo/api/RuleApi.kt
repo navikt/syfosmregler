@@ -122,7 +122,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 
             val validationResult = validationResult(results)
 
-            when(validationResult.status) {
+            when (validationResult.status) {
                 Status.INVALID -> RULE_HIT_STATUS_COUNTER.labels(Status.INVALID.name).inc()
                 Status.MANUAL_PROCESSING -> RULE_HIT_STATUS_COUNTER.labels(Status.MANUAL_PROCESSING.name).inc()
                 Status.OK -> RULE_HIT_STATUS_COUNTER.labels(Status.OK.name).inc()
