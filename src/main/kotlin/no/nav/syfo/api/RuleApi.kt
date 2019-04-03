@@ -16,6 +16,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.syfo.helpers.retry
+import no.nav.syfo.metrics.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -130,6 +131,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                             messageForSender = "Behandler er ikke register i HPR",
                             messageForUser = "Behandler er ikke register i HPR"))
             )
+            RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
             call.respond(validationResult)
         }
     }
