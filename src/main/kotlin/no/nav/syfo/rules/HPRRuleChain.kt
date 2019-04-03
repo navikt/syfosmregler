@@ -15,7 +15,7 @@ enum class HPRRuleChain(
     BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(
             1143,
             Status.INVALID,
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
+            "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
             { (healthInformation, doctor) ->
 
@@ -34,7 +34,7 @@ enum class HPRRuleChain(
     BEHANDLER_NOT_VALDIG_IN_HPR(
             1402,
             Status.INVALID,
-            "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt",
+            "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
             it?.autorisasjon?.isAktiv != null && it.autorisasjon.isAktiv
@@ -45,7 +45,7 @@ enum class HPRRuleChain(
     BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(
             1403,
             Status.INVALID,
-            "Behandler har ikkje gylding autorisasjon i HPR",
+            "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler har ikkje gylding autorisasjon i HPR", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
             it?.autorisasjon?.isAktiv != null &&
@@ -61,7 +61,7 @@ enum class HPRRuleChain(
     BEHANDLER_NOT_LE_KI_MT_TL_FT_IN_HPR(
             1407,
             Status.INVALID,
-            "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege",
+            "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null &&
                 !doctor.godkjenninger.godkjenning.any {
@@ -77,7 +77,7 @@ enum class HPRRuleChain(
     BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS(
             1519,
             Status.INVALID,
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag",
+            "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
 
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
