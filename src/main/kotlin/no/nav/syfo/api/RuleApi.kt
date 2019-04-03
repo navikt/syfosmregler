@@ -121,7 +121,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
             val validationResult = validationResult(results)
-
+            RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
             call.respond(validationResult)
         } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
             val validationResult = ValidationResult(
