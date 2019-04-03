@@ -11,7 +11,6 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 object PeriodLogicRuleChainSpek : Spek({
     fun ruleData(
@@ -400,50 +399,6 @@ object PeriodLogicRuleChainSpek : Spek({
             ))
 
             PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusMonths(1))) shouldEqual false
-        }
-
-        it("Should check rule BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE, should trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2019, 1, 7),
-                            tom = LocalDate.of(2019, 1, 8)
-                    )
-            ))
-
-            PeriodLogicRuleChain.BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(ruleData(healthInformation, signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON))) shouldEqual true
-        }
-
-        it("Should check rule BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2019, 1, 7),
-                            tom = LocalDate.of(2019, 1, 8)
-                    )
-            ))
-
-            PeriodLogicRuleChain.BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(ruleData(healthInformation, signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON))) shouldEqual false
-        }
-
-        it("Should check rule BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK, should trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2019, 1, 7),
-                            tom = LocalDate.of(2019, 1, 8)
-                    )
-            ))
-
-            PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(ruleData(healthInformation, signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 15), LocalTime.NOON))) shouldEqual true
-        }
-
-        it("Should check rule BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2019, 1, 7),
-                            tom = LocalDate.of(2019, 1, 8)
-                    )
-            ))
-
-            PeriodLogicRuleChain.BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(ruleData(healthInformation, signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 7), LocalTime.NOON))) shouldEqual false
         }
     }
 })

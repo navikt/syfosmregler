@@ -31,6 +31,8 @@ import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.Rule
 import no.nav.syfo.rules.RuleData
+import no.nav.syfo.rules.RuleMetadataAndForstegangsSykemelding
+import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
@@ -106,11 +108,22 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
-            /*val syketilfelle = syketilfelleClient.fetchSyketilfelle(
+            val erNyttSyketilfelle = syketilfelleClient.fetchErNytttilfelle(
                     receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
                             receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato, receivedSykmelding.msgId),
-                    receivedSykmelding.sykmelding.pasientAktoerId).await()
-            val syketilfelleResults = SyketillfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, syketilfelle)*/
+                    receivedSykmelding.sykmelding.pasientAktoerId)
+
+            val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = receivedSykmelding.mottattDato,
+                            signatureDate = receivedSykmelding.signaturDato,
+                            patientPersonNumber = receivedSykmelding.personNrPasient,
+                            rulesetVersion = receivedSykmelding.rulesetVersion,
+                            legekontorOrgnr = receivedSykmelding.legekontorOrgNr
+                    ), erNyttSyketilfelle = erNyttSyketilfelle
+            )
+
+            val syketilfelleResults = SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)
             val results = listOf(
                     validationAndPeriodRuleResults,
                     tpsRuleResults,

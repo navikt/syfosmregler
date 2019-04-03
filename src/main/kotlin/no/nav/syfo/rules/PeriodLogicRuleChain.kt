@@ -89,32 +89,6 @@ enum class PeriodLogicRuleChain(
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
     }),
 
-    @Description("Sykmeldinges er tilbakedater mer enn 8 dager tilbake i tid.")
-    BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(
-            1204,
-            Status.INVALID,
-            "Sykmeldingen er tilbakedatert uten at det er begrunnet",
-            "Sykmeldinges er tilbakedater mer enn 8 dager tilbake i tid.",
-            { (healthInformation, ruleMetadata) ->
-        // TODO sjekke om førstegangs sykmelding, fra syketilfelle appen
-        ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
-                healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
-    }),
-
-    @Description("Sykmeldinges er tilbakedater mindre enn 8 dager tilbake i tid.")
-    BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(
-            1204,
-            Status.INVALID,
-            "Sykmeldingen er tilbakedatert uten at det er begrunnet.",
-            "Sykmeldinges er tilbakedater mindre enn 8 dager tilbake i tid.",
-            { (healthInformation, ruleMetadata) ->
-        // TODO sjekke om førstegangs sykmelding, i syketilfelle appen
-        ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
-        healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-        healthInformation.kontaktMedPasient.kontaktDato != null &&
-        ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato?.atStartOfDay()
-    }),
-
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
     BACKDATED_WITH_REASON(
             1207,
