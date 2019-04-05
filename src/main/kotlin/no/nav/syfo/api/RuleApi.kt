@@ -128,7 +128,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                     validationAndPeriodRuleResults,
                     tpsRuleResults,
                     hprRuleResults,
-                    doctorRuleResults
+                    doctorRuleResults,
+                    syketilfelleResults
             ).flatten()
 
             log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
