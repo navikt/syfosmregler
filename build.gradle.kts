@@ -91,8 +91,6 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-basic:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
 
     implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
