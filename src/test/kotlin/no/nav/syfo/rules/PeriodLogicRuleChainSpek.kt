@@ -1,7 +1,6 @@
 package no.nav.syfo.rules
 
 import no.nav.syfo.generateGradert
-import no.nav.syfo.generateKontaktMedPasient
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.RuleMetadata
@@ -146,25 +145,6 @@ object PeriodLogicRuleChainSpek : Spek({
             )
 
             PeriodLogicRuleChain.BACKDATED_MORE_THEN_3_YEARS(ruleData(healthInformation)) shouldEqual false
-        }
-
-        it("Should check rule BACKDATED_WITH_REASON, should trigger rule") {
-            val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().minusYears(2),
-                    kontaktMedPasient = generateKontaktMedPasient(
-                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
-                    )
-            )
-
-            PeriodLogicRuleChain.BACKDATED_WITH_REASON(ruleData(healthInformation)) shouldEqual true
-        }
-
-        it("Should check rule BACKDATED_WITH_REASON, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().minusYears(3)
-            )
-
-            PeriodLogicRuleChain.BACKDATED_WITH_REASON(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule PRE_DATED, should trigger rule") {
@@ -377,28 +357,6 @@ object PeriodLogicRuleChainSpek : Spek({
             ))
 
             PeriodLogicRuleChain.PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(ruleData(healthInformation)) shouldEqual false
-        }
-
-        it("Should check rule BACKDATING_SYKMELDING_EXTENSION, should trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.now(),
-                            tom = LocalDate.now()
-                    )
-            ))
-
-            PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusMonths(1).minusDays(1))) shouldEqual true
-        }
-
-        it("Should check rule BACKDATING_SYKMELDING_EXTENSION, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.now(),
-                            tom = LocalDate.now()
-                    )
-            ))
-
-            PeriodLogicRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusMonths(1))) shouldEqual false
         }
     }
 })

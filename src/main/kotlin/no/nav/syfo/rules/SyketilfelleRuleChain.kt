@@ -36,6 +36,29 @@ enum class SyketilfelleRuleChain(
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato?.atStartOfDay()
                         // burde vi i tillegg sjekke om kontaktdato er større en fom-dato?
             }),
+
+    @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
+    BACKDATING_SYKMELDING_EXTENSION(
+            null,
+            Status.INVALID,
+            "Sykmeldingen er tilbakedatert mer enn én måned uten begrunnelse.",
+            "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.",
+            { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
+                !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
+                healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate
+            }),
+
+    @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
+    BACKDATED_WITH_REASON(
+            1207,
+            Status.MANUAL_PROCESSING,
+            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
+                !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
+                healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate) &&
+                        !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+            }),
 }
 
 data class RuleMetadataAndForstegangsSykemelding(

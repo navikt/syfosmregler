@@ -89,16 +89,6 @@ enum class PeriodLogicRuleChain(
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
     }),
 
-    @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON(
-            1207,
-            Status.MANUAL_PROCESSING,
-            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
-            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
-            { (healthInformation, ruleMetadata) ->
-        healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(ruleMetadata.signatureDate) &&
-                !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
-    }),
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
     PRE_DATED(
             1209,
@@ -197,17 +187,6 @@ enum class PeriodLogicRuleChain(
             "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
             { (healthInformation, _) ->
         healthInformation.perioder.mapNotNull { it.gradert }.any { it.grad > 99 }
-    }),
-
-    // TODO: Check persisted sykmelding if there is a gap of less then 16 days from the previous one
-    @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
-    BACKDATING_SYKMELDING_EXTENSION(
-            null,
-            Status.INVALID,
-            "Sykmeldingen er tilbakedatert mer enn én måned uten begrunnelse.",
-            "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.",
-            { (healthInformation, ruleMetadata) ->
-        healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadata.signatureDate
     }),
 }
 
