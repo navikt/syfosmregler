@@ -15,7 +15,7 @@ val kluentVersion = "1.39"
 val ktorVersion = "1.1.3"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
-val prometheusVersion = "0.6.0"
+val prometheusVersion = "0.5.0"
 val smCommonVersion = "1.0.8"
 val spekVersion = "2.0.0-rc.1"
 val sykmeldingVersion = "1.1-SNAPSHOT"
@@ -170,6 +170,6 @@ tasks {
         useJUnitPlatform {
             includeEngines("spek2")
         }
-        testLogging.events("passed", "skipped", "failed")
+        testLogging.showStandardStreams = true
     }
 }
