@@ -41,8 +41,8 @@ enum class ValidationRuleChain(
     YOUNGER_THAN_13(
             1101,
             Status.INVALID,
-            "Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.",
-            "Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.", { (healthInformation, metadata) ->
+            "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
+            "Pasienten er under 13 år. Sykmelding kan ikke benyttes.", { (healthInformation, metadata) ->
         healthInformation.perioder.sortedTOMDate().last() < extractBornDate(metadata.patientPersonNumber).plusYears(13)
     }),
 
@@ -51,7 +51,7 @@ enum class ValidationRuleChain(
             1102,
             Status.INVALID,
             "Sykmelding kan ikke benyttes etter at du har fylt 70 år.",
-            "Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.", { (healthInformation, metadata) ->
+            "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (healthInformation, metadata) ->
         healthInformation.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
     }),
 
@@ -60,7 +60,7 @@ enum class ValidationRuleChain(
             1137,
             Status.INVALID,
             "Sykmeldingen har en diagnosekode som er ukjent for NAV.",
-            "Ukjent hoved diagnosekode type", { (healthInformation, _) ->
+            "Ukjent diagnosekode er benyttet. ", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose != null &&
             healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE)
     }),
@@ -70,7 +70,7 @@ enum class ValidationRuleChain(
             1132,
             Status.INVALID,
             "Sykmeldingen har en ugyldig hoveddiagnose som ikke gir rett til sykepenger.",
-            "Hoveddiagnose er Z-diagnose (ICPC-2)", { (healthInformation, _) ->
+            "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
     }),
 
@@ -79,7 +79,7 @@ enum class ValidationRuleChain(
             1133,
             Status.INVALID,
             "Sykmeldingen mangler hoveddiagnose eller annen gyldig fraværsgrunn.",
-            "Hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn",
+            "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
             { (healthInformation, _) ->
         healthInformation.medisinskVurdering.annenFraversArsak == null &&
                 healthInformation.medisinskVurdering.hovedDiagnose == null
@@ -90,7 +90,7 @@ enum class ValidationRuleChain(
             1540,
             Status.INVALID,
             "Det er feil i koden for hoveddiagnosen.",
-            "Diagnose Kodeverk ikke er angitt eller korrekt for hoveddiagnose", { (healthInformation, _) ->
+            "Kodeverk for hoveddiagnose er feil eller mangler.  ", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
                 healthInformation.medisinskVurdering.hovedDiagnose?.let { diagnose ->
             if (diagnose.isICPC2()) {
@@ -102,6 +102,7 @@ enum class ValidationRuleChain(
     }),
 
     // Revurder regel når IT ikkje lenger skal brukes
+    // Her mener jeg fremdeles at vi skal nulle ut bidiagnosen dersom den er feil - ikke avvise sykmeldingen!!
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(
             1541,
@@ -122,7 +123,7 @@ enum class ValidationRuleChain(
             1707,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er langvarig.",
-            "Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises", { (healthInformation, ruleMetadata) ->
+            "Utdypende opplysninger mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
                 healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
@@ -133,7 +134,7 @@ enum class ValidationRuleChain(
             1708,
             Status.INVALID,
             "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
-            "Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres", { (_, ruleMetadata) ->
+            "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
         ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
     }),
 
@@ -142,7 +143,7 @@ enum class ValidationRuleChain(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 7 uker til sammen.",
-            "Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises", { (healthInformation, ruleMetadata) ->
+            "Utdypende opplysninger som kreves ved uke 7 mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
                 healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
@@ -153,7 +154,7 @@ enum class ValidationRuleChain(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 17 uker til sammen.",
-            "Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises", { (healthInformation, ruleMetadata) ->
+            "Utdypende opplysninger som kreves ved uke 17 mangler.", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
                 healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
@@ -164,7 +165,7 @@ enum class ValidationRuleChain(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
-            "Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises", { (healthInformation, ruleMetadata) ->
+            "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
                 healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
@@ -175,7 +176,7 @@ enum class ValidationRuleChain(
             9999,
             Status.INVALID,
             "Det er oppgitt feil organisasjonsnummer i sykmeldingen.",
-            "Organisasjonsnummeret som er oppgitt er ikke 9 tegn.", { (_, metadata) ->
+            "Feil format på organisasjonsnummer. Dette skal være 9 sifre..", { (_, metadata) ->
         metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
     }),
 }
