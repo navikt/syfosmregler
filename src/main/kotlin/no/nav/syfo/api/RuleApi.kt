@@ -104,8 +104,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
             val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
-            val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
             // TODO REMOVE after dataload i Q0..
+            // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
             // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
             val erNyttSyketilfelle = syketilfelleClient.fetchErNytttilfelle(
