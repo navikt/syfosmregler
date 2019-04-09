@@ -15,9 +15,8 @@ enum class HPRRuleChain(
     BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(
             1143,
             Status.MANUAL_PROCESSING,
-            //"Den som skrev sykmeldingen mangler autorisasjon.",
-            //"Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
-            // Her er det vel egentlig tekst til veileder vi bør få inn.
+            "Den som skrev sykmeldingen mangler autorisasjon.",
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
             { (healthInformation, doctor) ->
 
         healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
