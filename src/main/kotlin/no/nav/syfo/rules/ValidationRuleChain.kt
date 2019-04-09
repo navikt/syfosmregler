@@ -1,9 +1,7 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Diagnosekode
 import no.nav.syfo.Diagnosekoder
 import no.nav.syfo.QuestionGroup
-import no.nav.syfo.contains
 import no.nav.syfo.isICPC2
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
@@ -64,7 +62,7 @@ enum class ValidationRuleChain(
             "Sykmeldingen har en diagnosekode som er ukjent for NAV.",
             "Ukjent hoved diagnosekode type", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose != null &&
-            healthInformation.medisinskVurdering.hovedDiagnose?.system !in Diagnosekode.values()
+            healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE)
     }),
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
