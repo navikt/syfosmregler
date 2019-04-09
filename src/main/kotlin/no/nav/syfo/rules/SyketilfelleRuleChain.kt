@@ -34,7 +34,7 @@ enum class SyketilfelleRuleChain(
                         healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                         healthInformation.kontaktMedPasient.kontaktDato != null &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato?.atStartOfDay()
-             // burde vi i tillegg sjekke om kontaktdato er større en fom-dato?
+                        // burde vi i tillegg sjekke om kontaktdato er større en fom-dato?
             }),
 }
 
