@@ -18,9 +18,8 @@ enum class HPRRuleChain(
             "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
             { (healthInformation, doctor) ->
-
-        healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
-        doctor.godkjenninger?.godkjenning != null &&
+                healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
+                doctor.godkjenninger?.godkjenning != null &&
                 doctor.godkjenninger.godkjenning.any {
                     it?.helsepersonellkategori?.isAktiv != null &&
                             it.autorisasjon?.isAktiv == true &&

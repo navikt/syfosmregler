@@ -207,5 +207,49 @@ object HPRRuleChainSpek : Spek({
 
             HPRRuleChain.BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS(ruleData(healthInformation, person)) shouldEqual false
         }
+
+        it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should trigger rule") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "A92")
+            ))
+
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "KI"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            HPRRuleChain.BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual true
+        }
+
+        it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
+            ))
+
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "KI"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            HPRRuleChain.BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual false
+        }
     }
 })
