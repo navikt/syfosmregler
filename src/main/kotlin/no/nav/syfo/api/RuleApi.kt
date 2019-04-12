@@ -26,6 +26,7 @@ import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.rules.HPRRuleChain
+import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostTPSRuleChain
 import no.nav.syfo.rules.Rule
@@ -104,9 +105,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
             val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
-            // TODO REMOVE after dataload i Q0..
-            // val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
-            // val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
+            val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
+            val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
             val erNyttSyketilfelle = syketilfelleClient.fetchErNytttilfelle(
                     receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
@@ -123,19 +123,11 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                     ), erNyttSyketilfelle = erNyttSyketilfelle
             )
             val syketilfelleResults = SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)
-            // TODO REMOVE after dataload i Q0..
-            /* val results = listOf(
-                    validationAndPeriodRuleResults,
-                    tpsRuleResults,
-                    hprRuleResults,
-                    doctorRuleResults,
-                    syketilfelleResults
-            ).flatten() */
-
             val results = listOf(
                     validationAndPeriodRuleResults,
                     tpsRuleResults,
                     hprRuleResults,
+                    doctorRuleResults,
                     syketilfelleResults
             ).flatten()
 
