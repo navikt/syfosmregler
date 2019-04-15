@@ -90,7 +90,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 PeriodLogicRuleChain.values().toList()
         ).flatten().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
-                signatureDate = receivedSykmelding.signaturDato,
+                signatureDate = receivedSykmelding.sykmelding.signaturDato,
                 patientPersonNumber = receivedSykmelding.personNrPasient,
                 rulesetVersion = receivedSykmelding.rulesetVersion,
                 legekontorOrgnr = receivedSykmelding.legekontorOrgNr
@@ -104,7 +104,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
-            val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.signaturDato)
+            val signaturDatoString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(receivedSykmelding.sykmelding.signaturDato)
             val doctorSuspend = legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
             val doctorRuleResults = LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspend)
 
@@ -116,7 +116,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = receivedSykmelding.mottattDato,
-                            signatureDate = receivedSykmelding.signaturDato,
+                            signatureDate = receivedSykmelding.sykmelding.signaturDato,
                             patientPersonNumber = receivedSykmelding.personNrPasient,
                             rulesetVersion = receivedSykmelding.rulesetVersion,
                             legekontorOrgnr = receivedSykmelding.legekontorOrgNr
