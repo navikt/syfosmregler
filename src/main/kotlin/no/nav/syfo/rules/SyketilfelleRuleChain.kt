@@ -18,7 +18,7 @@ enum class SyketilfelleRuleChain(
             "Første sykmelding er tilbakedatert mer enn det som er tillatt.",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
+                ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
                         healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -30,7 +30,7 @@ enum class SyketilfelleRuleChain(
             "Første sykmelding er tilbakedatert uten at dato for kontakt er angitt eller begrunnelse er gitt.",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(7) &&
+                ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
                         healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                         healthInformation.kontaktMedPasient.kontaktDato != null &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato?.atStartOfDay()
@@ -49,14 +49,26 @@ enum class SyketilfelleRuleChain(
             }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON(
+    BACKDATED_WITH_REASON_FIRST_SICK_LAVE(
+            1207,
+            Status.MANUAL_PROCESSING,
+            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
+                ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
+                        ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+                        !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+            }),
+
+    @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
+    BACKDATED_WITH_REASON_EXTENSION(
             1207,
             Status.MANUAL_PROCESSING,
             "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
             "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isBefore(ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate) &&
+                        ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 }

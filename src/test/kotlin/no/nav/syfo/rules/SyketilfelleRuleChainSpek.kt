@@ -144,9 +144,14 @@ object SyketilfelleRuleChainSpek : Spek({
             SyketilfelleRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
-        it("Should check rule BACKDATED_WITH_REASON, should trigger rule") {
+        it("Should check rule BACKDATED_WITH_REASON_FIRST_SICK_LAVE, should trigger rule") {
             val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().minusYears(2),
+                    perioder = listOf(
+                            generatePeriode(
+                                    fom = LocalDate.now().minusDays(8),
+                                    tom = LocalDate.now()
+                            )
+                    ),
                     kontaktMedPasient = generateKontaktMedPasient(
                             begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
                     )
@@ -155,32 +160,115 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().minusMonths(1),
+                            signatureDate = LocalDateTime.now(),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313"
-                    ), erNyttSyketilfelle = false
+                    ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+            SyketilfelleRuleChain.BACKDATED_WITH_REASON_FIRST_SICK_LAVE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
         }
 
         it("Should check rule BACKDATED_WITH_REASON, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().minusYears(3)
+                    perioder = listOf(
+                            generatePeriode(
+                                    fom = LocalDate.now().minusDays(7),
+                                    tom = LocalDate.now()
+                            )
+                    ),
+                    kontaktMedPasient = generateKontaktMedPasient(
+                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+                    )
             )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().minusMonths(1),
+                            signatureDate = LocalDateTime.now(),
+                            patientPersonNumber = "1232345244",
+                            rulesetVersion = "2",
+                            legekontorOrgnr = "12313"
+                    ), erNyttSyketilfelle = true
+            )
+
+            SyketilfelleRuleChain.BACKDATED_WITH_REASON_FIRST_SICK_LAVE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+        }
+
+        it("Should check rule BACKDATED_WITH_REASON_EXTENSION, should trigger rule") {
+            val healthInformation = generateSykmelding(
+                    perioder = listOf(
+                            generatePeriode(
+                                    fom = LocalDate.now(),
+                                    tom = LocalDate.now()
+                            )
+                    ),
+                    kontaktMedPasient = generateKontaktMedPasient(
+                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+                    )
+            )
+
+            val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = LocalDateTime.now(),
+                            signatureDate = LocalDateTime.now().plusDays(30),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313"
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.BACKDATED_WITH_REASON_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+        }
+
+        it("Should check rule BACKDATED_WITH_REASON_EXTENSION, NOT should trigger rule") {
+            val healthInformation = generateSykmelding(
+                    perioder = listOf(
+                            generatePeriode(
+                                    fom = LocalDate.now(),
+                                    tom = LocalDate.now()
+                            )
+                    ),
+                    kontaktMedPasient = generateKontaktMedPasient(
+                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+                    )
+            )
+
+            val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = LocalDateTime.now(),
+                            signatureDate = LocalDateTime.now().plusDays(29),
+                            patientPersonNumber = "1232345244",
+                            rulesetVersion = "2",
+                            legekontorOrgnr = "12313"
+                    ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.BACKDATED_WITH_REASON_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+        }
+
+        it("Should check rule BACKDATED_WITH_REASON_EXTENSION, NOT should trigger rule") {
+            val healthInformation = generateSykmelding(
+                    perioder = listOf(
+                            generatePeriode(
+                                    fom = LocalDate.now(),
+                                    tom = LocalDate.now()
+                            )
+                    )
+            )
+
+            val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = LocalDateTime.now(),
+                            signatureDate = LocalDateTime.now().plusDays(30),
+                            patientPersonNumber = "1232345244",
+                            rulesetVersion = "2",
+                            legekontorOrgnr = "12313"
+                    ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.BACKDATED_WITH_REASON_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
     }
 })
