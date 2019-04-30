@@ -50,7 +50,7 @@ enum class ValidationRuleChain(
     PATIENT_OVER_70_YEARS(
             1102,
             Status.INVALID,
-            "Sykmelding kan ikke benyttes etter at du har fylt 70 år.",
+            "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
             "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (healthInformation, metadata) ->
         healthInformation.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
     }),
@@ -122,7 +122,7 @@ enum class ValidationRuleChain(
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(
             1707,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er langvarig.",
+            "Utdypende opplysninger som skal beskrives i et langvarig sykefravær mangler.",
             "Utdypende opplysninger mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
@@ -133,7 +133,7 @@ enum class ValidationRuleChain(
     INVALID_RULESET_VERSION(
             1708,
             Status.INVALID,
-            "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
+            "Sykmeldingen er på en gammel versjon med et regelsett som ikke lenger er gyldig.",
             "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
         ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
     }),
@@ -142,7 +142,7 @@ enum class ValidationRuleChain(
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(
             1709,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 7 uker til sammen.",
+            "Sykmeldingen mangler utdypende opplysninger som kreves når totalt sykefravær er lengre enn 7 uker.",
             "Utdypende opplysninger som kreves ved uke 7 mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
@@ -153,7 +153,7 @@ enum class ValidationRuleChain(
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(
             1709,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 17 uker til sammen.",
+            "Sykmeldingen mangler utdypende opplysninger som kreves når totalt sykefravær er lengre enn 17 uker.",
             "Utdypende opplysninger som kreves ved uke 17 mangler.", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
@@ -164,7 +164,7 @@ enum class ValidationRuleChain(
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_39(
             1709,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
+            "Sykmeldingen mangler utdypende opplysninger som kreves når totalt sykefravær er lengre enn 39 uker.",
             "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&

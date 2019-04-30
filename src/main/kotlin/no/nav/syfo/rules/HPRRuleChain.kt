@@ -15,7 +15,7 @@ enum class HPRRuleChain(
     BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(
             1143,
             Status.MANUAL_PROCESSING,
-            "Den som skrev sykmeldingen mangler autorisasjon.",
+            "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
             { (healthInformation, doctor) ->
                 healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
@@ -33,7 +33,7 @@ enum class HPRRuleChain(
     BEHANDLER_NOT_VALDIG_IN_HPR(
             1402,
             Status.INVALID,
-            "Den som skrev sykmeldingen mangler autorisasjon.",
+            "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
             "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
             it?.autorisasjon?.isAktiv != null && it.autorisasjon.isAktiv
@@ -60,7 +60,7 @@ enum class HPRRuleChain(
     BEHANDLER_NOT_LE_KI_MT_TL_FT_IN_HPR(
             1407,
             Status.INVALID,
-            "Den som skrev sykmeldingen mangler autorisasjon.",
+            "Den som har skrevet sykmelding til deg har ikke rett til å gjøre dette.",
             "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege", { (_, doctor) ->
         doctor.godkjenninger?.godkjenning != null &&
                 !doctor.godkjenninger.godkjenning.any {
