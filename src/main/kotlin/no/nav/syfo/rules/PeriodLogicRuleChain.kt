@@ -19,7 +19,7 @@ enum class PeriodLogicRuleChain(
     SIGNATURE_DATE_AFTER_RECEIVED_DATE(
             1123,
             Status.INVALID,
-            "Det er oppgitt en dato for behandlingen som er etter datoen vi mottok sykmeldingen.",
+            "Den må ha riktig dato for behandlingen.",
             "Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.",
             { (healthInformation, ruleMetadata) ->
         healthInformation.behandletTidspunkt > ruleMetadata.signatureDate
@@ -29,7 +29,7 @@ enum class PeriodLogicRuleChain(
     NO_PERIOD_PROVIDED(
             1200,
             Status.INVALID,
-            "Det er ikke oppgitt perioden sykmeldingen gjelder for.",
+            "Det må stå hvilken periode sykmeldingen gjelder for.",
             "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
             { (healthInformation, _) ->
         healthInformation.perioder.isNullOrEmpty()
@@ -39,7 +39,7 @@ enum class PeriodLogicRuleChain(
     TO_DATE_BEFORE_FROM_DATE(
             1201,
             Status.INVALID,
-            "Det er feil i periodene som er angitt i sykmeldingen.",
+            "Til-dato er før fra-dato.",
             "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
             { (healthInformation, _) ->
         healthInformation.perioder.any { it.fom.isAfter(it.tom) }
@@ -49,7 +49,7 @@ enum class PeriodLogicRuleChain(
     OVERLAPPING_PERIODS(
             1202,
             Status.INVALID,
-            "Sykmeldingen inneholder perioder som overlapper.",
+            "Periodene må ikke overlappe hverandre.",
             "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
             { (healthInformation, _) ->
         healthInformation.perioder.any { periodA ->
@@ -65,7 +65,7 @@ enum class PeriodLogicRuleChain(
     GAP_BETWEEN_PERIODS(
             1203,
             Status.INVALID,
-            "Sykmeldingen inneholder opphold mellom sykmeldingsperioder.",
+            "De ulike sykmeldingsperiodene må henge sammen. ",
             "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
             { (healthInformation, _) ->
         val ranges = healthInformation.perioder
@@ -83,7 +83,7 @@ enum class PeriodLogicRuleChain(
     BACKDATED_MORE_THEN_3_YEARS(
             1206,
             Status.INVALID,
-            "Sykmeldingen har en startdato for mer enn 3 år siden.",
+            "Startdatoen kan ikke være mer enn tre år tilbake.",
             "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
             { (healthInformation, _) ->
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
@@ -93,7 +93,7 @@ enum class PeriodLogicRuleChain(
     PRE_DATED(
             1209,
             Status.INVALID,
-            "Sykmeldingen er datert frem mer enn 30 dager.",
+            "Datoen må endres fordi sykmeldingen ikke kan være datert mer enn 30 dager fram i tid.",
             "Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.",
             { (healthInformation, ruleMetadata) ->
         healthInformation.perioder.sortedFOMDate().first().atStartOfDay() > ruleMetadata.signatureDate.plusDays(30)
@@ -103,7 +103,7 @@ enum class PeriodLogicRuleChain(
     END_DATE(
             1211,
             Status.INVALID,
-            "Sykmeldingen har en varighet på over ett år.",
+            "Den kan ikke ha en varighet på over ett år.",
             "Hvis sykmeldingens sluttdato er mer enn ett år frem i tid, avvises meldingen.",
             { (healthInformation, _) ->
         healthInformation.perioder.sortedTOMDate().last().atStartOfDay() > healthInformation.behandletTidspunkt.plusYears(1)
@@ -113,7 +113,7 @@ enum class PeriodLogicRuleChain(
     RECEIVED_DATE_BEFORE_PROCESSED_DATE(
             1123,
             Status.INVALID,
-            "Det er oppgitt en dato for behandlingen som er etter datoen vi mottok sykmeldingen.",
+            "Behandlingsdatoen må rettes.",
             "Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen",
             { (healthInformation, ruleMetadata) ->
         healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusHours(2)
@@ -125,7 +125,7 @@ enum class PeriodLogicRuleChain(
     PENDING_SICK_LEAVE_COMBINED(
             1240,
             Status.INVALID,
-            "En avventende sykmelding kan kun inneholde én periode. Denne inneholder flere perioder.",
+            "Den kan bare inneholde én periode fordi den er en avventende sykmelding. ",
             "Hvis avventende sykmelding er funnet og det finnes mer enn en periode",
             { (healthInformation, _) ->
         val numberOfPendingPeriods = healthInformation.perioder.count { it.avventendeInnspillTilArbeidsgiver != null }
@@ -136,7 +136,7 @@ enum class PeriodLogicRuleChain(
     MISSING_INSPILL_TIL_ARBEIDSGIVER(
             1241,
             Status.INVALID,
-            "En avventende sykmelding indikerer at du kan jobbe dersom arbeidsgiver legger til rette for dette. Den som har sykmeldt deg har ikke foreslått tiltak, noe som er påkrevet.",
+            "Den som sykmelder deg må foreslå hvordan arbeidsgiveren din kan tilrettelegge for at du kan jobbe. Det er fordi den er en avventende sykmelding.",
             "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
             { (healthInformation, _) ->
         healthInformation.perioder
@@ -147,7 +147,7 @@ enum class PeriodLogicRuleChain(
     PENDING_PERIOD_OUTSIDE_OF_EMPLOYER_PAID(
             1242,
             Status.INVALID,
-            "Denne type sykmelding kan maksimalt angis for 16 dager. Denne sykmeldingen har en periode på over 16 dager.",
+            "Perioden kan ikke være lenger enn 16 dager fordi det er en avventende sykmelding. ",
             "Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
             { (healthInformation, _) ->
         healthInformation.perioder
@@ -159,7 +159,7 @@ enum class PeriodLogicRuleChain(
     TOO_MANY_TREATMENT_DAYS(
             1250,
             Status.INVALID,
-            "Den kan maksimalt angis en behandlingsdag per uke.",
+            "Det kan bare angis én behandlingsdag per uke. ",
             "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
             { (healthInformation, _) ->
         healthInformation.perioder.any {
@@ -171,7 +171,7 @@ enum class PeriodLogicRuleChain(
     PARTIAL_SICK_LEAVE_PERCENTAGE_TO_LOW(
             1251,
             Status.INVALID,
-            "En gradert sykmelding kan ikke ha en sykmeldingsgrad på mindre enn 20%.",
+            "Sykmeldingsgraden kan ikke være mindre enn 20 %.",
             "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
             { (healthInformation, _) ->
         healthInformation.perioder.any {
@@ -183,7 +183,7 @@ enum class PeriodLogicRuleChain(
     PARTIAL_SICK_LEAVE_TOO_HIGH_PERCENTAGE(
             1252,
             Status.INVALID,
-            "En gradert sykmelding kan ikke ha en sykmeldingsgrad på over 99%.",
+            "Sykmeldingsgraden kan ikke være mer enn 99% fordi det er en gradert sykmelding.",
             "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
             { (healthInformation, _) ->
         healthInformation.perioder.mapNotNull { it.gradert }.any { it.grad > 99 }

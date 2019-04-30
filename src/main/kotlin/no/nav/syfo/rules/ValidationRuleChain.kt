@@ -59,7 +59,7 @@ enum class ValidationRuleChain(
     UNKNOWN_DIAGNOSECODE_TYPE(
             1137,
             Status.INVALID,
-            "Sykmeldingen har en diagnosekode som er ukjent for NAV.",
+            "Den må ha en kjent diagnosekode.",
             "Ukjent diagnosekode er benyttet. ", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose != null &&
             healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE)
@@ -69,7 +69,7 @@ enum class ValidationRuleChain(
     ICPC_2_Z_DIAGNOSE(
             1132,
             Status.INVALID,
-            "Sykmeldingen har en ugyldig hoveddiagnose som ikke gir rett til sykepenger.",
+            "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
             "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
     }),
@@ -78,7 +78,7 @@ enum class ValidationRuleChain(
     MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON(
             1133,
             Status.INVALID,
-            "Sykmeldingen mangler hoveddiagnose eller annen gyldig fraværsgrunn.",
+            "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn.",
             "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
             { (healthInformation, _) ->
         healthInformation.medisinskVurdering.annenFraversArsak == null &&
@@ -122,7 +122,7 @@ enum class ValidationRuleChain(
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(
             1707,
             Status.INVALID,
-            "Utdypende opplysninger som skal beskrives i et langvarig sykefravær mangler.",
+            "Den må inneholde utdypende opplysninger når du har vært sykmeldt lenge",
             "Utdypende opplysninger mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
@@ -142,7 +142,7 @@ enum class ValidationRuleChain(
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(
             1709,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når totalt sykefravær er lengre enn 7 uker.",
+            "Den må inneholde utdypende opplysninger når du har vært sykmeldt i mer enn 7 uker til sammen.",
             "Utdypende opplysninger som kreves ved uke 7 mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
@@ -153,7 +153,7 @@ enum class ValidationRuleChain(
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(
             1709,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når totalt sykefravær er lengre enn 17 uker.",
+            "Den må inneholde utdypende opplysninger når du har vært sykmeldt i mer enn 17 uker til sammen.",
             "Utdypende opplysninger som kreves ved uke 17 mangler.", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
@@ -164,7 +164,7 @@ enum class ValidationRuleChain(
     MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_39(
             1709,
             Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når totalt sykefravær er lengre enn 39 uker.",
+            "Den må inneholde utdypende opplysninger når du har vært sykmeldt i mer enn 39 uker til sammen.",
             "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (healthInformation, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
@@ -175,7 +175,7 @@ enum class ValidationRuleChain(
     INVALID_ORGNR_SIZE(
             9999,
             Status.INVALID,
-            "Det er oppgitt feil organisasjonsnummer i sykmeldingen.",
+            "Den må ha riktig organisasjonsnummer.",
             "Feil format på organisasjonsnummer. Dette skal være 9 sifre..", { (_, metadata) ->
         metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
     }),
