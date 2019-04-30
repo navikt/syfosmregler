@@ -16,6 +16,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.syfo.helpers.retry
+import no.nav.syfo.metrics.BORN_AFTER_1999_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
@@ -35,6 +36,7 @@ import no.nav.syfo.rules.RuleMetadataAndForstegangsSykemelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
+import no.nav.syfo.validation.extractBornDate
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
@@ -44,6 +46,7 @@ import no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaul
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.GregorianCalendar
@@ -132,6 +135,11 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
             ).flatten()
 
             log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
+
+            // TODO remove over testing
+            if (LocalDate.of(1999, 1, 1).isBefore(extractBornDate(receivedSykmelding.personNrPasient))) {
+                BORN_AFTER_1999_COUNTER.inc()
+            }
 
             val validationResult = validationResult(results)
             RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
