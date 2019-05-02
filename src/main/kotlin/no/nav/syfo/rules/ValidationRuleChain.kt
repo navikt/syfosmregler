@@ -89,7 +89,7 @@ enum class ValidationRuleChain(
     INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(
             1540,
             Status.INVALID,
-            "Det er feil i koden for hoveddiagnosen.",
+            "Den må ha riktig kode for hoveddiagnose.",
             "Kodeverk for hoveddiagnose er feil eller mangler.  ", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
                 healthInformation.medisinskVurdering.hovedDiagnose?.let { diagnose ->
