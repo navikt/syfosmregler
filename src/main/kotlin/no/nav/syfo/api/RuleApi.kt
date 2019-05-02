@@ -199,5 +199,5 @@ fun validationResult(results: List<Rule<Any>>): ValidationResult =
                             ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
                             ?: Status.OK
                         },
-                ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForUser!!, rule.messageForSender!!) }
+                ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForSender!!, rule.messageForUser!!) }
         )
