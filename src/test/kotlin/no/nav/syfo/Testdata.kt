@@ -22,16 +22,19 @@ import no.nav.syfo.model.Periode
 import no.nav.syfo.model.Prognose
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.sm.Diagnosekoder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.random.Random
 
-fun Diagnosekoder.Diagnosekode.toDiagnose() = Diagnose(system = oid, kode = code)
+fun Diagnosekoder.DiagnosekodeType.toDiagnose() = Diagnose(system = oid, kode = code)
 
 fun generateSykmelding(
     id: String = UUID.randomUUID().toString(),
     pasientAktoerId: String = UUID.randomUUID().toString(),
+    signaturDato: LocalDateTime = LocalDateTime.now(),
+    syketilfelleStartDato: LocalDate = LocalDate.now(),
     medisinskVurdering: MedisinskVurdering = generateMedisinskVurdering(),
     skjermetForPasient: Boolean = false,
     perioder: List<Periode> = listOf(generatePeriode()),
@@ -54,6 +57,8 @@ fun generateSykmelding(
         id = id,
         msgId = msgid,
         pasientAktoerId = pasientAktoerId,
+        signaturDato = signaturDato,
+        syketilfelleStartDato = syketilfelleStartDato,
         medisinskVurdering = medisinskVurdering,
         skjermesForPasient = skjermetForPasient,
         perioder = perioder,
@@ -185,6 +190,7 @@ fun generateBehandler(
     mellomnavn: String? = "Mellomnavn",
     etternavn: String = "Etternavnsen",
     aktoerId: String = "128731827",
+    tlf: String = "98765432",
     fnr: String = "1234567891",
     hpr: String? = null,
     her: String? = null,
@@ -195,6 +201,7 @@ fun generateBehandler(
         mellomnavn = mellomnavn,
         etternavn = etternavn,
         aktoerId = aktoerId,
+        tlf = tlf,
         fnr = fnr,
         hpr = hpr,
         her = her,

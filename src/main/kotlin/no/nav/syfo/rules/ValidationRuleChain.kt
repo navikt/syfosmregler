@@ -1,12 +1,12 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.Diagnosekoder
+import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.QuestionGroup
-import no.nav.syfo.isICPC2
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
-import no.nav.syfo.toICPC2
+import no.nav.syfo.sm.isICPC2
+import no.nav.syfo.sm.toICPC2
 import no.nav.syfo.validation.extractBornDate
 import no.nav.syfo.validation.validatePersonAndDNumber
 import no.nav.syfo.validation.validatePersonAndDNumber11Digits
@@ -62,7 +62,7 @@ enum class ValidationRuleChain(
             "Den må ha en kjent diagnosekode.",
             "Ukjent diagnosekode er benyttet. ", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose != null &&
-            healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE)
+            healthInformation.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
     }),
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")

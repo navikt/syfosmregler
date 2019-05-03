@@ -12,11 +12,11 @@ val jacksonVersion = "2.9.8"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kluentVersion = "1.39"
-val ktorVersion = "1.1.3"
+val ktorVersion = "1.1.5"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.0.12"
+val smCommonVersion = "1.0.16"
 val spekVersion = "2.0.2"
 val sykmeldingVersion = "1.1-SNAPSHOT"
 val navPersonv3Version = "3.2.0"
@@ -97,6 +97,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$smCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-ws:$smCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-rules:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-diagnosis-codes:$smCommonVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")

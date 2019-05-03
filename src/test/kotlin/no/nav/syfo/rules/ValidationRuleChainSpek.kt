@@ -3,7 +3,6 @@ package no.nav.syfo.rules
 import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
-import no.nav.syfo.Diagnosekoder
 import no.nav.syfo.QuestionId
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.generateMedisinskVurdering
@@ -14,6 +13,7 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.SvarRestriksjon
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldEqual

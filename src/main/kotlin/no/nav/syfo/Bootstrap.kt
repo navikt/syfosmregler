@@ -23,6 +23,7 @@ import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.ws.createPort
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service

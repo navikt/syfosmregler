@@ -1,7 +1,7 @@
 package no.nav.syfo.rules
 
 import no.nav.syfo.model.Status
-import no.nav.syfo.toICPC2
+import no.nav.syfo.sm.toICPC2
 import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 enum class HPRRuleChain(
