@@ -159,7 +159,11 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 }
 
 fun CoroutineScope.fetchDoctor(hprService: IHPR2Service, doctorIdent: String): Deferred<HPRPerson> = async {
-    retry("hpr_hent_person_med_personnummer", arrayOf(500L, 1000L, 3000L, 5000L, 10000L), IOException::class, WstxException::class) {
+    retry(
+            callName = "hpr_hent_person_med_personnummer",
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
+            legalExceptions = *arrayOf(IOException::class, WstxException::class)
+    ) {
         hprService.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
     }
 }
@@ -184,7 +188,11 @@ fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, re
 }
 
 fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
-    retry("tps_hent_person", arrayOf(500L, 1000L, 3000L, 5000L, 10000L), IOException::class, WstxException::class) {
+    retry(
+            callName = "tps_hent_person",
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
+            legalExceptions = *arrayOf(IOException::class, WstxException::class)
+    ) {
         personV3.hentPerson(HentPersonRequest()
                 .withAktoer(PersonIdent().withIdent(NorskIdent().withIdent(ident)))
         ).person
