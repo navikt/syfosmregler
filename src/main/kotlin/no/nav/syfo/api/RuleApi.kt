@@ -190,7 +190,7 @@ fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, re
 fun CoroutineScope.fetchPerson(personV3: PersonV3, ident: String): Deferred<TPSPerson> = async {
     retry(
             callName = "tps_hent_person",
-            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L, 60000L),
             legalExceptions = *arrayOf(IOException::class, WstxException::class)
     ) {
         personV3.hentPerson(HentPersonRequest()
