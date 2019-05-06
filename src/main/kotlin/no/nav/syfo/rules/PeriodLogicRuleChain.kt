@@ -39,7 +39,7 @@ enum class PeriodLogicRuleChain(
     TO_DATE_BEFORE_FROM_DATE(
             1201,
             Status.INVALID,
-            "Til-dato er før fra-dato.",
+            "Fra-dato må være før til-dato.",
             "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
             { (healthInformation, _) ->
         healthInformation.perioder.any { it.fom.isAfter(it.tom) }
