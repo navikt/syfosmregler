@@ -38,56 +38,56 @@ object ValidationRuleChainSpek : Spek({
 
     describe("Testing validation rules and checking the rule outcomes") {
 
-        it("Should check rule INVALID_FNR_SIZE, should trigger rule") {
-            ValidationRuleChain.INVALID_FNR_SIZE(ruleData(generateSykmelding(), patientPersonNumber = "3006310441")) shouldEqual true
+        it("Should check rule UGYLDIG_FNR_LENGDE, should trigger rule") {
+            ValidationRuleChain.UGYLDIG_FNR_LENGDE(ruleData(generateSykmelding(), patientPersonNumber = "3006310441")) shouldEqual true
         }
 
-        it("Should check rule INVALID_FNR_SIZE, should NOT trigger rule") {
-            ValidationRuleChain.INVALID_FNR_SIZE(ruleData(generateSykmelding(), patientPersonNumber = "04030350265")) shouldEqual false
+        it("Should check rule UGYLDIG_FNR_LENGDE, should NOT trigger rule") {
+            ValidationRuleChain.UGYLDIG_FNR_LENGDE(ruleData(generateSykmelding(), patientPersonNumber = "04030350265")) shouldEqual false
         }
 
-        it("Should check rule INVALID_FNR,should trigger rule") {
-            ValidationRuleChain.INVALID_FNR(ruleData(generateSykmelding(), patientPersonNumber = "30063104424")) shouldEqual true
+        it("Should check rule UGYLDIG_FNR,should trigger rule") {
+            ValidationRuleChain.UGYLDIG_FNR(ruleData(generateSykmelding(), patientPersonNumber = "30063104424")) shouldEqual true
         }
 
-        it("Should check rule INVALID_FNR,should NOT trigger rule") {
-            ValidationRuleChain.INVALID_FNR(ruleData(generateSykmelding(), patientPersonNumber = "04030350265")) shouldEqual false
+        it("Should check rule UGYLDIG_FNR,should NOT trigger rule") {
+            ValidationRuleChain.UGYLDIG_FNR(ruleData(generateSykmelding(), patientPersonNumber = "04030350265")) shouldEqual false
         }
 
-        it("Should check rule YOUNGER_THAN_13,should trigger rule") {
+        it("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {
             val person = fairy.person(PersonProperties.ageBetween(PersonProvider.MIN_AGE, 12))
 
-            ValidationRuleChain.YOUNGER_THAN_13(ruleData(
+            ValidationRuleChain.PASIENT_YNGRE_ENN_13(ruleData(
                     generateSykmelding(),
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
             )) shouldEqual true
         }
 
-        it("Should check rule YOUNGER_THAN_13,should NOT trigger rule") {
+        it("Should check rule PASIENT_YNGRE_ENN_13,should NOT trigger rule") {
             val person = fairy.person(
                     PersonProperties.ageBetween(13, 70))
 
-            ValidationRuleChain.YOUNGER_THAN_13(ruleData(
+            ValidationRuleChain.PASIENT_YNGRE_ENN_13(ruleData(
                     generateSykmelding(),
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
             )) shouldEqual false
         }
 
-        it("Should check rule PATIENT_OVER_70_YEARS,should trigger rule") {
+        it("Should check rule PASIENT_ELDRE_ENN_70,should trigger rule") {
             val person = fairy.person(
                     PersonProperties.ageBetween(71, 88))
 
-            ValidationRuleChain.PATIENT_OVER_70_YEARS(ruleData(
+            ValidationRuleChain.PASIENT_ELDRE_ENN_70(ruleData(
                     generateSykmelding(),
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
             )) shouldEqual true
         }
 
-        it("Should check rule PATIENT_OVER_70_YEARS,should NOT trigger rule") {
+        it("Should check rule PASIENT_ELDRE_ENN_70,should NOT trigger rule") {
             val person = fairy.person(
                     PersonProperties.ageBetween(13, 69))
 
-            ValidationRuleChain.PATIENT_OVER_70_YEARS(ruleData(
+            ValidationRuleChain.PASIENT_ELDRE_ENN_70(ruleData(
                     generateSykmelding(),
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
             )) shouldEqual false
@@ -120,7 +120,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON,should trigger rule") {
+        it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should trigger rule") {
             val healthInformation = generateSykmelding(
                     medisinskVurdering = generateMedisinskVurdering(
                             hovedDiagnose = null,
@@ -128,54 +128,54 @@ object ValidationRuleChainSpek : Spek({
                     )
             )
 
-            ValidationRuleChain.MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON(ruleData(healthInformation)) shouldEqual true
+            ValidationRuleChain.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON,should NOT trigger rule") {
+        it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule UNKNOWN_DIAGNOSECODE_TYPE,should trigger rule") {
+        it("Should check rule UKJENT_DIAGNOSEKODETYPE,should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.9999", kode = "A09")
             ))
 
-            ValidationRuleChain.UNKNOWN_DIAGNOSECODE_TYPE(ruleData(healthInformation)) shouldEqual true
+            ValidationRuleChain.UKJENT_DIAGNOSEKODETYPE(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule UNKNOWN_DIAGNOSECODE_TYPE,should NOT trigger rule") {
+        it("Should check rule UKJENT_DIAGNOSEKODETYPE,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.UNKNOWN_DIAGNOSECODE_TYPE(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.UKJENT_DIAGNOSEKODETYPE(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule INVALID_KODEVERK_FOR_MAIN_DIAGNOSE, wrong kodeverk for hoveddiagnose") {
+        it("Should check rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7110", kode = "Z09")
             ))
 
-            ValidationRuleChain.INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(ruleData(healthInformation)) shouldEqual true
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule INVALID_KODEVERK_FOR_BI_DIAGNOSE, wrong kodeverk for biDiagnoser") {
+        it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7110", kode = "Z09"))
             ))
 
-            ValidationRuleChain.INVALID_KODEVERK_FOR_BI_DIAGNOSE(ruleData(healthInformation)) shouldEqual true
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule INVALID_KODEVERK_FOR_BI_DIAGNOSE, correct kodeverk for biDiagnoser") {
+        it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, correct kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L92"))
             ))
 
-            ValidationRuleChain.INVALID_KODEVERK_FOR_BI_DIAGNOSE(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, missing utdypendeOpplysninger") {
+        it("Should check rule MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL, missing utdypendeOpplysninger") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2018, 1, 7),
@@ -183,10 +183,10 @@ object ValidationRuleChainSpek : Spek({
                     )
             ))
 
-            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual true
+            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("MISSING_REQUIRED_DYNAMIC_QUESTIONS should not hit whenever there is no period longer then 8 weeks") {
+        it("MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL should not hit whenever there is no period longer then 8 weeks") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2018, 1, 7),
@@ -194,10 +194,10 @@ object ValidationRuleChainSpek : Spek({
                     )
             ))
 
-            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, should NOT trigger rule") {
+        it("Should check rule MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
                             generatePeriode(
@@ -215,18 +215,18 @@ object ValidationRuleChainSpek : Spek({
                     )
             )
 
-            ValidationRuleChain.MISSING_REQUIRED_DYNAMIC_QUESTIONS(ruleData(healthInformation)) shouldEqual false
+            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule INVALID_RULESET_VERSION, should trigger rule") {
-            ValidationRuleChain.INVALID_RULESET_VERSION(ruleData(generateSykmelding(), rulesetVersion = "999")) shouldEqual true
+        it("Should check rule UGYLDIG_REGELSETTVERSJON, should trigger rule") {
+            ValidationRuleChain.UGYLDIG_REGELSETTVERSJON(ruleData(generateSykmelding(), rulesetVersion = "999")) shouldEqual true
         }
 
-        it("Should check rule INVALID_RULESET_VERSION, should NOT trigger rule") {
-            ValidationRuleChain.INVALID_RULESET_VERSION(ruleData(generateSykmelding(), rulesetVersion = "2")) shouldEqual false
+        it("Should check rule UGYLDIG_REGELSETTVERSJON, should NOT trigger rule") {
+            ValidationRuleChain.UGYLDIG_REGELSETTVERSJON(ruleData(generateSykmelding(), rulesetVersion = "2")) shouldEqual false
         }
 
-        it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2, should trigger rule") {
+        it("Should check rule MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(generatePeriode(
                             fom = LocalDate.of(2018, 1, 7),
@@ -239,10 +239,10 @@ object ValidationRuleChainSpek : Spek({
                     )
             )
 
-            ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
+            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
         }
 
-        it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS_AFTER_RULE_SET_VERSION_2, should NOT trigger rule") {
+        it("Should check rule MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(generatePeriode(
                             fom = LocalDate.of(2018, 1, 7),
@@ -256,10 +256,10 @@ object ValidationRuleChainSpek : Spek({
                     )
             )
 
-            ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual false
+            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual false
         }
 
-        it("MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7 should trigger on missing UtdypendeOpplysninger") {
+        it("MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7 should trigger on missing UtdypendeOpplysninger") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(generatePeriode(
                             fom = LocalDate.of(2018, 1, 7),
@@ -267,19 +267,19 @@ object ValidationRuleChainSpek : Spek({
                     ))
             )
 
-            ValidationRuleChain.MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
+            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
         }
 
-        it("INVALID_ORGNR_SIZE should trigger on when orgnr lengt is not 9") {
+        it("UGYLDIG_ORGNR_LENGDE should trigger on when orgnr lengt is not 9") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.INVALID_ORGNR_SIZE(ruleData(healthInformation, legekontorOrgNr = "1234567890")) shouldEqual true
+            ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(ruleData(healthInformation, legekontorOrgNr = "1234567890")) shouldEqual true
         }
 
-        it("INVALID_ORGNR_SIZE should not trigger on when orgnr is 9") {
+        it("UGYLDIG_ORGNR_LENGDE should not trigger on when orgnr is 9") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.INVALID_ORGNR_SIZE(ruleData(healthInformation, legekontorOrgNr = "123456789")) shouldEqual false
+            ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(ruleData(healthInformation, legekontorOrgNr = "123456789")) shouldEqual false
         }
     }
 })

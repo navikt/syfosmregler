@@ -20,7 +20,7 @@ enum class ValidationRuleChain(
 ) : Rule<RuleData<RuleMetadata>> {
 
     @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
-    INVALID_FNR_SIZE(
+    UGYLDIG_FNR_LENGDE(
             1002,
             Status.INVALID,
             "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
@@ -29,7 +29,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Fødselsnummer/D-nummer kan passerer ikke modulus 11")
-    INVALID_FNR(
+    UGYLDIG_FNR(
             1006,
             Status.INVALID,
             "Fødselsnummer/D-nummer kan passerer ikke modulus 11",
@@ -38,7 +38,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
-    YOUNGER_THAN_13(
+    PASIENT_YNGRE_ENN_13(
             1101,
             Status.INVALID,
             "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
@@ -47,7 +47,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
-    PATIENT_OVER_70_YEARS(
+    PASIENT_ELDRE_ENN_70(
             1102,
             Status.INVALID,
             "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
@@ -56,7 +56,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Ukjent houved diagnosekode type")
-    UNKNOWN_DIAGNOSECODE_TYPE(
+    UKJENT_DIAGNOSEKODETYPE(
             1137,
             Status.INVALID,
             "Den må ha en kjent diagnosekode.",
@@ -75,7 +75,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
-    MAIN_DIAGNOSE_MISSING_AND_MISSING_REASON(
+    HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(
             1133,
             Status.INVALID,
             "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn.",
@@ -86,7 +86,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
-    INVALID_KODEVERK_FOR_MAIN_DIAGNOSE(
+    UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(
             1540,
             Status.INVALID,
             "Den må ha riktig kode for hoveddiagnose.",
@@ -104,7 +104,7 @@ enum class ValidationRuleChain(
     // Revurder regel når IT ikkje lenger skal brukes
     // Her mener jeg fremdeles at vi skal nulle ut bidiagnosen dersom den er feil - ikke avvise sykmeldingen!!
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
-    INVALID_KODEVERK_FOR_BI_DIAGNOSE(
+    UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
             1541,
             Status.MANUAL_PROCESSING, "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er langvarig. ",
             "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (healthInformation, _) ->
@@ -118,7 +118,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
-    MISSING_REQUIRED_DYNAMIC_QUESTIONS(
+    MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(
             1707,
             Status.INVALID,
             "Den må inneholde utdypende opplysninger når du har vært sykmeldt lenge",
@@ -129,7 +129,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
-    INVALID_RULESET_VERSION(
+    UGYLDIG_REGELSETTVERSJON(
             1708,
             Status.INVALID,
             "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
@@ -138,7 +138,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-    MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_7(
+    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 7 uker til sammen.",
@@ -149,7 +149,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-    MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_17(
+    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 17 uker til sammen.",
@@ -160,7 +160,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-    MISSING_DYNAMIC_QUESTION_VERSION2_WEEK_39(
+    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
@@ -171,7 +171,7 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Organisasjonsnummeret som er oppgitt er ikke 9 tegn.")
-    INVALID_ORGNR_SIZE(
+    UGYLDIG_ORGNR_LENGDE(
             9999,
             Status.INVALID,
             "Den må ha riktig organisasjonsnummer.",

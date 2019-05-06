@@ -12,7 +12,7 @@ enum class HPRRuleChain(
     override val predicate: (RuleData<HPRPerson>) -> Boolean
 ) : Rule<RuleData<HPRPerson>> {
     @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")
-    BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE(
+    BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(
             1143,
             Status.MANUAL_PROCESSING,
             "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
@@ -30,7 +30,7 @@ enum class HPRRuleChain(
     }),
 
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
-    BEHANDLER_NOT_VALDIG_IN_HPR(
+    BEHANDLER_IKKE_GYLDIG_I_HPR(
             1402,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
@@ -41,7 +41,7 @@ enum class HPRRuleChain(
     }),
 
     @Description("Behandler har ikke gyldig autorisasjon i HPR")
-    BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR(
+    BEHANDLER_MANGLER_AUTORISASJON_I_HPR(
             1403,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
@@ -57,7 +57,7 @@ enum class HPRRuleChain(
     }),
 
     @Description("Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege")
-    BEHANDLER_NOT_LE_KI_MT_TL_FT_IN_HPR(
+    BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR(
             1407,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
@@ -73,7 +73,7 @@ enum class HPRRuleChain(
     }),
 
     @Description("Hvis en sykmelding fra manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag skal meldingen avvises")
-    BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS(
+    BEHANDLER_MT_FT_KI_OVER_12_UKER(
             1519,
             Status.INVALID,
             "Den som skrev sykmeldingen mangler autorisasjon.",

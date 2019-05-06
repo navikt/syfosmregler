@@ -18,7 +18,7 @@ object SyketilfelleRuleChainSpek : Spek({
         fun ruleData(healthInformation: Sykmelding, ruleMetadataAndForstegangsSykemelding: RuleMetadataAndForstegangsSykemelding) =
                 RuleData(healthInformation, ruleMetadataAndForstegangsSykemelding)
 
-        it("Should check rule BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE, should trigger rule") {
+        it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO, should trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 7),
@@ -36,10 +36,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
         }
 
-        it("Should check rule BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 7),
@@ -57,10 +57,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
-        it("Should check rule BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK, should trigger rule") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 10),
@@ -78,10 +78,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
         }
 
-        it("Should check rule BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 7),
@@ -99,10 +99,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
-        it("Should check rule BACKDATING_SYKMELDING_EXTENSION, should trigger rule") {
+        it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.now(),
@@ -120,10 +120,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
         }
 
-        it("Should check rule BACKDATING_SYKMELDING_EXTENSION, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.now(),
@@ -141,10 +141,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATING_SYKMELDING_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
-        it("Should check rule BACKDATED_WITH_REASON_FIRST_SICK_LAVE, should trigger rule") {
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
                             generatePeriode(
@@ -167,10 +167,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON_FIRST_SICK_LAVE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
         }
 
-        it("Should check rule BACKDATED_WITH_REASON, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
                             generatePeriode(
@@ -193,10 +193,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON_FIRST_SICK_LAVE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
-        it("Should check rule BACKDATED_WITH_REASON_EXTENSION, should trigger rule") {
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
                             generatePeriode(
@@ -219,10 +219,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual true
         }
 
-        it("Should check rule BACKDATED_WITH_REASON_EXTENSION, NOT should trigger rule") {
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
                             generatePeriode(
@@ -245,10 +245,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
-        it("Should check rule BACKDATED_WITH_REASON_EXTENSION, NOT should trigger rule") {
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
                             generatePeriode(
@@ -268,7 +268,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.BACKDATED_WITH_REASON_EXTENSION(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
     }
 })

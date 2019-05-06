@@ -11,7 +11,7 @@ enum class SyketilfelleRuleChain(
     override val predicate: (RuleData<RuleMetadataAndForstegangsSykemelding>) -> Boolean
 ) : Rule<RuleData<RuleMetadataAndForstegangsSykemelding>> {
     @Description("Første gangs sykmelding er tilbakedatert mer enn 8 dager.")
-    BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(
+    TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(
             1204,
             Status.INVALID,
             "Sykmeldingen er tilbakedatert uten at det er begrunnet.",
@@ -23,7 +23,7 @@ enum class SyketilfelleRuleChain(
             }),
 
     @Description("Første gangs sykmelding er tilbakedatert mindre enn 8 dager.")
-    BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(
+    TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO(
             1204,
             Status.INVALID,
             "Sykmeldingen er tilbakedatert uten at det er begrunnet.",
@@ -38,7 +38,7 @@ enum class SyketilfelleRuleChain(
             }),
 
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
-    BACKDATING_SYKMELDING_EXTENSION(
+    TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
             null,
             Status.INVALID,
             "Det må begrunnes hvorfor sykmeldingen er tilbakedatert.",
@@ -49,7 +49,7 @@ enum class SyketilfelleRuleChain(
             }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON_FIRST_SICK_LAVE(
+    TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING(
             1207,
             Status.MANUAL_PROCESSING,
             "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
@@ -61,7 +61,7 @@ enum class SyketilfelleRuleChain(
             }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
-    BACKDATED_WITH_REASON_EXTENSION(
+    TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
             1207,
             Status.MANUAL_PROCESSING,
             "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",

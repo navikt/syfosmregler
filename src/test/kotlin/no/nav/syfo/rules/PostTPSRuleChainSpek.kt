@@ -17,7 +17,7 @@ object PostTPSRuleChainSpek : Spek({
 
     describe("Testing validation rules and checking the rule outcomes") {
 
-        it("Should check rule PATIENT_HAS_SPERREKODE_6, should trigger rule") {
+        it("Should check rule PASIENTEN_HAR_KODE_6, should trigger rule") {
             val healthInformation = generateSykmelding()
             val tpsPerson = Person().apply {
                 diskresjonskode = Diskresjonskoder().apply {
@@ -25,14 +25,14 @@ object PostTPSRuleChainSpek : Spek({
                 }
             }
 
-            PostTPSRuleChain.PATIENT_HAS_SPERREKODE_6(ruleData(healthInformation, tpsPerson)) shouldEqual true
+            PostTPSRuleChain.PASIENTEN_HAR_KODE_6(ruleData(healthInformation, tpsPerson)) shouldEqual true
         }
 
-        it("Should check rule PATIENT_HAS_SPERREKODE_6, should NOT trigger rule") {
+        it("Should check rule PASIENTEN_HAR_KODE_6, should NOT trigger rule") {
             val healthInformation = generateSykmelding()
             val tpsPerson = Person()
 
-            PostTPSRuleChain.PATIENT_HAS_SPERREKODE_6(ruleData(healthInformation, tpsPerson)) shouldEqual false
+            PostTPSRuleChain.PASIENTEN_HAR_KODE_6(ruleData(healthInformation, tpsPerson)) shouldEqual false
         }
     }
 })
