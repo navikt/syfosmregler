@@ -14,7 +14,7 @@ enum class SyketilfelleRuleChain(
     BACKDATED_MORE_THEN_8_DAYS_FIRST_SICK(
             1204,
             Status.INVALID,
-            "Det må begrunnes hvorfor sykmeldingen er tilbakedatert.",
+            "Sykmeldingen er tilbakedatert uten at det er begrunnet.",
             "Første sykmelding er tilbakedatert mer enn det som er tillatt.",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
@@ -26,7 +26,7 @@ enum class SyketilfelleRuleChain(
     BACKDATED_UP_TO_8_DAYS_FIRST_SICK_LAVE(
             1204,
             Status.INVALID,
-            "Det må begrunnes hvorfor sykmeldingen er tilbakedatert.",
+            "Sykmeldingen er tilbakedatert uten at det er begrunnet.",
             "Første sykmelding er tilbakedatert uten at dato for kontakt er angitt eller begrunnelse er gitt.",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
