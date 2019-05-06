@@ -10,7 +10,6 @@ enum class PostTPSRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<TPSPerson>) -> Boolean
 ) : Rule<RuleData<TPSPerson>> {
-    // TODO: Hent sperrekode informasjon fra team register
     @Description("Pasient er registrert med sperrekode 6, sperret adresse, strengt fortrolig. Kode 6 overstyrer oppfølgingsregler. Melding går ikke til Arena.")
     PATIENT_HAS_SPERREKODE_6(
             1305,
