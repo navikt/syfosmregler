@@ -11,21 +11,6 @@ import java.io.IOException
 import java.lang.RuntimeException
 
 object HelpersSpek : Spek({
-    // TODO: Move this to the helper library
-    describe("Exception-cause crawler") {
-        it("Should find a IOException in a nested Exception") {
-            isCausedBy(Exception(IOException("Connection timed out")), 3, arrayOf(IOException::class)) shouldEqual true
-        }
-        it("Should find not a IOException in a nested Exception") {
-            isCausedBy(Exception(IOException("Connection timed out")), 3, arrayOf(RuntimeException::class)) shouldEqual false
-        }
-        it("Should not find a IOException whenever the cause stack is too deep") {
-            isCausedBy(Exception(Exception(Exception(IOException("Connection timed out")))), 3, arrayOf(IOException::class)) shouldEqual false
-        }
-        it("Should find a IOException whenever the cause stack is 3 deep") {
-            isCausedBy(Exception(Exception(IOException("Connection timed out"))), 3, arrayOf(IOException::class)) shouldEqual true
-        }
-    }
 
     describe("Retries") {
         it("Returns result success") {

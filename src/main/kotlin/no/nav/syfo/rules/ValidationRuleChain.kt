@@ -118,7 +118,6 @@ enum class ValidationRuleChain(
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
-    // TODO: Endre navn på denne etter diskusjon med fag og Diskutere med fag mtp hva vi skal gjøre med regelsettversjon
     MISSING_REQUIRED_DYNAMIC_QUESTIONS(
             1707,
             Status.INVALID,
@@ -185,5 +184,3 @@ fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: Que
         this[questionGroup.spmGruppeId]?.all { (spmId, _) ->
             spmId in questionGroup.spmsvar.map { it.spmId }
         }
-
-// TODO Figure out what to do about group 6.6

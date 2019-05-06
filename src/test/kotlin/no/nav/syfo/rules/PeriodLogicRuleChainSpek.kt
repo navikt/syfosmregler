@@ -224,19 +224,18 @@ object PeriodLogicRuleChainSpek : Spek({
                     )
             ))
 
-            PeriodLogicRuleChain.PENDING_SICK_LEAVE_COMBINED(ruleData(healthInformation)) shouldEqual true
+            PeriodLogicRuleChain.PENDING_SICK_LEAVE(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule PENDING_SICK_LEAVE_COMBINED, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.now(),
-                            tom = LocalDate.now().plusDays(5),
-                            avventendeInnspillTilArbeidsgiver = "Bør gå minst mulig på jobb"
+                            tom = LocalDate.now().plusDays(5)
                     )
             ))
 
-            PeriodLogicRuleChain.PENDING_SICK_LEAVE_COMBINED(ruleData(healthInformation)) shouldEqual false
+            PeriodLogicRuleChain.PENDING_SICK_LEAVE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule MISSING_INSPILL_TIL_ARBEIDSGIVER, should trigger rule") {
