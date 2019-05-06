@@ -12,7 +12,7 @@ enum class HPRRuleChain(
     override val predicate: (RuleData<HPRPerson>) -> Boolean
 ) : Rule<RuleData<HPRPerson>> {
     @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")
-    BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(
+    BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE(
             1143,
             Status.MANUAL_PROCESSING,
             "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
@@ -25,7 +25,7 @@ enum class HPRRuleChain(
                             it.autorisasjon?.isAktiv == true &&
                             it.helsepersonellkategori.isAktiv != null &&
                             it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in kotlin.collections.listOf("KI", "MT", "FT") }
+                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("KI", "MT", "FT") }
                 }
     }),
 
