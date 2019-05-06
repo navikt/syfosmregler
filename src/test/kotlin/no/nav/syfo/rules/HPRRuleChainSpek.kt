@@ -116,7 +116,7 @@ object HPRRuleChainSpek : Spek({
             HPRRuleChain.BEHANDLER_NOT_LE_KI_MT_TL_FT_IN_HPR(ruleData(healthInformation, person)) shouldEqual false
         }
 
-        it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should trigger rule") {
+        it("Should check rule BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE, should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "S82")
             ))
@@ -134,10 +134,10 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            HPRRuleChain.BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual true
+            HPRRuleChain.BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual true
         }
 
-        it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should NOT trigger rule") {
+        it("Should check rule BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                             hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
                     ))
@@ -155,7 +155,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            HPRRuleChain.BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual false
+            HPRRuleChain.BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should trigger rule") {
@@ -208,7 +208,7 @@ object HPRRuleChainSpek : Spek({
             HPRRuleChain.BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS(ruleData(healthInformation, person)) shouldEqual false
         }
 
-        it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should trigger rule") {
+        it("Should check rule BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE, should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "A92")
             ))
@@ -227,10 +227,10 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            HPRRuleChain.BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual true
+            HPRRuleChain.BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual true
         }
 
-        it("Should check rule BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE, should NOT trigger rule") {
+        it("Should check rule BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
             ))
@@ -249,7 +249,7 @@ object HPRRuleChainSpek : Spek({
                 }
             }
 
-            HPRRuleChain.BEHANDLER_KI_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual false
+            HPRRuleChain.BEHANDLER_KI_MT_FT_NOT_USING_VALID_DIAGNOSECODE_TYPE(ruleData(healthInformation, person)) shouldEqual false
         }
     }
 })
