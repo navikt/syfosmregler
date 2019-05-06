@@ -106,7 +106,7 @@ enum class ValidationRuleChain(
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     INVALID_KODEVERK_FOR_BI_DIAGNOSE(
             1541,
-            Status.INVALID, "Den må ha riktig kode for bidiagnose.",
+            Status.MANUAL_PROCESSING, "Den må ha riktig kode for bidiagnose.",
             "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (healthInformation, _) ->
         !healthInformation.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {

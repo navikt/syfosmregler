@@ -167,6 +167,14 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.INVALID_KODEVERK_FOR_BI_DIAGNOSE(ruleData(healthInformation)) shouldEqual true
         }
 
+        it("Should check rule INVALID_KODEVERK_FOR_BI_DIAGNOSE, correct kodeverk for biDiagnoser") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L92"))
+            ))
+
+            ValidationRuleChain.INVALID_KODEVERK_FOR_BI_DIAGNOSE(ruleData(healthInformation)) shouldEqual false
+        }
+
         it("Should check rule MISSING_REQUIRED_DYNAMIC_QUESTIONS, missing utdypendeOpplysninger") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
