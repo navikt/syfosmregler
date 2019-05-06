@@ -14,7 +14,6 @@ enum class PeriodLogicRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
-    // TODO: Emotak gjør kanskje dette alerede, i så fall kan denne testen fjernes
     @Description("Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.")
     SIGNATURE_DATE_AFTER_RECEIVED_DATE(
             1123,
