@@ -14,7 +14,6 @@ enum class PeriodLogicRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
-    // TODO: gendate newer than signature date, check if emottak does this?
     @Description("Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.")
     SIGNATURE_DATE_AFTER_RECEIVED_DATE(
             1123,
@@ -119,17 +118,15 @@ enum class PeriodLogicRuleChain(
         healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusHours(2)
     }),
 
-    // TODO: Is this even supposed to be here?
-    // NOPE pål would delete this one
-    @Description("Hvis avventende sykmelding er funnet og det finnes mer enn en periode")
-    PENDING_SICK_LEAVE_COMBINED(
-            1240,
-            Status.INVALID,
-            "Den kan bare inneholde én periode fordi den er en avventende sykmelding. ",
-            "Hvis avventende sykmelding er funnet og det finnes mer enn en periode",
+    @Description("Hvis avventende sykmelding er funnet og det finnes en eller flere perioder")
+    PENDING_SICK_LEAVE(
+            9999,
+            Status.MANUAL_PROCESSING,
+            "Den inneholder en avventende sykmelding. ",
+            "Hvis avventende sykmelding er funnet og det finnes en eller flere perioder. ",
             { (healthInformation, _) ->
         val numberOfPendingPeriods = healthInformation.perioder.count { it.avventendeInnspillTilArbeidsgiver != null }
-        numberOfPendingPeriods != 0 && healthInformation.perioder.size > 1
+        numberOfPendingPeriods != 0 && healthInformation.perioder.isNotEmpty()
     }),
 
     @Description("Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen")
