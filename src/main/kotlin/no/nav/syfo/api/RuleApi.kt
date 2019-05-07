@@ -107,7 +107,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                                 it.autorisasjon?.isAktiv == true &&
                                 it.helsepersonellkategori.isAktiv != null &&
                                 it.helsepersonellkategori.verdi != null &&
-                                it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("TN") &&
+                                it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("TL") &&
                                         receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode != null &&
                                         receivedSykmelding.sykmelding.perioder.isNotEmpty()}
                     }) {
