@@ -90,7 +90,7 @@ enum class ValidationRuleChain(
             1540,
             Status.INVALID,
             "Den må ha riktig kode for hoveddiagnose.",
-            "Kodeverk for hoveddiagnose er feil eller mangler.  ", { (healthInformation, _) ->
+            "Kodeverk for hoveddiagnose er feil eller mangler.", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
                 healthInformation.medisinskVurdering.hovedDiagnose?.let { diagnose ->
             if (diagnose.isICPC2()) {
@@ -106,7 +106,7 @@ enum class ValidationRuleChain(
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
             1541,
-            Status.MANUAL_PROCESSING, "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er langvarig. ",
+            Status.MANUAL_PROCESSING, "Det er feil i koden for bidiagnosen.",
             "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (healthInformation, _) ->
         !healthInformation.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {
