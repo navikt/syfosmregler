@@ -21,7 +21,7 @@ object SyketilfelleRuleChainSpek : Spek({
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO, should trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
-                            fom = LocalDate.of(2019, 1, 7),
+                            fom = LocalDate.of(2019, 1, 3),
                             tom = LocalDate.of(2019, 1, 8)
                     )
             ))
