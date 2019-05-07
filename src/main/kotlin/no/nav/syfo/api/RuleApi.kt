@@ -101,6 +101,22 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
 
             val hprRuleResults = HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctor)
 
+            // TODO kun datagrunlag for å evt legge til ny regel på tannleger, slette denne if-setningen etterpå
+            if (doctor.godkjenninger.godkjenning.any {
+                        it?.helsepersonellkategori?.isAktiv != null &&
+                                it.autorisasjon?.isAktiv == true &&
+                                it.helsepersonellkategori.isAktiv != null &&
+                                it.helsepersonellkategori.verdi != null &&
+                                it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("TN") &&
+                                        receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode != null &&
+                                        receivedSykmelding.sykmelding.perioder.isNotEmpty()}
+                    }) {
+                log.info("Tannlege statestikk: " +
+                        "fom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.fom} " +
+                        "tom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.tom} " +
+                        "houvedDiagnose: ${receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode }")
+            }
+
             val patient = fetchPerson(personV3, receivedSykmelding.personNrPasient)
             val tpsRuleResults = PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patient.await())
 
