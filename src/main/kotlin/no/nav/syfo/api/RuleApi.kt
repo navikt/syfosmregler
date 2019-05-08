@@ -157,7 +157,7 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                     status = Status.INVALID,
                     ruleHits = listOf(RuleInfo(
                             ruleName = "BEHANDLER_NOT_IN_HPR",
-                            messageForSender = "Behandler er ikke register i HPR",
+                            messageForSender = "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
                             messageForUser = "Behandler er ikke register i HPR"))
             )
             RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
