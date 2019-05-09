@@ -15,6 +15,7 @@ import no.nav.syfo.model.SvarRestriksjon
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
+import no.nav.syfo.validation.extractBornYear
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -91,6 +92,54 @@ object ValidationRuleChainSpek : Spek({
                     generateSykmelding(),
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
             )) shouldEqual false
+        }
+
+        it("Skal håndtere fødselsnummer fra 1854-1899") {
+            val beregnetFodselsar1 = extractBornYear("01015450000")
+            val beregnetFodselsar2 = extractBornYear("01015474900")
+            val beregnetFodselsar3 = extractBornYear("01019950000")
+            val beregnetFodselsar4 = extractBornYear("01019974900")
+
+            beregnetFodselsar1 shouldEqual 1854
+            beregnetFodselsar2 shouldEqual 1854
+            beregnetFodselsar3 shouldEqual 1899
+            beregnetFodselsar4 shouldEqual 1899
+        }
+
+        it("Skal håndtere fødselsnummer fra 1900-1999") {
+            val beregnetFodselsar1 = extractBornYear("01010000000")
+            val beregnetFodselsar2 = extractBornYear("01010049900")
+            val beregnetFodselsar3 = extractBornYear("01019900000")
+            val beregnetFodselsar4 = extractBornYear("01019949900")
+
+            beregnetFodselsar1 shouldEqual 1900
+            beregnetFodselsar2 shouldEqual 1900
+            beregnetFodselsar3 shouldEqual 1999
+            beregnetFodselsar4 shouldEqual 1999
+        }
+
+        it("Skal håndtere fødselsnummer fra 1940-1999") {
+            val beregnetFodselsar1 = extractBornYear("01014090000")
+            val beregnetFodselsar2 = extractBornYear("01014099900")
+            val beregnetFodselsar3 = extractBornYear("01019990000")
+            val beregnetFodselsar4 = extractBornYear("01019999900")
+
+            beregnetFodselsar1 shouldEqual 1940
+            beregnetFodselsar2 shouldEqual 1940
+            beregnetFodselsar3 shouldEqual 1999
+            beregnetFodselsar4 shouldEqual 1999
+        }
+
+        it("Skal håndtere fødselsnummer fra 2000-2039") {
+            val beregnetFodselsar1 = extractBornYear("01010050000")
+            val beregnetFodselsar2 = extractBornYear("01010099900")
+            val beregnetFodselsar3 = extractBornYear("01013950000")
+            val beregnetFodselsar4 = extractBornYear("01013999900")
+
+            beregnetFodselsar1 shouldEqual 2000
+            beregnetFodselsar2 shouldEqual 2000
+            beregnetFodselsar3 shouldEqual 2039
+            beregnetFodselsar4 shouldEqual 2039
         }
 
         it("Should check rule ICPC_2_Z_DIAGNOSE,should trigger rule") {
