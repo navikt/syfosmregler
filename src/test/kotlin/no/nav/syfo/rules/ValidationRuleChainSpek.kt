@@ -331,24 +331,6 @@ object ValidationRuleChainSpek : Spek({
 
             ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(ruleData(healthInformation, legekontorOrgNr = "123456789")) shouldEqual false
         }
-
-        it("TSS_IDENT_MANGLER should trigger on when tssid is null") {
-            val healthInformation = generateSykmelding()
-
-            ValidationRuleChain.TSS_IDENT_MANGLER(ruleData(healthInformation, tssid = null)) shouldEqual true
-        }
-
-        it("TSS_IDENT_MANGLER should trigger on when tssid is blank") {
-            val healthInformation = generateSykmelding()
-
-            ValidationRuleChain.TSS_IDENT_MANGLER(ruleData(healthInformation, tssid = "")) shouldEqual true
-        }
-
-        it("TSS_IDENT_MANGLER should not trigger on when orgnr is 9") {
-            val healthInformation = generateSykmelding()
-
-            ValidationRuleChain.TSS_IDENT_MANGLER(ruleData(healthInformation, tssid = "1234567890")) shouldEqual false
-        }
     }
 })
 
