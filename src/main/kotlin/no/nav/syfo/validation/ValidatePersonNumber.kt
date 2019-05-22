@@ -53,15 +53,15 @@ fun extractBornDate(personIdent: String): LocalDate =
 fun extractBornYear(personIdent: String): Int {
     val lastTwoDigitsOfYear = extractLastTwoDigistOfyear(personIdent)
     val individualDigits = extractIndividualDigits(personIdent)
-    if (individualDigits in (0..499)) {
+    if (lastTwoDigitsOfYear in (0..99) && individualDigits in (0..499)) {
         return 1900 + lastTwoDigitsOfYear
     }
 
-    if (individualDigits in 500..749) {
+    if (lastTwoDigitsOfYear in (54..99) && individualDigits in 500..749) {
         return 1800 + lastTwoDigitsOfYear
     }
 
-    if (individualDigits in 500..999) {
+    if (lastTwoDigitsOfYear in (0..39) && individualDigits in 500..999) {
         return 2000 + lastTwoDigitsOfYear
     }
     return 1900 + lastTwoDigitsOfYear
