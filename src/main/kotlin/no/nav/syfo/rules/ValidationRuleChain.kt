@@ -178,6 +178,14 @@ enum class ValidationRuleChain(
             "Feil format på organisasjonsnummer. Dette skal være 9 sifre..", { (_, metadata) ->
         metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
     }),
+    @Description("Behandlers TSS-ident ikkje funnet")
+    TSS_IDENT_MANGLER(
+            9999,
+            Status.MANUAL_PROCESSING,
+            "Behandlers TSS-ident ikkje funnet",
+            "Behandlers TSS-ident ikkje funnet", { (_, metadata) ->
+        metadata.tssid.isNullOrBlank()
+    }),
 }
 
 fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: QuestionGroup) =

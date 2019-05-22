@@ -93,7 +93,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                 signatureDate = receivedSykmelding.sykmelding.signaturDato,
                 patientPersonNumber = receivedSykmelding.personNrPasient,
                 rulesetVersion = receivedSykmelding.rulesetVersion,
-                legekontorOrgnr = receivedSykmelding.legekontorOrgNr
+                legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
+                tssid = receivedSykmelding.tssid
         ))
 
         try {
@@ -135,7 +136,8 @@ fun Routing.registerRuleApi(personV3: PersonV3, helsepersonellv1: IHPR2Service, 
                             signatureDate = receivedSykmelding.sykmelding.signaturDato,
                             patientPersonNumber = receivedSykmelding.personNrPasient,
                             rulesetVersion = receivedSykmelding.rulesetVersion,
-                            legekontorOrgnr = receivedSykmelding.legekontorOrgNr
+                            legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
+                            tssid = receivedSykmelding.tssid
                     ), erNyttSyketilfelle = erNyttSyketilfelle
             )
             val syketilfelleResults = SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)

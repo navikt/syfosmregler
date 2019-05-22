@@ -7,5 +7,6 @@ data class RuleMetadata(
     val receivedDate: LocalDateTime,
     val patientPersonNumber: String,
     val rulesetVersion: String?,
-    val legekontorOrgnr: String?
+    val legekontorOrgnr: String?,
+    val tssid: String?
 )

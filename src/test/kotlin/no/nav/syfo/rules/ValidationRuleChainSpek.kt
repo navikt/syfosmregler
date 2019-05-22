@@ -33,8 +33,9 @@ object ValidationRuleChainSpek : Spek({
         signatureDate: LocalDateTime = LocalDateTime.now(),
         patientPersonNumber: String = "1234567891",
         rulesetVersion: String = "1",
-        legekontorOrgNr: String = "123456789"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, rulesetVersion, legekontorOrgNr))
+        legekontorOrgNr: String = "123456789",
+        tssid: String? = "1314445"
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid))
 
     describe("Testing validation rules and checking the rule outcomes") {
 
@@ -280,6 +281,24 @@ object ValidationRuleChainSpek : Spek({
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(ruleData(healthInformation, legekontorOrgNr = "123456789")) shouldEqual false
+        }
+
+        it("TSS_IDENT_MANGLER should trigger on when tssid is null") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.TSS_IDENT_MANGLER(ruleData(healthInformation, tssid = null)) shouldEqual true
+        }
+
+        it("TSS_IDENT_MANGLER should trigger on when tssid is blank") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.TSS_IDENT_MANGLER(ruleData(healthInformation, tssid = "")) shouldEqual true
+        }
+
+        it("TSS_IDENT_MANGLER should not trigger on when orgnr is 9") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.TSS_IDENT_MANGLER(ruleData(healthInformation, tssid = "1234567890")) shouldEqual false
         }
     }
 })

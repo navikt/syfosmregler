@@ -32,7 +32,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = true
             )
 
@@ -53,7 +54,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
@@ -74,7 +76,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = true
             )
 
@@ -95,7 +98,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
@@ -116,7 +120,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now().minusMonths(1).minusDays(1),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
@@ -137,7 +142,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now().minusMonths(1),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
@@ -163,7 +169,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now(),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = true
             )
 
@@ -189,7 +196,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now(),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = true
             )
 
@@ -215,7 +223,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now().plusDays(30),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
@@ -241,7 +250,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now().plusDays(29),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
@@ -264,7 +274,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             signatureDate = LocalDateTime.now().plusDays(30),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
-                            legekontorOrgnr = "12313"
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
                     ), erNyttSyketilfelle = false
             )
 
