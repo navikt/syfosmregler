@@ -12,11 +12,11 @@ val jacksonVersion = "2.9.8"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kluentVersion = "1.39"
-val ktorVersion = "1.1.5"
+val ktorVersion = "1.2.0"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.0.19"
+val smCommonVersion = "1.0.20"
 val spekVersion = "2.0.2"
 val sykmeldingVersion = "1.1-SNAPSHOT"
 val navPersonv3Version = "3.2.0"
@@ -30,16 +30,12 @@ val jfairyVersion = "0.6.2"
 val saajVersion = "1.4.0"
 val commonsTextVersion = "1.4"
 
-tasks.withType<Jar> {
-    manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
-}
-
 
 plugins {
     java
     id("no.nils.wsdl2java") version "0.10"
-    kotlin("jvm") version "1.3.21"
-    id("org.jmailen.kotlinter") version "1.21.0"
+    kotlin("jvm") version "1.3.31"
+    id("org.jmailen.kotlinter") version "1.25.1"
     id("com.diffplug.gradle.spotless") version "3.14.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
 }
@@ -143,10 +139,16 @@ dependencies {
 }
 
 tasks {
-    create("printVersion") {
-        println(project.version)
+    withType<Jar> {
+        manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
     }
 
+    create("printVersion") {
+
+        doLast {
+            println(project.version)
+        }
+    }
     withType<KotlinCompile> {
         dependsOn("wsdl2java")
 
@@ -171,6 +173,8 @@ tasks {
         useJUnitPlatform {
             includeEngines("spek2")
         }
-        testLogging.showStandardStreams = true
+        testLogging {
+            showStandardStreams = true
+        }
     }
 }

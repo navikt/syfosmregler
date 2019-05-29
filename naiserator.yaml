@@ -9,7 +9,7 @@ spec:
   name: "syfosmregler"
   image: "repo.adeo.no:5443/syfo/syfosmregler:@@VERSION@@"
   replicas:
-    min: 1
+    min: 2
     max: 10
     cpuThresholdPercentage: 90
   port: 8080

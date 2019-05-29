@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
-import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.accept
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
-import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
@@ -33,8 +31,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
     }
 
     suspend fun fetchErNytttilfelle(syketilfelleList: List<Syketilfelle>, aktorId: String): Boolean = retry("ernytttilfelle") {
-        // TODO: Remove this workaround whenever ktor issue #1009 is fixed
-        httpClient.post<HttpResponse>("$endpointUrl/oppfolgingstilfelle/ernytttilfelle/$aktorId") {
+        httpClient.post<Boolean>("$endpointUrl/oppfolgingstilfelle/ernytttilfelle/$aktorId") {
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
             val oidcToken = stsClient.oidcToken()
@@ -42,7 +39,7 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
                 append("Authorization", "Bearer ${oidcToken.access_token}")
             }
             body = syketilfelleList
-        }.use { it.call.response.receive<Boolean>() }
+        }
     }
 }
 
