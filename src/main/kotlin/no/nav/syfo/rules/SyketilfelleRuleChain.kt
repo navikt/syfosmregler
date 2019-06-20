@@ -52,8 +52,8 @@ enum class SyketilfelleRuleChain(
     TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING(
             1207,
             Status.MANUAL_PROCESSING,
-            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
-            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
+            "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
@@ -64,8 +64,8 @@ enum class SyketilfelleRuleChain(
     TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
             1207,
             Status.MANUAL_PROCESSING,
-            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
-            "Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.",
+            "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
+            "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
