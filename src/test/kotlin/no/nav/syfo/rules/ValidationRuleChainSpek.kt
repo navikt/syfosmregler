@@ -3,15 +3,10 @@ package no.nav.syfo.rules
 import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
-import no.nav.syfo.QuestionId
-import no.nav.syfo.QuestionGroup
 import no.nav.syfo.generateMedisinskVurdering
-import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
-import no.nav.syfo.model.SporsmalSvar
-import no.nav.syfo.model.SvarRestriksjon
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
@@ -225,100 +220,100 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldEqual false
         }
 
-        it("Should check rule MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL, missing utdypendeOpplysninger") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2018, 1, 7),
-                            tom = LocalDate.of(2018, 3, 9)
-                    )
-            ))
-
-            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual true
-        }
-
-        it("MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL should not hit whenever there is no period longer then 8 weeks") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.of(2018, 1, 7),
-                            tom = LocalDate.of(2018, 1, 9)
-                    )
-            ))
-
-            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual false
-        }
-
-        it("Should check rule MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(
-                    perioder = listOf(
-                            generatePeriode(
-                                    fom = LocalDate.of(2018, 1, 7),
-                                    tom = LocalDate.of(2018, 3, 9)
-                            )
-                    ),
-                    utdypendeOpplysninger = mapOf(
-                            QuestionGroup.GROUP_6_2.spmGruppeId to mapOf(
-                                    QuestionId.ID_6_2_1.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
-                                    QuestionId.ID_6_2_2.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
-                                    QuestionId.ID_6_2_3.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
-                                    QuestionId.ID_6_2_4.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER))
-                            )
-                    )
-            )
-
-            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual false
-        }
-
-        it("Should check rule UGYLDIG_REGELSETTVERSJON, should trigger rule") {
-            ValidationRuleChain.UGYLDIG_REGELSETTVERSJON(ruleData(generateSykmelding(), rulesetVersion = "999")) shouldEqual true
-        }
-
-        it("Should check rule UGYLDIG_REGELSETTVERSJON, should NOT trigger rule") {
-            ValidationRuleChain.UGYLDIG_REGELSETTVERSJON(ruleData(generateSykmelding(), rulesetVersion = "2")) shouldEqual false
-        }
-
-        it("Should check rule MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17, should trigger rule") {
-            val healthInformation = generateSykmelding(
-                    perioder = listOf(generatePeriode(
-                            fom = LocalDate.of(2018, 1, 7),
-                            tom = LocalDate.of(2018, 9, 9)
-                    )),
-                    utdypendeOpplysninger = mapOf(
-                            QuestionGroup.GROUP_6_3.spmGruppeId to mapOf(
-                                    QuestionId.ID_6_3_1.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER))
-                            )
-                    )
-            )
-
-            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
-        }
-
-        it("Should check rule MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(
-                    perioder = listOf(generatePeriode(
-                            fom = LocalDate.of(2018, 1, 7),
-                            tom = LocalDate.of(2018, 9, 9)
-                    )),
-                    utdypendeOpplysninger = mapOf(
-                            QuestionGroup.GROUP_6_3.spmGruppeId to mapOf(
-                                    QuestionId.ID_6_3_1.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
-                                    QuestionId.ID_6_3_2.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER))
-                            )
-                    )
-            )
-
-            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual false
-        }
-
-        it("MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7 should trigger on missing UtdypendeOpplysninger") {
-            val healthInformation = generateSykmelding(
-                    perioder = listOf(generatePeriode(
-                            fom = LocalDate.of(2018, 1, 7),
-                            tom = LocalDate.of(2018, 9, 9)
-                    ))
-            )
-
-            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
-        }
+//        it("Should check rule MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL, missing utdypendeOpplysninger") {
+//            val healthInformation = generateSykmelding(perioder = listOf(
+//                    generatePeriode(
+//                            fom = LocalDate.of(2018, 1, 7),
+//                            tom = LocalDate.of(2018, 3, 9)
+//                    )
+//            ))
+//
+//            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual true
+//        }
+//
+//        it("MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL should not hit whenever there is no period longer then 8 weeks") {
+//            val healthInformation = generateSykmelding(perioder = listOf(
+//                    generatePeriode(
+//                            fom = LocalDate.of(2018, 1, 7),
+//                            tom = LocalDate.of(2018, 1, 9)
+//                    )
+//            ))
+//
+//            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual false
+//        }
+//
+//        it("Should check rule MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL, should NOT trigger rule") {
+//            val healthInformation = generateSykmelding(
+//                    perioder = listOf(
+//                            generatePeriode(
+//                                    fom = LocalDate.of(2018, 1, 7),
+//                                    tom = LocalDate.of(2018, 3, 9)
+//                            )
+//                    ),
+//                    utdypendeOpplysninger = mapOf(
+//                            QuestionGroup.GROUP_6_2.spmGruppeId to mapOf(
+//                                    QuestionId.ID_6_2_1.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
+//                                    QuestionId.ID_6_2_2.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
+//                                    QuestionId.ID_6_2_3.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
+//                                    QuestionId.ID_6_2_4.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER))
+//                            )
+//                    )
+//            )
+//
+//            ValidationRuleChain.MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(ruleData(healthInformation)) shouldEqual false
+//        }
+//
+//        it("Should check rule UGYLDIG_REGELSETTVERSJON, should trigger rule") {
+//            ValidationRuleChain.UGYLDIG_REGELSETTVERSJON(ruleData(generateSykmelding(), rulesetVersion = "999")) shouldEqual true
+//        }
+//
+//        it("Should check rule UGYLDIG_REGELSETTVERSJON, should NOT trigger rule") {
+//            ValidationRuleChain.UGYLDIG_REGELSETTVERSJON(ruleData(generateSykmelding(), rulesetVersion = "2")) shouldEqual false
+//        }
+//
+//        it("Should check rule MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17, should trigger rule") {
+//            val healthInformation = generateSykmelding(
+//                    perioder = listOf(generatePeriode(
+//                            fom = LocalDate.of(2018, 1, 7),
+//                            tom = LocalDate.of(2018, 9, 9)
+//                    )),
+//                    utdypendeOpplysninger = mapOf(
+//                            QuestionGroup.GROUP_6_3.spmGruppeId to mapOf(
+//                                    QuestionId.ID_6_3_1.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER))
+//                            )
+//                    )
+//            )
+//
+//            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
+//        }
+//
+//        it("Should check rule MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7, should NOT trigger rule") {
+//            val healthInformation = generateSykmelding(
+//                    perioder = listOf(generatePeriode(
+//                            fom = LocalDate.of(2018, 1, 7),
+//                            tom = LocalDate.of(2018, 9, 9)
+//                    )),
+//                    utdypendeOpplysninger = mapOf(
+//                            QuestionGroup.GROUP_6_3.spmGruppeId to mapOf(
+//                                    QuestionId.ID_6_3_1.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)),
+//                                    QuestionId.ID_6_3_2.spmId to SporsmalSvar("Pasienten er syk", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER))
+//                            )
+//                    )
+//            )
+//
+//            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual false
+//        }
+//
+//        it("MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7 should trigger on missing UtdypendeOpplysninger") {
+//            val healthInformation = generateSykmelding(
+//                    perioder = listOf(generatePeriode(
+//                            fom = LocalDate.of(2018, 1, 7),
+//                            tom = LocalDate.of(2018, 9, 9)
+//                    ))
+//            )
+//
+//            ValidationRuleChain.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(ruleData(healthInformation, rulesetVersion = "2")) shouldEqual true
+//        }
 
         it("UGYLDIG_ORGNR_LENGDE should trigger on when orgnr lengt is not 9") {
             val healthInformation = generateSykmelding()

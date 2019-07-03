@@ -117,47 +117,48 @@ enum class ValidationRuleChain(
         }
     }),
 
-    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
-    MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(
-            1707,
-            Status.INVALID,
-            "Den må inneholde utdypende opplysninger når du har vært sykmeldt lenge",
-            "Utdypende opplysninger mangler. ", { (healthInformation, ruleMetadata) ->
-        ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
-                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
-                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
-    }),
-
-    @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
-    UGYLDIG_REGELSETTVERSJON(
-            1708,
-            Status.INVALID,
-            "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
-            "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
-        ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
-    }),
-
-    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(
-            1709,
-            Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 7 uker til sammen.",
-            "Utdypende opplysninger som kreves ved uke 7 mangler. ", { (healthInformation, ruleMetadata) ->
-        ruleMetadata.rulesetVersion in arrayOf("2") &&
-                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
-                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
-    }),
-
-    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(
-            1709,
-            Status.INVALID,
-            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 17 uker til sammen.",
-            "Utdypende opplysninger som kreves ved uke 17 mangler.", { (healthInformation, ruleMetadata) ->
-        ruleMetadata.rulesetVersion in arrayOf("2") &&
-                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
-                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
-    }),
+    // TODO: Vi trenger å kunne finne syketilfelle start dato for å gjøre disse beregningene. Fom i beregningen skal være syketilfelle start dato.
+//    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
+//    MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(
+//            1707,
+//            Status.INVALID,
+//            "Den må inneholde utdypende opplysninger når du har vært sykmeldt lenge",
+//            "Utdypende opplysninger mangler. ", { (healthInformation, ruleMetadata) ->
+//        ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
+//                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
+//                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
+//    }),
+//
+//    @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
+//    UGYLDIG_REGELSETTVERSJON(
+//            1708,
+//            Status.INVALID,
+//            "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
+//            "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
+//        ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
+//    }),
+//
+//    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
+//    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(
+//            1709,
+//            Status.INVALID,
+//            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 7 uker til sammen.",
+//            "Utdypende opplysninger som kreves ved uke 7 mangler. ", { (healthInformation, ruleMetadata) ->
+//        ruleMetadata.rulesetVersion in arrayOf("2") &&
+//                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
+//                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
+//    }),
+//
+//    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
+//    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(
+//            1709,
+//            Status.INVALID,
+//            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 17 uker til sammen.",
+//            "Utdypende opplysninger som kreves ved uke 17 mangler.", { (healthInformation, ruleMetadata) ->
+//        ruleMetadata.rulesetVersion in arrayOf("2") &&
+//                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
+//                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
+//    }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
