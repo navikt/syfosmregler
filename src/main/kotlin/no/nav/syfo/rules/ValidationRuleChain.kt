@@ -129,14 +129,14 @@ enum class ValidationRuleChain(
 //                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
 //    }),
 //
-//    @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
-//    UGYLDIG_REGELSETTVERSJON(
-//            1708,
-//            Status.INVALID,
-//            "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
-//            "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
-//        ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
-//    }),
+    @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
+    UGYLDIG_REGELSETTVERSJON(
+            1708,
+            Status.INVALID,
+            "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
+            "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
+        ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
+    }),
 //
 //    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
 //    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(
