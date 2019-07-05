@@ -13,6 +13,7 @@ import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.response.respond
+import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -81,6 +82,11 @@ fun Application.initRouting(applicationState: ApplicationState, personV3: Person
     routing {
         registerNaisApi(readynessCheck = { applicationState.ready }, livenessCheck = { applicationState.running })
         registerRuleApi(personV3, helsepersonellClient, legeSuspensjonClient, syketilfelleClient)
+
+        get("internal/register/helsepersonell") {
+            val legeFnr: String = call.request.queryParameters["legeFnr"] ?: ""
+            helsepersonellClient.hentLege(legeFnr)
+        }
     }
     install(ContentNegotiation) {
         jackson {
