@@ -51,9 +51,9 @@ class HelsepersonellClient(
             ws2Lege(wsHelsePerson)
                 .also {
                     log.info("fant lege i register med {} godkjenninger", it.godkjenninger.size)
-                    it.godkjenninger.forEach {godkjenning ->
-                        log.info("autorisasjon a/v/o: {}/{}/[}", godkjenning.autorisasjon?.aktiv, godkjenning.autorisasjon?.verdi, godkjenning.autorisasjon?.oid  )
-                        log.info("helsepersonell a/v/o: {}/{}/[}", godkjenning.helsepersonellkategori?.aktiv, godkjenning.helsepersonellkategori?.verdi, godkjenning.helsepersonellkategori?.oid  )
+                    it.godkjenninger.forEach { godkjenning ->
+                        log.info("autorisasjon a/v/o: {}/{}/[}", godkjenning.autorisasjon?.aktiv, godkjenning.autorisasjon?.verdi, godkjenning.autorisasjon?.oid)
+                        log.info("helsepersonell a/v/o: {}/{}/[}", godkjenning.helsepersonellkategori?.aktiv, godkjenning.helsepersonellkategori?.verdi, godkjenning.helsepersonellkategori?.oid)
                     }
                 }
         }
