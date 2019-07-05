@@ -10,7 +10,7 @@ import java.time.LocalDate
 object TestHelperSpek : Spek({
     fun date(year: Int, month: Int, day: Int) =
             LocalDate.of(year, month, day)
-    describe("Test helpers") {
+    describe("Lege helpers") {
         it("Monday to Sunday should return 4 week days") {
             workdaysBetween(date(2018, 10, 8), date(2018, 10, 14)) shouldEqual 4
         }

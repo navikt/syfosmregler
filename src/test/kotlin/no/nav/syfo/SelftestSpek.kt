@@ -15,6 +15,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.api.HelsepersonellClient
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.Oppfolgingstilfelle
 import no.nav.syfo.api.Periode
@@ -23,12 +24,10 @@ import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.client.OidcToken
 import no.nav.syfo.client.StsOidcClient
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
-import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
 import org.apache.cxf.ext.logging.LoggingFeature
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
-import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.net.ServerSocket
@@ -73,19 +72,13 @@ object SelftestSpek : Spek({
             serviceClass = PersonV3::class.java
         }.create() as PersonV3
 
-            val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
-                address = "http://helsepersnolellv1/api"
-                features.add(LoggingFeature())
-                features.add(WSAddressingFeature())
-                serviceClass = IHPR2Service::class.java
-            }.create() as IHPR2Service
-
             val credentials = VaultCredentials("", "")
             val oidcClient = StsOidcClient("username", "password", "$mockHttpServerUrl/rest/v1/sts/token")
+            val helsepersonellClient = HelsepersonellClient("$mockHttpServerUrl/helsepersonell", "username", "password", "$mockHttpServerUrl/rest/v1/sts/token")
             val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
 
-            application.initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+            application.initRouting(applicationState, personV3, helsepersonellClient, legeSuspensjonClient, syketilfelleClient)
 
             it("Returns ok on is_alive") {
                 with(handleRequest(HttpMethod.Get, "/is_alive")) {

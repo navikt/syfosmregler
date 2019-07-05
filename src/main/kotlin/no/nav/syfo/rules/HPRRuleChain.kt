@@ -1,16 +1,16 @@
 package no.nav.syfo.rules
 
+import no.nav.syfo.api.Lege
 import no.nav.syfo.model.Status
 import no.nav.syfo.sm.toICPC2
-import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 enum class HPRRuleChain(
     override val ruleId: Int?,
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
-    override val predicate: (RuleData<HPRPerson>) -> Boolean
-) : Rule<RuleData<HPRPerson>> {
+    override val predicate: (RuleData<Lege>) -> Boolean
+) : Rule<RuleData<Lege>> {
     @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")
     BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(
             1143,
@@ -19,13 +19,9 @@ enum class HPRRuleChain(
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
             { (healthInformation, doctor) ->
                 healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
-                doctor.godkjenninger?.godkjenning != null &&
-                doctor.godkjenninger.godkjenning.any {
-                    it?.helsepersonellkategori?.isAktiv != null &&
-                            it.autorisasjon?.isAktiv == true &&
-                            it.helsepersonellkategori.isAktiv != null &&
-                            it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("KI", "MT", "FT") }
+                doctor.godkjenninger.any {
+                        it.autorisasjon?.aktiv == true &&
+                        it.helsepersonellkategori.let { helsepersonellkategori -> helsepersonellkategori?.aktiv == true && helsepersonellkategori.verdi in listOf("KI", "MT", "FT") }
                 }
     }),
 
@@ -35,8 +31,8 @@ enum class HPRRuleChain(
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
             "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, doctor) ->
-        doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
-            it?.autorisasjon?.isAktiv != null && it.autorisasjon.isAktiv
+        !doctor.godkjenninger.any {
+            it.autorisasjon?.aktiv == true
         }
     }),
 
@@ -46,12 +42,9 @@ enum class HPRRuleChain(
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
             "Behandler har ikke gyldig autorisasjon i HPR", { (_, doctor) ->
-        doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
-            it?.autorisasjon?.isAktiv != null &&
-            it.autorisasjon.isAktiv &&
-                    it.autorisasjon?.oid != null
+        !doctor.godkjenninger.any {
+            it.autorisasjon?.aktiv == true &&
                     it.autorisasjon.oid == 7704 &&
-                    it.autorisasjon?.verdi != null &&
                     it.autorisasjon.verdi in arrayOf("1", "17", "4", "3", "2", "14", "18")
         }
     }),
@@ -62,13 +55,10 @@ enum class HPRRuleChain(
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
             "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege", { (_, doctor) ->
-        doctor.godkjenninger?.godkjenning != null &&
-                !doctor.godkjenninger.godkjenning.any {
-                    it?.helsepersonellkategori?.isAktiv != null &&
-                    it.autorisasjon?.isAktiv == true &&
-                    it.helsepersonellkategori.isAktiv != null &&
-                    it.helsepersonellkategori.verdi != null &&
-                    it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "KI", "MT", "TL", "FT") }
+                !doctor.godkjenninger.any {
+                    it.helsepersonellkategori?.aktiv == true &&
+                    it.autorisasjon?.aktiv == true &&
+                    it.helsepersonellkategori.let { helsepersonellkategori -> helsepersonellkategori.aktiv == true && helsepersonellkategori.verdi in listOf("LE", "KI", "MT", "TL", "FT") }
         }
     }),
 
@@ -80,13 +70,10 @@ enum class HPRRuleChain(
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
 
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
-                doctor.godkjenninger?.godkjenning != null &&
-                doctor.godkjenninger.godkjenning.any {
-                    it?.helsepersonellkategori?.isAktiv != null &&
-                            it.autorisasjon?.isAktiv == true &&
-                            it.helsepersonellkategori.isAktiv != null &&
-                            it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in kotlin.collections.listOf("KI", "MT", "FT") }
+                doctor.godkjenninger.any {
+                    it.helsepersonellkategori?.aktiv != null &&
+                            it.autorisasjon?.aktiv == true &&
+                            it.helsepersonellkategori.let { helsepersonellkategori -> helsepersonellkategori.aktiv == true && helsepersonellkategori.verdi in listOf("KI", "MT", "FT") }
                 }
     }),
 }

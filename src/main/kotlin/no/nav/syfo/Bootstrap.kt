@@ -18,6 +18,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import no.nav.syfo.api.HelsepersonellClient
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
@@ -26,12 +27,6 @@ import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.ws.createPort
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
-import no.nhn.schemas.reg.hprv2.IHPR2Service
-import org.apache.cxf.binding.soap.SoapMessage
-import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor
-import org.apache.cxf.message.Message
-import org.apache.cxf.phase.Phase
-import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
@@ -62,31 +57,14 @@ fun main() {
         port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
     }
 
-    val helsepersonellV1 = createPort<IHPR2Service>(env.helsepersonellv1EndpointURL) {
-        proxy {
-            // TODO: Contact someone about this hacky workaround
-            // talk to HDIR about HPR about they claim to send a ISO-8859-1 but its really UTF-8 payload
-            val interceptor = object : AbstractSoapInterceptor(Phase.RECEIVE) {
-                override fun handleMessage(message: SoapMessage?) {
-                    if (message != null)
-                        message[Message.ENCODING] = "utf-8"
-                }
-            }
-
-            inInterceptors.add(interceptor)
-            inFaultInterceptors.add(interceptor)
-            features.add(WSAddressingFeature())
-        }
-
-        port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
-    }
+    val hentLegeClient = HelsepersonellClient(env.helsepersonellv1EndpointURL, credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
 
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
 
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState, personV3, helsepersonellV1, legeSuspensjonClient, syketilfelleClient)
+        initRouting(applicationState, personV3, hentLegeClient, legeSuspensjonClient, syketilfelleClient)
         applicationState.ready = true
     }.start(wait = true)
 
@@ -99,10 +77,10 @@ fun main() {
 }
 
 @KtorExperimentalAPI
-fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient, syketilfelleClient: SyketilfelleClient) {
+fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellClient: HelsepersonellClient, legeSuspensjonClient: LegeSuspensjonClient, syketilfelleClient: SyketilfelleClient) {
     routing {
         registerNaisApi(readynessCheck = { applicationState.ready }, livenessCheck = { applicationState.running })
-        registerRuleApi(personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+        registerRuleApi(personV3, helsepersonellClient, legeSuspensjonClient, syketilfelleClient)
     }
     install(ContentNegotiation) {
         jackson {
