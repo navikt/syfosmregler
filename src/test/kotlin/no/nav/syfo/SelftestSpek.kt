@@ -15,6 +15,9 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
+import java.net.ServerSocket
+import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.Oppfolgingstilfelle
 import no.nav.syfo.api.Periode
@@ -22,6 +25,8 @@ import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.client.OidcToken
 import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.services.RuleService
+import no.nav.syfo.services.TPSService
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.amshove.kluent.shouldEqual
@@ -31,9 +36,6 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
 import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.net.ServerSocket
-import java.time.LocalDate
-import java.util.concurrent.TimeUnit
 
 @KtorExperimentalAPI
 object SelftestSpek : Spek({
@@ -68,10 +70,10 @@ object SelftestSpek : Spek({
         with(TestApplicationEngine()) {
             start()
             val personV3 = JaxWsProxyFactoryBean().apply {
-            address = "http://personv3/api"
-            features.add(LoggingFeature())
-            serviceClass = PersonV3::class.java
-        }.create() as PersonV3
+                address = "http://personv3/api"
+                features.add(LoggingFeature())
+                serviceClass = PersonV3::class.java
+            }.create() as PersonV3
 
             val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
                 address = "http://helsepersnolellv1/api"
@@ -85,7 +87,14 @@ object SelftestSpek : Spek({
             val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
 
-            application.initRouting(applicationState, personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+            val env = Environment(
+                    personV3EndpointURL = "PERSON_V3_ENDPOINT_URL",
+                    securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL",
+                    helsepersonellv1EndpointURL = "HELSEPERSONELL_V1_ENDPOINT_URL"
+            )
+
+            val ruleService = RuleService(TPSService(env, credentials), helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+            application.initRouting(applicationState, ruleService)
 
             it("Returns ok on is_alive") {
                 with(handleRequest(HttpMethod.Get, "/is_alive")) {

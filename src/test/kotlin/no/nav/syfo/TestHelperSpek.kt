@@ -1,11 +1,11 @@
 package no.nav.syfo
 
+import java.time.LocalDate
 import no.nav.syfo.rules.startedWeeksBetween
 import no.nav.syfo.rules.workdaysBetween
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDate
 
 object TestHelperSpek : Spek({
     fun date(year: Int, month: Int, day: Int) =
