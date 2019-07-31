@@ -3,6 +3,9 @@ package no.nav.syfo.rules
 import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
@@ -15,9 +18,6 @@ import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 val fairy: Fairy = Fairy.create() // (Locale("no", "NO"))
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")

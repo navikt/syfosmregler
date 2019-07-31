@@ -1,10 +1,10 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
+import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.sm.toICPC2
 import no.nav.syfo.validation.extractBornDate

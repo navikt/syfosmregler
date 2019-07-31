@@ -1,11 +1,11 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.model.Status
-import no.nav.syfo.model.Periode
-import no.nav.syfo.model.RuleMetadata
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import no.nav.syfo.model.Periode
+import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.model.Status
 
 enum class PeriodLogicRuleChain(
     override val ruleId: Int?,

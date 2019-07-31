@@ -1,12 +1,12 @@
 package no.nav.syfo
 
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.helpers.retry
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldThrow
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.io.IOException
 
 object HelpersSpek : Spek({
 

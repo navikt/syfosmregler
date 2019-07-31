@@ -1,5 +1,9 @@
 package no.nav.syfo
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.UUID
+import kotlin.random.Random
 import no.nav.syfo.model.Adresse
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.AnnenFraversArsak
@@ -23,10 +27,6 @@ import no.nav.syfo.model.Prognose
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.UUID
-import kotlin.random.Random
 
 fun Diagnosekoder.DiagnosekodeType.toDiagnose() = Diagnose(system = oid, kode = code)
 

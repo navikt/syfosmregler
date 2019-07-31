@@ -13,10 +13,10 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
+import java.time.LocalDate
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.model.Syketilfelle
-import java.time.LocalDate
 
 @KtorExperimentalAPI
 class SyketilfelleClient(private val endpointUrl: String, private val stsClient: StsOidcClient) {

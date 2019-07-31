@@ -18,14 +18,17 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.services.RuleService
+import no.nav.syfo.services.TPSService
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.ws.createPort
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.apache.cxf.binding.soap.SoapMessage
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor
@@ -34,8 +37,6 @@ import org.apache.cxf.phase.Phase
 import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
@@ -58,9 +59,8 @@ fun main() {
     }
 
     DefaultExports.initialize()
-    val personV3 = createPort<PersonV3>(env.personV3EndpointURL) {
-        port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
-    }
+
+    val tpsService = TPSService(env, credentials)
 
     val helsepersonellV1 = createPort<IHPR2Service>(env.helsepersonellv1EndpointURL) {
         proxy {
@@ -85,24 +85,24 @@ fun main() {
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
 
+    val ruleService = RuleService(tpsService, helsepersonellV1, legeSuspensjonClient, syketilfelleClient)
+
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState, personV3, helsepersonellV1, legeSuspensjonClient, syketilfelleClient)
+        initRouting(applicationState, ruleService)
         applicationState.ready = true
     }.start(wait = true)
 
     Runtime.getRuntime().addShutdownHook(Thread {
-        // Kubernetes polls every 5 seconds for liveness, mark as not ready and wait 5 seconds for a new readyness check
         applicationState.ready = false
-        Thread.sleep(10000)
         applicationServer.stop(10, 10, TimeUnit.SECONDS)
     })
 }
 
 @KtorExperimentalAPI
-fun Application.initRouting(applicationState: ApplicationState, personV3: PersonV3, helsepersonellv1: IHPR2Service, legeSuspensjonClient: LegeSuspensjonClient, syketilfelleClient: SyketilfelleClient) {
+fun Application.initRouting(applicationState: ApplicationState, ruleService: RuleService) {
     routing {
         registerNaisApi(readynessCheck = { applicationState.ready }, livenessCheck = { applicationState.running })
-        registerRuleApi(personV3, helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+        registerRuleApi(ruleService)
     }
     install(ContentNegotiation) {
         jackson {

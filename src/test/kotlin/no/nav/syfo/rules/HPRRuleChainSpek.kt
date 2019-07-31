@@ -1,5 +1,6 @@
 package no.nav.syfo.rules
 
+import java.time.LocalDate
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
@@ -12,7 +13,6 @@ import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDate
 
 object HPRRuleChainSpek : Spek({
 

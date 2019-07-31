@@ -1,5 +1,7 @@
 package no.nav.syfo.rules
 
+import java.time.LocalDate
+import java.time.LocalDateTime
 import no.nav.syfo.generateGradert
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
@@ -8,8 +10,6 @@ import no.nav.syfo.model.Sykmelding
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 object PeriodLogicRuleChainSpek : Spek({
     fun ruleData(

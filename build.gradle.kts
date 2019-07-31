@@ -16,10 +16,10 @@ val ktorVersion = "1.2.0"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.0.20"
+val smCommonVersion = "1.0.22"
 val spekVersion = "2.0.2"
-val sykmeldingVersion = "1.1-SNAPSHOT"
-val navPersonv3Version = "3.2.0"
+val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
+val navPersonv3Version = "1.2019.07.11-06.47-b55f47790a9d"
 val cxfVersion = "3.2.7"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
@@ -34,10 +34,10 @@ val commonsTextVersion = "1.4"
 plugins {
     java
     id("no.nils.wsdl2java") version "0.10"
-    kotlin("jvm") version "1.3.31"
-    id("org.jmailen.kotlinter") version "1.25.1"
-    id("com.diffplug.gradle.spotless") version "3.14.0"
-    id("com.github.johnrengelman.shadow") version "4.0.4"
+    kotlin("jvm") version "1.3.41"
+    id("org.jmailen.kotlinter") version "2.1.0"
+    id("com.diffplug.gradle.spotless") version "3.24.0"
+    id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
 
@@ -53,11 +53,9 @@ buildscript {
 }
 
 repositories {
-    maven (url= "https://repo.adeo.no/repository/maven-snapshots/")
-    maven (url= "https://repo.adeo.no/repository/maven-releases/")
-    maven (url= "https://dl.bintray.com/kotlin/ktor")
-    maven (url= "https://dl.bintray.com/spekframework/spek-dev")
-    maven (url= "https://kotlin.bintray.com/kotlinx")
+    maven(url = "https://dl.bintray.com/kotlin/ktor")
+    maven(url = "https://dl.bintray.com/spekframework/spek-dev")
+    maven(url = "https://kotlin.bintray.com/kotlinx")
     mavenCentral()
     jcenter()
 }
@@ -103,7 +101,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("no.nav.helse.xml:sm2013:$sykmeldingVersion")
-    implementation("no.nav.tjenester:nav-person-v3-tjenestespesifikasjon:$navPersonv3Version")
+    implementation("no.nav.tjenestespesifikasjoner:person-v3-tjenestespesifikasjon:$navPersonv3Version")
 
     implementation("org.apache.commons:commons-text:$commonsTextVersion")
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
