@@ -20,19 +20,9 @@ enum class HPRRuleChain(
             { (healthInformation, doctor) ->
                 healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
                 doctor.godkjenninger?.godkjenning != null &&
-                doctor.godkjenninger.godkjenning.any {
-                    it?.helsepersonellkategori?.isAktiv != null &&
-                            it.autorisasjon?.isAktiv == true &&
-                            it.helsepersonellkategori.isAktiv != null &&
-                            it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("KI", "MT", "FT") }
-                } && !doctor.godkjenninger.godkjenning.any {
-                            it?.helsepersonellkategori?.isAktiv != null &&
-                                    it.autorisasjon?.isAktiv == true &&
-                                    it.helsepersonellkategori.isAktiv != null &&
-                                    it.helsepersonellkategori.verdi != null &&
-                                    it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "TL") }
-                        }
+                containsHelsepersonellkategoriVerdi(doctor ,listOf("KI","MT","FT"))  &&
+                !containsHelsepersonellkategoriVerdi(doctor ,listOf("LT","TL"))
+
     }),
 
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
@@ -86,20 +76,17 @@ enum class HPRRuleChain(
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
                 doctor.godkjenninger?.godkjenning != null &&
-                doctor.godkjenninger.godkjenning.any {
-                            it?.helsepersonellkategori?.isAktiv != null &&
-                            it.autorisasjon?.isAktiv == true &&
-                            it.helsepersonellkategori.isAktiv != null &&
-                            it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("KI", "MT", "FT") } &&
-                            !it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "TL") }
-                } &&
-                !doctor.godkjenninger.godkjenning.any {
-                            it?.helsepersonellkategori?.isAktiv != null &&
-                            it.autorisasjon?.isAktiv == true &&
-                            it.helsepersonellkategori.isAktiv != null &&
-                            it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "TL") }
-        }
+                containsHelsepersonellkategoriVerdi(doctor ,listOf("KI","MT","FT")) &&
+                !containsHelsepersonellkategoriVerdi(doctor ,listOf("LE","TL"))
+
     }),
 }
+
+fun containsHelsepersonellkategoriVerdi(doctor: HPRPerson, helsepersonerVerdi: List<String>): Boolean =
+    doctor.godkjenninger.godkjenning.any {
+        it?.helsepersonellkategori?.isAktiv != null &&
+                it.autorisasjon?.isAktiv == true &&
+                it.helsepersonellkategori.isAktiv != null &&
+                it.helsepersonellkategori.verdi != null &&
+                it.helsepersonellkategori.let { it.isAktiv && it.verdi in helsepersonerVerdi }
+    }

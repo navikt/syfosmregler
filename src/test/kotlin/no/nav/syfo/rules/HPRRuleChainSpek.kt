@@ -183,7 +183,7 @@ object HPRRuleChainSpek : Spek({
             HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, person)) shouldEqual true
         }
 
-        it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule") {
+        it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule, when helsepersoner is Lege(LE) and Kiropratkor(KI)") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 1),
