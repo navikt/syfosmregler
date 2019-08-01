@@ -26,7 +26,13 @@ enum class HPRRuleChain(
                             it.helsepersonellkategori.isAktiv != null &&
                             it.helsepersonellkategori.verdi != null &&
                             it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("KI", "MT", "FT") }
-                }
+                } && !doctor.godkjenninger.godkjenning.any {
+                            it?.helsepersonellkategori?.isAktiv != null &&
+                                    it.autorisasjon?.isAktiv == true &&
+                                    it.helsepersonellkategori.isAktiv != null &&
+                                    it.helsepersonellkategori.verdi != null &&
+                                    it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "TL") }
+                        }
     }),
 
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
@@ -78,15 +84,22 @@ enum class HPRRuleChain(
             Status.INVALID,
             "Den som skrev sykmeldingen mangler autorisasjon.",
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
-
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
                 doctor.godkjenninger?.godkjenning != null &&
                 doctor.godkjenninger.godkjenning.any {
-                    it?.helsepersonellkategori?.isAktiv != null &&
+                            it?.helsepersonellkategori?.isAktiv != null &&
                             it.autorisasjon?.isAktiv == true &&
                             it.helsepersonellkategori.isAktiv != null &&
                             it.helsepersonellkategori.verdi != null &&
-                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in kotlin.collections.listOf("KI", "MT", "FT") }
-                }
+                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("KI", "MT", "FT") } &&
+                            !it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "TL") }
+                } &&
+                !doctor.godkjenninger.godkjenning.any {
+                            it?.helsepersonellkategori?.isAktiv != null &&
+                            it.autorisasjon?.isAktiv == true &&
+                            it.helsepersonellkategori.isAktiv != null &&
+                            it.helsepersonellkategori.verdi != null &&
+                            it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "TL") }
+        }
     }),
 }

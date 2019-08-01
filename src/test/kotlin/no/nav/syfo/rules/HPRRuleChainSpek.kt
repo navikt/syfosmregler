@@ -183,6 +183,41 @@ object HPRRuleChainSpek : Spek({
             HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, person)) shouldEqual true
         }
 
+        it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                    generatePeriode(
+                            fom = LocalDate.of(2019, 1, 1),
+                            tom = LocalDate.of(2019, 3, 27)
+                    )
+            ))
+
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "KI"
+                            }
+                            isAktiv = true
+                        }
+                    })
+
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "LE"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, person)) shouldEqual false
+        }
+
         it("Should check rule BEHANDLER_MT_FT_KI_OVER_12_UKER, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
@@ -228,6 +263,37 @@ object HPRRuleChainSpek : Spek({
             }
 
             HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, person)) shouldEqual true
+        }
+
+        it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
+            ))
+
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "KI"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = "LE"
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, person)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
