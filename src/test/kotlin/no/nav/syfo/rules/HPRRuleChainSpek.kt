@@ -105,7 +105,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "LE"
+                                verdi = HelsepersonellKategori.LEGE.verdi
                             }
                             isAktiv = true
                         }
@@ -126,7 +126,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -147,7 +147,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -172,7 +172,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -181,6 +181,41 @@ object HPRRuleChainSpek : Spek({
             }
 
             HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, person)) shouldEqual true
+        }
+
+        it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule, when helsepersoner is Lege(LE) and Kiropratkor(KI)") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                    generatePeriode(
+                            fom = LocalDate.of(2019, 1, 1),
+                            tom = LocalDate.of(2019, 3, 27)
+                    )
+            ))
+
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
+                            }
+                            isAktiv = true
+                        }
+                    })
+
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = HelsepersonellKategori.LEGE.verdi
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, person)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_MT_FT_KI_OVER_12_UKER, should NOT trigger rule") {
@@ -197,7 +232,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -219,7 +254,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -241,7 +276,38 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
+                            }
+                            isAktiv = true
+                        }
+                    })
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = HelsepersonellKategori.LEGE.verdi
+                            }
+                            isAktiv = true
+                        }
+                    })
+                }
+            }
+
+            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, person)) shouldEqual false
+        }
+
+        it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
+            ))
+
+            val person = no.nhn.schemas.reg.hprv2.Person().apply {
+                godkjenninger = ArrayOfGodkjenning().apply {
+                    godkjenning.add(Godkjenning().apply {
+                        autorisasjon = Kode().apply {
+                            helsepersonellkategori = Kode().apply {
+                                isAktiv = true
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
