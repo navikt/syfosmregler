@@ -20,9 +20,13 @@ enum class HPRRuleChain(
             { (healthInformation, doctor) ->
                 healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
                 doctor.godkjenninger?.godkjenning != null &&
-                containsHelsepersonellkategoriVerdi(doctor ,listOf("KI","MT","FT"))  &&
-                !containsHelsepersonellkategoriVerdi(doctor ,listOf("LT","TL"))
-
+                        !harAktivHelsepersonelAutorisasjonsSom(doctor, listOf(
+                                HelsepersonellKategori.LEGE.verdi,
+                                HelsepersonellKategori.TANNLEGE.verdi)) &&
+                        harAktivHelsepersonelAutorisasjonsSom(doctor, listOf(
+                            HelsepersonellKategori.KIROPRAKTOR.verdi,
+                            HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                            HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
     }),
 
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
@@ -64,7 +68,12 @@ enum class HPRRuleChain(
                     it.autorisasjon?.isAktiv == true &&
                     it.helsepersonellkategori.isAktiv != null &&
                     it.helsepersonellkategori.verdi != null &&
-                    it.helsepersonellkategori.let { it.isAktiv && it.verdi in listOf("LE", "KI", "MT", "TL", "FT") }
+                    harAktivHelsepersonelAutorisasjonsSom(doctor, listOf(
+                            HelsepersonellKategori.LEGE.verdi,
+                            HelsepersonellKategori.KIROPRAKTOR.verdi,
+                            HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                            HelsepersonellKategori.TANNLEGE.verdi,
+                            HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
         }
     }),
 
@@ -76,13 +85,17 @@ enum class HPRRuleChain(
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
                 doctor.godkjenninger?.godkjenning != null &&
-                containsHelsepersonellkategoriVerdi(doctor ,listOf("KI","MT","FT")) &&
-                !containsHelsepersonellkategoriVerdi(doctor ,listOf("LE","TL"))
-
+                !harAktivHelsepersonelAutorisasjonsSom(doctor, listOf(
+                        HelsepersonellKategori.LEGE.verdi,
+                        HelsepersonellKategori.TANNLEGE.verdi)) &&
+                harAktivHelsepersonelAutorisasjonsSom(doctor, listOf(
+                        HelsepersonellKategori.KIROPRAKTOR.verdi,
+                        HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                        HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
     }),
 }
 
-fun containsHelsepersonellkategoriVerdi(doctor: HPRPerson, helsepersonerVerdi: List<String>): Boolean =
+fun harAktivHelsepersonelAutorisasjonsSom(doctor: HPRPerson, helsepersonerVerdi: List<String>): Boolean =
     doctor.godkjenninger.godkjenning.any {
         it?.helsepersonellkategori?.isAktiv != null &&
                 it.autorisasjon?.isAktiv == true &&

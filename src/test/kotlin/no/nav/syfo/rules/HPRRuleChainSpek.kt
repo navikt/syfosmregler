@@ -105,7 +105,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "LE"
+                                verdi = HelsepersonellKategori.LEGE.verdi
                             }
                             isAktiv = true
                         }
@@ -126,7 +126,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -147,7 +147,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -172,7 +172,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -197,7 +197,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -207,7 +207,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "LE"
+                                verdi = HelsepersonellKategori.LEGE.verdi
                             }
                             isAktiv = true
                         }
@@ -232,7 +232,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -254,7 +254,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -276,7 +276,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
@@ -285,7 +285,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "LE"
+                                verdi = HelsepersonellKategori.LEGE.verdi
                             }
                             isAktiv = true
                         }
@@ -307,7 +307,7 @@ object HPRRuleChainSpek : Spek({
                         autorisasjon = Kode().apply {
                             helsepersonellkategori = Kode().apply {
                                 isAktiv = true
-                                verdi = "KI"
+                                verdi = HelsepersonellKategori.KIROPRAKTOR.verdi
                             }
                             isAktiv = true
                         }
