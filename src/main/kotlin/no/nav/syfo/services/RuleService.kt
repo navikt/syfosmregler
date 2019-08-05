@@ -10,9 +10,9 @@ import javax.xml.datatype.DatatypeFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.fields
+import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.SyketilfelleClient
-import no.nav.syfo.extractLogMeta
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
@@ -47,9 +47,15 @@ class RuleService(
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
     private val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
-        val logMeta = receivedSykmelding.extractLogMeta()
 
-        log.info("Received a SM2013, going to rules, {}", fields(logMeta))
+        val loggingMeta = LoggingMeta(
+                mottakId = receivedSykmelding.navLogId,
+                orgNr = receivedSykmelding.legekontorOrgNr,
+                msgId = receivedSykmelding.msgId,
+                sykmeldingId = receivedSykmelding.sykmelding.id
+        )
+
+        log.info("Received a SM2013, going to rules, {}", fields(loggingMeta))
 
         val ruleMetadata = RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
@@ -112,7 +118,7 @@ class RuleService(
                 SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)
         ).flatten()
 
-        log.info("Rules hit {}, {}", results.map { it.name }, fields(logMeta))
+        log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 
         return validationResult(results)
     }
