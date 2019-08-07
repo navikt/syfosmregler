@@ -25,7 +25,7 @@ import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
-import no.nav.syfo.rules.PostTPSRuleChain
+import no.nav.syfo.rules.PostDiskresjonskodeRuleChain
 import no.nav.syfo.rules.Rule
 import no.nav.syfo.rules.RuleMetadataAndForstegangsSykemelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
@@ -39,10 +39,10 @@ import org.slf4j.LoggerFactory
 
 @KtorExperimentalAPI
 class RuleService(
-    private val tpsService: TPSService,
     private val helsepersonellv1: IHPR2Service,
     private val legeSuspensjonClient: LegeSuspensjonClient,
-    private val syketilfelleClient: SyketilfelleClient
+    private val syketilfelleClient: SyketilfelleClient,
+    private val diskresjonskodeService: DiskresjonskodeService
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
     private val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
@@ -67,7 +67,7 @@ class RuleService(
         )
 
         val doctorDeferred = async { fetchDoctor(receivedSykmelding.personNrLege) }
-        val patientDeferred = async { tpsService.fetchPerson(receivedSykmelding.personNrPasient) }
+        val patientDiskresjonskodeDeferred = async { diskresjonskodeService.hentDiskresjonskode(receivedSykmelding.personNrPasient) }
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
             legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
@@ -113,7 +113,7 @@ class RuleService(
                 ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
                 PeriodLogicRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
                 HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorDeferred.await()),
-                PostTPSRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patientDeferred.await()),
+                PostDiskresjonskodeRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patientDiskresjonskodeDeferred.await()),
                 LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
                 SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)
         ).flatten()

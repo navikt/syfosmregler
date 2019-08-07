@@ -19,7 +19,6 @@ val prometheusVersion = "0.5.0"
 val smCommonVersion = "1.0.22"
 val spekVersion = "2.0.6"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val navPersonv3Version = "1.2019.07.11-06.47-b55f47790a9d"
 val cxfVersion = "3.2.7"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
@@ -29,6 +28,7 @@ val javaxJaxwsApiVersion = "2.2.1"
 val jfairyVersion = "0.6.2"
 val saajVersion = "1.4.0"
 val commonsTextVersion = "1.4"
+val diskresjonskodeV1Version= "1.2019.07.11-06.47-b55f47790a9d"
 
 
 plugins {
@@ -101,7 +101,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("no.nav.helse.xml:sm2013:$sykmeldingVersion")
-    implementation("no.nav.tjenestespesifikasjoner:person-v3-tjenestespesifikasjon:$navPersonv3Version")
+    implementation ("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:$diskresjonskodeV1Version")
 
     implementation("org.apache.commons:commons-text:$commonsTextVersion")
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")

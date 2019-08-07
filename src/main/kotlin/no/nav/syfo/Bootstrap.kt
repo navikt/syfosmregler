@@ -25,8 +25,8 @@ import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.services.DiskresjonskodeService
 import no.nav.syfo.services.RuleService
-import no.nav.syfo.services.TPSService
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.ws.createPort
 import no.nhn.schemas.reg.hprv2.IHPR2Service
@@ -60,8 +60,6 @@ fun main() {
 
     DefaultExports.initialize()
 
-    val tpsService = TPSService(env, credentials)
-
     val helsepersonellV1 = createPort<IHPR2Service>(env.helsepersonellv1EndpointURL) {
         proxy {
             // TODO: Contact someone about this hacky workaround
@@ -81,11 +79,13 @@ fun main() {
         port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
     }
 
+    val diskresjonskodeService = DiskresjonskodeService(env, credentials)
+
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
 
-    val ruleService = RuleService(tpsService, helsepersonellV1, legeSuspensjonClient, syketilfelleClient)
+    val ruleService = RuleService(helsepersonellV1, legeSuspensjonClient, syketilfelleClient, diskresjonskodeService)
 
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
         initRouting(applicationState, ruleService)

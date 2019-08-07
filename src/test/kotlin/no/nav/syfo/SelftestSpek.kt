@@ -25,9 +25,9 @@ import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.client.OidcToken
 import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.services.DiskresjonskodeService
 import no.nav.syfo.services.RuleService
-import no.nav.syfo.services.TPSService
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
+import no.nav.tjeneste.pip.diskresjonskode.DiskresjonskodePortType
 import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
@@ -69,11 +69,11 @@ object SelftestSpek : Spek({
     describe("Calling selftest with successful liveness and readyness tests") {
         with(TestApplicationEngine()) {
             start()
-            val personV3 = JaxWsProxyFactoryBean().apply {
-                address = "http://personv3/api"
+            val diskresjonskodeService = JaxWsProxyFactoryBean().apply {
+                address = "http://diskresjonskode/api"
                 features.add(LoggingFeature())
-                serviceClass = PersonV3::class.java
-            }.create() as PersonV3
+                serviceClass = DiskresjonskodePortType::class.java
+            }.create() as DiskresjonskodePortType
 
             val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
                 address = "http://helsepersnolellv1/api"
@@ -88,12 +88,12 @@ object SelftestSpek : Spek({
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
 
             val env = Environment(
-                    personV3EndpointURL = "PERSON_V3_ENDPOINT_URL",
+                    diskresjonskodeEndpointUrl = "DISKRESJONSKODE_ENDPOINT_URL",
                     securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL",
                     helsepersonellv1EndpointURL = "HELSEPERSONELL_V1_ENDPOINT_URL"
             )
 
-            val ruleService = RuleService(TPSService(env, credentials), helsepersonellv1, legeSuspensjonClient, syketilfelleClient)
+            val ruleService = RuleService(helsepersonellv1, legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(env, credentials))
             application.initRouting(applicationState, ruleService)
 
             it("Returns ok on is_alive") {
