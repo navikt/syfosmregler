@@ -21,7 +21,7 @@ enum class PeriodLogicRuleChain(
             "Den må ha riktig dato for behandlingen.",
             "Behandlet dato (felt 12.1) er etter dato for mottak av sykmeldingen.",
             { (healthInformation, ruleMetadata) ->
-        healthInformation.behandletTidspunkt > ruleMetadata.signatureDate
+        healthInformation.behandletTidspunkt > ruleMetadata.signatureDate.plusHours(3)
     }),
 
     @Description("Hvis ingen perioder er oppgitt skal sykmeldingen avvises.")

@@ -28,6 +28,18 @@ object PeriodLogicRuleChainSpek : Spek({
             PeriodLogicRuleChain.SIGNATURDATO_ETTER_MOTTATT_DATO(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusDays(2))) shouldEqual true
         }
 
+        it("Should check rule SIGNATURDATO_ETTER_MOTTATT_DATO, should trigger rule") {
+            val healthInformation = generateSykmelding()
+
+            PeriodLogicRuleChain.SIGNATURDATO_ETTER_MOTTATT_DATO(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusHours(4))) shouldEqual true
+        }
+
+        it("Should check rule SIGNATURDATO_ETTER_MOTTATT_DATO, should NOT trigger rule") {
+            val healthInformation = generateSykmelding()
+
+            PeriodLogicRuleChain.SIGNATURDATO_ETTER_MOTTATT_DATO(ruleData(healthInformation, signatureDate = LocalDateTime.now().minusHours(3))) shouldEqual false
+        }
+
         it("Should check rule SIGNATURDATO_ETTER_MOTTATT_DATO, should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
