@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 
 enum class SyketilfelleTag {
     SYKMELDING,
+    NY,
     PERIODE,
     FULL_AKTIVITET,
     INGEN_AKTIVITET,

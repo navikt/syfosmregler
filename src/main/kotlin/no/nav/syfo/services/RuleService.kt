@@ -136,7 +136,7 @@ class RuleService(
                 aktorId = aktoerId,
                 orgnummer = null,
                 inntruffet = received,
-                tags = listOf(SyketilfelleTag.SYKMELDING, SyketilfelleTag.PERIODE, when {
+                tags = listOf(SyketilfelleTag.SYKMELDING, SyketilfelleTag.NY, SyketilfelleTag.PERIODE, when {
                     it.aktivitetIkkeMulig != null -> SyketilfelleTag.INGEN_AKTIVITET
                     it.reisetilskudd -> SyketilfelleTag.FULL_AKTIVITET
                     it.gradert != null -> SyketilfelleTag.GRADERT_AKTIVITET
