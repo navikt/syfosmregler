@@ -150,6 +150,32 @@ object SyketilfelleRuleChainSpek : Spek({
             SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
         }
 
+        it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                    generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now()
+                    )
+                    ),
+                    kontaktMedPasient = generateKontaktMedPasient(
+                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+                    )
+            )
+
+            val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = LocalDateTime.now(),
+                            signatureDate = LocalDateTime.now().minusMonths(2),
+                            patientPersonNumber = "1232345244",
+                            rulesetVersion = "2",
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
+                    ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(ruleData(healthInformation, ruleMetadataAndForstegangsSykemelding)) shouldEqual false
+        }
+
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORSTE_SYKMELDING, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
