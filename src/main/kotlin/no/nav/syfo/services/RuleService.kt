@@ -1,19 +1,15 @@
 package no.nav.syfo.services
 
-import com.ctc.wstx.exc.WstxException
 import io.ktor.util.KtorExperimentalAPI
-import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.GregorianCalendar
-import javax.xml.datatype.DatatypeFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.LegeSuspensjonClient
+import no.nav.syfo.api.NorskHelsenettClient
 import no.nav.syfo.api.SyketilfelleClient
-import no.nav.syfo.helpers.retry
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -31,21 +27,17 @@ import no.nav.syfo.rules.RuleMetadataAndForstegangsSykemelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
-import no.nhn.schemas.reg.hprv2.IHPR2Service
-import no.nhn.schemas.reg.hprv2.IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage
-import no.nhn.schemas.reg.hprv2.Person
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 @KtorExperimentalAPI
 class RuleService(
-    private val helsepersonellv1: IHPR2Service,
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
-    private val diskresjonskodeService: DiskresjonskodeService
+    private val diskresjonskodeService: DiskresjonskodeService,
+    private val norskHelsenettClient: NorskHelsenettClient
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
-    private val datatypeFactory: DatatypeFactory = DatatypeFactory.newInstance()
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
 
         val loggingMeta = LoggingMeta(
@@ -66,7 +58,6 @@ class RuleService(
                 tssid = receivedSykmelding.tssid
         )
 
-        val doctorDeferred = async { fetchDoctor(receivedSykmelding.personNrLege) }
         val patientDiskresjonskodeDeferred = async { diskresjonskodeService.hentDiskresjonskode(receivedSykmelding.personNrPasient) }
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
@@ -80,30 +71,26 @@ class RuleService(
             syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId)
         }
 
-        val doctor = try {
-            doctorDeferred.await()
-        } catch (e: IHPR2ServiceHentPersonMedPersonnummerGenericFaultFaultFaultMessage) {
-            return ValidationResult(
-                    status = Status.INVALID,
-                    ruleHits = listOf(RuleInfo(
-                            ruleName = "BEHANDLER_NOT_IN_HPR",
-                            messageForSender = "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
-                            messageForUser = "Behandler er ikke register i HPR"))
-            )
-        }
+        val behandler = norskHelsenettClient.finnBehandler(receivedSykmelding.personNrLege) ?: return ValidationResult(
+            status = Status.INVALID,
+            ruleHits = listOf(RuleInfo(
+                ruleName = "BEHANDLER_NOT_IN_HPR",
+                messageForSender = "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
+                messageForUser = "Behandler er ikke register i HPR"))
+        )
 
-        // TODO kun datagrunlag for å evt legge til ny regel på tannleger, slette denne if-setningen etterpå
-        if (doctor.godkjenninger.godkjenning.any {
-                    it.autorisasjon?.isAktiv == true &&
-                            it.helsepersonellkategori.isAktiv == true &&
-                            it.helsepersonellkategori.verdi in listOf("TL") &&
-                            receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode != null &&
-                            receivedSykmelding.sykmelding.perioder.isNotEmpty()
-                }) {
-            log.info("Tannlege statestikk: " +
-                    "fom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.fom} " +
-                    "tom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.tom} " +
-                    "hovedDiagnose: ${receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode }")
+        // TODO kun datagrunnlag for å evt legge til ny regel på tannleger, slette denne if-setningen etterpå
+        if (behandler.godkjenninger.any {
+                it.autorisasjon?.aktiv == true &&
+                    it.helsepersonellkategori?.aktiv == true &&
+                    it.helsepersonellkategori.verdi in listOf("TL") &&
+                    receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode != null &&
+                    receivedSykmelding.sykmelding.perioder.isNotEmpty()
+            }) {
+            log.info("Tannlegestatistikk: " +
+                "fom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.fom} " +
+                "tom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.tom} " +
+                "hovedDiagnose: ${receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode }")
         }
 
         val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
@@ -112,7 +99,7 @@ class RuleService(
         val results = listOf(
                 ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
                 PeriodLogicRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
-                HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorDeferred.await()),
+                HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, behandler),
                 PostDiskresjonskodeRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patientDiskresjonskodeDeferred.await()),
                 LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
                 SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)
@@ -121,14 +108,6 @@ class RuleService(
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 
         return validationResult(results)
-    }
-
-    private suspend fun fetchDoctor(doctorIdent: String): Person = retry(
-            callName = "hpr_hent_person_med_personnummer",
-            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
-            legalExceptions = *arrayOf(IOException::class, WstxException::class)
-    ) {
-        helsepersonellv1.hentPersonMedPersonnummer(doctorIdent, datatypeFactory.newXMLGregorianCalendar(GregorianCalendar()))
     }
 
     private fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {

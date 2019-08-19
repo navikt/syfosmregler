@@ -6,7 +6,7 @@ data class Environment(
     val applicationPort: Int = getEnvVar("APPLICATION_PORT", "8080").toInt(),
     val applicationThreads: Int = getEnvVar("APPLICATION_THREADS", "4").toInt(),
     val securityTokenServiceURL: String = getEnvVar("SECURITY_TOKEN_SERVICE_URL"),
-    val helsepersonellv1EndpointURL: String = getEnvVar("HELSEPERSONELL_V1_ENDPOINT_URL"),
+    val norskHelsenettEndpointURL: String = getEnvVar("HELSENETT_ENDPOINT_URL", "http://syfohelsenettproxy"),
     val diskresjonskodeEndpointUrl: String = getEnvVar("DISKRESJONSKODE_ENDPOINT_URL")
 )
 

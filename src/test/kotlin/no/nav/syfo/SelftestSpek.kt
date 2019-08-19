@@ -19,6 +19,7 @@ import java.net.ServerSocket
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import no.nav.syfo.api.LegeSuspensjonClient
+import no.nav.syfo.api.NorskHelsenettClient
 import no.nav.syfo.api.Oppfolgingstilfelle
 import no.nav.syfo.api.Periode
 import no.nav.syfo.api.SyketilfelleClient
@@ -27,13 +28,8 @@ import no.nav.syfo.client.OidcToken
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.services.DiskresjonskodeService
 import no.nav.syfo.services.RuleService
-import no.nav.tjeneste.pip.diskresjonskode.DiskresjonskodePortType
-import no.nhn.schemas.reg.hprv2.IHPR2Service
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
-import org.apache.cxf.ext.logging.LoggingFeature
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
-import org.apache.cxf.ws.addressing.WSAddressingFeature
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
@@ -69,31 +65,19 @@ object SelftestSpek : Spek({
     describe("Calling selftest with successful liveness and readyness tests") {
         with(TestApplicationEngine()) {
             start()
-            val diskresjonskodeService = JaxWsProxyFactoryBean().apply {
-                address = "http://diskresjonskode/api"
-                features.add(LoggingFeature())
-                serviceClass = DiskresjonskodePortType::class.java
-            }.create() as DiskresjonskodePortType
-
-            val helsepersonellv1 = JaxWsProxyFactoryBean().apply {
-                address = "http://helsepersnolellv1/api"
-                features.add(LoggingFeature())
-                features.add(WSAddressingFeature())
-                serviceClass = IHPR2Service::class.java
-            }.create() as IHPR2Service
 
             val credentials = VaultCredentials("", "")
             val oidcClient = StsOidcClient("username", "password", "$mockHttpServerUrl/rest/v1/sts/token")
             val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
+            val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, oidcClient)
 
             val env = Environment(
                     diskresjonskodeEndpointUrl = "DISKRESJONSKODE_ENDPOINT_URL",
-                    securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL",
-                    helsepersonellv1EndpointURL = "HELSEPERSONELL_V1_ENDPOINT_URL"
+                    securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL"
             )
 
-            val ruleService = RuleService(helsepersonellv1, legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(env, credentials))
+            val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(env, credentials), norskHelsenettClient)
             application.initRouting(applicationState, ruleService)
 
             it("Returns ok on is_alive") {
