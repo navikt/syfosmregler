@@ -71,7 +71,7 @@ class RuleService(
             syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId)
         }
 
-        val behandler = norskHelsenettClient.finnBehandler(receivedSykmelding.personNrLege) ?: return ValidationResult(
+        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId) ?: return ValidationResult(
             status = Status.INVALID,
             ruleHits = listOf(RuleInfo(
                 ruleName = "BEHANDLER_NOT_IN_HPR",
