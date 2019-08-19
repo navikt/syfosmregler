@@ -7,12 +7,16 @@ data class Environment(
     val applicationThreads: Int = getEnvVar("APPLICATION_THREADS", "4").toInt(),
     val securityTokenServiceURL: String = getEnvVar("SECURITY_TOKEN_SERVICE_URL"),
     val norskHelsenettEndpointURL: String = getEnvVar("HELSENETT_ENDPOINT_URL", "http://syfohelsenettproxy"),
-    val diskresjonskodeEndpointUrl: String = getEnvVar("DISKRESJONSKODE_ENDPOINT_URL")
+    val diskresjonskodeEndpointUrl: String = getEnvVar("DISKRESJONSKODE_ENDPOINT_URL"),
+    val clientId: String = getEnvVar("CLIENT_ID"),
+    val helsenettproxyId: String = getEnvVar("HELSENETTPROXY_ID"),
+    val aadAccessTokenUrl: String = getEnvVar("AADACCESSTOKEN_URL")
 )
 
 data class VaultCredentials(
     val serviceuserUsername: String,
-    val serviceuserPassword: String
+    val serviceuserPassword: String,
+    val clientsecret: String
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null) =

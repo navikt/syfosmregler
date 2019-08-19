@@ -20,6 +20,7 @@ import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
+import no.nav.syfo.api.AccessTokenClient
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.NorskHelsenettClient
 import no.nav.syfo.api.SyketilfelleClient
@@ -59,7 +60,8 @@ fun main() {
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
-    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, oidcClient)
+    val accessTokenClient = AccessTokenClient(env.aadAccessTokenUrl, env.clientId, credentials.clientsecret)
+    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyId)
 
     val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, diskresjonskodeService, norskHelsenettClient)
 

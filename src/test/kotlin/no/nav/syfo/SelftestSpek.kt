@@ -16,8 +16,11 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.KtorExperimentalAPI
 import java.net.ServerSocket
+import java.time.Instant
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
+import no.nav.syfo.api.AadAccessToken
+import no.nav.syfo.api.AccessTokenClient
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.NorskHelsenettClient
 import no.nav.syfo.api.Oppfolgingstilfelle
@@ -48,6 +51,10 @@ object SelftestSpek : Spek({
                 call.respond(OidcToken("", "", 1L))
             }
 
+            get("/aad/token") {
+                call.respond(AadAccessToken("token", Instant.now().plusSeconds(300)))
+            }
+
             get("/api/v1/suspensjon/status") {
                 call.respond(true)
             }
@@ -66,15 +73,19 @@ object SelftestSpek : Spek({
         with(TestApplicationEngine()) {
             start()
 
-            val credentials = VaultCredentials("", "")
+            val credentials = VaultCredentials("", "", "secret")
             val oidcClient = StsOidcClient("username", "password", "$mockHttpServerUrl/rest/v1/sts/token")
+            val accessTokenClient = AccessTokenClient("$mockHttpServerUrl/aad/token", "clientId", "clientsecret")
             val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
-            val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, oidcClient)
+            val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClient, "resourceId")
 
             val env = Environment(
                     diskresjonskodeEndpointUrl = "DISKRESJONSKODE_ENDPOINT_URL",
-                    securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL"
+                    securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL",
+                    clientId = "clientId",
+                    helsenettproxyId = "helsenettproxyId",
+                    aadAccessTokenUrl = "aadUrl"
             )
 
             val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(env, credentials), norskHelsenettClient)
