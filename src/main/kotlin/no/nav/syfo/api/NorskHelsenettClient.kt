@@ -12,7 +12,6 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.NotFound
@@ -42,8 +41,8 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
             headers {
                 append("Authorization", "Bearer $accessToken")
                 append("Nav-CallId", msgId)
+                append("behandlerFnr", behandlerFnr)
             }
-            parameter("behandlerFnr", behandlerFnr)
         }
 
         if (httpResponse.status == NotFound) {
