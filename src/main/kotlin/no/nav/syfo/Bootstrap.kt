@@ -38,6 +38,8 @@ import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.services.DiskresjonskodeService
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
+import no.nav.syfo.ws.createPort
+import no.nav.tjeneste.pip.diskresjonskode.DiskresjonskodePortType
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -64,7 +66,10 @@ fun main() {
 
     DefaultExports.initialize()
 
-    val diskresjonskodeService = DiskresjonskodeService(env, credentials)
+    val diskresjonskodePortType: DiskresjonskodePortType = createPort(env.diskresjonskodeEndpointUrl) {
+        port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
+    }
+    val diskresjonskodeService = DiskresjonskodeService(diskresjonskodePortType)
 
     val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
         install(JsonFeature) {
@@ -72,9 +77,12 @@ fun main() {
                 registerKotlinModule()
                 registerModule(JavaTimeModule())
                 configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             }
         }
+        expectSuccess = false
     }
+
     val proxyConfig: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
         config()
         engine {
@@ -83,13 +91,15 @@ fun main() {
             }
         }
     }
+
     val httpClientWithProxy = HttpClient(Apache, proxyConfig)
+    val httpClient = HttpClient(Apache, config)
 
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
-    val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient)
-    val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient)
+    val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
+    val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val accessTokenClient = AccessTokenClient(env.aadAccessTokenUrl, env.clientId, credentials.clientsecret, httpClientWithProxy)
-    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyId)
+    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyId, httpClient)
 
     val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, diskresjonskodeService, norskHelsenettClient)
 

@@ -38,6 +38,8 @@ import no.nav.syfo.client.OidcToken
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.services.DiskresjonskodeService
 import no.nav.syfo.services.RuleService
+import no.nav.syfo.ws.createPort
+import no.nav.tjeneste.pip.diskresjonskode.DiskresjonskodePortType
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
 import org.spekframework.spek2.Spek
@@ -92,9 +94,9 @@ object SelftestSpek : Spek({
                 }
             }
             val accessTokenClient = AccessTokenClient("$mockHttpServerUrl/aad/token", "clientId", "clientsecret", httpClient)
-            val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
-            val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
-            val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClient, "resourceId")
+            val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient, httpClient)
+            val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient, httpClient)
+            val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClient, "resourceId", httpClient)
 
             val env = Environment(
                     diskresjonskodeEndpointUrl = "DISKRESJONSKODE_ENDPOINT_URL",
@@ -104,7 +106,10 @@ object SelftestSpek : Spek({
                     aadAccessTokenUrl = "aadUrl"
             )
 
-            val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(env, credentials), norskHelsenettClient)
+            val diskresjonskodePortType: DiskresjonskodePortType = createPort(env.diskresjonskodeEndpointUrl) {
+                port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
+            }
+            val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(diskresjonskodePortType), norskHelsenettClient)
             application.initRouting(applicationState, ruleService)
 
             it("Returns ok on is_alive") {
