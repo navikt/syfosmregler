@@ -1,7 +1,14 @@
 package no.nav.syfo
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -75,7 +82,16 @@ object SelftestSpek : Spek({
 
             val credentials = VaultCredentials("", "", "secret")
             val oidcClient = StsOidcClient("username", "password", "$mockHttpServerUrl/rest/v1/sts/token")
-            val accessTokenClient = AccessTokenClient("$mockHttpServerUrl/aad/token", "clientId", "clientsecret")
+            val httpClient = HttpClient(Apache) {
+                install(JsonFeature) {
+                    serializer = JacksonSerializer {
+                        registerKotlinModule()
+                        registerModule(JavaTimeModule())
+                        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    }
+                }
+            }
+            val accessTokenClient = AccessTokenClient("$mockHttpServerUrl/aad/token", "clientId", "clientsecret", httpClient)
             val legeSuspensjonClient = LegeSuspensjonClient(mockHttpServerUrl, credentials, oidcClient)
             val syketilfelleClient = SyketilfelleClient(mockHttpServerUrl, oidcClient)
             val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClient, "resourceId")
