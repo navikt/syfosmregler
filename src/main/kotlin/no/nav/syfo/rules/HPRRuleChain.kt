@@ -1,32 +1,30 @@
 package no.nav.syfo.rules
 
+import no.nav.syfo.api.Behandler
 import no.nav.syfo.model.Status
 import no.nav.syfo.sm.toICPC2
-import no.nhn.schemas.reg.hprv2.Person as HPRPerson
 
 enum class HPRRuleChain(
     override val ruleId: Int?,
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
-    override val predicate: (RuleData<HPRPerson>) -> Boolean
-) : Rule<RuleData<HPRPerson>> {
+    override val predicate: (RuleData<Behandler>) -> Boolean
+) : Rule<RuleData<Behandler>> {
     @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")
     BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(
             1143,
             Status.MANUAL_PROCESSING,
             "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
-            { (healthInformation, doctor) ->
+            { (healthInformation, behandler) ->
                 healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
-                doctor.godkjenninger?.godkjenning != null &&
-                        !harAktivHelsepersonellAutorisasjonsSom(doctor, listOf(
-                                HelsepersonellKategori.LEGE.verdi,
-                                HelsepersonellKategori.TANNLEGE.verdi)) &&
-                        harAktivHelsepersonellAutorisasjonsSom(doctor, listOf(
-                            HelsepersonellKategori.KIROPRAKTOR.verdi,
-                            HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                            HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
+                    !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                        HelsepersonellKategori.LEGE.verdi,
+                        HelsepersonellKategori.TANNLEGE.verdi)) && harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                    HelsepersonellKategori.KIROPRAKTOR.verdi,
+                    HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                    HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
     }),
 
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
@@ -34,9 +32,9 @@ enum class HPRRuleChain(
             1402,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, doctor) ->
-        doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
-            it?.autorisasjon?.isAktiv != null && it.autorisasjon.isAktiv
+            "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, behandler) ->
+        !behandler.godkjenninger.any {
+            it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv
         }
     }),
 
@@ -45,14 +43,13 @@ enum class HPRRuleChain(
             1403,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler har ikke gyldig autorisasjon i HPR", { (_, doctor) ->
-        doctor.godkjenninger?.godkjenning != null && !doctor.godkjenninger.godkjenning.any {
-            it?.autorisasjon?.isAktiv != null &&
-            it.autorisasjon.isAktiv &&
-                    it.autorisasjon?.oid != null
-                    it.autorisasjon.oid == 7704 &&
-                    it.autorisasjon?.verdi != null &&
-                    it.autorisasjon.verdi in arrayOf("1", "17", "4", "3", "2", "14", "18")
+            "Behandler har ikke gyldig autorisasjon i HPR", { (_, behandler) ->
+        !behandler.godkjenninger.any {
+            it.autorisasjon?.aktiv != null &&
+                it.autorisasjon.aktiv &&
+                it.autorisasjon.oid == 7704 &&
+                it.autorisasjon.verdi != null &&
+                it.autorisasjon.verdi in arrayOf("1", "17", "4", "3", "2", "14", "18")
         }
     }),
 
@@ -61,19 +58,16 @@ enum class HPRRuleChain(
             1407,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege", { (_, doctor) ->
-        doctor.godkjenninger?.godkjenning != null &&
-                !doctor.godkjenninger.godkjenning.any {
-                    it?.helsepersonellkategori?.isAktiv != null &&
-                    it.autorisasjon?.isAktiv == true &&
-                    it.helsepersonellkategori.isAktiv != null &&
-                    it.helsepersonellkategori.verdi != null &&
-                    harAktivHelsepersonellAutorisasjonsSom(doctor, listOf(
-                            HelsepersonellKategori.LEGE.verdi,
-                            HelsepersonellKategori.KIROPRAKTOR.verdi,
-                            HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                            HelsepersonellKategori.TANNLEGE.verdi,
-                            HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
+            "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut, fysioterapeut eller tannlege", { (_, behandler) ->
+        !behandler.godkjenninger.any {
+            it.helsepersonellkategori?.aktiv != null &&
+                it.autorisasjon?.aktiv == true && it.helsepersonellkategori.verdi != null &&
+                harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                    HelsepersonellKategori.LEGE.verdi,
+                    HelsepersonellKategori.KIROPRAKTOR.verdi,
+                    HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                    HelsepersonellKategori.TANNLEGE.verdi,
+                    HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
         }
     }),
 
@@ -82,24 +76,22 @@ enum class HPRRuleChain(
             1519,
             Status.INVALID,
             "Den som skrev sykmeldingen mangler autorisasjon.",
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, doctor) ->
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, behandler) ->
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
-                doctor.godkjenninger?.godkjenning != null &&
-                !harAktivHelsepersonellAutorisasjonsSom(doctor, listOf(
-                        HelsepersonellKategori.LEGE.verdi,
-                        HelsepersonellKategori.TANNLEGE.verdi)) &&
-                harAktivHelsepersonellAutorisasjonsSom(doctor, listOf(
-                        HelsepersonellKategori.KIROPRAKTOR.verdi,
-                        HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                        HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
+            !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                HelsepersonellKategori.LEGE.verdi,
+                HelsepersonellKategori.TANNLEGE.verdi)) &&
+            harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                HelsepersonellKategori.KIROPRAKTOR.verdi,
+                HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
     }),
 }
 
-fun harAktivHelsepersonellAutorisasjonsSom(doctor: HPRPerson, helsepersonerVerdi: List<String>): Boolean =
-    doctor.godkjenninger.godkjenning.any {
-        it?.helsepersonellkategori?.isAktiv != null &&
-                it.autorisasjon?.isAktiv == true &&
-                it.helsepersonellkategori.isAktiv != null &&
-                it.helsepersonellkategori.verdi != null &&
-                it.helsepersonellkategori.let { it.isAktiv && it.verdi in helsepersonerVerdi }
+fun harAktivHelsepersonellAutorisasjonsSom(behandler: Behandler, helsepersonerVerdi: List<String>): Boolean =
+    behandler.godkjenninger.any { godkjenning ->
+        godkjenning.helsepersonellkategori?.aktiv != null &&
+            godkjenning.autorisasjon?.aktiv == true && godkjenning.helsepersonellkategori.verdi != null &&
+            godkjenning.helsepersonellkategori.let {
+                it.aktiv && it.verdi in helsepersonerVerdi }
     }

@@ -1,6 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
-import no.nils.wsdl2java.Wsdl2JavaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
@@ -20,7 +19,6 @@ val smCommonVersion = "2019.08.08-03-52-c78281e2409af36f3ef07df4369fa29b0ea81a46
 val spekVersion = "2.0.6"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val cxfVersion = "3.2.7"
-val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
@@ -33,23 +31,10 @@ val diskresjonskodeV1Version= "1.2019.07.11-06.47-b55f47790a9d"
 
 plugins {
     java
-    id("no.nils.wsdl2java") version "0.10"
     kotlin("jvm") version "1.3.41"
     id("org.jmailen.kotlinter") version "2.1.0"
     id("com.diffplug.gradle.spotless") version "3.24.0"
     id("com.github.johnrengelman.shadow") version "5.1.0"
-}
-
-
-buildscript {
-    dependencies {
-        classpath("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-        classpath("org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438")
-        classpath("com.sun.activation:javax.activation:1.2.0")
-        classpath("com.sun.xml.ws:jaxws-tools:2.3.1") {
-            exclude(group = "com.sun.xml.ws", module = "policy")
-        }
-    }
 }
 
 repositories {
@@ -62,16 +47,6 @@ repositories {
 
 
 dependencies {
-    wsdl2java("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion")
-    wsdl2java("javax.activation:activation:$javaxActivationVersion")
-    wsdl2java("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
-    wsdl2java("javax.xml.bind:jaxb-api:$jaxbApiVersion")
-    wsdl2java("javax.xml.ws:jaxws-api:$javaxJaxwsApiVersion")
-    wsdl2java("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
-        exclude(group = "com.sun.xml.ws", module = "policy")
-    }
-
-
     implementation(kotlin("stdlib"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
@@ -85,6 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-basic:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
 
     implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
@@ -148,16 +124,7 @@ tasks {
         }
     }
     withType<KotlinCompile> {
-        dependsOn("wsdl2java")
-
         kotlinOptions.jvmTarget = "1.8"
-    }
-
-    withType<Wsdl2JavaTask> {
-        wsdlDir = file("$projectDir/src/main/resources/wsdl")
-        wsdlsToGenerate = listOf(
-                mutableListOf("-xjc", "-b", "$projectDir/src/main/resources/xjb/binding.xml", "$projectDir/src/main/resources/wsdl/helsepersonellregisteret.wsdl")
-        )
     }
 
     withType<ShadowJar> {
