@@ -28,13 +28,12 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
                 append("behandlerFnr", behandlerFnr)
             }
         }
-        when {
-            httpResponse.status == NotFound -> {
+        if (httpResponse.status == InternalServerError) {
+            log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}", msgId)
+        }
+        when (NotFound) {
+            httpResponse.status -> {
                 log.error("BehandlerFnr mangler i request for msgId {}", msgId)
-                null
-            }
-            httpResponse.status == InternalServerError -> {
-                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}", msgId)
                 null
             }
             else -> {
