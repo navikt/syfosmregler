@@ -10,6 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.util.KtorExperimentalAPI
+import java.io.IOException
 import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI
@@ -30,6 +31,7 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
         }
         if (httpResponse.status == InternalServerError) {
             log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}", msgId)
+            throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
         }
         when (NotFound) {
             httpResponse.status -> {
