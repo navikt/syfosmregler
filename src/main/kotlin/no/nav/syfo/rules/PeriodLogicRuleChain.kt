@@ -103,9 +103,9 @@ enum class PeriodLogicRuleChain(
             1123,
             Status.INVALID,
             "Behandlingsdatoen må rettes.",
-            "Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen",
+            "Behandlingsdatoen er etter dato for når nav mottar meldingen",
             { (healthInformation, ruleMetadata) ->
-        healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusHours(2)
+        healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusDays (1)
     }),
 
     @Description("Hvis avventende sykmelding er funnet og det finnes en eller flere perioder")

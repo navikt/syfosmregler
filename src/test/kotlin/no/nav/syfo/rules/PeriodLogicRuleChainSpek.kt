@@ -185,7 +185,7 @@ object PeriodLogicRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLINGSDATO_ETTER_MOTTATTDATO, should trigger rule") {
             val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().plusHours(3)
+                    behandletTidspunkt = LocalDateTime.now().plusDays(2)
             )
 
             PeriodLogicRuleChain.BEHANDLINGSDATO_ETTER_MOTTATTDATO(ruleData(healthInformation)) shouldEqual true
@@ -193,7 +193,7 @@ object PeriodLogicRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLINGSDATO_ETTER_MOTTATTDATO, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().plusHours(2)
+                    behandletTidspunkt = LocalDateTime.now().plusDays(1)
             )
 
             PeriodLogicRuleChain.BEHANDLINGSDATO_ETTER_MOTTATTDATO(ruleData(healthInformation)) shouldEqual false
