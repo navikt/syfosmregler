@@ -98,6 +98,18 @@ enum class PeriodLogicRuleChain(
         healthInformation.perioder.sortedTOMDate().last().atStartOfDay() > healthInformation.behandletTidspunkt.plusYears(1)
     }),
 
+    @Description("Hvis sykmeldingen første fom og siste tom har ein varighet som er over 1 år. avvises meldingen.")
+    TOTAL_VARIGHET_OVER_ETT_AAR(
+            1211,
+            Status.INVALID,
+            "Den kan ikke ha en varighet på over ett år.",
+            "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
+            { (healthInformation, _) ->
+                val firstFomDate = healthInformation.perioder.sortedFOMDate().first().atStartOfDay().toLocalDate()
+                val lastTomDate = healthInformation.perioder.sortedTOMDate().last().atStartOfDay().toLocalDate()
+                (firstFomDate..lastTomDate).daysBetween() > 365
+            }),
+
     @Description("Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen")
     BEHANDLINGSDATO_ETTER_MOTTATTDATO(
             1123,
@@ -105,7 +117,7 @@ enum class PeriodLogicRuleChain(
             "Behandlingsdatoen må rettes.",
             "Behandlingsdatoen er etter dato for når nav mottar meldingen",
             { (healthInformation, ruleMetadata) ->
-        healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusDays (1)
+        healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusDays(1)
     }),
 
     @Description("Hvis avventende sykmelding er funnet og det finnes en eller flere perioder")
