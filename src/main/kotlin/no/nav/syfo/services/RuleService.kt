@@ -76,7 +76,8 @@ class RuleService(
             ruleHits = listOf(RuleInfo(
                 ruleName = "BEHANDLER_NOT_IN_HPR",
                 messageForSender = "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
-                messageForUser = "Behandler er ikke register i HPR"))
+                messageForUser = "Behandler er ikke register i HPR",
+                ruleStatus = Status.INVALID))
         )
 
         // TODO kun datagrunnlag for å evt legge til ny regel på tannleger, slette denne if-setningen etterpå
@@ -136,6 +137,6 @@ class RuleService(
                                 ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
                                 ?: Status.OK
                     },
-            ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForSender!!, rule.messageForUser!!) }
+            ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForSender!!, rule.messageForUser!!, rule.status) }
     )
 }
