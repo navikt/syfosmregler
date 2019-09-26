@@ -1,0 +1,49 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: syfosmregler
+  namespace: default
+  labels:
+    team: {{team}}
+spec:
+  image: "docker.pkg.github.com/navikt/syfosmregler:{{tag}}"
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 90
+  port: 8080
+  liveness:
+    path: /is_alive
+    initialDelay: 10
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /is_ready
+    initialDelay: 30
+    periodSeconds: 5
+    timeout: 5
+  prometheus:
+    enabled: true
+    path: /prometheus
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  vault:
+    enabled: true
+  webproxy: true
+  env:
+    - name: SECURITY_TOKEN_SERVICE_URL
+      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
+    - name: DISKRESJONSKODE_ENDPOINT_URL
+      value: https://wasapp-q1.adeo.no/tpsws/Diskresjonskode
+    - name: AADACCESSTOKEN_URL
+      value: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token
+    - name: CLIENT_ID
+      value: b0f159e9-71af-4a30-8c2b-a02f67b7905a
+    - name: HELSENETTPROXY_ID
+      value: c18eba24-f676-47db-9a97-3c66e9304aee
