@@ -36,6 +36,8 @@ spec:
   vault:
     enabled: true
   webproxy: true
+  ingresses:
+    - "https://syfosmregler.nais.adeo.no"
   env:
     - name: SECURITY_TOKEN_SERVICE_URL
       value: https://sts.adeo.no/SecurityTokenServiceProvider/

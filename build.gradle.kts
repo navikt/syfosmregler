@@ -11,7 +11,7 @@ val jacksonVersion = "2.9.8"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kluentVersion = "1.39"
-val ktorVersion = "1.2.0"
+val ktorVersion = "1.2.3"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
@@ -31,18 +31,19 @@ val diskresjonskodeV1Version= "1.2019.07.11-06.47-b55f47790a9d"
 
 plugins {
     java
-    kotlin("jvm") version "1.3.41"
+    kotlin("jvm") version "1.3.50"
     id("org.jmailen.kotlinter") version "2.1.0"
     id("com.diffplug.gradle.spotless") version "3.24.0"
     id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
 repositories {
+    mavenCentral()
+    jcenter()
     maven(url = "https://dl.bintray.com/kotlin/ktor")
     maven(url = "https://dl.bintray.com/spekframework/spek-dev")
     maven(url = "https://kotlin.bintray.com/kotlinx")
-    mavenCentral()
-    jcenter()
+    maven(url = "https://oss.sonatype.org/content/groups/staging/")
 }
 
 
@@ -57,7 +58,6 @@ dependencies {
     implementation ("io.ktor:ktor-jackson:$ktorVersion")
 
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-basic:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
@@ -77,7 +77,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("no.nav.helse.xml:sm2013:$sykmeldingVersion")
-    implementation ("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:$diskresjonskodeV1Version")
+    implementation("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:$diskresjonskodeV1Version")
 
     implementation("org.apache.commons:commons-text:$commonsTextVersion")
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")

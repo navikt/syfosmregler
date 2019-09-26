@@ -36,6 +36,8 @@ spec:
   vault:
     enabled: true
   webproxy: true
+  ingresses:
+    - "https://syfosmregler.nais.preprod.local"
   env:
     - name: SECURITY_TOKEN_SERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
