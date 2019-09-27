@@ -19,7 +19,7 @@ enum class SyketilfelleRuleChain(
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
-                 healthInformation.kontaktMedPasient.kontaktDato != null
+                healthInformation.kontaktMedPasient.kontaktDato != null
             }),
 
     @Description("Første gangs sykmelding er tilbakedatert mindre enn 8 dager.")
@@ -40,7 +40,7 @@ enum class SyketilfelleRuleChain(
     TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
             null,
             Status.INVALID,
-            "Det må begrunnes hvorfor sykmeldingen er tilbakedatert.",
+            "Sykmeldingen er tilbakedatert uten at det er opplyst når du kontaktet den som sykmeldte deg.",
             "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato og felt 11.1 er ikke utfylt",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&

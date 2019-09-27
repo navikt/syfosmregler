@@ -6,6 +6,7 @@ import java.time.LocalTime
 import no.nav.syfo.generateKontaktMedPasient
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.model.KontaktMedPasient
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import org.amshove.kluent.shouldEqual
@@ -157,9 +158,7 @@ object SyketilfelleRuleChainSpek : Spek({
                             tom = LocalDate.now()
                     )
                     ),
-                    kontaktMedPasient = generateKontaktMedPasient(
-                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
-                    )
+                    kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "")
             )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
