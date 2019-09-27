@@ -142,12 +142,12 @@ enum class PeriodLogicRuleChain(
                 .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty() }
     }),
 
-    @Description("Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
+    @Description("Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
     AVVENTENDE_SYKMELDING_OVER_16_DAGER(
             1242,
             Status.INVALID,
             "En avventende sykmelding kan bare gis for 16 dager.",
-            "Hvis avventende sykmelding benyttes utover i arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
+            "Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
             { (healthInformation, _) ->
         healthInformation.perioder
                 .filter { it.avventendeInnspillTilArbeidsgiver != null }

@@ -120,7 +120,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual true
+            HPRRuleChain.BEHANDLER_KI_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
@@ -140,7 +140,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual false
+            HPRRuleChain.BEHANDLER_KI_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should trigger rule") {
@@ -164,7 +164,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, behandler)) shouldEqual true
+            HPRRuleChain.BEHANDLER_MT_KI_OVER_12_UKER(ruleData(healthInformation, behandler)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule, when helsepersoner is Lege(LE) and Kiropratkor(KI)") {
@@ -199,7 +199,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, behandler)) shouldEqual false
+            HPRRuleChain.BEHANDLER_MT_KI_OVER_12_UKER(ruleData(healthInformation, behandler)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_MT_FT_KI_OVER_12_UKER, should NOT trigger rule") {
@@ -223,7 +223,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, behandler)) shouldEqual false
+            HPRRuleChain.BEHANDLER_MT_KI_OVER_12_UKER(ruleData(healthInformation, behandler)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should trigger rule") {
@@ -244,7 +244,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual true
+            HPRRuleChain.BEHANDLER_KI_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual true
         }
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
@@ -276,7 +276,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual false
+            HPRRuleChain.BEHANDLER_KI_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual false
         }
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
@@ -297,7 +297,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual false
+            HPRRuleChain.BEHANDLER_KI_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(ruleData(healthInformation, behandler)) shouldEqual false
         }
     }
 })
