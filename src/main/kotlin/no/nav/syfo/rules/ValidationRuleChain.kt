@@ -60,7 +60,7 @@ enum class ValidationRuleChain(
             1137,
             Status.INVALID,
             "Den må ha en kjent diagnosekode.",
-            "Ukjent diagnosekode er benyttet. ", { (healthInformation, _) ->
+            "Ukjent diagnosekode er benyttet.", { (healthInformation, _) ->
         healthInformation.medisinskVurdering.hovedDiagnose != null &&
             healthInformation.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
     }),
