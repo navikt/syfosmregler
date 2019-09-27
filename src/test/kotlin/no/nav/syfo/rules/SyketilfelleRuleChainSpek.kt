@@ -25,7 +25,9 @@ object SyketilfelleRuleChainSpek : Spek({
                             fom = LocalDate.of(2019, 1, 3),
                             tom = LocalDate.of(2019, 1, 8)
                     )
-            ))
+            ),
+                    kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = null)
+            )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
@@ -47,7 +49,9 @@ object SyketilfelleRuleChainSpek : Spek({
                             fom = LocalDate.of(2019, 1, 7),
                             tom = LocalDate.of(2019, 1, 8)
                     )
-            ))
+            ),
+                    kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "")
+            )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
@@ -69,7 +73,9 @@ object SyketilfelleRuleChainSpek : Spek({
                             fom = LocalDate.of(2019, 1, 10),
                             tom = LocalDate.of(2019, 1, 20)
                     )
-            ))
+            ),
+                    kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "")
+            )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
@@ -113,7 +119,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             fom = LocalDate.now(),
                             tom = LocalDate.now()
                     )
-            ))
+            ),
+                    kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = ""))
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
@@ -135,7 +142,10 @@ object SyketilfelleRuleChainSpek : Spek({
                             fom = LocalDate.now(),
                             tom = LocalDate.now()
                     )
-            ))
+            ), kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+            )
+            )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
@@ -158,7 +168,9 @@ object SyketilfelleRuleChainSpek : Spek({
                             tom = LocalDate.now()
                     )
                     ),
-                    kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "")
+                    kontaktMedPasient = generateKontaktMedPasient(
+                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+                    )
             )
 
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(

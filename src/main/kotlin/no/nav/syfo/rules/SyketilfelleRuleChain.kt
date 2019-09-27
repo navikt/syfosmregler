@@ -19,7 +19,7 @@ enum class SyketilfelleRuleChain(
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
-                healthInformation.kontaktMedPasient.kontaktDato != null
+                healthInformation.kontaktMedPasient.kontaktDato == null
             }),
 
     @Description("Første gangs sykmelding er tilbakedatert mindre enn 8 dager.")
@@ -32,8 +32,7 @@ enum class SyketilfelleRuleChain(
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
-                        healthInformation.kontaktMedPasient.kontaktDato != null &&
-                        ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate <= healthInformation.kontaktMedPasient.kontaktDato?.atStartOfDay()
+                        healthInformation.kontaktMedPasient.kontaktDato == null
             }),
 
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato. Skal telles.")
@@ -45,7 +44,7 @@ enum class SyketilfelleRuleChain(
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate &&
-                healthInformation.kontaktMedPasient.kontaktDato != null
+                healthInformation.kontaktMedPasient.kontaktDato == null
             }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
