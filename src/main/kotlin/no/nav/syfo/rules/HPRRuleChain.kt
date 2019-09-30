@@ -43,13 +43,13 @@ enum class HPRRuleChain(
             1403,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler har ikke gyldig autorisasjon i HPR", { (_, behandler) ->
+            "Behandler har ikke til gyldig autorisasjon i HPR", { (_, behandler) ->
         !behandler.godkjenninger.any {
             it.autorisasjon?.aktiv != null &&
                 it.autorisasjon.aktiv &&
-                it.autorisasjon.oid == 7704 &&
+                it.autorisasjon.oid == 7702 &&
                 it.autorisasjon.verdi != null &&
-                it.autorisasjon.verdi in arrayOf("1", "17", "4", "2", "14", "18")
+                it.autorisasjon.verdi in arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
         }
     }),
 
