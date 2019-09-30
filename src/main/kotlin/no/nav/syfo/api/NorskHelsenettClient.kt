@@ -7,18 +7,19 @@ import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.util.KtorExperimentalAPI
-import java.io.IOException
 import no.nav.syfo.helpers.retry
+import java.io.IOException
 
 @KtorExperimentalAPI
 class NorskHelsenettClient(private val endpointUrl: String, private val accessTokenClient: AccessTokenClient, private val resourceId: String, private val httpClient: HttpClient) {
 
     suspend fun finnBehandler(behandlerFnr: String, msgId: String): Behandler? = retry(
         callName = "finnbehandler",
-        retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L)) {
+        retryIntervals = arrayOf(500L, 1000L, 1000L)) {
         log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
         val httpResponse = httpClient.get<HttpResponse>("$endpointUrl/api/behandler") {
             accept(ContentType.Application.Json)
@@ -29,14 +30,20 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
                 append("behandlerFnr", behandlerFnr)
             }
         }
-        if (httpResponse.status == InternalServerError) {
-            log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}", msgId)
-            throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
-        }
-        when (NotFound) {
-            httpResponse.status -> {
+        when (httpResponse.status) {
+            InternalServerError -> {
+                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}", msgId)
+                throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
+            }
+
+            BadRequest -> {
                 log.error("BehandlerFnr mangler i request for msgId {}", msgId)
-                null
+                return@retry null
+            }
+
+            NotFound -> {
+                log.error("BehandlerFnr ikke funnet {}", msgId)
+                return@retry null
             }
             else -> {
                 log.info("Hentet behandler for msgId {}", msgId)
