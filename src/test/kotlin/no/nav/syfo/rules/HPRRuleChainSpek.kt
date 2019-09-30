@@ -24,7 +24,7 @@ object HPRRuleChainSpek : Spek({
             val behandler = Behandler(listOf(Godkjenning(
                 autorisasjon = Kode(
                     aktiv = false,
-                    oid = 7704,
+                    oid = 7702,
                     verdi = "1")
             )))
 
@@ -36,7 +36,7 @@ object HPRRuleChainSpek : Spek({
             val behandler = Behandler(listOf(Godkjenning(
                 autorisasjon = Kode(
                     aktiv = true,
-                    oid = 7704,
+                    oid = 7702,
                     verdi = "1")
             )))
 
@@ -48,8 +48,8 @@ object HPRRuleChainSpek : Spek({
             val behandler = Behandler(listOf(Godkjenning(
                 autorisasjon = Kode(
                     aktiv = true,
-                    oid = 7704,
-                    verdi = "5")
+                    oid = 7702,
+                    verdi = "11")
             )))
 
             HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(ruleData(healthInformation, behandler)) shouldEqual true
@@ -60,7 +60,7 @@ object HPRRuleChainSpek : Spek({
             val behandler = Behandler(listOf(Godkjenning(
                 autorisasjon = Kode(
                     aktiv = true,
-                    oid = 7704,
+                    oid = 7702,
                     verdi = "1")
             )))
 
