@@ -11,8 +11,8 @@ import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.helpers.retry
 import java.io.IOException
+import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI
 class NorskHelsenettClient(private val endpointUrl: String, private val accessTokenClient: AccessTokenClient, private val resourceId: String, private val httpClient: HttpClient) {

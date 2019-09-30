@@ -46,6 +46,27 @@ enum class HPRRuleChain(
             "Behandler har ikke til gyldig autorisasjon i HPR", { (_, behandler) ->
         !behandler.godkjenninger.any {
             it.autorisasjon?.aktiv != null &&
+                    it.autorisasjon.aktiv &&
+                    it.autorisasjon.oid == 7704 &&
+                    it.autorisasjon.verdi != null &&
+                    it.autorisasjon.verdi in arrayOf("1", "17", "4", "2", "14", "18")
+        }
+    }),
+
+    @Description("Behandler er manuellterapeut/kiropraktor eller fysioterapeut og har ikke gyldig autorisasjon i HPR")
+    BEHANDLER_KI_FT_MT_MANGLER_AUTORISASJON_I_HPR(
+            1403,
+            Status.INVALID,
+            "Den som skrev sykmeldingen manglet autorisasjon.",
+            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut uten gyldig autorisasjon i HPR", { (_, behandler) ->
+        !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                HelsepersonellKategori.LEGE.verdi,
+                HelsepersonellKategori.TANNLEGE.verdi)) && harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                HelsepersonellKategori.KIROPRAKTOR.verdi,
+                HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                HelsepersonellKategori.FYSIOTERAPAEUT.verdi)) &&
+                !behandler.godkjenninger.any {
+            it.autorisasjon?.aktiv != null &&
                 it.autorisasjon.aktiv &&
                 it.autorisasjon.oid == 7702 &&
                 it.autorisasjon.verdi != null &&

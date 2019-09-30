@@ -83,7 +83,7 @@ internal class NorskHelsenettClientTest : Spek({
                     DefaultHttpResponse(httpClientCall, respond("InternalServerErrror", HttpStatusCode.InternalServerError)))
             runBlocking {
                 assertFailsWith<IOException> { norskHelsenettClient.finnBehandler(fnr, "1") }
-                coVerify(exactly = 3) { httpClient.execute(any()) }
+                coVerify(exactly = 4) { httpClient.execute(any()) }
             }
         }
     }
