@@ -53,27 +53,6 @@ enum class HPRRuleChain(
         }
     }),
 
-    @Description("Behandler er manuellterapeut/kiropraktor eller fysioterapeut og har ikke gyldig autorisasjon i HPR")
-    BEHANDLER_KI_FT_MT_MANGLER_AUTORISASJON_I_HPR(
-            1403,
-            Status.INVALID,
-            "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut uten gyldig autorisasjon i HPR", { (_, behandler) ->
-        !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
-                HelsepersonellKategori.LEGE.verdi,
-                HelsepersonellKategori.TANNLEGE.verdi)) && harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
-                HelsepersonellKategori.KIROPRAKTOR.verdi,
-                HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                HelsepersonellKategori.FYSIOTERAPAEUT.verdi)) &&
-                !behandler.godkjenninger.any {
-            it.autorisasjon?.aktiv != null &&
-                it.autorisasjon.aktiv &&
-                it.autorisasjon.oid == 7702 &&
-                it.autorisasjon.verdi != null &&
-                it.autorisasjon.verdi in arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
-        }
-    }),
-
     @Description("Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege")
     BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR(
             1407,

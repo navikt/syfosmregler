@@ -317,35 +317,5 @@ object HPRRuleChainSpek : Spek({
 
             HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(ruleData(healthInformation, behandler)) shouldEqual true
         }
-
-        it("Should check rule BEHANDLER_KI_FT_MT_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
-            val healthInformation = generateSykmelding()
-            val behandler = Behandler(listOf(Godkjenning(
-                    autorisasjon = Kode(
-                            aktiv = true,
-                            oid = 0,
-                            verdi = ""
-                    ),
-                    helsepersonellkategori = Kode(
-                            aktiv = true,
-                            oid = 0,
-                            verdi = "KI"
-                    )
-            )))
-
-            HPRRuleChain.BEHANDLER_KI_FT_MT_MANGLER_AUTORISASJON_I_HPR(ruleData(healthInformation, behandler)) shouldEqual true
-        }
-
-        it("Should check rule BEHANDLER_KI_FT_MT_MANGLER_AUTORISASJON_I_HPR, should NOT trigger rule") {
-            val healthInformation = generateSykmelding()
-            val behandler = Behandler(listOf(Godkjenning(
-                autorisasjon = Kode(
-                        aktiv = true,
-                        oid = 7702,
-                        verdi = "1")
-        )))
-
-            HPRRuleChain.BEHANDLER_KI_FT_MT_MANGLER_AUTORISASJON_I_HPR(ruleData(healthInformation, behandler)) shouldEqual false
-        }
     }
 })
