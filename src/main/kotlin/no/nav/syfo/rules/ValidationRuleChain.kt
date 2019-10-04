@@ -23,7 +23,7 @@ enum class ValidationRuleChain(
     UGYLDIG_FNR_LENGDE_PASIENT(
             1002,
             Status.INVALID,
-            "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
+            "Fødselsnummer eller D-nummer den sykmeldt er ikke 11 tegn.",
             "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (_, metadata) ->
         !validatePersonAndDNumber11Digits(metadata.patientPersonNumber)
     }),
@@ -32,7 +32,7 @@ enum class ValidationRuleChain(
     UGYLDIG_FNR_LENGDE_BEHANDLER(
             1002,
             Status.INVALID,
-            "den som sykmeldte deg sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
+            "Fødselsnummer for den som sykmeldte deg, er ikke 11 tegn.",
             "Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (sykmelding, _) ->
         !validatePersonAndDNumber11Digits(sykmelding.behandler.fnr)
     }),
@@ -41,7 +41,7 @@ enum class ValidationRuleChain(
     UGYLDIG_FNR_PASIENT(
             1006,
             Status.INVALID,
-            "fødselsnummer/D-nummer som den sykmeldte oppgav, kan passerer ikke modulus 11 sjekk",
+            "Fødselsnummer for den sykmeldte er ikke gyldig",
             "Pasientens fødselsnummer/D-nummer kan passerer ikke modulus 11", { (_, metadata) ->
         !validatePersonAndDNumber(metadata.patientPersonNumber)
     }),
@@ -50,7 +50,7 @@ enum class ValidationRuleChain(
     UGYLDIG_FNR_BEHANDLER(
             1006,
             Status.INVALID,
-            "den sykmeldte deg sitt fødselsnummer/D-nummer kan passerer ikke modulus 11",
+            "Fødselsnummer for den sykmeldte deg, er ikke gyldig",
             "Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11", { (sykmelding, _) ->
         !validatePersonAndDNumber(sykmelding.behandler.fnr)
     }),
