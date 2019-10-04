@@ -20,21 +20,39 @@ enum class ValidationRuleChain(
 ) : Rule<RuleData<RuleMetadata>> {
 
     @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
-    UGYLDIG_FNR_LENGDE(
+    UGYLDIG_FNR_LENGDE_PASIENT(
             1002,
             Status.INVALID,
-            "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
+            "Fødselsnummer eller D-nummer den sykmeldt er ikke 11 tegn.",
             "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (_, metadata) ->
         !validatePersonAndDNumber11Digits(metadata.patientPersonNumber)
     }),
 
-    @Description("Fødselsnummer/D-nummer kan passerer ikke modulus 11")
-    UGYLDIG_FNR(
+    @Description("Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
+    UGYLDIG_FNR_LENGDE_BEHANDLER(
+            1002,
+            Status.INVALID,
+            "Fødselsnummer for den som sykmeldte deg, er ikke 11 tegn.",
+            "Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (sykmelding, _) ->
+        !validatePersonAndDNumber11Digits(sykmelding.behandler.fnr)
+    }),
+
+    @Description("Pasientens fødselsnummer/D-nummer kan passerer ikke modulus 11")
+    UGYLDIG_FNR_PASIENT(
             1006,
             Status.INVALID,
-            "Fødselsnummer/D-nummer kan passerer ikke modulus 11",
-            "Fødselsnummer/D-nummer kan passerer ikke modulus 11", { (_, metadata) ->
+            "Fødselsnummer for den sykmeldte er ikke gyldig",
+            "Pasientens fødselsnummer/D-nummer kan passerer ikke modulus 11", { (_, metadata) ->
         !validatePersonAndDNumber(metadata.patientPersonNumber)
+    }),
+
+    @Description("Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11")
+    UGYLDIG_FNR_BEHANDLER(
+            1006,
+            Status.INVALID,
+            "Fødselsnummer for den sykmeldte deg, er ikke gyldig",
+            "Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11", { (sykmelding, _) ->
+        !validatePersonAndDNumber(sykmelding.behandler.fnr)
     }),
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
@@ -42,8 +60,8 @@ enum class ValidationRuleChain(
             1101,
             Status.INVALID,
             "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
-            "Pasienten er under 13 år. Sykmelding kan ikke benyttes.", { (healthInformation, metadata) ->
-        healthInformation.perioder.sortedTOMDate().last() < extractBornDate(metadata.patientPersonNumber).plusYears(13)
+            "Pasienten er under 13 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
+        sykmelding.perioder.sortedTOMDate().last() < extractBornDate(metadata.patientPersonNumber).plusYears(13)
     }),
 
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
@@ -51,8 +69,8 @@ enum class ValidationRuleChain(
             1102,
             Status.INVALID,
             "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
-            "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (healthInformation, metadata) ->
-        healthInformation.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
+            "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
+        sykmelding.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
     }),
 
     @Description("Ukjent houved diagnosekode type")
@@ -60,9 +78,9 @@ enum class ValidationRuleChain(
             1137,
             Status.INVALID,
             "Den må ha en kjent diagnosekode.",
-            "Ukjent diagnosekode er benyttet.", { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose != null &&
-            healthInformation.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
+            "Ukjent diagnosekode er benyttet.", { (sykmelding, _) ->
+        sykmelding.medisinskVurdering.hovedDiagnose != null &&
+                sykmelding.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
     }),
 
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
@@ -70,8 +88,8 @@ enum class ValidationRuleChain(
             1132,
             Status.INVALID,
             "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
-            "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
+            "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (sykmelding, _) ->
+        sykmelding.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
@@ -80,9 +98,9 @@ enum class ValidationRuleChain(
             Status.INVALID,
             "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn.",
             "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
-            { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.annenFraversArsak == null &&
-                healthInformation.medisinskVurdering.hovedDiagnose == null
+            { (sykmelding, _) ->
+                sykmelding.medisinskVurdering.annenFraversArsak == null &&
+                        sykmelding.medisinskVurdering.hovedDiagnose == null
     }),
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
@@ -90,9 +108,9 @@ enum class ValidationRuleChain(
             1540,
             Status.INVALID,
             "Den må ha riktig kode for hoveddiagnose.",
-            "Kodeverk for hoveddiagnose er feil eller mangler.", { (healthInformation, _) ->
-        healthInformation.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
-                healthInformation.medisinskVurdering.hovedDiagnose?.let { diagnose ->
+            "Kodeverk for hoveddiagnose er feil eller mangler.", { (sykmelding, _) ->
+        sykmelding.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
+                sykmelding.medisinskVurdering.hovedDiagnose?.let { diagnose ->
             if (diagnose.isICPC2()) {
                 Diagnosekoder.icpc2.containsKey(diagnose.kode)
             } else {
@@ -107,8 +125,8 @@ enum class ValidationRuleChain(
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
             1541,
             Status.MANUAL_PROCESSING, "Det er feil i koden for bidiagnosen.",
-            "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (healthInformation, _) ->
-        !healthInformation.medisinskVurdering.biDiagnoser.all { diagnose ->
+            "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (sykmelding, _) ->
+        !sykmelding.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {
                 Diagnosekoder.icpc2.containsKey(diagnose.kode)
             } else {
@@ -165,10 +183,10 @@ enum class ValidationRuleChain(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
-            "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (healthInformation, ruleMetadata) ->
+            "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (sykmelding, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
-                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
-                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
+                sykmelding.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
+                sykmelding.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
     }),
 
     @Description("Organisasjonsnummeret som er oppgitt er ikke 9 tegn.")
