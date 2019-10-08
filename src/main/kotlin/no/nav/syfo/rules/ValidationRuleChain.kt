@@ -55,7 +55,7 @@ enum class ValidationRuleChain(
             Status.INVALID,
             "Fødselsnummer for den sykmeldte deg, er ikke gyldig",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11", { (sykmelding, _) ->
+                    "Behandlers fødselsnummer/D-nummer er ikke gyldig", { (sykmelding, _) ->
         !validatePersonAndDNumber(sykmelding.behandler.fnr)
     }),
 
