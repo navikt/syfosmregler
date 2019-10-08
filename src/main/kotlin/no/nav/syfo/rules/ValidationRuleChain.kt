@@ -135,8 +135,7 @@ enum class ValidationRuleChain(
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
             1541,
             Status.MANUAL_PROCESSING, "Det er feil i koden for bidiagnosen.",
-            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (sykmelding, _) ->
+            "Kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (sykmelding, _) ->
         !sykmelding.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {
                 Diagnosekoder.icpc2.containsKey(diagnose.kode)
