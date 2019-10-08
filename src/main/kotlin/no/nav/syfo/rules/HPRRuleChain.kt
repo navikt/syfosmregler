@@ -16,7 +16,8 @@ enum class HPRRuleChain(
             1143,
             Status.MANUAL_PROCESSING,
             "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
             { (healthInformation, behandler) ->
                 healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
                     !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
@@ -32,7 +33,8 @@ enum class HPRRuleChain(
             1402,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, behandler) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, behandler) ->
         !behandler.godkjenninger.any {
             it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv
         }
@@ -58,7 +60,8 @@ enum class HPRRuleChain(
             1407,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege", { (_, behandler) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege", { (_, behandler) ->
         !behandler.godkjenninger.any {
             it.helsepersonellkategori?.aktiv != null &&
                 it.autorisasjon?.aktiv == true && it.helsepersonellkategori.verdi != null &&
@@ -76,7 +79,8 @@ enum class HPRRuleChain(
             1519,
             Status.INVALID,
             "Den som skrev sykmeldingen mangler autorisasjon.",
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, behandler) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første sykefraværsdag", { (healthInformation, behandler) ->
         healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 84 } &&
             !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
                 HelsepersonellKategori.LEGE.verdi,
