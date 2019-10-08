@@ -95,8 +95,8 @@ enum class PeriodLogicRuleChain(
     }),
 
     @Description("Hvis sykmeldingens sluttdato er mer enn ett år i tid siden behandeletDato, avvises meldingen.")
-    VARIGHET_OVER_ETT_AAR(
-            1211,
+    OVER_ETT_AAR_MELLOM_BEHANDLETDATO_OG_FOMDATO(
+            9999,
             Status.INVALID,
             "Den er over 1 år siden behandletDato",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
