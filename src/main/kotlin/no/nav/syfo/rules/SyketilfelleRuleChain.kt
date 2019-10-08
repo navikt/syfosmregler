@@ -15,7 +15,8 @@ enum class SyketilfelleRuleChain(
             1204,
             Status.INVALID,
             "Sykmeldingen er tilbakedatert uten at det er opplyst når du kontaktet den som sykmeldte deg.",
-            "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.1 er ikke utfylt",
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.1 er ikke utfylt",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
@@ -27,7 +28,8 @@ enum class SyketilfelleRuleChain(
             1204,
             Status.INVALID,
             "Sykmeldingen er tilbakedatert uten at det er opplyst når du kontaktet den som sykmeldte deg.",
-            "Første sykmelding er tilbakedatert uten at dato for kontakt er angitt eller felt 11.1 er ikke utfylt",
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Første sykmelding er tilbakedatert uten at dato for kontakt er angitt eller felt 11.1 er ikke utfylt",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                         ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
@@ -40,7 +42,8 @@ enum class SyketilfelleRuleChain(
             null,
             Status.INVALID,
             "Sykmeldingen er tilbakedatert uten at det er opplyst når du kontaktet den som sykmeldte deg.",
-            "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato og felt 11.1 er ikke utfylt",
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra signaturdato og felt 11.1 er ikke utfylt",
             { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
                 !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadataAndForstegangsSykemelding.ruleMetadata.signatureDate &&

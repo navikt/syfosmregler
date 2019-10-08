@@ -24,7 +24,8 @@ enum class ValidationRuleChain(
             1002,
             Status.INVALID,
             "Fødselsnummer eller D-nummer den sykmeldt er ikke 11 tegn.",
-            "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (_, metadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (_, metadata) ->
         !validatePersonAndDNumber11Digits(metadata.patientPersonNumber)
     }),
 
@@ -33,7 +34,8 @@ enum class ValidationRuleChain(
             1002,
             Status.INVALID,
             "Fødselsnummer for den som sykmeldte deg, er ikke 11 tegn.",
-            "Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (sykmelding, _) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.", { (sykmelding, _) ->
         !validatePersonAndDNumber11Digits(sykmelding.behandler.fnr)
     }),
 
@@ -42,7 +44,8 @@ enum class ValidationRuleChain(
             1006,
             Status.INVALID,
             "Fødselsnummer for den sykmeldte er ikke gyldig",
-            "Pasientens fødselsnummer/D-nummer kan passerer ikke modulus 11", { (_, metadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Pasientens fødselsnummer/D-nummer er ikke gyldig", { (_, metadata) ->
         !validatePersonAndDNumber(metadata.patientPersonNumber)
     }),
 
@@ -51,7 +54,8 @@ enum class ValidationRuleChain(
             1006,
             Status.INVALID,
             "Fødselsnummer for den sykmeldte deg, er ikke gyldig",
-            "Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11", { (sykmelding, _) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Behandlers fødselsnummer/D-nummer er ikke gyldig", { (sykmelding, _) ->
         !validatePersonAndDNumber(sykmelding.behandler.fnr)
     }),
 
@@ -60,7 +64,8 @@ enum class ValidationRuleChain(
             1101,
             Status.INVALID,
             "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
-            "Pasienten er under 13 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Pasienten er under 13 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
         sykmelding.perioder.sortedTOMDate().last() < extractBornDate(metadata.patientPersonNumber).plusYears(13)
     }),
 
@@ -69,7 +74,8 @@ enum class ValidationRuleChain(
             1102,
             Status.INVALID,
             "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
-            "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
         sykmelding.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
     }),
 
@@ -78,7 +84,8 @@ enum class ValidationRuleChain(
             1137,
             Status.INVALID,
             "Den må ha en kjent diagnosekode.",
-            "Ukjent diagnosekode er benyttet.", { (sykmelding, _) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Ukjent diagnosekode er benyttet.", { (sykmelding, _) ->
         sykmelding.medisinskVurdering.hovedDiagnose != null &&
                 sykmelding.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
     }),
@@ -88,7 +95,8 @@ enum class ValidationRuleChain(
             1132,
             Status.INVALID,
             "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
-            "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (sykmelding, _) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (sykmelding, _) ->
         sykmelding.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
     }),
 
@@ -97,7 +105,8 @@ enum class ValidationRuleChain(
             1133,
             Status.INVALID,
             "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn.",
-            "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
             { (sykmelding, _) ->
                 sykmelding.medisinskVurdering.annenFraversArsak == null &&
                         sykmelding.medisinskVurdering.hovedDiagnose == null
@@ -108,7 +117,8 @@ enum class ValidationRuleChain(
             1540,
             Status.INVALID,
             "Den må ha riktig kode for hoveddiagnose.",
-            "Kodeverk for hoveddiagnose er feil eller mangler.", { (sykmelding, _) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Kodeverk for hoveddiagnose er feil eller mangler.", { (sykmelding, _) ->
         sykmelding.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
                 sykmelding.medisinskVurdering.hovedDiagnose?.let { diagnose ->
             if (diagnose.isICPC2()) {
@@ -125,7 +135,7 @@ enum class ValidationRuleChain(
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
             1541,
             Status.MANUAL_PROCESSING, "Det er feil i koden for bidiagnosen.",
-            "Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (sykmelding, _) ->
+            "Kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (sykmelding, _) ->
         !sykmelding.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {
                 Diagnosekoder.icpc2.containsKey(diagnose.kode)
@@ -135,55 +145,23 @@ enum class ValidationRuleChain(
         }
     }),
 
-    // TODO: Vi trenger å kunne finne syketilfelle start dato for å gjøre disse beregningene. Fom i beregningen skal være syketilfelle start dato.
-//    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 8.17, 39 uker før regelsettversjon \"2\" er innført skal sykmeldingen avvises")
-//    MANGLENDE_PAKREVDE_DYNAMISKE_SPORSMAL(
-//            1707,
-//            Status.INVALID,
-//            "Den må inneholde utdypende opplysninger når du har vært sykmeldt lenge",
-//            "Utdypende opplysninger mangler. ", { (healthInformation, ruleMetadata) ->
-//        ruleMetadata.rulesetVersion in arrayOf(null, "", "1") &&
-//                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 56 } &&
-//                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_2) != true
-//    }),
-//
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
     UGYLDIG_REGELSETTVERSJON(
             1708,
             Status.INVALID,
             "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
-            "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Feil regelsett er brukt i sykmeldingen.", { (_, ruleMetadata) ->
         ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
     }),
-//
-//    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 7 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-//    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_7(
-//            1709,
-//            Status.INVALID,
-//            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 7 uker til sammen.",
-//            "Utdypende opplysninger som kreves ved uke 7 mangler. ", { (healthInformation, ruleMetadata) ->
-//        ruleMetadata.rulesetVersion in arrayOf("2") &&
-//                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 49 } &&
-//                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_3) != true
-//    }),
-//
-//    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 17 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
-//    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_17(
-//            1709,
-//            Status.INVALID,
-//            "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 17 uker til sammen.",
-//            "Utdypende opplysninger som kreves ved uke 17 mangler.", { (healthInformation, ruleMetadata) ->
-//        ruleMetadata.rulesetVersion in arrayOf("2") &&
-//                healthInformation.perioder.any { (it.fom..it.tom).daysBetween() > 119 } &&
-//                healthInformation.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_4) != true
-//    }),
 
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
             1709,
             Status.INVALID,
             "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
-            "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (sykmelding, ruleMetadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Utdypende opplysninger som kreves ved uke 39 mangler. ", { (sykmelding, ruleMetadata) ->
         ruleMetadata.rulesetVersion in arrayOf("2") &&
                 sykmelding.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
                 sykmelding.utdypendeOpplysninger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
@@ -194,7 +172,8 @@ enum class ValidationRuleChain(
             9999,
             Status.INVALID,
             "Den må ha riktig organisasjonsnummer.",
-            "Feil format på organisasjonsnummer. Dette skal være 9 sifre..", { (_, metadata) ->
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Feil format på organisasjonsnummer. Dette skal være 9 sifre..", { (_, metadata) ->
         metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
     }),
 }

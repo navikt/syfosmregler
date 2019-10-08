@@ -167,7 +167,7 @@ object PeriodLogicRuleChainSpek : Spek({
                     behandletTidspunkt = LocalDateTime.now().minusDays(1)
             )
 
-            PeriodLogicRuleChain.VARIGHET_OVER_ETT_AAR(ruleData(healthInformation)) shouldEqual true
+            PeriodLogicRuleChain.OVER_ETT_AAR_MELLOM_BEHANDLETDATO_OG_FOMDATO(ruleData(healthInformation)) shouldEqual true
         }
 
         it("Should check rule VARIGHET_OVER_ETT_AAR, should NOT trigger rule") {
@@ -180,7 +180,7 @@ object PeriodLogicRuleChainSpek : Spek({
                     behandletTidspunkt = LocalDateTime.now()
             )
 
-            PeriodLogicRuleChain.VARIGHET_OVER_ETT_AAR(ruleData(healthInformation)) shouldEqual false
+            PeriodLogicRuleChain.OVER_ETT_AAR_MELLOM_BEHANDLETDATO_OG_FOMDATO(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule TOTAL_VARIGHET_OVER_ETT_AAR, should trigger rule") {
