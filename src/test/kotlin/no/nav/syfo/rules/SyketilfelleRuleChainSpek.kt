@@ -32,7 +32,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -56,7 +57,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -80,7 +82,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -102,7 +105,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -125,7 +129,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().minusMonths(1).minusDays(1),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().minusMonths(1).minusDays(1),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -150,7 +155,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().minusMonths(1),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().minusMonths(1),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -176,7 +182,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().minusMonths(2),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().minusMonths(2),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -204,6 +211,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
                             signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now(),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -231,6 +239,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
                             signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now(),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -257,7 +266,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().plusDays(30),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().plusDays(30),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -284,7 +294,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().plusDays(29),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().plusDays(29),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -308,7 +319,8 @@ object SyketilfelleRuleChainSpek : Spek({
             val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
-                            signatureDate = LocalDateTime.now().plusDays(30),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().plusDays(30),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",

@@ -16,9 +16,10 @@ object PeriodLogicRuleChainSpek : Spek({
         healthInformation: Sykmelding,
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
+        behandletTidspunkt: LocalDateTime = LocalDateTime.now(),
         patientPersonNumber: String = "1234567891",
         tssid: String? = "1314445"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, "1", "123456789", tssid))
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, "1", "123456789", tssid))
 
     describe("Testing validation rules and checking the rule outcomes") {
 
