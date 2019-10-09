@@ -29,11 +29,12 @@ object ValidationRuleChainSpek : Spek({
         healthInformation: Sykmelding,
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
+        behandletTidspunkt: LocalDateTime = LocalDateTime.now(),
         patientPersonNumber: String = "1234567891",
         rulesetVersion: String = "1",
         legekontorOrgNr: String = "123456789",
         tssid: String? = "1314445"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid))
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid))
 
     describe("Testing validation rules and checking the rule outcomes") {
 

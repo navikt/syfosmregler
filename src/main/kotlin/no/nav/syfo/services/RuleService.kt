@@ -52,6 +52,7 @@ class RuleService(
         val ruleMetadata = RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
                 signatureDate = receivedSykmelding.sykmelding.signaturDato,
+                behandletTidspunkt = receivedSykmelding.sykmelding.behandletTidspunkt,
                 patientPersonNumber = receivedSykmelding.personNrPasient,
                 rulesetVersion = receivedSykmelding.rulesetVersion,
                 legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
