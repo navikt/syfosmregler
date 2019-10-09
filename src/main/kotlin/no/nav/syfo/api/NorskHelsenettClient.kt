@@ -12,12 +12,14 @@ import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.util.KtorExperimentalAPI
 import java.io.IOException
+import net.logstash.logback.argument.StructuredArguments.fields
+import no.nav.syfo.LoggingMeta
 import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI
 class NorskHelsenettClient(private val endpointUrl: String, private val accessTokenClient: AccessTokenClient, private val resourceId: String, private val httpClient: HttpClient) {
 
-    suspend fun finnBehandler(behandlerFnr: String, msgId: String): Behandler? = retry(
+    suspend fun finnBehandler(behandlerFnr: String, msgId: String, loggingMeta: LoggingMeta): Behandler? = retry(
         callName = "finnbehandler",
         retryIntervals = arrayOf(500L, 1000L, 1000L)) {
         log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
@@ -32,21 +34,21 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
         }
         when (httpResponse.status) {
             InternalServerError -> {
-                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}", msgId)
+                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}, {}", msgId, fields(loggingMeta))
                 throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
             }
 
             BadRequest -> {
-                log.error("BehandlerFnr mangler i request for msgId {}", msgId)
+                log.error("BehandlerFnr mangler i request for msgId {}, {}", msgId, fields(loggingMeta))
                 return@retry null
             }
 
             NotFound -> {
-                log.error("BehandlerFnr ikke funnet {}", msgId)
+                log.error("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
                 return@retry null
             }
             else -> {
-                log.info("Hentet behandler for msgId {}", msgId)
+                log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta))
                 httpResponse.call.response.receive<Behandler>()
             }
         }
@@ -54,7 +56,8 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
 }
 
 data class Behandler(
-    val godkjenninger: List<Godkjenning>
+    val godkjenninger: List<Godkjenning>,
+    val hprNummer: Int? = null
 )
 
 data class Godkjenning(

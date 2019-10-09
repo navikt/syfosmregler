@@ -18,6 +18,7 @@ import java.io.IOException
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.LoggingMeta
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -50,7 +51,8 @@ internal class NorskHelsenettClientTest : Spek({
             coEvery { httpClientCall.response.receive<Behandler>() } returns Behandler(listOf(Godkjenning()))
 
             runBlocking {
-                val behandler = norskHelsenettClient.finnBehandler(fnr, "123")
+                val behandler = norskHelsenettClient.finnBehandler(fnr, "123",
+                        LoggingMeta("", "", "123", ""))
                 behandler shouldEqual Behandler(listOf(Godkjenning()))
             }
         }
@@ -59,7 +61,8 @@ internal class NorskHelsenettClientTest : Spek({
                     DefaultHttpResponse(httpClientCall,
                             respond("Not found", HttpStatusCode.NotFound)))
             runBlocking {
-                val behandler = norskHelsenettClient.finnBehandler(fnr, "1")
+                val behandler = norskHelsenettClient.finnBehandler(fnr, "1",
+                        LoggingMeta("", "", "1", ""))
                 behandler shouldEqual null
             }
         }
@@ -72,7 +75,8 @@ internal class NorskHelsenettClientTest : Spek({
                             HttpStatusCode.InternalServerError))) andThen getDefaultResponse(httpClientCall)
 
             runBlocking {
-                val behandler = norskHelsenettClient.finnBehandler(fnr, "1")
+                val behandler = norskHelsenettClient.finnBehandler(fnr, "1",
+                        LoggingMeta("", "", "1", ""))
                 behandler shouldEqual Behandler(listOf(Godkjenning()))
                 coVerify(exactly = 2) { httpClient.execute(any()) }
             }
@@ -82,7 +86,8 @@ internal class NorskHelsenettClientTest : Spek({
             coEvery { httpClientCall.receive(any()) } returns(
                     DefaultHttpResponse(httpClientCall, respond("InternalServerErrror", HttpStatusCode.InternalServerError)))
             runBlocking {
-                assertFailsWith<IOException> { norskHelsenettClient.finnBehandler(fnr, "1") }
+                assertFailsWith<IOException> { norskHelsenettClient.finnBehandler(fnr, "1",
+                        LoggingMeta("", "", "123", "")) }
                 coVerify(exactly = 4) { httpClient.execute(any()) }
             }
         }

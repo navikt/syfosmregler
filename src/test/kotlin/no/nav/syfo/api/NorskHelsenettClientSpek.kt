@@ -24,6 +24,7 @@ import io.mockk.mockk
 import java.net.ServerSocket
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.LoggingMeta
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe
 import org.spekframework.spek2.Spek
@@ -74,7 +75,10 @@ object NorskHelsenettClientSpek : Spek({
         it("Får hente behandler som finnes") {
             var behandler: Behandler? = null
             runBlocking {
-                behandler = norskHelsenettClient.finnBehandler("behandler", "sykmeldingsId")
+                behandler = norskHelsenettClient.finnBehandler(
+                        "behandler",
+                        "sykmeldingsId",
+                        LoggingMeta("", "", "sykmeldingsId", ""))
             }
 
             behandler shouldNotBe null
@@ -83,7 +87,10 @@ object NorskHelsenettClientSpek : Spek({
         it("Returnerer null for behandler som ikke finnes") {
             var behandler: Behandler? = null
             runBlocking {
-                behandler = norskHelsenettClient.finnBehandler("behandlerFinnesIkke", "sykmeldingsId")
+                behandler = norskHelsenettClient.finnBehandler(
+                        "behandlerFinnesIkke",
+                        "sykmeldingsId",
+                        LoggingMeta("", "", "sykmeldingsId", ""))
             }
 
             behandler shouldEqual null

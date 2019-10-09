@@ -72,7 +72,7 @@ class RuleService(
             syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId)
         }
 
-        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId) ?: return ValidationResult(
+        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId, loggingMeta = loggingMeta) ?: return ValidationResult(
             status = Status.INVALID,
             ruleHits = listOf(RuleInfo(
                 ruleName = "BEHANDLER_NOT_IN_HPR",
@@ -81,19 +81,7 @@ class RuleService(
                 ruleStatus = Status.INVALID))
         )
 
-        // TODO kun datagrunnlag for å evt legge til ny regel på tannleger, slette denne if-setningen etterpå
-        if (behandler.godkjenninger.any {
-                it.autorisasjon?.aktiv == true &&
-                    it.helsepersonellkategori?.aktiv == true &&
-                    it.helsepersonellkategori.verdi in listOf("TL") &&
-                    receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode != null &&
-                    receivedSykmelding.sykmelding.perioder.isNotEmpty()
-            }) {
-            log.info("Tannlegestatistikk: " +
-                "fom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.fom} " +
-                "tom: ${receivedSykmelding.sykmelding.perioder.firstOrNull()?.tom} " +
-                "hovedDiagnose: ${receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode }")
-        }
+        log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}")
 
         val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
                 ruleMetadata = ruleMetadata, erNyttSyketilfelle = erNyttSyketilfelleDeferred.await())
