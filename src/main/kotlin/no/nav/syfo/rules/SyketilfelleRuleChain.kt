@@ -8,8 +8,8 @@ enum class SyketilfelleRuleChain(
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
-    override val predicate: (RuleData<RuleMetadataAndForstegangsSykemelding>) -> Boolean
-) : Rule<RuleData<RuleMetadataAndForstegangsSykemelding>> {
+    override val predicate: (RuleData<RuleMetadataSykmelding>) -> Boolean
+) : Rule<RuleData<RuleMetadataSykmelding>> {
     @Description("Første gangs sykmelding er tilbakedatert mer enn 8 dager.")
     TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(
             1204,
@@ -17,9 +17,9 @@ enum class SyketilfelleRuleChain(
             "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt",
-            { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
-                ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+            { (healthInformation, ruleMetadataSykmelding) ->
+                ruleMetadataSykmelding.erNyttSyketilfelle &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -29,9 +29,9 @@ enum class SyketilfelleRuleChain(
         Status.MANUAL_PROCESSING,
         "Første sykmelding er tilbakedatert og årsak for tilbakedatering er angitt.",
         "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
-        { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
-            ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+        { (healthInformation, ruleMetadataSykmelding) ->
+            ruleMetadataSykmelding.erNyttSyketilfelle &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
         }),
 
@@ -42,10 +42,10 @@ enum class SyketilfelleRuleChain(
         "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Første sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
-        { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
-            ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+        { (healthInformation, ruleMetadataSykmelding) ->
+            ruleMetadataSykmelding.erNyttSyketilfelle &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
                 (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
         }),
 
@@ -56,9 +56,9 @@ enum class SyketilfelleRuleChain(
             "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra tidspunkt for behandling og felt 11.2 er ikke utfylt",
-            { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
-                !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt &&
+            { (healthInformation, ruleMetadataSykmelding) ->
+                !ruleMetadataSykmelding.erNyttSyketilfelle &&
+                healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -68,9 +68,9 @@ enum class SyketilfelleRuleChain(
             Status.MANUAL_PROCESSING,
             "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
             "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
-            { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
-                !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                        ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
+            { (healthInformation, ruleMetadataSykmelding) ->
+                !ruleMetadataSykmelding.erNyttSyketilfelle &&
+                        ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -81,15 +81,15 @@ enum class SyketilfelleRuleChain(
         "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
-        { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
-            !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
-                ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
+        { (healthInformation, ruleMetadataSykmelding) ->
+            !ruleMetadataSykmelding.erNyttSyketilfelle &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
                 (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
         }),
 }
 
-data class RuleMetadataAndForstegangsSykemelding(
+data class RuleMetadataSykmelding(
     val ruleMetadata: RuleMetadata,
     val erNyttSyketilfelle: Boolean
 )

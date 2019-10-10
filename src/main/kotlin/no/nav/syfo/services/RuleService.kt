@@ -23,7 +23,7 @@ import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.PostDiskresjonskodeRuleChain
 import no.nav.syfo.rules.Rule
-import no.nav.syfo.rules.RuleMetadataAndForstegangsSykemelding
+import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
@@ -83,7 +83,7 @@ class RuleService(
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}")
 
-        val ruleMetadataAndForstegangsSykemelding = RuleMetadataAndForstegangsSykemelding(
+        val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = ruleMetadata, erNyttSyketilfelle = erNyttSyketilfelleDeferred.await())
 
         val results = listOf(
@@ -92,7 +92,7 @@ class RuleService(
                 HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, behandler),
                 PostDiskresjonskodeRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patientDiskresjonskodeDeferred.await()),
                 LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
-                SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataAndForstegangsSykemelding)
+                SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
         ).flatten()
 
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
