@@ -41,7 +41,7 @@ enum class SyketilfelleRuleChain(
         Status.INVALID,
         "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Første sykmelding er tilbakedatert uten at dato for kontakt er angitt eller felt 11.2 er ikke utfylt",
+            "Første sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
         { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
             ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
@@ -80,7 +80,7 @@ enum class SyketilfelleRuleChain(
         Status.INVALID,
         "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Sykmelding er tilbakedatert uten at dato for kontakt er angitt eller felt 11.2 er ikke utfylt",
+            "Sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
         { (healthInformation, ruleMetadataAndForstegangsSykemelding) ->
             !ruleMetadataAndForstegangsSykemelding.erNyttSyketilfelle &&
                 ruleMetadataAndForstegangsSykemelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
