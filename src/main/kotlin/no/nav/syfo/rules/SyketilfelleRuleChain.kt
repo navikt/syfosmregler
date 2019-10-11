@@ -19,7 +19,7 @@ enum class SyketilfelleRuleChain(
                     "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt",
             { (healthInformation, ruleMetadataSykmelding) ->
                 ruleMetadataSykmelding.erNyttSyketilfelle &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -31,7 +31,7 @@ enum class SyketilfelleRuleChain(
         "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
         { (healthInformation, ruleMetadataSykmelding) ->
             ruleMetadataSykmelding.erNyttSyketilfelle &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
         }),
 
@@ -44,8 +44,8 @@ enum class SyketilfelleRuleChain(
             "Første sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
         { (healthInformation, ruleMetadataSykmelding) ->
             ruleMetadataSykmelding.erNyttSyketilfelle &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(8) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(4) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() <= healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
         }),
 
@@ -58,7 +58,7 @@ enum class SyketilfelleRuleChain(
                     "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra tidspunkt for behandling og felt 11.2 er ikke utfylt",
             { (healthInformation, ruleMetadataSykmelding) ->
                 !ruleMetadataSykmelding.erNyttSyketilfelle &&
-                healthInformation.perioder.sortedFOMDate().first().minusMonths(1).atStartOfDay() > ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt &&
+                healthInformation.perioder.sortedFOMDate().first().minusMonths(1) > ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -70,7 +70,7 @@ enum class SyketilfelleRuleChain(
             "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
             { (healthInformation, ruleMetadataSykmelding) ->
                 !ruleMetadataSykmelding.erNyttSyketilfelle &&
-                        ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
+                        ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
             }),
 
@@ -83,8 +83,8 @@ enum class SyketilfelleRuleChain(
             "Sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
         { (healthInformation, ruleMetadataSykmelding) ->
             !ruleMetadataSykmelding.erNyttSyketilfelle &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt > healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(4) &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt <= healthInformation.perioder.sortedFOMDate().first().atStartOfDay().plusDays(30) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(4) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() <= healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                 (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
         }),
 }
