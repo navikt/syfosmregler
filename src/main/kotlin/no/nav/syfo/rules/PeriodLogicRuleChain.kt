@@ -89,9 +89,9 @@ enum class PeriodLogicRuleChain(
             Status.INVALID,
             "Sykmeldingen er datert mer enn 30 dager fram i tid.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.",
-            { (healthInformation, ruleMetadata) ->
-        healthInformation.perioder.sortedFOMDate().first().atStartOfDay() > ruleMetadata.signatureDate.plusDays(30)
+                    "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
+            { (sykmelding, ruleMetadata) ->
+                sykmelding.perioder.sortedFOMDate().first() > ruleMetadata.behandletTidspunkt.plusDays(30).toLocalDate()
     }),
 
     @Description("Hvis sykmeldingens sluttdato er mer enn ett år i tid siden behandeletDato, avvises meldingen.")

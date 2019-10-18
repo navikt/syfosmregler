@@ -13,13 +13,13 @@ import org.spekframework.spek2.style.specification.describe
 
 object PeriodLogicRuleChainSpek : Spek({
     fun ruleData(
-        healthInformation: Sykmelding,
+        sykmelding: Sykmelding,
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
         behandletTidspunkt: LocalDateTime = LocalDateTime.now(),
         patientPersonNumber: String = "1234567891",
         tssid: String? = "1314445"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, "1", "123456789", tssid))
+    ): RuleData<RuleMetadata> = RuleData(sykmelding, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, "1", "123456789", tssid))
 
     describe("Testing validation rules and checking the rule outcomes") {
 
@@ -138,24 +138,28 @@ object PeriodLogicRuleChainSpek : Spek({
         }
 
         it("Should check rule FREMDATERT, should trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
+            val sykmelding = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.now().plusDays(31),
                             tom = LocalDate.now().plusDays(37)
                     )
-            ))
+            ),
+                    behandletTidspunkt = LocalDateTime.now()
+            )
 
-            PeriodLogicRuleChain.FREMDATERT(ruleData(healthInformation)) shouldEqual true
+            PeriodLogicRuleChain.FREMDATERT(ruleData(sykmelding)) shouldEqual true
         }
 
         it("Should check rule FREMDATERT, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
+            val sykmelding = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.now().plusDays(29),
                             tom = LocalDate.now().plusDays(31)
-                    )))
+                    )),
+                    behandletTidspunkt = LocalDateTime.now().minusDays(1)
+            )
 
-            PeriodLogicRuleChain.FREMDATERT(ruleData(healthInformation)) shouldEqual false
+            PeriodLogicRuleChain.FREMDATERT(ruleData(sykmelding)) shouldEqual false
         }
 
         it("Should check rule VARIGHET_OVER_ETT_AAR, should trigger rule") {
