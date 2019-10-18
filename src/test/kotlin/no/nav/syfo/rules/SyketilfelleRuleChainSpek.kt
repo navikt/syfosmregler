@@ -394,7 +394,6 @@ object SyketilfelleRuleChainSpek : Spek({
             SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
-
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
