@@ -44,7 +44,7 @@ class NorskHelsenettClient(private val endpointUrl: String, private val accessTo
             }
 
             NotFound -> {
-                log.error("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
+                log.warn("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
                 return@retry null
             }
             else -> {
