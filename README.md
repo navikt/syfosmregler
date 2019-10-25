@@ -1,3 +1,5 @@
+[![Build status](https://github.com/navikt/syfosmregler/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)](https://github.com/navikt/syfosmregler/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)
+
 # SYFO sykemelding regler
 This project contains just the rules for validating whether or not a user is supposed to get paid sick leave
 
@@ -29,9 +31,10 @@ Creating a docker image should be as simple as `docker build -t syfosmregler .`
 
 ## Contact us
 ### Code/project related questions can be sent to
-* Kevin Sillerud, `kevin.sillerud@nav.no`
-* Anders Østby, `anders.ostby@nav.no`
 * Joakim Kartveit, `joakim.kartveit@nav.no`
+* Andreas Nilsen, `andreas.nilsen@nav.no`
+* Sebastian Knudsen, `sebastian.knudsen@nav.no`
+* Tia Firing, `tia.firing@nav.no`
 
 ### For NAV employees
-We are available at the Slack channel #barken
+We are available at the Slack channel #team-sykmelding
