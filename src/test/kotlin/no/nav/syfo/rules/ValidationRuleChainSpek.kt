@@ -221,7 +221,8 @@ object ValidationRuleChainSpek : Spek({
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
                             system = "2.16.578.1.12.4.1.1.7170",
-                            kode = "A62"
+                            kode = "A62",
+                            tekst = "Brudd legg/ankel"
                     )
             ))
 
@@ -247,7 +248,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule UKJENT_DIAGNOSEKODETYPE,should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.9999", kode = "A09")
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.9999", kode = "A09", tekst = "Brudd legg/ankel")
             ))
 
             ValidationRuleChain.UKJENT_DIAGNOSEKODETYPE(ruleData(healthInformation)) shouldEqual true
@@ -261,7 +262,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7110", kode = "Z09")
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7110", kode = "Z09", tekst = "Brudd legg/ankel")
             ))
 
             ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual true
@@ -269,7 +270,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7110", kode = "Z09"))
+                    bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7110", kode = "Z09", tekst = "Brudd legg/ankel"))
             ))
 
             ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldEqual true
@@ -277,7 +278,7 @@ object ValidationRuleChainSpek : Spek({
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, correct kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L92"))
+                    bidiagnoser = listOf(Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L92", tekst = "Brudd legg/ankel"))
             ))
 
             ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldEqual false

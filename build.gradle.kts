@@ -15,7 +15,7 @@ val ktorVersion = "1.2.5"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97"
+val smCommonVersion = "1.bba46d9"
 val spekVersion = "2.0.6"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val cxfVersion = "3.2.7"
@@ -37,12 +37,22 @@ plugins {
     id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
+val githubUser: String by project
+val githubPassword: String by project
+
 repositories {
     mavenCentral()
     jcenter()
     maven(url = "https://dl.bintray.com/kotlin/ktor")
     maven(url = "https://dl.bintray.com/spekframework/spek-dev")
     maven(url = "https://kotlin.bintray.com/kotlinx")
+    maven {
+        url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
+        credentials {
+            username = githubUser
+            password = githubPassword
+        }
+    }
     maven(url = "https://oss.sonatype.org/content/groups/staging/")
 }
 
@@ -62,12 +72,12 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
 
-    implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-ws:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-rules:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-diagnosis-codes:$smCommonVersion")
+    implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
+    implementation("no.nav.helse:syfosm-common-networking:$smCommonVersion")
+    implementation("no.nav.helse:syfosm-common-rest-sts:$smCommonVersion")
+    implementation("no.nav.helse:syfosm-common-ws:$smCommonVersion")
+    implementation("no.nav.helse:syfosm-common-rules:$smCommonVersion")
+    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")

@@ -105,7 +105,7 @@ object HPRRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "S82")
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "S82", tekst = "Brudd legg/ankel")
             ))
             val behandler = Behandler(listOf(Godkjenning(
                 autorisasjon = Kode(
@@ -125,7 +125,7 @@ object HPRRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                            hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
+                            hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02", tekst = "Brudd legg/ankel")
                     ))
             val behandler = Behandler(listOf(Godkjenning(
                 autorisasjon = Kode(
@@ -228,7 +228,7 @@ object HPRRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "A92")
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "A92", tekst = "Brudd legg/ankel")
             ))
 
             val behandler = Behandler(listOf(Godkjenning(
@@ -249,7 +249,7 @@ object HPRRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02", tekst = "Brudd legg/ankel")
             ))
 
             val behandler = Behandler(listOf(Godkjenning(
@@ -281,7 +281,7 @@ object HPRRuleChainSpek : Spek({
 
         it("Should check rule BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L, should NOT trigger rule") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02")
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L02", tekst = "Brudd legg/ankel")
             ))
 
             val behandler = Behandler(listOf(Godkjenning(
