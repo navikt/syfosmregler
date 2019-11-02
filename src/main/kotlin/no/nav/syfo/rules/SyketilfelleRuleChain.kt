@@ -19,7 +19,7 @@ enum class SyketilfelleRuleChain(
                     "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt",
             { (healthInformation, ruleMetadataSykmelding) ->
                 ruleMetadataSykmelding.erNyttSyketilfelle &&
-                (ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) ||
+                (ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
             }),
 
