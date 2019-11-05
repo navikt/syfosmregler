@@ -126,7 +126,7 @@ enum class ValidationRuleChain(
             } else {
                 Diagnosekoder.icd10.containsKey(diagnose.kode)
             }
-        } != true
+        } != true && sykmelding.medisinskVurdering.annenFraversArsak == null
     }),
 
     // Revurder regel når IT ikkje lenger skal brukes
