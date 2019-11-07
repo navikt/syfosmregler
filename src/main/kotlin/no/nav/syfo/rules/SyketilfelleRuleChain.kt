@@ -46,7 +46,7 @@ enum class SyketilfelleRuleChain(
             ruleMetadataSykmelding.erNyttSyketilfelle &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(4) &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() <= healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
-                (healthInformation.kontaktMedPasient.kontaktDato == null || healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
+                (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
         }),
 
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra behandlet-tidspunkt. Skal telles.")

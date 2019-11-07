@@ -177,7 +177,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     tom = LocalDate.of(2019, 1, 20)
                 )
             ),
-                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "")
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = null)
             )
 
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
@@ -209,7 +209,7 @@ object SyketilfelleRuleChainSpek : Spek({
                 ruleMetadata = RuleMetadata(
                     receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
-                    behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON),
+                    behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
@@ -240,6 +240,31 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435"
                 ), erNyttSyketilfelle = true
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
+        it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                    generatePeriode(
+                            fom = LocalDate.of(2019, 10, 30),
+                            tom = LocalDate.of(2019, 11, 17)
+                    )
+            ),
+                    kontaktMedPasient = KontaktMedPasient(kontaktDato = LocalDate.of(2019, 10, 30), begrunnelseIkkeKontakt = null)
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = LocalDateTime.now(),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 11, 4), LocalTime.NOON),
+                            patientPersonNumber = "1232345244",
+                            rulesetVersion = "2",
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435"
+                    ), erNyttSyketilfelle = true
             )
 
             SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
