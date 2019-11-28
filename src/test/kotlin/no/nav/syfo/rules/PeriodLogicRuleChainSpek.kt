@@ -262,6 +262,18 @@ object PeriodLogicRuleChainSpek : Spek({
             PeriodLogicRuleChain.AVVENTENDE_SYKMELDING_KOMBINERT(ruleData(healthInformation)) shouldEqual false
         }
 
+        it("Should check rule AVVENTENDE_SYKMELDING_KOMBINERT, should NOT trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                    generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(5),
+                            avventendeInnspillTilArbeidsgiver = "Jobbe"
+                    )
+            ))
+
+            PeriodLogicRuleChain.AVVENTENDE_SYKMELDING_KOMBINERT(ruleData(healthInformation)) shouldEqual false
+        }
+
         it("Should check rule MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER, should trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
