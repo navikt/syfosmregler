@@ -132,7 +132,7 @@ enum class PeriodLogicRuleChain(
     @Description("Hvis avventende sykmelding er funnet og det finnes en eller flere perioder")
     AVVENTENDE_SYKMELDING_KOMBINERT(
             9999,
-            Status.MANUAL_PROCESSING,
+            Status.INVALID,
             "En avventende sykmelding kan bare inneholde én periode.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Avventende sykmelding kan ikke inneholde flere perioder.",
