@@ -129,7 +129,7 @@ enum class PeriodLogicRuleChain(
                 healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusDays(1)
             }),
 
-    @Description("Hvis avventende sykmelding er funnet og det finnes en eller flere perioder")
+    @Description("Hvis avventende sykmelding er funnet og det finnes flere perioder")
     AVVENTENDE_SYKMELDING_KOMBINERT(
             9999,
             Status.INVALID,
