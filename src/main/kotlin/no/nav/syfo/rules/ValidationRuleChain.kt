@@ -129,13 +129,12 @@ enum class ValidationRuleChain(
         } != true && sykmelding.medisinskVurdering.annenFraversArsak == null
     }),
 
-    // Revurder regel når IT ikkje lenger skal brukes
-    // Her mener jeg fremdeles at vi skal nulle ut bidiagnosen dersom den er feil - ikke avvise sykmeldingen!!
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
             1541,
-            Status.MANUAL_PROCESSING, "Det er feil i koden for bidiagnosen.",
-            "Kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.", { (sykmelding, _) ->
+            Status.INVALID, "Det er brukt eit ukjent kodeverk for bidiagnosen.",
+            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+                    "Kodeverk for bidiagnose er ikke angitt eller korrekt", { (sykmelding, _) ->
         !sykmelding.medisinskVurdering.biDiagnoser.all { diagnose ->
             if (diagnose.isICPC2()) {
                 Diagnosekoder.icpc2.containsKey(diagnose.kode)
