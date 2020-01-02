@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransf
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
-version = "1.0.22"
+version = "1.0.0"
 
 val coroutinesVersion = "1.1.1"
 val javaxActivationVersion = "1.1.1"
@@ -11,11 +11,11 @@ val jacksonVersion = "2.9.8"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kluentVersion = "1.39"
-val ktorVersion = "1.2.5"
+val ktorVersion = "1.2.6"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.bba46d9"
+val smCommonVersion = "1.7bf5e6f"
 val spekVersion = "2.0.6"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val cxfVersion = "3.2.7"
@@ -31,10 +31,10 @@ val diskresjonskodeV1Version= "1.2019.07.11-06.47-b55f47790a9d"
 
 plugins {
     java
-    kotlin("jvm") version "1.3.50"
-    id("org.jmailen.kotlinter") version "2.1.0"
+    kotlin("jvm") version "1.3.61"
+    id("org.jmailen.kotlinter") version "2.2.0"
     id("com.diffplug.gradle.spotless") version "3.24.0"
-    id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 val githubUser: String by project
@@ -152,5 +152,9 @@ tasks {
         testLogging {
             showStandardStreams = true
         }
+    }
+
+    "check" {
+        dependsOn("formatKotlin")
     }
 }
