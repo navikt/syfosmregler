@@ -110,7 +110,7 @@ fun main() {
 
     Runtime.getRuntime().addShutdownHook(Thread {
         applicationState.ready = false
-        applicationServer.stop(10, 10, TimeUnit.SECONDS)
+        applicationServer.stop(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(10))
     })
 }
 

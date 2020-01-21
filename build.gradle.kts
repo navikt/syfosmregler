@@ -5,18 +5,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val coroutinesVersion = "1.1.1"
+val coroutinesVersion = "1.3.3"
 val javaxActivationVersion = "1.1.1"
 val jacksonVersion = "2.9.8"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kluentVersion = "1.39"
-val ktorVersion = "1.2.6"
+val ktorVersion = "1.3.0"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.7bf5e6f"
-val spekVersion = "2.0.6"
+val smCommonVersion = "1.84cb553"
+val spekVersion = "2.0.9"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val cxfVersion = "3.2.7"
 val javaxAnnotationApiVersion = "1.3.2"
@@ -27,6 +27,7 @@ val jfairyVersion = "0.6.2"
 val saajVersion = "1.4.0"
 val commonsTextVersion = "1.4"
 val diskresjonskodeV1Version= "1.2019.07.11-06.47-b55f47790a9d"
+val mockkVersion = "1.9.3"
 
 
 plugins {
@@ -53,7 +54,6 @@ repositories {
             password = githubPassword
         }
     }
-    maven(url = "https://oss.sonatype.org/content/groups/staging/")
 }
 
 
@@ -109,7 +109,7 @@ dependencies {
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
     testImplementation("com.devskiller:jfairy:$jfairyVersion")
-    testImplementation ("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty") // conflicts with WireMock
     }
@@ -135,7 +135,7 @@ tasks {
         }
     }
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "12"
     }
 
     withType<ShadowJar> {
