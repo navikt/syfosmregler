@@ -9,6 +9,8 @@ import java.time.format.DateTimeFormatter
 import no.nav.syfo.generateAdresse
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.model.AnnenFraverGrunn
+import no.nav.syfo.model.AnnenFraversArsak
 import no.nav.syfo.model.Behandler
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
@@ -266,6 +268,31 @@ object ValidationRuleChainSpek : Spek({
             ))
 
             ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual true
+        }
+
+        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L92", tekst = "Brudd legg/ankel")
+            ))
+
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual false
+        }
+
+        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    annenFraversArsak = AnnenFraversArsak("innlagt på instuisjon", listOf(AnnenFraverGrunn.GODKJENT_HELSEINSTITUSJON))
+            ))
+
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual false
+        }
+
+        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = null,
+                    annenFraversArsak = AnnenFraversArsak("innlagt på instuisjon", listOf(AnnenFraverGrunn.GODKJENT_HELSEINSTITUSJON))
+            ))
+
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual false
         }
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {

@@ -1,24 +1,36 @@
 package no.nav.syfo.api
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.ktor.application.call
+import io.ktor.application.install
 import io.ktor.client.HttpClient
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.receive
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.response.DefaultHttpResponse
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.get
+import io.ktor.client.request.request
+import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.jackson
+import io.ktor.response.respond
+import io.ktor.routing.get
+import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.ktor.util.InternalAPI
 import io.ktor.util.KtorExperimentalAPI
-import io.mockk.clearMocks
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.mockkClass
-import io.mockk.mockkStatic
+import io.mockk.mockk
 import java.io.IOException
+import java.net.ServerSocket
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LoggingMeta
+import org.amshove.kluent.any
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -28,79 +40,81 @@ private val fnr = "12345678912"
 @KtorExperimentalAPI
 internal class NorskHelsenettClientTest : Spek({
 
-    val accessTokenClient = mockkClass(AccessTokenClient::class)
-    val httpClient = mockkClass(HttpClient::class)
-    val httpClientCall = mockkClass(HttpClientCall::class)
-
-    mockkStatic("kotlinx.coroutines.DelayKt")
-    coEvery { delay(any()) } returns Unit
-
-    beforeEachTest {
-        clearMocks(httpClient, httpClientCall)
-        coEvery { httpClient.execute(any()) } returns httpClientCall
-        coEvery { httpClientCall.response.receive<Behandler>() } returns Behandler(listOf(Godkjenning()))
+    val accessTokenClientMock = mockk<AccessTokenClient>()
+    val httpClient = HttpClient(Apache) {
+        install(JsonFeature) {
+            serializer = JacksonSerializer {
+                registerKotlinModule()
+                registerModule(JavaTimeModule())
+                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            }
+        }
     }
 
-    coEvery { accessTokenClient.hentAccessToken(any()) } returns "token"
+    val mockHttpServerPort = ServerSocket(0).use { it.localPort }
+    val mockHttpServerUrl = "http://localhost:$mockHttpServerPort"
+    val mockServer = embeddedServer(Netty, mockHttpServerPort) {
+        install(ContentNegotiation) {
+            jackson {}
+        }
+        routing {
+            get("/api/behandler") {
+                when {
+                    call.request.headers["behandlerFnr"] == fnr -> call.respond(Behandler(listOf(Godkjenning(helsepersonellkategori = Kode(true, 1, "verdi"), autorisasjon = Kode(true, 2, "annenVerdi")))))
+                    call.request.headers["behandlerFnr"] == "behandlerFinnesIkke" -> call.respond(HttpStatusCode.NotFound, "Behandler finnes ikke")
+                    else -> call.respond(HttpStatusCode.InternalServerError, "Noe gikk galt")
+                }
+            }
+        }
+    }.start()
 
-    val norskHelsenettClient = NorskHelsenettClient("url", accessTokenClient, "resource", httpClient)
+    val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClientMock, "resourceId", httpClient)
+
+    afterGroup {
+        mockServer.stop(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(10))
+    }
+
+    beforeGroup {
+        coEvery { accessTokenClientMock.hentAccessToken(any()) } returns "token"
+    }
 
     describe("Test NorskHelsenettClient") {
         it("Should get behandler") {
-            coEvery { httpClientCall.receive(any()) } returns getDefaultResponse(httpClientCall)
-            coEvery { httpClientCall.response.receive<Behandler>() } returns Behandler(listOf(Godkjenning()))
-
+            var behandler: Behandler? = null
             runBlocking {
-                val behandler = norskHelsenettClient.finnBehandler(fnr, "123",
+                behandler = norskHelsenettClient.finnBehandler(fnr, "123",
                         LoggingMeta("", "", "123", ""))
-                behandler shouldEqual Behandler(listOf(Godkjenning()))
             }
+                behandler shouldEqual Behandler(listOf(Godkjenning(helsepersonellkategori = Kode(true, 1, "verdi"), autorisasjon = Kode(true, 2, "annenVerdi"))))
         }
+
         it("Should receive null when 404") {
-            coEvery { httpClientCall.receive(any()) } returns(
-                    DefaultHttpResponse(httpClientCall,
-                            respond("Not found", HttpStatusCode.NotFound)))
+            var behandler: Behandler? = null
             runBlocking {
-                val behandler = norskHelsenettClient.finnBehandler(fnr, "1",
+                behandler = norskHelsenettClient.finnBehandler("behandlerFinnesIkke", "1",
                         LoggingMeta("", "", "1", ""))
-                behandler shouldEqual null
             }
+                behandler shouldEqual null
         }
     }
 
     describe("Test retry") {
         it("Should retry when getting internal server error") {
-            coEvery { httpClientCall.receive(any()) } returns(
-                    DefaultHttpResponse(httpClientCall, respond("Internal Server Error",
-                            HttpStatusCode.InternalServerError))) andThen getDefaultResponse(httpClientCall)
-
+            var behandler: Behandler? = null
             runBlocking {
-                val behandler = norskHelsenettClient.finnBehandler(fnr, "1",
+                behandler = norskHelsenettClient.finnBehandler(fnr, "1",
                         LoggingMeta("", "", "1", ""))
-                behandler shouldEqual Behandler(listOf(Godkjenning()))
-                coVerify(exactly = 2) { httpClient.execute(any()) }
             }
+            behandler shouldEqual Behandler(listOf(Godkjenning(helsepersonellkategori = Kode(true, 1, "verdi"), autorisasjon = Kode(true, 2, "annenVerdi"))))
         }
 
         it("Should throw exeption when exceeds max retries") {
-            coEvery { httpClientCall.receive(any()) } returns(
-                    DefaultHttpResponse(httpClientCall, respond("InternalServerErrror", HttpStatusCode.InternalServerError)))
+            var behandler: Behandler? = null
             runBlocking {
-                assertFailsWith<IOException> { norskHelsenettClient.finnBehandler(fnr, "1",
+                assertFailsWith<IOException> { norskHelsenettClient.finnBehandler("1234", "1",
                         LoggingMeta("", "", "123", "")) }
-                coVerify(exactly = 4) { httpClient.execute(any()) }
             }
         }
     }
 })
-
-@InternalAPI
-private fun getDefaultResponse(httpClientCall: HttpClientCall) =
-        DefaultHttpResponse(
-                httpClientCall, respond(
-                jacksonObjectMapper().writeValueAsString(
-                        Behandler(
-                                listOf(Godkjenning())
-                        )
-                ), HttpStatusCode.OK)
-        )

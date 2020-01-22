@@ -76,7 +76,7 @@ object SelftestSpek : Spek({
 
     afterGroup {
         applicationState.running = false
-        mockServer.stop(1L, 10L, TimeUnit.SECONDS)
+        mockServer.stop(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(10))
     }
     describe("Calling selftest with successful liveness and readyness tests") {
         with(TestApplicationEngine()) {
