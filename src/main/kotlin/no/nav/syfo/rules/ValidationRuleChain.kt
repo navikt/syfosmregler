@@ -119,14 +119,14 @@ enum class ValidationRuleChain(
             "Den må ha riktig kode for hoveddiagnose.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Kodeverk for hoveddiagnose er feil eller mangler.", { (sykmelding, _) ->
-        sykmelding.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
+        (sykmelding.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
                 sykmelding.medisinskVurdering.hovedDiagnose?.let { diagnose ->
             if (diagnose.isICPC2()) {
                 Diagnosekoder.icpc2.containsKey(diagnose.kode)
             } else {
                 Diagnosekoder.icd10.containsKey(diagnose.kode)
             }
-        } != true && sykmelding.medisinskVurdering.annenFraversArsak == null
+        } != true) && sykmelding.medisinskVurdering.annenFraversArsak == null
     }),
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")

@@ -286,6 +286,14 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual false
         }
 
+        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+            val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = null,
+                    annenFraversArsak = AnnenFraversArsak("innlagt på instuisjon", listOf(AnnenFraverGrunn.GODKJENT_HELSEINSTITUSJON))
+            ))
+
+            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldEqual false
+        }
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(medisinskVurdering = generateMedisinskVurdering(
