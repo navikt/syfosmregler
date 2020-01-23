@@ -56,7 +56,8 @@ class RuleService(
                 patientPersonNumber = receivedSykmelding.personNrPasient,
                 rulesetVersion = receivedSykmelding.rulesetVersion,
                 legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
-                tssid = receivedSykmelding.tssid
+                tssid = receivedSykmelding.tssid,
+                avsenderFnr = receivedSykmelding.personNrLege
         )
 
         val patientDiskresjonskodeDeferred = async { diskresjonskodeService.hentDiskresjonskode(receivedSykmelding.personNrPasient) }
