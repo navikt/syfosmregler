@@ -7,6 +7,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import no.nav.syfo.generateAdresse
+import no.nav.syfo.generateBehandler
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.AnnenFraverGrunn
@@ -35,8 +36,9 @@ object ValidationRuleChainSpek : Spek({
         patientPersonNumber: String = "1234567891",
         rulesetVersion: String = "1",
         legekontorOrgNr: String = "123456789",
-        tssid: String? = "1314445"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid))
+        tssid: String? = "1314445",
+        avsenderfnr: String = "12344"
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid, avsenderfnr))
 
     describe("Testing validation rules and checking the rule outcomes") {
 
@@ -416,6 +418,34 @@ object ValidationRuleChainSpek : Spek({
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(ruleData(healthInformation, legekontorOrgNr = "123456789")) shouldEqual false
+        }
+
+        it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when avsender fnr and pasient fnr is the same") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(ruleData(healthInformation, patientPersonNumber = "123456789", avsenderfnr = "123456789")) shouldEqual true
+        }
+
+        it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when avsender fnr and pasient fnr is diffrent") {
+            val healthInformation = generateSykmelding()
+
+            ValidationRuleChain.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(ruleData(healthInformation, patientPersonNumber = "645646666", avsenderfnr = "123456789")) shouldEqual false
+        }
+
+        it("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when behandler fnr and pasient fnr is the same") {
+            val behandlerFnr = "123456789"
+            val healthInformation = generateSykmelding(behandler = generateBehandler(
+                    "Per", "", "Hansen", "134", "113", behandlerFnr))
+
+            ValidationRuleChain.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(ruleData(healthInformation, patientPersonNumber = behandlerFnr)) shouldEqual true
+        }
+
+        it("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when behandler fnr and pasient fnr is diffrent") {
+            val behandlerFnr = "123456789"
+            val healthInformation = generateSykmelding(behandler = generateBehandler(
+                    "Per", "", "Hansen", "134", "113", behandlerFnr))
+
+            ValidationRuleChain.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(ruleData(healthInformation, patientPersonNumber = "645646666")) shouldEqual false
         }
     }
 })

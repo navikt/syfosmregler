@@ -37,7 +37,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = true
             )
 
@@ -62,7 +63,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -87,7 +89,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = true
             )
 
@@ -112,7 +115,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = true
             )
 
@@ -135,7 +139,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -163,7 +168,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = true
             )
 
@@ -188,7 +194,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = true
             )
 
@@ -213,7 +220,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = true
             )
 
@@ -238,7 +246,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = true
             )
 
@@ -263,7 +272,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = true
             )
 
@@ -287,7 +297,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -313,7 +324,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -340,7 +352,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -363,7 +376,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -386,7 +400,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -412,7 +427,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -440,7 +456,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -468,7 +485,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -493,7 +511,8 @@ object SyketilfelleRuleChainSpek : Spek({
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
-                            tssid = "1355435"
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
             )
 
@@ -518,7 +537,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = false
             )
 
@@ -543,7 +563,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = false
             )
 
@@ -568,7 +589,8 @@ object SyketilfelleRuleChainSpek : Spek({
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
-                    tssid = "1355435"
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
                 ), erNyttSyketilfelle = false
             )
 

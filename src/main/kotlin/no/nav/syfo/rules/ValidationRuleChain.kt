@@ -175,6 +175,26 @@ enum class ValidationRuleChain(
                     "Feil format på organisasjonsnummer. Dette skal være 9 sifre..", { (_, metadata) ->
         metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
     }),
+
+    @Description("Avsender fnr er det samme som pasient fnr")
+    AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
+            9999,
+            Status.INVALID,
+            "Den som signert sykmeldingen er også pasient.",
+            "Sykmeldingen kan ikke rettes, Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
+                    "Avsender fnr er det samme som pasient fnr", { (_, metadata) ->
+        metadata.avsenderFnr.equals(metadata.patientPersonNumber)
+    }),
+
+    @Description("Behandler fnr er det samme som pasient fnr")
+    BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
+            9999,
+            Status.INVALID,
+            "Den som er behandler av sykmeldingen er også pasient.",
+            "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
+                    "Behandler fnr er det samme som pasient fnr", { (sykmelding, metadata) ->
+        sykmelding.behandler.fnr.equals(metadata.patientPersonNumber)
+    }),
 }
 
 fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: QuestionGroup) =
