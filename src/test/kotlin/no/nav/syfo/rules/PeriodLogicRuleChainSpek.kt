@@ -163,32 +163,6 @@ object PeriodLogicRuleChainSpek : Spek({
             PeriodLogicRuleChain.FREMDATERT(ruleData(sykmelding)) shouldEqual false
         }
 
-        it("Should check rule VARIGHET_OVER_ETT_AAR, should trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.now(),
-                            tom = LocalDate.now().plusYears(1)
-                    )
-            ),
-                    behandletTidspunkt = LocalDateTime.now().minusDays(1)
-            )
-
-            PeriodLogicRuleChain.OVER_ETT_AAR_MELLOM_BEHANDLETDATO_OG_FOMDATO(ruleData(healthInformation)) shouldEqual true
-        }
-
-        it("Should check rule VARIGHET_OVER_ETT_AAR, should NOT trigger rule") {
-            val healthInformation = generateSykmelding(perioder = listOf(
-                    generatePeriode(
-                            fom = LocalDate.now(),
-                            tom = LocalDate.now().plusYears(1)
-                    )
-            ),
-                    behandletTidspunkt = LocalDateTime.now()
-            )
-
-            PeriodLogicRuleChain.OVER_ETT_AAR_MELLOM_BEHANDLETDATO_OG_FOMDATO(ruleData(healthInformation)) shouldEqual false
-        }
-
         it("Should check rule TOTAL_VARIGHET_OVER_ETT_AAR, should trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(

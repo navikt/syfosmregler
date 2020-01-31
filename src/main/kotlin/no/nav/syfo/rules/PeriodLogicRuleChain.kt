@@ -94,17 +94,6 @@ enum class PeriodLogicRuleChain(
                 sykmelding.perioder.sortedFOMDate().first() > ruleMetadata.behandletTidspunkt.plusDays(30).toLocalDate()
             }),
 
-    @Description("Hvis sykmeldingens sluttdato er mer enn ett år i tid siden behandeletDato, avvises meldingen.")
-    OVER_ETT_AAR_MELLOM_BEHANDLETDATO_OG_FOMDATO(
-            9999,
-            Status.INVALID,
-            "Sykmeldingen kan ikke ha en varighet på mer enn ett år.",
-            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Sykmeldingens sluttdato (tom-dato) er mer enn ett år siden behandletDato",
-            { (healthInformation, _) ->
-                healthInformation.perioder.sortedTOMDate().last().atStartOfDay() > healthInformation.behandletTidspunkt.plusYears(1)
-            }),
-
     @Description("Hvis sykmeldingen første fom og siste tom har ein varighet som er over 1 år. avvises meldingen.")
     TOTAL_VARIGHET_OVER_ETT_AAR(
             1211,
