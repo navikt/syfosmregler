@@ -77,7 +77,7 @@ enum class HPRRuleChain(
     BEHANDLER_MT_FT_KI_OVER_12_UKER(
             1519,
             Status.INVALID,
-            "Den som skrev sykmeldingen mangler autorisasjon.",
+            "Den som skrev sykmeldingen er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Behandler er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker regnet fra første fom-dato til siste tom-dato", { (sykmelding, behandler) ->
         (sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 &&
