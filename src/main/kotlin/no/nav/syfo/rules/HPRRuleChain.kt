@@ -73,13 +73,13 @@ enum class HPRRuleChain(
         }
     }),
 
-    @Description("Hvis en sykmelding fra manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første fom dato til siste tom skal meldingen avvises")
+    @Description("Behandler er manuellterapeuter, kiropraktorer og fysioterapeuter kan skrive sykmeldinger inntil 12 uker varighet")
     BEHANDLER_MT_FT_KI_OVER_12_UKER(
             1519,
             Status.INVALID,
             "Den som skrev sykmeldingen mangler autorisasjon.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandler er manuellterapeut/kiropraktor eller fysioterapeut overstiger 12 uker regnet fra første fom dato til siste tom dato", { (sykmelding, behandler) ->
+                    "Behandler er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker regnet fra første fom-dato til siste tom-dato", { (sykmelding, behandler) ->
         (sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 &&
             !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
                 HelsepersonellKategori.LEGE.verdi,
