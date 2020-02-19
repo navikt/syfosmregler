@@ -73,16 +73,17 @@ class RuleService(
             syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId)
         }
 
-        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId, loggingMeta = loggingMeta) ?: return ValidationResult(
-            status = Status.INVALID,
-            ruleHits = listOf(RuleInfo(
-                ruleName = "BEHANDLER_NOT_IN_HPR",
-                messageForSender = "Den som har skrevet sykmeldingen din har ikke autorisasjon til dette.",
-                messageForUser = "Behandler er ikke register i HPR",
-                ruleStatus = Status.INVALID))
-        )
+        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId, loggingMeta = loggingMeta)
+                ?: return ValidationResult(
+                        status = Status.INVALID,
+                        ruleHits = listOf(RuleInfo(
+                                ruleName = "BEHANDLER_NOT_IN_HPR",
+                                messageForSender = "Den som har skrevet sykmeldingen din ble ikkje funnet i Helsepersonellregisteret (HPR)",
+                                messageForUser = "Avsender fodselsnummer er registert i Helsepersonellregisteret (HPR)",
+                                ruleStatus = Status.INVALID))
+                )
 
-        log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}")
+        log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = ruleMetadata, erNyttSyketilfelle = erNyttSyketilfelleDeferred.await())
