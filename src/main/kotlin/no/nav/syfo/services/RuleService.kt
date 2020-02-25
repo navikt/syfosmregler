@@ -78,8 +78,8 @@ class RuleService(
                         status = Status.INVALID,
                         ruleHits = listOf(RuleInfo(
                                 ruleName = "BEHANDLER_NOT_IN_HPR",
-                                messageForSender = "Den som har skrevet sykmeldingen din ble ikkje funnet i Helsepersonellregisteret (HPR)",
-                                messageForUser = "Avsender fodselsnummer er registert i Helsepersonellregisteret (HPR)",
+                                messageForSender = "Den som har skrevet sykmeldingen ble ikkee funnet i Helsepersonellregisteret (HPR)",
+                                messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
                                 ruleStatus = Status.INVALID))
                 )
 
