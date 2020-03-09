@@ -2,7 +2,6 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.api.Behandler
 import no.nav.syfo.model.Status
-import no.nav.syfo.sm.toICPC2
 
 enum class HPRRuleChain(
     override val ruleId: Int?,
@@ -11,22 +10,6 @@ enum class HPRRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<Behandler>) -> Boolean
 ) : Rule<RuleData<Behandler>> {
-    @Description("Hvis manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)skal meldingen til manuell behandling")
-    BEHANDLER_KI_FT_MT_BENYTTER_ANNEN_DIAGNOSEKODE_ENN_L(
-            1143,
-            Status.MANUAL_PROCESSING,
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
-            "Behandler er manuellterapeut/kiropraktor eller fysioterapeut med autorisasjon har angitt annen diagnose enn kapitel L (muskel og skjelettsykdommer)",
-            { (healthInformation, behandler) ->
-                healthInformation.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("L") == false &&
-                    !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
-                        HelsepersonellKategori.LEGE.verdi,
-                        HelsepersonellKategori.TANNLEGE.verdi)) && harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
-                    HelsepersonellKategori.KIROPRAKTOR.verdi,
-                    HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                    HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
-    }),
-
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
     BEHANDLER_IKKE_GYLDIG_I_HPR(
             1402,
