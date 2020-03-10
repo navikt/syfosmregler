@@ -97,7 +97,7 @@ enum class ValidationRuleChain(
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (sykmelding, _) ->
         sykmelding.medisinskVurdering.hovedDiagnose != null &&
-                sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose!!.kode?.startsWith("Z") == true
+                sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose!!.kode?.startsWith("Z")
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
