@@ -6,7 +6,6 @@ import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
-import no.nav.syfo.sm.toICPC2
 import no.nav.syfo.validation.extractBornDate
 import no.nav.syfo.validation.validatePersonAndDNumber
 import no.nav.syfo.validation.validatePersonAndDNumber11Digits
@@ -97,7 +96,8 @@ enum class ValidationRuleChain(
             "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.", { (sykmelding, _) ->
-        sykmelding.medisinskVurdering.hovedDiagnose?.toICPC2()?.firstOrNull()?.code?.startsWith("Z") == true
+        sykmelding.medisinskVurdering.hovedDiagnose != null &&
+                sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose!!.kode?.startsWith("Z")
     }),
 
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
@@ -110,7 +110,7 @@ enum class ValidationRuleChain(
             { (sykmelding, _) ->
                 sykmelding.medisinskVurdering.annenFraversArsak == null &&
                         sykmelding.medisinskVurdering.hovedDiagnose == null
-    }),
+            }),
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(
@@ -121,12 +121,12 @@ enum class ValidationRuleChain(
                     "Kodeverk for hoveddiagnose er feil eller mangler.", { (sykmelding, _) ->
         (sykmelding.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
                 sykmelding.medisinskVurdering.hovedDiagnose?.let { diagnose ->
-            if (diagnose.isICPC2()) {
-                Diagnosekoder.icpc2.containsKey(diagnose.kode)
-            } else {
-                Diagnosekoder.icd10.containsKey(diagnose.kode)
-            }
-        } != true) && sykmelding.medisinskVurdering.annenFraversArsak == null
+                    if (diagnose.isICPC2()) {
+                        Diagnosekoder.icpc2.containsKey(diagnose.kode)
+                    } else {
+                        Diagnosekoder.icd10.containsKey(diagnose.kode)
+                    }
+                } != true) && sykmelding.medisinskVurdering.annenFraversArsak == null
     }),
 
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
