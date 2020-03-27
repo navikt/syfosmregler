@@ -68,6 +68,9 @@ enum class PeriodLogicRuleChain(
                 var gapBetweenPeriods = false
                 for (i in 1..(ranges.size - 1)) {
                     gapBetweenPeriods = workdaysBetween(ranges[i - 1].second, ranges[i].first) > 0
+                    if (gapBetweenPeriods == true) {
+                        break
+                    }
                 }
                 gapBetweenPeriods
             }),
