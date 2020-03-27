@@ -107,6 +107,25 @@ object PeriodLogicRuleChainSpek : Spek({
             PeriodLogicRuleChain.OPPHOLD_MELLOM_PERIODER(ruleData(healthInformation)) shouldEqual true
         }
 
+        it("Should check rule OPPHOLD_MELLOM_PERIODER, should trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                    generatePeriode(
+                            fom = LocalDate.of(2020, 2, 15),
+                            tom = LocalDate.of(2020, 3, 18)
+                    ),
+                    generatePeriode(
+                            fom = LocalDate.of(2019, 10, 31),
+                            tom = LocalDate.of(2019, 12, 19)
+                    ),
+                    generatePeriode(
+                            fom = LocalDate.of(2020, 3, 19),
+                            tom = LocalDate.of(2020, 3, 26)
+                    )
+            ))
+
+            PeriodLogicRuleChain.OPPHOLD_MELLOM_PERIODER(ruleData(healthInformation)) shouldEqual true
+        }
+
         it("Should check rule OPPHOLD_MELLOM_PERIODER, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
