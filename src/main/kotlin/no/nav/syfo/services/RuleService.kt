@@ -33,6 +33,7 @@ import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.sm.isICpc10
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.LocalDate
 
 @KtorExperimentalAPI
 class RuleService(
@@ -136,11 +137,16 @@ class RuleService(
     )
 }
 
-fun erCoronaRelatert(sykmelding : Sykmelding): Boolean {
-    // Er det ein R991 og
-    return (sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose!!.isICpc10() && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose!!.isICpc10() && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
-            (sykmelding.medisinskVurdering.annenFraversArsak?.grunn)?.any { it != null && it == AnnenFraverGrunn.SMITTEFARE }!!
+/**
+ * Spesialsjekk for å støtte den ekstraordinære egenmeldte sykmeldingstypen
+ * som ble innført etter COVID-19-utbruddet mars 2020.
+ */
+fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
+    return ((sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
+            sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any {it == AnnenFraverGrunn.SMITTEFARE} ?: false)
+            && sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
+
 }
