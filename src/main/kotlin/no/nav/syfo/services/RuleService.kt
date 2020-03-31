@@ -138,8 +138,7 @@ class RuleService(
 }
 
 /**
- * Spesialsjekk for å støtte den ekstraordinære egenmeldte sykmeldingstypen
- * som ble innført etter COVID-19-utbruddet mars 2020.
+ * Spesialsjekk for å avlaste behandlere i kjølvannet av COVID-19-utbruddet mars 2020.
  */
 fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
     return ((sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
