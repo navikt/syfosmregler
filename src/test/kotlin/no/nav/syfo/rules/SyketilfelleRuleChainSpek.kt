@@ -585,6 +585,36 @@ object SyketilfelleRuleChainSpek : Spek({
             SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
         }
 
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should NOT trigger rule because of covid19") {
+            val healthInformation = generateSykmelding(
+                    perioder = listOf(
+                            generatePeriode(
+                                    fom = LocalDate.now(),
+                                    tom = LocalDate.now()
+                            )
+                    ),
+                    kontaktMedPasient = generateKontaktMedPasient(
+                            begrunnelseIkkeKontakt = "Noe tull skjedde, med sykmeldingen"
+                    ),
+                    medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icpc2["R991"]!!.toDiagnose())
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                    ruleMetadata = RuleMetadata(
+                            receivedDate = LocalDateTime.now(),
+                            signatureDate = LocalDateTime.now(),
+                            behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                            patientPersonNumber = "1232345244",
+                            rulesetVersion = "2",
+                            legekontorOrgnr = "12313",
+                            tssid = "1355435",
+                            avsenderFnr = "1345525522"
+                    ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(

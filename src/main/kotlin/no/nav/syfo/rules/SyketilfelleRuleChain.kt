@@ -77,6 +77,7 @@ enum class SyketilfelleRuleChain(
                 !ruleMetadataSykmelding.erNyttSyketilfelle &&
                         ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+                        && !no.nav.syfo.services.erCoronaRelatert(healthInformation)
             }),
 
     @Description("Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.")
