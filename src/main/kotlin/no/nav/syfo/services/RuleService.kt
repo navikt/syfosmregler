@@ -10,7 +10,6 @@ import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.LegeSuspensjonClient
 import no.nav.syfo.api.NorskHelsenettClient
 import no.nav.syfo.api.SyketilfelleClient
-import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -18,7 +17,6 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
-import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
@@ -29,11 +27,8 @@ import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
-import no.nav.syfo.sm.isICPC2
-import no.nav.syfo.sm.isICpc10
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 
 @KtorExperimentalAPI
 class RuleService(
@@ -135,17 +130,4 @@ class RuleService(
                     },
             ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForSender!!, rule.messageForUser!!, rule.status) }
     )
-}
-
-/**
- * Spesialsjekk for å avlaste behandlere i kjølvannet av COVID-19-utbruddet mars 2020.
- */
-fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
-    return ((sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
-            sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any {it == AnnenFraverGrunn.SMITTEFARE} ?: false)
-            && sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
-
 }
