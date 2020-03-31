@@ -2,6 +2,7 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
+import no.nav.syfo.services.erCoronaRelatert
 
 enum class SyketilfelleRuleChain(
     override val ruleId: Int?,
@@ -21,6 +22,7 @@ enum class SyketilfelleRuleChain(
                 ruleMetadataSykmelding.erNyttSyketilfelle &&
                 (ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
+                        && !erCoronaRelatert(healthInformation)
             }),
 
     @Description("Første gangs sykmelding er tilbakedatert mer enn 8 dager med begrunnelse.")
@@ -33,6 +35,7 @@ enum class SyketilfelleRuleChain(
             ruleMetadataSykmelding.erNyttSyketilfelle &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+                    && !erCoronaRelatert(healthInformation)
         }),
 
     @Description("Første gangs sykmelding er tilbakedatert mindre enn 8 dager uten begrunnelse og kontaktdato.")
@@ -47,6 +50,7 @@ enum class SyketilfelleRuleChain(
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(4) &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() <= healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
+                    && !erCoronaRelatert(healthInformation)
         }),
 
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra behandlet-tidspunkt. Skal telles.")
@@ -60,6 +64,7 @@ enum class SyketilfelleRuleChain(
                 !ruleMetadataSykmelding.erNyttSyketilfelle &&
                 healthInformation.perioder.sortedFOMDate().first() < ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate().minusMonths(1) &&
                 healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+                        && !erCoronaRelatert(healthInformation)
             }),
 
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
@@ -72,6 +77,7 @@ enum class SyketilfelleRuleChain(
                 !ruleMetadataSykmelding.erNyttSyketilfelle &&
                         ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+                        && !no.nav.syfo.services.erCoronaRelatert(healthInformation)
             }),
 
     @Description("Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.")
@@ -86,6 +92,7 @@ enum class SyketilfelleRuleChain(
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(4) &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() <= healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                 (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty())
+                    && !erCoronaRelatert(healthInformation)
         }),
 }
 
