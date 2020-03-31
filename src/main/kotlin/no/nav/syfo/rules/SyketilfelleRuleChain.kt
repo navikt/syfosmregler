@@ -67,6 +67,9 @@ enum class SyketilfelleRuleChain(
                         && !erCoronaRelatert(healthInformation)
             }),
 
+    /**
+     * Denne er trolig avhenging av PeriodLogicRuleChain.TILBAKEDATERT_MER_ENN_3_AR for å validere øvre grense på tre år
+     */
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
     TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
             1207,
@@ -77,7 +80,6 @@ enum class SyketilfelleRuleChain(
                 !ruleMetadataSykmelding.erNyttSyketilfelle &&
                         ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
-                        && !no.nav.syfo.services.erCoronaRelatert(healthInformation)
             }),
 
     @Description("Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.")
