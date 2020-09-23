@@ -83,7 +83,7 @@ enum class PeriodLogicRuleChain(
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
             { (healthInformation, _) ->
-                healthInformation.perioder.sortedFOMDate().first().atStartOfDay().minusYears(3).isAfter(healthInformation.behandletTidspunkt)
+                healthInformation.perioder.sortedFOMDate().first().atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
             }),
 
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")

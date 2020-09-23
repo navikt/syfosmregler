@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import no.nav.syfo.generateGradert
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import org.amshove.kluent.shouldEqual
@@ -143,15 +144,37 @@ object PeriodLogicRuleChainSpek : Spek({
 
         it("Should check rule TILBAKEDATERT_MER_ENN_3_AR, should trigger rule") {
             val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().minusYears(3).minusDays(1)
+                    perioder = listOf(
+                            Periode(
+                                    fom = LocalDate.now().minusYears(3).minusDays(14),
+                                    tom =  LocalDate.now().minusYears(3),
+                                    aktivitetIkkeMulig = null,
+                                    avventendeInnspillTilArbeidsgiver = null,
+                                    behandlingsdager = 1,
+                                    gradert = null,
+                                    reisetilskudd = false
+                            )
+                    ),
+                    behandletTidspunkt = LocalDateTime.now()
             )
 
             PeriodLogicRuleChain.TILBAKEDATERT_MER_ENN_3_AR(ruleData(healthInformation)) shouldEqual true
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_3_AR, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_3_AR, should not trigger rule") {
             val healthInformation = generateSykmelding(
-                    behandletTidspunkt = LocalDateTime.now().minusYears(2)
+                    perioder = listOf(
+                            Periode(
+                                    fom = LocalDate.now().minusDays(14),
+                                    tom = LocalDate.now(),
+                                    aktivitetIkkeMulig = null,
+                                    avventendeInnspillTilArbeidsgiver = null,
+                                    behandlingsdager = 1,
+                                    gradert = null,
+                                    reisetilskudd = false
+                            )
+                    ),
+                    behandletTidspunkt = LocalDateTime.now()
             )
 
             PeriodLogicRuleChain.TILBAKEDATERT_MER_ENN_3_AR(ruleData(healthInformation)) shouldEqual false
