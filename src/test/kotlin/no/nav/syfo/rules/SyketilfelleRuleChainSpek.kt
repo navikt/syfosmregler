@@ -1,7 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.generateAvsenderSystem
-import no.nav.syfo.generateDiagnose
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -11,9 +9,7 @@ import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.AnnenFraversArsak
-import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.KontaktMedPasient
-import no.nav.syfo.model.MedisinskVurdering
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
