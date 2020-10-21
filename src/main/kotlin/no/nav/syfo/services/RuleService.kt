@@ -1,6 +1,7 @@
 package no.nav.syfo.services
 
 import io.ktor.util.KtorExperimentalAPI
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.GlobalScope
@@ -33,7 +34,6 @@ import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.sm.isICpc10
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 
 @KtorExperimentalAPI
 class RuleService(
@@ -65,17 +65,17 @@ class RuleService(
                 avsenderFnr = receivedSykmelding.personNrLege
         )
 
-        val patientDiskresjonskodeDeferred = async { diskresjonskodeService.hentDiskresjonskode(receivedSykmelding.personNrPasient) }
+        val patientDiskresjonskodeDeferred = async { diskresjonskodeService.hentDiskresjonskode(receivedSykmelding.personNrPasient, loggingMeta) }
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
-            legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString).suspendert
+            legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString, loggingMeta).suspendert
         }
         val erNyttSyketilfelleDeferred = async {
             val syketilfelle = receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
                     receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato,
                     receivedSykmelding.msgId)
 
-            syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId)
+            syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId, loggingMeta)
         }
 
         val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId, loggingMeta = loggingMeta)
@@ -83,7 +83,7 @@ class RuleService(
                         status = Status.INVALID,
                         ruleHits = listOf(RuleInfo(
                                 ruleName = "BEHANDLER_NOT_IN_HPR",
-                                messageForSender = "Den som har skrevet sykmeldingen ble ikkee funnet i Helsepersonellregisteret (HPR)",
+                                messageForSender = "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
                                 messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
                                 ruleStatus = Status.INVALID))
                 )
@@ -145,7 +145,6 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
-            sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any {it == AnnenFraverGrunn.SMITTEFARE} ?: false)
-            && sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
-
+            sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any { it == AnnenFraverGrunn.SMITTEFARE } ?: false) &&
+            sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
 }

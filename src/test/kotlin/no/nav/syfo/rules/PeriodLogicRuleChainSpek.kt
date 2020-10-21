@@ -147,7 +147,7 @@ object PeriodLogicRuleChainSpek : Spek({
                     perioder = listOf(
                             Periode(
                                     fom = LocalDate.now().minusYears(3).minusDays(14),
-                                    tom =  LocalDate.now().minusYears(3),
+                                    tom = LocalDate.now().minusYears(3),
                                     aktivitetIkkeMulig = null,
                                     avventendeInnspillTilArbeidsgiver = null,
                                     behandlingsdager = 1,
