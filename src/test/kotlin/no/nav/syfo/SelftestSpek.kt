@@ -36,10 +36,8 @@ import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.client.OidcToken
 import no.nav.syfo.client.StsOidcClient
-import no.nav.syfo.services.DiskresjonskodeService
+import no.nav.syfo.pdl.PdlFactory
 import no.nav.syfo.services.RuleService
-import no.nav.syfo.ws.createPort
-import no.nav.tjeneste.pip.diskresjonskode.DiskresjonskodePortType
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
 import org.spekframework.spek2.Spek
@@ -99,17 +97,16 @@ object SelftestSpek : Spek({
             val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClient, "resourceId", httpClient)
 
             val env = Environment(
-                    diskresjonskodeEndpointUrl = "DISKRESJONSKODE_ENDPOINT_URL",
                     securityTokenServiceURL = "SECURITY_TOKEN_SERVICE_URL",
                     clientId = "clientId",
                     helsenettproxyId = "helsenettproxyId",
-                    aadAccessTokenUrl = "aadUrl"
+                    aadAccessTokenUrl = "aadUrl",
+                    pdlGraphqlPath = "pdl"
             )
 
-            val diskresjonskodePortType: DiskresjonskodePortType = createPort(env.diskresjonskodeEndpointUrl) {
-                port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
-            }
-            val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, DiskresjonskodeService(diskresjonskodePortType), norskHelsenettClient)
+            val pdlPersonService = PdlFactory.getPdlService(env, oidcClient, httpClient)
+
+            val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, pdlPersonService, norskHelsenettClient)
             application.initRouting(applicationState, ruleService)
 
             it("Returns ok on is_alive") {

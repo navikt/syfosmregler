@@ -35,11 +35,9 @@ import no.nav.syfo.api.SyketilfelleClient
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.api.registerRuleApi
 import no.nav.syfo.client.StsOidcClient
-import no.nav.syfo.services.DiskresjonskodeService
+import no.nav.syfo.pdl.PdlFactory
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
-import no.nav.syfo.ws.createPort
-import no.nav.tjeneste.pip.diskresjonskode.DiskresjonskodePortType
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -65,11 +63,6 @@ fun main() {
     }
 
     DefaultExports.initialize()
-
-    val diskresjonskodePortType: DiskresjonskodePortType = createPort(env.diskresjonskodeEndpointUrl) {
-        port { withSTS(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL) }
-    }
-    val diskresjonskodeService = DiskresjonskodeService(diskresjonskodePortType)
 
     val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
         install(JsonFeature) {
@@ -100,8 +93,9 @@ fun main() {
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val accessTokenClient = AccessTokenClient(env.aadAccessTokenUrl, env.clientId, credentials.clientsecret, httpClientWithProxy)
     val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyId, httpClient)
+    val pdlPersonService = PdlFactory.getPdlService(env, oidcClient, httpClient)
 
-    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, diskresjonskodeService, norskHelsenettClient)
+    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, pdlPersonService, norskHelsenettClient)
 
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
         initRouting(applicationState, ruleService)

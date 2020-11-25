@@ -21,6 +21,7 @@ import no.nav.syfo.model.Syketilfelle
 import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
+import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
-    private val diskresjonskodeService: DiskresjonskodeService,
+    private val pdlPersonService: PdlPersonService,
     private val norskHelsenettClient: NorskHelsenettClient
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
@@ -65,7 +66,7 @@ class RuleService(
                 avsenderFnr = receivedSykmelding.personNrLege
         )
 
-        val patientDiskresjonskodeDeferred = async { diskresjonskodeService.hentDiskresjonskode(receivedSykmelding.personNrPasient, loggingMeta) }
+        val patientDiskresjonskodeDeferred = async { pdlPersonService.hentDiskresjonskode(receivedSykmelding.personNrPasient, loggingMeta) }
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
             legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString, loggingMeta).suspendert

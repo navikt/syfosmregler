@@ -28,5 +28,12 @@ object PostDiskresjonskodeRuleChainSpek : Spek({
 
             PostDiskresjonskodeRuleChain.PASIENTEN_HAR_KODE_6(ruleData(healthInformation, diskresjonskode)) shouldEqual false
         }
+
+        it("Should check rule PASIENTEN_HAR_KODE_6, should NOT trigger rule") {
+            val healthInformation = generateSykmelding()
+            val diskresjonskode = ""
+
+            PostDiskresjonskodeRuleChain.PASIENTEN_HAR_KODE_6(ruleData(healthInformation, diskresjonskode)) shouldEqual false
+        }
     }
 })
