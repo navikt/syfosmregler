@@ -25,16 +25,17 @@ enum class SyketilfelleRuleChain(
                         !erCoronaRelatert(healthInformation)
             }),
 
-    @Description("Første gangs sykmelding er tilbakedatert mer enn 8 dager med begrunnelse.")
-    TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
+    @Description("Første gangs sykmelding er tilbakedatert mer enn 13 dager med kort begrunnelse.")
+    TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
         1207,
         Status.MANUAL_PROCESSING,
         "Første sykmelding er tilbakedatert og årsak for tilbakedatering er angitt.",
         "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
         { (healthInformation, ruleMetadataSykmelding) ->
             ruleMetadataSykmelding.erNyttSyketilfelle &&
-                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
+                ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(13) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt!!.length < 16 &&
                     !erCoronaRelatert(healthInformation)
         }),
 

@@ -24,7 +24,7 @@ object SyketilfelleRuleChainSpek : Spek({
         fun ruleData(healthInformation: Sykmelding, ruleMetadataSykmelding: RuleMetadataSykmelding) =
                 RuleData(healthInformation, ruleMetadataSykmelding)
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should trigger rule ") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE: tilbakedatert 14 dager med kort begrunnelse skal trigge regel") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 10),
@@ -38,7 +38,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
                             signatureDate = LocalDateTime.now(),
-                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 24), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -47,10 +47,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2020, 2, 25),
@@ -75,10 +75,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2020, 2, 25),
@@ -103,10 +103,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2020, 2, 25),
@@ -131,10 +131,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should trigger rule because FOM is before covid19 date") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should trigger rule because FOM is before covid19 date") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 10),
@@ -150,7 +150,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     ruleMetadata = RuleMetadata(
                             receivedDate = LocalDateTime.now(),
                             signatureDate = LocalDateTime.now(),
-                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
+                            behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 24), LocalTime.NOON),
                             patientPersonNumber = "1232345244",
                             rulesetVersion = "2",
                             legekontorOrgnr = "12313",
@@ -159,10 +159,10 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(perioder = listOf(
                     generatePeriode(
                             fom = LocalDate.of(2019, 1, 7),
@@ -185,7 +185,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     ), erNyttSyketilfelle = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should trigger rule") {
@@ -264,11 +264,40 @@ object SyketilfelleRuleChainSpek : Spek({
             SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
-                        fom = LocalDate.now().minusDays(7),
+                        fom = LocalDate.now().minusDays(12),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "Noe tull skjedde med sykmeldingen"
+                )
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now(),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = true
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, skal ikke trigge regel når begrunnelse er lang") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().minusDays(14),
                         tom = LocalDate.now()
                     )
                 ),
@@ -290,7 +319,36 @@ object SyketilfelleRuleChainSpek : Spek({
                 ), erNyttSyketilfelle = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
+        it("Should check rule TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, skal trigge regel når begrunnelse er for kort") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().minusDays(14),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "Begrunnelse"
+                )
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now(),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = true
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_13_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
         }
 
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
