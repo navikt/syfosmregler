@@ -35,7 +35,9 @@ enum class SyketilfelleRuleChain(
             ruleMetadataSykmelding.erNyttSyketilfelle &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !erCoronaRelatert(healthInformation)
+                    !erCoronaRelatert(healthInformation) &&
+                (healthInformation.perioder.sortedFOMDate().first().plusDays(14).isBefore(healthInformation.perioder.sortedTOMDate().last()) ||
+                    healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt!!.length < 16)
         }),
 
     @Description("Første gangs sykmelding er tilbakedatert mindre enn 8 dager uten begrunnelse og kontaktdato.")
