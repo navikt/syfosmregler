@@ -194,6 +194,30 @@ enum class PeriodLogicRuleChain(
             { (healthInformation, _) ->
                 healthInformation.perioder.mapNotNull { it.gradert }.any { it.grad > 99 }
             }),
+
+    @Description("Sykmelding inneholder behandlingsdager")
+    SYKMELDING_MED_BEHANDLINGSDAGER(
+        1253,
+        Status.MANUAL_PROCESSING,
+        "Sykmelding inneholder behandlingsdager.",
+        "Sykmelding inneholder behandlingsdager (felt 4.4).",
+        { (healthInformation, _) ->
+            healthInformation.perioder.any {
+                it.behandlingsdager != null
+            }
+        }),
+
+    @Description("Sykmelding inneholder reisetilskudd")
+    SYKMELDING_MED_REISETILSKUDD(
+        1254,
+        Status.MANUAL_PROCESSING,
+        "Sykmelding inneholder reisetilskudd.",
+        "Sykmelding inneholder reisetilskudd (felt 4.2.4 eller 4.5).",
+        { (healthInformation, _) ->
+            healthInformation.perioder.any {
+                it.reisetilskudd == true || (it.gradert != null && it.gradert!!.reisetilskudd == true)
+            }
+        }),
 }
 
 fun List<Periode>.sortedFOMDate(): List<LocalDate> =

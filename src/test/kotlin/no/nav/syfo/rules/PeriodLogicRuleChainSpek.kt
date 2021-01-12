@@ -410,5 +410,75 @@ object PeriodLogicRuleChainSpek : Spek({
 
             PeriodLogicRuleChain.GRADERT_SYKMELDING_OVER_99_PROSENT(ruleData(healthInformation)) shouldEqual false
         }
+
+        it("Should check rule SYKMELDING_MED_BEHANDLINGSDAGER, should trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.of(2019, 1, 7),
+                    tom = LocalDate.of(2019, 1, 13),
+                    behandlingsdager = 1
+                )
+            ))
+
+            PeriodLogicRuleChain.SYKMELDING_MED_BEHANDLINGSDAGER(ruleData(healthInformation)) shouldEqual true
+        }
+
+        it("Should check rule SYKMELDING_MED_BEHANDLINGSDAGER, should not trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.of(2019, 1, 7),
+                    tom = LocalDate.of(2019, 1, 13)
+                )
+            ))
+
+            PeriodLogicRuleChain.SYKMELDING_MED_BEHANDLINGSDAGER(ruleData(healthInformation)) shouldEqual false
+        }
+
+        it("Should check rule SYKMELDING_MED_REISETILSKUDD, should trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.of(2019, 1, 7),
+                    tom = LocalDate.of(2019, 1, 13),
+                    reisetilskudd = true
+                )
+            ))
+
+            PeriodLogicRuleChain.SYKMELDING_MED_REISETILSKUDD(ruleData(healthInformation)) shouldEqual true
+        }
+
+        it("Should check rule SYKMELDING_MED_REISETILSKUDD, should not trigger rule") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.of(2019, 1, 7),
+                    tom = LocalDate.of(2019, 1, 13)
+                )
+            ))
+
+            PeriodLogicRuleChain.SYKMELDING_MED_REISETILSKUDD(ruleData(healthInformation)) shouldEqual false
+        }
+
+        it("Should check rule SYKMELDING_MED_REISETILSKUDD, should trigger rule (gradert)") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.of(2019, 1, 7),
+                    tom = LocalDate.of(2019, 1, 13),
+                    gradert = generateGradert(grad = 50, reisetilskudd = true)
+                )
+            ))
+
+            PeriodLogicRuleChain.SYKMELDING_MED_REISETILSKUDD(ruleData(healthInformation)) shouldEqual true
+        }
+
+        it("Should check rule SYKMELDING_MED_REISETILSKUDD, should not trigger rule (gradert)") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.of(2019, 1, 7),
+                    tom = LocalDate.of(2019, 1, 13),
+                    gradert = generateGradert(grad = 50, reisetilskudd = false)
+                )
+            ))
+
+            PeriodLogicRuleChain.SYKMELDING_MED_REISETILSKUDD(ruleData(healthInformation)) shouldEqual false
+        }
     }
 })
