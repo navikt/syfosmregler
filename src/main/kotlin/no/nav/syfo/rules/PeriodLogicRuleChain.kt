@@ -79,9 +79,9 @@ enum class PeriodLogicRuleChain(
     IKKE_DEFINERT_PERIODE(
         1204,
         Status.INVALID,
-        "Det er ikke oppgitt type for sykmeldingen (den må være enten 100%, gradert, avventende, reisetilskudd eller behandlingsdager).",
+        "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Det er ikke oppgitt type for sykmeldingen (den må være enten 100%, gradert, avventende, reisetilskudd eller behandlingsdager).",
+            "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
         { (healthInformation, _) ->
             healthInformation.perioder.any { it.aktivitetIkkeMulig == null && it.gradert == null && it.avventendeInnspillTilArbeidsgiver.isNullOrEmpty() && !it.reisetilskudd && (it.behandlingsdager == null || it.behandlingsdager == 0) }
         }),
