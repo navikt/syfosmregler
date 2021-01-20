@@ -142,6 +142,38 @@ object PeriodLogicRuleChainSpek : Spek({
             PeriodLogicRuleChain.OPPHOLD_MELLOM_PERIODER(ruleData(healthInformation)) shouldEqual false
         }
 
+        it("Should check rule IKKE_DEFINERT_PERIODE, should trigger rule") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(Periode(
+                    fom = LocalDate.of(2018, 2, 1),
+                    tom = LocalDate.of(2018, 2, 2),
+                    aktivitetIkkeMulig = null,
+                    gradert = null,
+                    avventendeInnspillTilArbeidsgiver = null,
+                    reisetilskudd = false,
+                    behandlingsdager = 0
+                ))
+            )
+
+            PeriodLogicRuleChain.IKKE_DEFINERT_PERIODE(ruleData(healthInformation)) shouldEqual true
+        }
+
+        it("Should check rule IKKE_DEFINERT_PERIODE, should not trigger rule") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(Periode(
+                    fom = LocalDate.of(2018, 2, 1),
+                    tom = LocalDate.of(2018, 2, 2),
+                    aktivitetIkkeMulig = null,
+                    gradert = null,
+                    avventendeInnspillTilArbeidsgiver = null,
+                    reisetilskudd = false,
+                    behandlingsdager = 1
+                ))
+            )
+
+            PeriodLogicRuleChain.IKKE_DEFINERT_PERIODE(ruleData(healthInformation)) shouldEqual false
+        }
+
         it("Should check rule TILBAKEDATERT_MER_ENN_3_AR, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
