@@ -6,35 +6,24 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.engine.apache.ApacheEngineConfig
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.jackson
-import io.ktor.response.respond
-import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import java.net.ProxySelector
 import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
-import no.nav.syfo.api.AccessTokenClient
-import no.nav.syfo.api.LegeSuspensjonClient
-import no.nav.syfo.api.NorskHelsenettClient
-import no.nav.syfo.api.SyketilfelleClient
-import no.nav.syfo.api.registerNaisApi
-import no.nav.syfo.api.registerRuleApi
+import no.nav.syfo.application.ApplicationServer
+import no.nav.syfo.application.ApplicationState
+import no.nav.syfo.application.createApplicationEngine
+import no.nav.syfo.client.AccessTokenClient
+import no.nav.syfo.client.LegeSuspensjonClient
+import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.pdl.PdlFactory
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
@@ -43,8 +32,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
-
-data class ApplicationState(var ready: Boolean = false, var running: Boolean = true)
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -56,12 +43,12 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
 fun main() {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
-    val applicationState = ApplicationState()
 
     if (Diagnosekoder.icd10.isEmpty() || Diagnosekoder.icpc2.isEmpty()) {
         throw RuntimeException("ICD10 or ICPC2 diagnose codes failed to load.")
     }
 
+    val applicationState = ApplicationState()
     DefaultExports.initialize()
 
     val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
@@ -97,36 +84,14 @@ fun main() {
 
     val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, pdlPersonService, norskHelsenettClient)
 
-    val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState, ruleService)
-        applicationState.ready = true
-    }.start(wait = true)
+    val applicationEngine = createApplicationEngine(
+        ruleService,
+        env,
+        applicationState
+    )
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        applicationState.ready = false
-        applicationServer.stop(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(10))
-    })
-}
+    val applicationServer = ApplicationServer(applicationEngine, applicationState)
+    applicationServer.start()
 
-@KtorExperimentalAPI
-fun Application.initRouting(applicationState: ApplicationState, ruleService: RuleService) {
-    routing {
-        registerNaisApi(readynessCheck = { applicationState.ready }, livenessCheck = { applicationState.running })
-        registerRuleApi(ruleService)
-    }
-    install(ContentNegotiation) {
-        jackson {
-            registerKotlinModule()
-            registerModule(JavaTimeModule())
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        }
-    }
-    install(StatusPages) {
-        exception<Throwable> { cause ->
-            call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
-
-            log.error("Caught exception while trying to validate against rules", cause)
-            throw cause
-        }
-    }
+    applicationState.ready = true
 }

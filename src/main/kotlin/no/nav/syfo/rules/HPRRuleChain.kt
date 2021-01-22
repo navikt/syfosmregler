@@ -1,6 +1,6 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.api.Behandler
+import no.nav.syfo.client.Behandler
 import no.nav.syfo.model.Status
 
 enum class HPRRuleChain(

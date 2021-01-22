@@ -1,4 +1,4 @@
-package no.nav.syfo.api
+package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
@@ -14,7 +14,7 @@ import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.VaultCredentials
-import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.api.log
 
 @KtorExperimentalAPI
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient, private val httpClient: HttpClient) {

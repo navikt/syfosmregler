@@ -1,4 +1,4 @@
-package no.nav.syfo.api
+package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
@@ -10,7 +10,7 @@ import io.ktor.util.KtorExperimentalAPI
 import java.time.LocalDate
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
-import no.nav.syfo.client.StsOidcClient
+import no.nav.syfo.api.log
 import no.nav.syfo.model.Syketilfelle
 
 @KtorExperimentalAPI
