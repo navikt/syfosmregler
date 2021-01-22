@@ -1,9 +1,9 @@
 package no.nav.syfo.rules
 
 import java.time.LocalDate
-import no.nav.syfo.api.Behandler
-import no.nav.syfo.api.Godkjenning
-import no.nav.syfo.api.Kode
+import no.nav.syfo.client.Behandler
+import no.nav.syfo.client.Godkjenning
+import no.nav.syfo.client.Kode
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Sykmelding

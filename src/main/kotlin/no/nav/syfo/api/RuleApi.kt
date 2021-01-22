@@ -17,7 +17,7 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 @KtorExperimentalAPI
 fun Routing.registerRuleApi(ruleService: RuleService) {
     post("/v1/rules/validate") {
-        log.info("Got an request to validate rules")
+        log.info("Got a request to validate rules")
 
         val receivedSykmelding: ReceivedSykmelding = call.receive()
 

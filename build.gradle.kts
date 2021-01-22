@@ -5,18 +5,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val coroutinesVersion = "1.3.3"
+val coroutinesVersion = "1.3.9"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.9.8"
+val jacksonVersion = "2.10.2"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
-val kluentVersion = "1.39"
-val ktorVersion = "1.3.0"
+val kluentVersion = "1.51"
+val ktorVersion = "1.4.1"
 val logbackVersion = "1.2.3"
-val logstashEncoderVersion = "5.1"
-val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.6f1bcd1"
-val smCommonDiagnosisCodesVersion = "1.f409e4d"
+val logstashEncoderVersion = "6.1"
+val prometheusVersion = "0.6.0"
+val smCommonVersion = "1.f409e4d"
 val spekVersion = "2.0.9"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val cxfVersion = "3.2.7"
@@ -27,13 +26,12 @@ val javaxJaxwsApiVersion = "2.2.1"
 val jfairyVersion = "0.6.2"
 val saajVersion = "1.4.0"
 val commonsTextVersion = "1.4"
-val diskresjonskodeV1Version= "1.2019.07.11-06.47-b55f47790a9d"
 val mockkVersion = "1.9.3"
 
 
 plugins {
     java
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.72"
     id("org.jmailen.kotlinter") version "2.2.0"
     id("com.diffplug.gradle.spotless") version "3.24.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
@@ -78,7 +76,7 @@ dependencies {
     implementation("no.nav.helse:syfosm-common-rest-sts:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-ws:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-rules:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonDiagnosisCodesVersion")
+    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
@@ -88,7 +86,6 @@ dependencies {
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("no.nav.helse.xml:sm2013:$sykmeldingVersion")
-    implementation("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:$diskresjonskodeV1Version")
 
     implementation("org.apache.commons:commons-text:$commonsTextVersion")
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")

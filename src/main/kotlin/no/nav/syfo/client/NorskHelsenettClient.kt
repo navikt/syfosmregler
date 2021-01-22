@@ -1,4 +1,4 @@
-package no.nav.syfo.api
+package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
@@ -14,6 +14,7 @@ import io.ktor.util.KtorExperimentalAPI
 import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
+import no.nav.syfo.api.log
 import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI

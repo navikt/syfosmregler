@@ -8,9 +8,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
-import no.nav.syfo.api.LegeSuspensjonClient
-import no.nav.syfo.api.NorskHelsenettClient
-import no.nav.syfo.api.SyketilfelleClient
+import no.nav.syfo.client.LegeSuspensjonClient
+import no.nav.syfo.client.NorskHelsenettClient
+import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
