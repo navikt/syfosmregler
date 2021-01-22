@@ -118,6 +118,7 @@ fun Application.initRouting(applicationState: ApplicationState, ruleService: Rul
         jackson {
             registerKotlinModule()
             registerModule(JavaTimeModule())
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
     }
     install(StatusPages) {
