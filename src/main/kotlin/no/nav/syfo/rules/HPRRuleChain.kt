@@ -61,27 +61,11 @@ enum class HPRRuleChain(
     BEHANDLER_MT_FT_KI_OVER_12_UKER(
             1519,
             Status.INVALID,
-            "Den som skrev sykmeldingen er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker",
+            "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandler er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker regnet fra første fom-dato til siste tom-dato", { (sykmelding, behandlerOgStartdato) ->
-        (sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 &&
-            !harAktivHelsepersonellAutorisasjonsSom(behandlerOgStartdato.behandler, listOf(
-                HelsepersonellKategori.LEGE.verdi,
-                HelsepersonellKategori.TANNLEGE.verdi)) &&
-            harAktivHelsepersonellAutorisasjonsSom(behandlerOgStartdato.behandler, listOf(
-                HelsepersonellKategori.KIROPRAKTOR.verdi,
-                HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
-    }),
-
-    @Description("Manuellterapeuter, kiropraktorer og fysioterapeuter kan skrive sykmeldinger som gir totalt sykefravær inntil 12 ukers varighet")
-    BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT(
-        1520,
-        Status.INVALID,
-        "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT kan ikke sykmelde utover 12 uker)", { (sykmelding, behandlerOgStartdato) ->
-        behandlerOgStartdato.startdato != null && (behandlerOgStartdato.startdato..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 &&
+                    "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker)", { (sykmelding, behandlerOgStartdato) ->
+        ((sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 ||
+            (behandlerOgStartdato.startdato != null && (behandlerOgStartdato.startdato..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84)) &&
             !harAktivHelsepersonellAutorisasjonsSom(behandlerOgStartdato.behandler, listOf(
                 HelsepersonellKategori.LEGE.verdi,
                 HelsepersonellKategori.TANNLEGE.verdi)) &&

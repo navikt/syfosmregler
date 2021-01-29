@@ -202,7 +202,7 @@ object HPRRuleChainSpek : Spek({
             HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(ruleData(healthInformation, BehandlerOgStartdato(behandler, null))) shouldEqual true
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT, slår ut fordi startdato for tidligere sykefravær gir varighet på mer enn 12 uker") {
+        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ut fordi startdato for tidligere sykefravær gir varighet på mer enn 12 uker") {
             val healthInformation = generateSykmelding(perioder = listOf(
                 generatePeriode(
                     fom = LocalDate.of(2019, 3, 1),
@@ -223,10 +223,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT(ruleData(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1)))) shouldEqual true
+            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1)))) shouldEqual true
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT, slår ikke ut fordi det er nytt sykefravær") {
+        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi det er nytt sykefravær") {
             val healthInformation = generateSykmelding(perioder = listOf(
                 generatePeriode(
                     fom = LocalDate.of(2019, 3, 1),
@@ -247,10 +247,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT(ruleData(healthInformation, BehandlerOgStartdato(behandler, null))) shouldEqual false
+            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, BehandlerOgStartdato(behandler, null))) shouldEqual false
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT, slår ikke ut fordi behandler er Lege(LE) og Kiropraktor(KI)") {
+        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi behandler er Lege(LE) og Kiropraktor(KI)") {
             val healthInformation = generateSykmelding(perioder = listOf(
                 generatePeriode(
                     fom = LocalDate.of(2019, 3, 1),
@@ -282,10 +282,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT(ruleData(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1)))) shouldEqual false
+            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1)))) shouldEqual false
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT, slår ikke ut fordi startdato for tidligere sykefravær gir varighet på mindre enn 12 uker") {
+        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi startdato for tidligere sykefravær gir varighet på mindre enn 12 uker") {
             val healthInformation = generateSykmelding(perioder = listOf(
                 generatePeriode(
                     fom = LocalDate.of(2019, 3, 1),
@@ -306,7 +306,7 @@ object HPRRuleChainSpek : Spek({
                 )
             )))
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER_TOTALT(ruleData(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 2, 20)))) shouldEqual false
+            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(ruleData(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 2, 20)))) shouldEqual false
         }
     }
 })
