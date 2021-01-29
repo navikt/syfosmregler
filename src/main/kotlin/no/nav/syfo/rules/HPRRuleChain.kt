@@ -1,5 +1,6 @@
 package no.nav.syfo.rules
 
+import java.time.LocalDate
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.model.Status
 
@@ -8,16 +9,16 @@ enum class HPRRuleChain(
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
-    override val predicate: (RuleData<Behandler>) -> Boolean
-) : Rule<RuleData<Behandler>> {
+    override val predicate: (RuleData<BehandlerOgStartdato>) -> Boolean
+) : Rule<RuleData<BehandlerOgStartdato>> {
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
     BEHANDLER_IKKE_GYLDIG_I_HPR(
             1402,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, behandler) ->
-        !behandler.godkjenninger.any {
+                    "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt", { (_, behandlerOgStartdato) ->
+        !behandlerOgStartdato.behandler.godkjenninger.any {
             it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv
         }
     }),
@@ -27,8 +28,8 @@ enum class HPRRuleChain(
             1403,
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
-            "Behandler har ikke til gyldig autorisasjon i HPR", { (_, behandler) ->
-        !behandler.godkjenninger.any {
+            "Behandler har ikke til gyldig autorisasjon i HPR", { (_, behandlerOgStartdato) ->
+        !behandlerOgStartdato.behandler.godkjenninger.any {
             it.autorisasjon?.aktiv != null &&
                     it.autorisasjon.aktiv &&
                     it.autorisasjon.oid == 7704 &&
@@ -43,11 +44,11 @@ enum class HPRRuleChain(
             Status.INVALID,
             "Den som skrev sykmeldingen manglet autorisasjon.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege", { (_, behandler) ->
-        !behandler.godkjenninger.any {
+                    "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege", { (_, behandlerOgStartdato) ->
+        !behandlerOgStartdato.behandler.godkjenninger.any {
             it.helsepersonellkategori?.aktiv != null &&
                 it.autorisasjon?.aktiv == true && it.helsepersonellkategori.verdi != null &&
-                harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+                harAktivHelsepersonellAutorisasjonsSom(behandlerOgStartdato.behandler, listOf(
                     HelsepersonellKategori.LEGE.verdi,
                     HelsepersonellKategori.KIROPRAKTOR.verdi,
                     HelsepersonellKategori.MANUELLTERAPEUT.verdi,
@@ -62,12 +63,12 @@ enum class HPRRuleChain(
             Status.INVALID,
             "Den som skrev sykmeldingen er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandler er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker regnet fra første fom-dato til siste tom-dato", { (sykmelding, behandler) ->
+                    "Behandler er manuellterapeut, kiropraktor eller fysioterapeut og sykmeldingsperioden overstiger 12 uker regnet fra første fom-dato til siste tom-dato", { (sykmelding, behandlerOgStartdato) ->
         (sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 &&
-            !harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+            !harAktivHelsepersonellAutorisasjonsSom(behandlerOgStartdato.behandler, listOf(
                 HelsepersonellKategori.LEGE.verdi,
                 HelsepersonellKategori.TANNLEGE.verdi)) &&
-            harAktivHelsepersonellAutorisasjonsSom(behandler, listOf(
+            harAktivHelsepersonellAutorisasjonsSom(behandlerOgStartdato.behandler, listOf(
                 HelsepersonellKategori.KIROPRAKTOR.verdi,
                 HelsepersonellKategori.MANUELLTERAPEUT.verdi,
                 HelsepersonellKategori.FYSIOTERAPAEUT.verdi))
@@ -81,3 +82,8 @@ fun harAktivHelsepersonellAutorisasjonsSom(behandler: Behandler, helsepersonerVe
             godkjenning.helsepersonellkategori.let {
                 it.aktiv && it.verdi in helsepersonerVerdi }
     }
+
+data class BehandlerOgStartdato(
+    val behandler: Behandler,
+    val startdato: LocalDate?
+)
