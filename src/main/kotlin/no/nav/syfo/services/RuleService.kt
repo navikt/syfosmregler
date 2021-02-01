@@ -2,7 +2,6 @@ package no.nav.syfo.services
 
 import io.ktor.util.KtorExperimentalAPI
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -12,16 +11,14 @@ import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.model.AnnenFraverGrunn
-import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.Syketilfelle
-import no.nav.syfo.model.SyketilfelleTag
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.pdl.service.PdlPersonService
+import no.nav.syfo.rules.BehandlerOgStartdato
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
@@ -71,12 +68,8 @@ class RuleService(
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
             legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString, loggingMeta).suspendert
         }
-        val erNyttSyketilfelleDeferred = async {
-            val syketilfelle = receivedSykmelding.sykmelding.perioder.intoSyketilfelle(
-                    receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.mottattDato,
-                    receivedSykmelding.msgId)
-
-            syketilfelleClient.fetchErNytttilfelle(syketilfelle, receivedSykmelding.sykmelding.pasientAktoerId, loggingMeta)
+        val syketilfelleStartdatoDeferred = async {
+            syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.sykmelding.perioder, loggingMeta)
         }
 
         val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId, loggingMeta = loggingMeta)
@@ -91,13 +84,14 @@ class RuleService(
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
+        val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
-                ruleMetadata = ruleMetadata, erNyttSyketilfelle = erNyttSyketilfelleDeferred.await())
+                ruleMetadata = ruleMetadata, erNyttSyketilfelle = syketilfelleStartdato == null)
 
         val results = listOf(
                 ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
                 PeriodLogicRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
-                HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, behandler),
+                HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, BehandlerOgStartdato(behandler, syketilfelleStartdato)),
                 PostDiskresjonskodeRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patientDiskresjonskodeDeferred.await()),
                 LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
                 SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
@@ -106,25 +100,6 @@ class RuleService(
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 
         return validationResult(results)
-    }
-
-    private fun List<Periode>.intoSyketilfelle(aktoerId: String, received: LocalDateTime, resourceId: String): List<Syketilfelle> = map {
-        Syketilfelle(
-                aktorId = aktoerId,
-                orgnummer = null,
-                inntruffet = received,
-                tags = listOf(SyketilfelleTag.SYKMELDING, SyketilfelleTag.NY, SyketilfelleTag.PERIODE, when {
-                    it.aktivitetIkkeMulig != null -> SyketilfelleTag.INGEN_AKTIVITET
-                    it.reisetilskudd -> SyketilfelleTag.FULL_AKTIVITET
-                    it.gradert != null -> SyketilfelleTag.GRADERT_AKTIVITET
-                    it.behandlingsdager != null -> SyketilfelleTag.BEHANDLINGSDAGER
-                    it.avventendeInnspillTilArbeidsgiver != null -> SyketilfelleTag.FULL_AKTIVITET
-                    else -> throw RuntimeException("Could not find aktivitetstype, this should never happen")
-                }).joinToString(",") { tag -> tag.name },
-                ressursId = resourceId,
-                fom = it.fom.atStartOfDay(),
-                tom = it.tom.atStartOfDay()
-        )
     }
 
     private fun validationResult(results: List<Rule<Any>>): ValidationResult = ValidationResult(
