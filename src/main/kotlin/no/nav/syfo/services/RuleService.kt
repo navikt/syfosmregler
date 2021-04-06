@@ -120,7 +120,7 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
     return ((sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R992") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "d" }) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R992" }) ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U072") ||
