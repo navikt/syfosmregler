@@ -52,7 +52,7 @@ enum class ValidationRuleChain(
     UGYLDIG_FNR_BEHANDLER(
             1006,
             Status.INVALID,
-            "Fødselsnummer for den sykmeldte deg, er ikke gyldig",
+            "Fødselsnummer for den som sykmeldte deg er ikke gyldig.",
             "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                     "Behandlers fødselsnummer/D-nummer er ikke gyldig", { (sykmelding, _) ->
         !validatePersonAndDNumber(sykmelding.behandler.fnr)
