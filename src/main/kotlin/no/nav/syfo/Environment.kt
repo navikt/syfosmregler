@@ -2,7 +2,7 @@ package no.nav.syfo
 
 data class Environment(
     val legeSuspensjonEndpointURL: String = getEnvVar("LEGE_SUSPENSJON_ENDPOINT_URL", "http://btsys"),
-    val syketilfelleEndpointURL: String = getEnvVar("SYKETILLFELLE_ENDPOINT_URL", "http://syfosyketilfelle"),
+    val syketilfelleEndpointURL: String = getEnvVar("SYKETILLFELLE_ENDPOINT_URL", "http://syfosyketilfelle.flex"),
     val applicationPort: Int = getEnvVar("APPLICATION_PORT", "8080").toInt(),
     val applicationThreads: Int = getEnvVar("APPLICATION_THREADS", "4").toInt(),
     val securityTokenServiceURL: String = getEnvVar("SECURITY_TOKEN_SERVICE_URL"),
