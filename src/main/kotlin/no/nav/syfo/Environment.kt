@@ -9,8 +9,7 @@ data class Environment(
     val norskHelsenettEndpointURL: String = getEnvVar("HELSENETT_ENDPOINT_URL", "http://syfohelsenettproxy"),
     val clientId: String = getEnvVar("CLIENT_ID"),
     val helsenettproxyId: String = getEnvVar("HELSENETTPROXY_ID"),
-    val aadAccessTokenUrl: String = getEnvVar("AADACCESSTOKEN_URL"),
-    val pdlGraphqlPath: String = getEnvVar("PDL_GRAPHQL_PATH")
+    val aadAccessTokenUrl: String = getEnvVar("AADACCESSTOKEN_URL")
 )
 
 data class VaultCredentials(
