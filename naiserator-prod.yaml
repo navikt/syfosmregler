@@ -47,5 +47,3 @@ spec:
       value: 97b74a7f-7cc8-475b-ac1e-6a198824e44c
     - name: HELSENETTPROXY_ID
       value: b813133d-82b8-46ef-be96-3b903ea6c048
-    - name: PDL_GRAPHQL_PATH
-      value: https://pdl-api.nais.adeo.no/graphql

@@ -24,7 +24,6 @@ import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.client.SyketilfelleClient
-import no.nav.syfo.pdl.PdlFactory
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
@@ -80,9 +79,8 @@ fun main() {
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val accessTokenClient = AccessTokenClient(env.aadAccessTokenUrl, env.clientId, credentials.clientsecret, httpClientWithProxy)
     val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyId, httpClient)
-    val pdlPersonService = PdlFactory.getPdlService(env, oidcClient, httpClient)
 
-    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, pdlPersonService, norskHelsenettClient)
+    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient)
 
     val applicationEngine = createApplicationEngine(
         ruleService,

@@ -17,12 +17,10 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
-import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.BehandlerOgStartdato
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
-import no.nav.syfo.rules.PostDiskresjonskodeRuleChain
 import no.nav.syfo.rules.Rule
 import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
@@ -37,7 +35,6 @@ import org.slf4j.LoggerFactory
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
-    private val pdlPersonService: PdlPersonService,
     private val norskHelsenettClient: NorskHelsenettClient
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
@@ -63,7 +60,6 @@ class RuleService(
                 avsenderFnr = receivedSykmelding.personNrLege
         )
 
-        val patientDiskresjonskodeDeferred = async { pdlPersonService.hentDiskresjonskode(receivedSykmelding.personNrPasient, loggingMeta) }
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
             legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString, loggingMeta).suspendert
@@ -92,7 +88,6 @@ class RuleService(
                 ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
                 PeriodLogicRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
                 HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, BehandlerOgStartdato(behandler, syketilfelleStartdato)),
-                PostDiskresjonskodeRuleChain.values().executeFlow(receivedSykmelding.sykmelding, patientDiskresjonskodeDeferred.await()),
                 LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
                 SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
         ).flatten()
