@@ -2,9 +2,9 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: syfosmregler
-  namespace: default
+  namespace: teamsykmelding
   labels:
-    team: teamsykefravr
+    team: teamsykmelding
 spec:
   image: {{ image }}
   replicas:
@@ -35,6 +35,11 @@ spec:
       memory: 512Mi
   vault:
     enabled: true
+    paths:
+      - kvPath: serviceuser/data/prod/srvsyfosmregler
+        mountPath: /secrets/serviceuser
+      - kvPath: /kv/prod/fss/syfosmregler/teamsykmelding
+        mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
   ingresses:
     - "https://syfosmregler.nais.adeo.no"
