@@ -39,8 +39,9 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
 @KtorExperimentalAPI
 fun main() {
     val env = Environment()
+    log.info("environment ok")
     val credentials = VaultCredentials()
-
+    log.info("vault ok")
     if (Diagnosekoder.icd10.isEmpty() || Diagnosekoder.icpc2.isEmpty()) {
         throw RuntimeException("ICD10 or ICPC2 diagnose codes failed to load.")
     }
@@ -71,6 +72,7 @@ fun main() {
 
     val httpClientWithProxy = HttpClient(Apache, proxyConfig)
     val httpClient = HttpClient(Apache, config)
+    log.info("httpclients ok")
 
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
@@ -80,6 +82,8 @@ fun main() {
 
     val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient)
 
+    log.info("services ok")
+
     val applicationEngine = createApplicationEngine(
         ruleService,
         env,
@@ -88,6 +92,7 @@ fun main() {
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)
     applicationServer.start()
+    log.info("app startet")
 
     applicationState.ready = true
 }
