@@ -44,8 +44,6 @@ spec:
   ingresses:
     - "https://syfosmregler.nais.adeo.no"
   env:
-    - name: SECURITY_TOKEN_SERVICE_URL
-      value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: AADACCESSTOKEN_URL
       value: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/token
     - name: CLIENT_ID

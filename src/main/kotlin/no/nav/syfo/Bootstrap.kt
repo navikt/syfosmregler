@@ -74,7 +74,7 @@ fun main() {
     val httpClient = HttpClient(Apache, config)
     log.info("httpclients ok")
 
-    val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword)
+    val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val accessTokenClient = AccessTokenClient(env.aadAccessTokenUrl, env.clientId, credentials.clientsecret, httpClientWithProxy)
