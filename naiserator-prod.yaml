@@ -2,9 +2,9 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: syfosmregler
-  namespace: default
+  namespace: teamsykmelding
   labels:
-    team: teamsykefravr
+    team: teamsykmelding
 spec:
   image: {{ image }}
   replicas:
@@ -22,7 +22,7 @@ spec:
     path: /is_ready
     initialDelay: 30
     periodSeconds: 5
-    timeout: 5
+    timeout: 1
   prometheus:
     enabled: true
     path: /prometheus
@@ -35,12 +35,15 @@ spec:
       memory: 512Mi
   vault:
     enabled: true
+    paths:
+      - kvPath: serviceuser/data/prod/srvsyfosmregler
+        mountPath: /secrets/serviceuser
+      - kvPath: /kv/prod/fss/syfosmregler/teamsykmelding
+        mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
   ingresses:
     - "https://syfosmregler.nais.adeo.no"
   env:
-    - name: SECURITY_TOKEN_SERVICE_URL
-      value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: AADACCESSTOKEN_URL
       value: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/token
     - name: CLIENT_ID
