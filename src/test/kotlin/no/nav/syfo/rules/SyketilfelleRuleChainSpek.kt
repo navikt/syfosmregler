@@ -3,6 +3,8 @@ package no.nav.syfo.rules
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import no.nav.syfo.QuestionGroup
+import no.nav.syfo.QuestionId
 import no.nav.syfo.generateKontaktMedPasient
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
@@ -10,7 +12,10 @@ import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.AnnenFraversArsak
 import no.nav.syfo.model.KontaktMedPasient
+import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.model.SporsmalSvar
+import no.nav.syfo.model.SvarRestriksjon
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
@@ -578,6 +583,126 @@ object SyketilfelleRuleChainSpek : Spek({
             SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
 
+        it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "6.3"
+                )
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
+        }
+
+        it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis begrunnelse inneholder bokstaver") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "Fikk ikke time"
+                )
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
+        it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis utdypende opplysninger er satt") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "6.3"
+                ),
+                utdypendeOpplysninger = mapOf(
+                    QuestionGroup.GROUP_6_2.spmGruppeId to mapOf(QuestionId.ID_6_2_1.spmId to SporsmalSvar("Pasienten er syk", "svar", listOf(SvarRestriksjon.SKJERMET_FOR_ARBEIDSGIVER)))
+                )
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
+        it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis melding til NAV er satt") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "6.3"
+                ),
+                meldingTilNAV = MeldingTilNAV(false, "Her er begrunnelsen")
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
                     perioder = listOf(
@@ -687,6 +812,35 @@ object SyketilfelleRuleChainSpek : Spek({
                             tssid = "1355435",
                             avsenderFnr = "1345525522"
                     ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
+        }
+
+        it("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE trigges ikke hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "6.3"
+                )
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = false
             )
 
             SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
