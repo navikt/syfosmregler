@@ -111,8 +111,9 @@ enum class SyketilfelleRuleChain(
             !ruleMetadataSykmelding.erNyttSyketilfelle &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(4) &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() <= healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
-                (healthInformation.kontaktMedPasient.kontaktDato == null && healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
-                    !erCoronaRelatert(healthInformation)
+                (healthInformation.kontaktMedPasient.kontaktDato == null &&
+                    (healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() || !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt!!.contains("""[A-Za-z]""".toRegex())) &&
+                !erCoronaRelatert(healthInformation))
         }),
 }
 

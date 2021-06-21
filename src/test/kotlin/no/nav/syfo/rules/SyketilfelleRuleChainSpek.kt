@@ -923,5 +923,31 @@ object SyketilfelleRuleChainSpek : Spek({
 
             SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual false
         }
+
+        it("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND trigges hvis begrunnelse ikke inneholder bokstaver") {
+            val healthInformation = generateSykmelding(perioder = listOf(
+                generatePeriode(
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now()
+                )
+            ),
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "6.3")
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    receivedDate = LocalDateTime.now(),
+                    signatureDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.of(LocalDate.now().plusDays(20), LocalTime.NOON),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522"
+                ), erNyttSyketilfelle = false
+            )
+
+            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(ruleData(healthInformation, ruleMetadataSykmelding)) shouldEqual true
+        }
     }
 })
