@@ -10,7 +10,7 @@ data class Environment(
     val applicationPort: Int = getEnvVar("APPLICATION_PORT", "8080").toInt(),
     val applicationThreads: Int = getEnvVar("APPLICATION_THREADS", "4").toInt(),
     val securityTokenServiceURL: String = getEnvVar("SECURITY_TOKEN_SERVICE_URL", "http://security-token-service.default/rest/v1/sts/token"),
-    val norskHelsenettEndpointURL: String = getEnvVar("HELSENETT_ENDPOINT_URL", "http://syfohelsenettproxy.default"),
+    val norskHelsenettEndpointURL: String = getEnvVar("HELSENETT_ENDPOINT_URL"),
     val clientId: String = getEnvVar("CLIENT_ID"),
     val helsenettproxyId: String = getEnvVar("HELSENETTPROXY_ID"),
     val aadAccessTokenUrl: String = getEnvVar("AADACCESSTOKEN_URL")
