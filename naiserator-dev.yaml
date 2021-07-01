@@ -50,3 +50,5 @@ spec:
       value: b0f159e9-71af-4a30-8c2b-a02f67b7905a
     - name: HELSENETTPROXY_ID
       value: c18eba24-f676-47db-9a97-3c66e9304aee
+    - name: HELSENETT_ENDPOINT_URL
+      value: https://syfohelsenettproxy.nais.preprod.local
