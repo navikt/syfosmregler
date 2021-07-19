@@ -73,7 +73,7 @@ enum class ValidationRuleChain(
             1102,
             Status.INVALID,
             "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
-            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                     "Pasienten er over 70 år. Sykmelding kan ikke benyttes.", { (sykmelding, metadata) ->
         sykmelding.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
     }),
