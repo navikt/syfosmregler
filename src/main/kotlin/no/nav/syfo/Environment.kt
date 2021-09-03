@@ -11,15 +11,15 @@ data class Environment(
     val applicationThreads: Int = getEnvVar("APPLICATION_THREADS", "4").toInt(),
     val securityTokenServiceURL: String = getEnvVar("SECURITY_TOKEN_SERVICE_URL", "http://security-token-service.default/rest/v1/sts/token"),
     val norskHelsenettEndpointURL: String = getEnvVar("HELSENETT_ENDPOINT_URL"),
-    val clientId: String = getEnvVar("CLIENT_ID"),
-    val helsenettproxyId: String = getEnvVar("HELSENETTPROXY_ID"),
-    val aadAccessTokenUrl: String = getEnvVar("AADACCESSTOKEN_URL")
+    val aadAccessTokenV2Url: String = getEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
+    val clientIdV2: String = getEnvVar("AZURE_APP_CLIENT_ID"),
+    val clientSecretV2: String = getEnvVar("AZURE_APP_CLIENT_SECRET"),
+    val helsenettproxyScope: String = getEnvVar("HELSENETT_SCOPE")
 )
 
 data class VaultCredentials(
     val serviceuserUsername: String = getFileAsString("/secrets/serviceuser/username"),
-    val serviceuserPassword: String = getFileAsString("/secrets/serviceuser/password"),
-    val clientsecret: String = getEnvVar("CLIENT_SECRET")
+    val serviceuserPassword: String = getFileAsString("/secrets/serviceuser/password")
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null) =
