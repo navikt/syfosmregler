@@ -18,15 +18,21 @@ import no.nav.syfo.api.log
 import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI
-class NorskHelsenettClient(private val endpointUrl: String, private val accessTokenClient: AccessTokenClient, private val resourceId: String, private val httpClient: HttpClient) {
+class NorskHelsenettClient(
+    private val endpointUrl: String,
+    private val accessTokenClient: AccessTokenClientV2,
+    private val resourceId: String,
+    private val httpClient: HttpClient
+) {
 
     suspend fun finnBehandler(behandlerFnr: String, msgId: String, loggingMeta: LoggingMeta): Behandler? = retry(
         callName = "finnbehandler",
-        retryIntervals = arrayOf(500L, 1000L, 1000L)) {
+        retryIntervals = arrayOf(500L, 1000L, 1000L)
+    ) {
         log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
-        val httpResponse = httpClient.get<HttpStatement>("$endpointUrl/api/behandler") {
+        val httpResponse = httpClient.get<HttpStatement>("$endpointUrl/api/v2/behandler") {
             accept(ContentType.Application.Json)
-            val accessToken = accessTokenClient.hentAccessToken(resourceId)
+            val accessToken = accessTokenClient.getAccessTokenV2(resourceId)
             headers {
                 append("Authorization", "Bearer $accessToken")
                 append("Nav-CallId", msgId)

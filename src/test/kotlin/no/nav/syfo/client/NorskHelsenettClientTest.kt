@@ -32,12 +32,12 @@ import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-private val fnr = "12345678912"
+private const val fnr = "12345678912"
 @InternalAPI
 @KtorExperimentalAPI
 internal class NorskHelsenettClientTest : Spek({
 
-    val accessTokenClientMock = mockk<AccessTokenClient>()
+    val accessTokenClientMock = mockk<AccessTokenClientV2>()
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
@@ -56,7 +56,7 @@ internal class NorskHelsenettClientTest : Spek({
             jackson {}
         }
         routing {
-            get("/api/behandler") {
+            get("/api/v2/behandler") {
                 when {
                     call.request.headers["behandlerFnr"] == fnr -> call.respond(Behandler(listOf(Godkjenning(helsepersonellkategori = Kode(true, 1, "verdi"), autorisasjon = Kode(true, 2, "annenVerdi")))))
                     call.request.headers["behandlerFnr"] == "behandlerFinnesIkke" -> call.respond(HttpStatusCode.NotFound, "Behandler finnes ikke")
@@ -69,16 +69,16 @@ internal class NorskHelsenettClientTest : Spek({
     val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClientMock, "resourceId", httpClient)
 
     afterGroup {
-        mockServer.stop(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(10))
+        mockServer.stop(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(1))
     }
 
     beforeGroup {
-        coEvery { accessTokenClientMock.hentAccessToken(any()) } returns "token"
+        coEvery { accessTokenClientMock.getAccessTokenV2(any()) } returns "token"
     }
 
     describe("Test NorskHelsenettClient") {
         it("Should get behandler") {
-            var behandler: Behandler? = null
+            var behandler: Behandler?
             runBlocking {
                 behandler = norskHelsenettClient.finnBehandler(fnr, "123",
                         LoggingMeta("", "", "123", ""))
@@ -87,7 +87,7 @@ internal class NorskHelsenettClientTest : Spek({
         }
 
         it("Should receive null when 404") {
-            var behandler: Behandler? = null
+            var behandler: Behandler?
             runBlocking {
                 behandler = norskHelsenettClient.finnBehandler("behandlerFinnesIkke", "1",
                         LoggingMeta("", "", "1", ""))
@@ -98,7 +98,7 @@ internal class NorskHelsenettClientTest : Spek({
 
     describe("Test retry") {
         it("Should retry when getting internal server error") {
-            var behandler: Behandler? = null
+            var behandler: Behandler?
             runBlocking {
                 behandler = norskHelsenettClient.finnBehandler(fnr, "1",
                         LoggingMeta("", "", "1", ""))
@@ -107,7 +107,6 @@ internal class NorskHelsenettClientTest : Spek({
         }
 
         it("Should throw exeption when exceeds max retries") {
-            var behandler: Behandler? = null
             runBlocking {
                 assertFailsWith<IOException> { norskHelsenettClient.finnBehandler("1234", "1",
                         LoggingMeta("", "", "123", "")) }
