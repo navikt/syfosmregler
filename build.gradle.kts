@@ -10,7 +10,7 @@ val javaxActivationVersion = "1.1.1"
 val jacksonVersion = "2.10.2"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
-val kluentVersion = "1.65"
+val kluentVersion = "1.51"
 val ktorVersion = "1.4.1"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "6.1"
@@ -32,9 +32,9 @@ val mockkVersion = "1.9.3"
 plugins {
     java
     kotlin("jvm") version "1.3.72"
-    id("org.jmailen.kotlinter") version "3.6.0"
-    id("com.diffplug.spotless") version "5.8.2"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("org.jmailen.kotlinter") version "2.2.0"
+    id("com.diffplug.gradle.spotless") version "3.24.0"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 val githubUser: String by project
@@ -42,10 +42,10 @@ val githubPassword: String by project
 
 repositories {
     mavenCentral()
-    // jcenter()
-    // maven(url = "https://dl.bintray.com/kotlin/ktor")
-    // maven(url = "https://dl.bintray.com/spekframework/spek-dev")
-    // maven(url = "https://kotlin.bintray.com/kotlinx")
+    jcenter()
+    maven(url = "https://dl.bintray.com/kotlin/ktor")
+    maven(url = "https://dl.bintray.com/spekframework/spek-dev")
+    maven(url = "https://kotlin.bintray.com/kotlinx")
     maven {
         url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
         credentials {
