@@ -152,3 +152,7 @@ fun gjelderBrudd(sykmelding: Sykmelding): Boolean {
         (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S72") ?: false) ||
         (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S82") ?: false))
 }
+
+fun kommerFraSykehus(sykmelding: Sykmelding): Boolean {
+    return sykmelding.avsenderSystem.navn == "DIPS Arena"
+}
