@@ -20,6 +20,7 @@ import no.nav.syfo.application.createApplicationEngine
 import no.nav.syfo.client.AccessTokenClientV2
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
+import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.services.RuleService
@@ -76,8 +77,9 @@ fun main() {
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val accessTokenClient = AccessTokenClientV2(env.aadAccessTokenV2Url, env.clientIdV2, env.clientSecretV2, httpClientWithProxy)
     val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyScope, httpClient)
+    val smregisterClient = SmregisterClient(env.smregisterEndpointURL, accessTokenClient, env.smregisterScope, httpClient)
 
-    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient)
+    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient, smregisterClient)
 
     val applicationEngine = createApplicationEngine(
         ruleService,

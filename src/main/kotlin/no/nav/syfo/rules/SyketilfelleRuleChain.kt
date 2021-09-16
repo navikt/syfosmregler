@@ -33,7 +33,7 @@ enum class SyketilfelleRuleChain(
         "Første sykmelding er tilbakedatert og årsak for tilbakedatering er angitt.",
         "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
         { (healthInformation, ruleMetadataSykmelding) ->
-            ruleMetadataSykmelding.erNyttSyketilfelle &&
+            ruleMetadataSykmelding.erNyttSyketilfelle && ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding != true &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                     !erCoronaRelatert(healthInformation) && !gjelderBrudd(healthInformation) &&
@@ -93,7 +93,7 @@ enum class SyketilfelleRuleChain(
             "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
             "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
             { (healthInformation, ruleMetadataSykmelding) ->
-                !ruleMetadataSykmelding.erNyttSyketilfelle &&
+                !ruleMetadataSykmelding.erNyttSyketilfelle && ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding != true &&
                         ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                         !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                         !erCoronaRelatert(healthInformation) && !gjelderBrudd(healthInformation) &&
@@ -120,5 +120,6 @@ enum class SyketilfelleRuleChain(
 
 data class RuleMetadataSykmelding(
     val ruleMetadata: RuleMetadata,
-    val erNyttSyketilfelle: Boolean
+    val erNyttSyketilfelle: Boolean,
+    val erEttersendingAvTidligereSykmelding: Boolean?
 )

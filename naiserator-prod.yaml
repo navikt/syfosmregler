@@ -50,3 +50,5 @@ spec:
       value: api://prod-fss.teamsykmelding.syfohelsenettproxy/.default
     - name: HELSENETT_ENDPOINT_URL
       value: https://syfohelsenettproxy.nais.adeo.no
+    - name: SMREGISTER_SCOPE
+      value: "api://prod-fss.teamsykmelding.syfosmregister/.default"
