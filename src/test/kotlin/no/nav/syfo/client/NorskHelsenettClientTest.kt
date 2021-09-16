@@ -22,15 +22,15 @@ import io.ktor.util.InternalAPI
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
+import no.nav.syfo.LoggingMeta
+import org.amshove.kluent.shouldBeEqualTo
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.io.IOException
 import java.net.ServerSocket
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
-import kotlinx.coroutines.runBlocking
-import no.nav.syfo.LoggingMeta
-import org.amshove.kluent.shouldEqual
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 
 private const val fnr = "12345678912"
 @InternalAPI
@@ -80,19 +80,30 @@ internal class NorskHelsenettClientTest : Spek({
         it("Should get behandler") {
             var behandler: Behandler?
             runBlocking {
-                behandler = norskHelsenettClient.finnBehandler(fnr, "123",
-                        LoggingMeta("", "", "123", ""))
+                behandler = norskHelsenettClient.finnBehandler(
+                    fnr, "123",
+                    LoggingMeta("", "", "123", "")
+                )
             }
-                behandler shouldEqual Behandler(listOf(Godkjenning(helsepersonellkategori = Kode(true, 1, "verdi"), autorisasjon = Kode(true, 2, "annenVerdi"))))
+            behandler shouldBeEqualTo Behandler(
+                listOf(
+                    Godkjenning(
+                        helsepersonellkategori = Kode(true, 1, "verdi"),
+                        autorisasjon = Kode(true, 2, "annenVerdi")
+                    )
+                )
+            )
         }
 
         it("Should receive null when 404") {
             var behandler: Behandler?
             runBlocking {
-                behandler = norskHelsenettClient.finnBehandler("behandlerFinnesIkke", "1",
-                        LoggingMeta("", "", "1", ""))
+                behandler = norskHelsenettClient.finnBehandler(
+                    "behandlerFinnesIkke", "1",
+                    LoggingMeta("", "", "1", "")
+                )
             }
-                behandler shouldEqual null
+            behandler shouldBeEqualTo null
         }
     }
 
@@ -100,16 +111,29 @@ internal class NorskHelsenettClientTest : Spek({
         it("Should retry when getting internal server error") {
             var behandler: Behandler?
             runBlocking {
-                behandler = norskHelsenettClient.finnBehandler(fnr, "1",
-                        LoggingMeta("", "", "1", ""))
+                behandler = norskHelsenettClient.finnBehandler(
+                    fnr, "1",
+                    LoggingMeta("", "", "1", "")
+                )
             }
-            behandler shouldEqual Behandler(listOf(Godkjenning(helsepersonellkategori = Kode(true, 1, "verdi"), autorisasjon = Kode(true, 2, "annenVerdi"))))
+            behandler shouldBeEqualTo Behandler(
+                listOf(
+                    Godkjenning(
+                        helsepersonellkategori = Kode(true, 1, "verdi"),
+                        autorisasjon = Kode(true, 2, "annenVerdi")
+                    )
+                )
+            )
         }
 
         it("Should throw exeption when exceeds max retries") {
             runBlocking {
-                assertFailsWith<IOException> { norskHelsenettClient.finnBehandler("1234", "1",
-                        LoggingMeta("", "", "123", "")) }
+                assertFailsWith<IOException> {
+                    norskHelsenettClient.finnBehandler(
+                        "1234", "1",
+                        LoggingMeta("", "", "123", "")
+                    )
+                }
             }
         }
     }

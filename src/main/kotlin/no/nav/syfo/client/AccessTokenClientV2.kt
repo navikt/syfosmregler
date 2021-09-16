@@ -8,10 +8,10 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.Parameters
-import java.time.Instant
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import no.nav.syfo.log
+import java.time.Instant
 
 class AccessTokenClientV2(
     private val aadAccessTokenUrl: String,

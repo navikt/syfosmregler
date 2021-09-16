@@ -6,13 +6,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
-import java.time.LocalDate
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
 import no.nav.syfo.model.Periode
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.sortedTOMDate
+import java.time.LocalDate
 
 @KtorExperimentalAPI
 class SyketilfelleClient(private val endpointUrl: String, private val stsClient: StsOidcClient, private val httpClient: HttpClient) {

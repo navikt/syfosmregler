@@ -1,21 +1,19 @@
 package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.receive
+import io.ktor.client.features.ClientRequestException
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
-import io.ktor.client.statement.HttpStatement
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
-import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.util.KtorExperimentalAPI
-import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
 import no.nav.syfo.helpers.retry
+import java.io.IOException
 
 @KtorExperimentalAPI
 class NorskHelsenettClient(
@@ -30,33 +28,26 @@ class NorskHelsenettClient(
         retryIntervals = arrayOf(500L, 1000L, 1000L)
     ) {
         log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
-        val httpResponse = httpClient.get<HttpStatement>("$endpointUrl/api/v2/behandler") {
-            accept(ContentType.Application.Json)
-            val accessToken = accessTokenClient.getAccessTokenV2(resourceId)
-            headers {
-                append("Authorization", "Bearer $accessToken")
-                append("Nav-CallId", msgId)
-                append("behandlerFnr", behandlerFnr)
-            }
-        }.execute()
-        when (httpResponse.status) {
-            InternalServerError -> {
-                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}, {}", msgId, fields(loggingMeta))
-                throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
-            }
-
-            BadRequest -> {
-                log.error("BehandlerFnr mangler i request for msgId {}, {}", msgId, fields(loggingMeta))
-                return@retry null
-            }
-
-            NotFound -> {
+        try {
+            return@retry httpClient.get<Behandler>("$endpointUrl/api/v2/behandler") {
+                accept(ContentType.Application.Json)
+                val accessToken = accessTokenClient.getAccessTokenV2(resourceId)
+                headers {
+                    append("Authorization", "Bearer $accessToken")
+                    append("Nav-CallId", msgId)
+                    append("behandlerFnr", behandlerFnr)
+                }
+            }.also { log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta)) }
+        } catch (e: Exception) {
+            if (e is ClientRequestException && e.response.status == NotFound) {
                 log.warn("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
                 return@retry null
-            }
-            else -> {
-                log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta))
-                httpResponse.call.response.receive<Behandler>()
+            } else if (e is ClientRequestException && e.response.status == BadRequest) {
+                log.error("BehandlerFnr mangler i request for msgId {}, {}", msgId, fields(loggingMeta))
+                return@retry null
+            } else {
+                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}: {}", msgId, e.message)
+                throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
             }
         }
     }
