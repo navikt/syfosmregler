@@ -14,7 +14,9 @@ data class Environment(
     val aadAccessTokenV2Url: String = getEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
     val clientIdV2: String = getEnvVar("AZURE_APP_CLIENT_ID"),
     val clientSecretV2: String = getEnvVar("AZURE_APP_CLIENT_SECRET"),
-    val helsenettproxyScope: String = getEnvVar("HELSENETT_SCOPE")
+    val helsenettproxyScope: String = getEnvVar("HELSENETT_SCOPE"),
+    val smregisterEndpointURL: String = getEnvVar("SMREGISTER_ENDPOINT_URL", "http://syfosmregister"),
+    val smregisterScope: String = getEnvVar("SMREGISTER_SCOPE")
 )
 
 data class VaultCredentials(
