@@ -201,7 +201,7 @@ object SyketilfelleRuleChainSpek : Spek({
                 )
             ),
                 kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "Begrunnelse"),
-                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icd10["S821"]!!.toDiagnose())
+                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icpc2["L72"]!!.toDiagnose())
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
@@ -857,7 +857,7 @@ object SyketilfelleRuleChainSpek : Spek({
                 kontaktMedPasient = generateKontaktMedPasient(
                     begrunnelseIkkeKontakt = "Noe tull skjedde med sykmeldingen"
                 ),
-                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icd10["S821"]!!.toDiagnose())
+                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icpc2["L72"]!!.toDiagnose())
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
