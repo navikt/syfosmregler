@@ -7,6 +7,7 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
+import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
@@ -24,6 +25,7 @@ import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
+import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.sm.isICpc10
 import org.slf4j.Logger
@@ -35,7 +37,8 @@ import java.time.format.DateTimeFormatter
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
-    private val norskHelsenettClient: NorskHelsenettClient
+    private val norskHelsenettClient: NorskHelsenettClient,
+    private val smregisterClient: SmregisterClient
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
@@ -83,9 +86,15 @@ class RuleService(
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
+        val erEttersendingAvTidligereSykmelding = if (erTilbakedatertMedBegrunnelse(receivedSykmelding)) {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(receivedSykmelding.personNrPasient, receivedSykmelding.sykmelding.perioder, loggingMeta)
+        } else {
+            null
+        }
+
         val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata, erNyttSyketilfelle = syketilfelleStartdato == null
+            ruleMetadata = ruleMetadata, erNyttSyketilfelle = syketilfelleStartdato == null, erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
         )
 
         val results = listOf(
@@ -110,6 +119,10 @@ class RuleService(
             },
         ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForSender!!, rule.messageForUser!!, rule.status) }
     )
+
+    private fun erTilbakedatertMedBegrunnelse(receivedSykmelding: ReceivedSykmelding): Boolean =
+        receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate().first().plusDays(8) &&
+            !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
 }
 
 /**
@@ -128,4 +141,21 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
             sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any { it == AnnenFraverGrunn.SMITTEFARE } ?: false
         ) &&
         sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
+}
+
+fun gjelderBrudd(sykmelding: Sykmelding): Boolean {
+    return (
+        (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S12") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S22") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S32") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S42") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S52") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S62") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S72") ?: false) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S82") ?: false)
+        )
+}
+
+fun kommerFraSykehus(sykmelding: Sykmelding): Boolean {
+    return sykmelding.avsenderSystem.navn == "DIPS Arena"
 }
