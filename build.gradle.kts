@@ -5,36 +5,25 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val coroutinesVersion = "1.3.9"
-val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.10.2"
-val jaxbApiVersion = "2.4.0-b180830.0359"
-val jaxbVersion = "2.3.0.1"
-val kluentVersion = "1.51"
-val ktorVersion = "1.4.1"
+val coroutinesVersion = "1.4.2"
+val jacksonVersion = "2.12.3"
+val kluentVersion = "1.65"
+val ktorVersion = "1.5.1"
 val logbackVersion = "1.2.3"
-val logstashEncoderVersion = "6.1"
-val prometheusVersion = "0.6.0"
+val logstashEncoderVersion = "6.5"
+val prometheusVersion = "0.9.0"
 val smCommonVersion = "1.dff6489"
-val spekVersion = "2.0.9"
-val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val cxfVersion = "3.2.7"
-val javaxAnnotationApiVersion = "1.3.2"
-val jaxwsToolsVersion = "2.3.1"
-val jaxbRuntimeVersion = "2.4.0-b180830.0438"
-val javaxJaxwsApiVersion = "2.2.1"
+val spekVersion = "2.0.17"
 val jfairyVersion = "0.6.2"
-val saajVersion = "1.4.0"
-val commonsTextVersion = "1.4"
 val mockkVersion = "1.9.3"
 
 
 plugins {
     java
-    kotlin("jvm") version "1.3.72"
-    id("org.jmailen.kotlinter") version "2.2.0"
-    id("com.diffplug.gradle.spotless") version "3.24.0"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    kotlin("jvm") version "1.4.21"
+    id("org.jmailen.kotlinter") version "3.3.0"
+    id("com.diffplug.spotless") version "5.8.2"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 val githubUser: String by project
@@ -42,7 +31,6 @@ val githubPassword: String by project
 
 repositories {
     mavenCentral()
-    jcenter()
     maven {
         url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
         credentials {
@@ -50,9 +38,6 @@ repositories {
             password = githubPassword
         }
     }
-    maven(url = "https://dl.bintray.com/kotlin/ktor")
-    maven(url = "https://dl.bintray.com/spekframework/spek-dev")
-    maven(url = "https://kotlin.bintray.com/kotlinx")
 }
 
 
@@ -66,7 +51,6 @@ dependencies {
     implementation ("io.ktor:ktor-server-netty:$ktorVersion")
     implementation ("io.ktor:ktor-jackson:$ktorVersion")
 
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-basic:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
@@ -74,7 +58,6 @@ dependencies {
     implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-networking:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-rest-sts:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-ws:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-rules:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
@@ -84,25 +67,6 @@ dependencies {
     implementation ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
-    implementation("no.nav.helse.xml:sm2013:$sykmeldingVersion")
-
-    implementation("org.apache.commons:commons-text:$commonsTextVersion")
-    implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
-
-    implementation("javax.xml.ws:jaxws-api:$javaxJaxwsApiVersion")
-    implementation("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion")
-    implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
-    implementation("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
-    implementation("javax.activation:activation:$javaxActivationVersion")
-    implementation("com.sun.xml.ws:jaxws-tools:$jaxwsToolsVersion") {
-        exclude(group = "com.sun.xml.ws", module = "policy")
-    }
-
-    implementation("com.sun.xml.messaging.saaj:saaj-impl:$saajVersion")
 
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
@@ -118,7 +82,6 @@ dependencies {
     testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
         exclude(group = "org.jetbrains.kotlin")
     }
-
 }
 
 tasks {

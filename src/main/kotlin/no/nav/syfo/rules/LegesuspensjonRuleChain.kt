@@ -11,11 +11,13 @@ enum class LegesuspensjonRuleChain(
 ) : Rule<RuleData<Boolean>> {
     @Description("Behandler er suspendert av NAV på konsultasjonstidspunkt")
     BEHANDLER_SUSPENDERT(
-            1414,
-            Status.INVALID,
-            "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
-            "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandler er suspendert av NAV på konsultasjonstidspunkt", { (_, suspended) ->
-        suspended
-    }),
+        1414,
+        Status.INVALID,
+        "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
+        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            "Behandler er suspendert av NAV på konsultasjonstidspunkt",
+        { (_, suspended) ->
+            suspended
+        }
+    ),
 }

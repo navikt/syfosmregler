@@ -6,13 +6,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.util.KtorExperimentalAPI
-import java.time.LocalDate
-import java.time.OffsetDateTime
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.log
 import no.nav.syfo.model.Periode
 import no.nav.syfo.rules.sortedFOMDate
+import java.time.LocalDate
+import java.time.OffsetDateTime
 
 @KtorExperimentalAPI
 class SmregisterClient(

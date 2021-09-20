@@ -13,7 +13,6 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
-import java.net.ProxySelector
 import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
@@ -28,6 +27,7 @@ import no.nav.syfo.sm.Diagnosekoder
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.net.ProxySelector
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
@@ -57,7 +57,6 @@ fun main() {
                 configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             }
         }
-        expectSuccess = false
     }
 
     val proxyConfig: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {

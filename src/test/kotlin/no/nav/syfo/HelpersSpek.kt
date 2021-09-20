@@ -1,12 +1,12 @@
 package no.nav.syfo
 
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.helpers.retry
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.io.IOException
 
 object HelpersSpek : Spek({
 
@@ -17,7 +17,7 @@ object HelpersSpek : Spek({
                     "I'm OK"
                 }
             }
-            result shouldEqual "I'm OK"
+            result shouldBeEqualTo "I'm OK"
         }
         it("Subclass of exception should be caught") {
             class SubIOException : IOException("Connection timed out")
@@ -33,7 +33,7 @@ object HelpersSpek : Spek({
                     }
                 }
             }
-            result shouldEqual "I'm OK"
+            result shouldBeEqualTo "I'm OK"
         }
         it("Returns result on single IOException") {
             var exceptionCount = 3
@@ -47,8 +47,8 @@ object HelpersSpek : Spek({
                     }
                 }
             }
-            exceptionCount shouldEqual 0
-            result shouldEqual "I'm OK"
+            exceptionCount shouldBeEqualTo 0
+            result shouldBeEqualTo "I'm OK"
         }
         it("Results in exception on non-retrying exceptions") {
             {

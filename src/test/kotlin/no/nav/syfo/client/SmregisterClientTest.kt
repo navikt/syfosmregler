@@ -23,19 +23,19 @@ import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
+import no.nav.syfo.LoggingMeta
+import no.nav.syfo.model.AktivitetIkkeMulig
+import no.nav.syfo.model.Periode
+import org.amshove.kluent.shouldBeEqualTo
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.net.ServerSocket
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.runBlocking
-import no.nav.syfo.LoggingMeta
-import no.nav.syfo.model.AktivitetIkkeMulig
-import no.nav.syfo.model.Periode
-import org.amshove.kluent.shouldEqual
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 
 @KtorExperimentalAPI
 class SmregisterClientTest : Spek({
@@ -68,18 +68,27 @@ class SmregisterClientTest : Spek({
                     when (call.request.headers["fnr"]) {
                         "fnr" -> call.respond(HttpStatusCode.OK, emptyList<SykmeldingDTO>())
                         "fnr2" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(fom = LocalDate.of(2021, 2, 15)))
-                        "fnr3" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(
-                            fom = LocalDate.of(2021, 2, 15),
-                            behandletDato = LocalDate.of(2021, 3, 1)
-                        ))
-                        "fnr4" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(
-                            fom = LocalDate.of(2021, 2, 15),
-                            behandletDato = LocalDate.of(2021, 2, 22)
-                        ))
-                        "fnr5" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(
-                            fom = LocalDate.of(2021, 2, 15),
-                            behandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.INVALID)
-                        ))
+                        "fnr3" -> call.respond(
+                            HttpStatusCode.OK,
+                            sykmeldingRespons(
+                                fom = LocalDate.of(2021, 2, 15),
+                                behandletDato = LocalDate.of(2021, 3, 1)
+                            )
+                        )
+                        "fnr4" -> call.respond(
+                            HttpStatusCode.OK,
+                            sykmeldingRespons(
+                                fom = LocalDate.of(2021, 2, 15),
+                                behandletDato = LocalDate.of(2021, 2, 22)
+                            )
+                        )
+                        "fnr5" -> call.respond(
+                            HttpStatusCode.OK,
+                            sykmeldingRespons(
+                                fom = LocalDate.of(2021, 2, 15),
+                                behandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.INVALID)
+                            )
+                        )
                     }
                 }
             }
@@ -103,7 +112,7 @@ class SmregisterClientTest : Spek({
                     "fnr",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med annen fom") {
@@ -112,7 +121,7 @@ class SmregisterClientTest : Spek({
                     "fnr2",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med samme fom som er tilbakedatert") {
@@ -121,7 +130,7 @@ class SmregisterClientTest : Spek({
                     "fnr3",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
@@ -130,7 +139,7 @@ class SmregisterClientTest : Spek({
                     "fnr2",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual true
+                ) shouldBeEqualTo true
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
@@ -139,7 +148,7 @@ class SmregisterClientTest : Spek({
                     "fnr4",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual true
+                ) shouldBeEqualTo true
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
@@ -148,7 +157,7 @@ class SmregisterClientTest : Spek({
                     "fnr5",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
     }
