@@ -27,7 +27,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.Periode
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.net.ServerSocket
@@ -112,7 +112,7 @@ class SmregisterClientTest : Spek({
                     "fnr",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med annen fom") {
@@ -121,7 +121,7 @@ class SmregisterClientTest : Spek({
                     "fnr2",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med samme fom som er tilbakedatert") {
@@ -130,7 +130,7 @@ class SmregisterClientTest : Spek({
                     "fnr3",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
@@ -139,7 +139,7 @@ class SmregisterClientTest : Spek({
                     "fnr2",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual true
+                ) shouldBeEqualTo true
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
@@ -148,7 +148,7 @@ class SmregisterClientTest : Spek({
                     "fnr4",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual true
+                ) shouldBeEqualTo true
             }
         }
         it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
@@ -157,7 +157,7 @@ class SmregisterClientTest : Spek({
                     "fnr5",
                     listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                     loggingMeta
-                ) shouldEqual false
+                ) shouldBeEqualTo false
             }
         }
     }
