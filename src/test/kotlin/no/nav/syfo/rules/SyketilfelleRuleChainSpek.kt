@@ -237,7 +237,7 @@ object SyketilfelleRuleChainSpek : Spek({
                 )
             ) shouldBeEqualTo true
         }
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga ICD-10-diagnose (sykehus)") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga ICD-10-diagnose (spesialisthelsetjenesten)") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -994,7 +994,7 @@ object SyketilfelleRuleChainSpek : Spek({
 
             SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldBeEqualTo false
         }
-        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, trigger ikke regel pga ICD-10-diagnose (sykehus)") {
+        it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, trigger ikke regel pga ICD-10-diagnose (spesialisthelsetjenesten)") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(

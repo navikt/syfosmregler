@@ -143,6 +143,6 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
         sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
 }
 
-fun kommerFraSykehus(sykmelding: Sykmelding): Boolean {
+fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
     return sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false
 }
