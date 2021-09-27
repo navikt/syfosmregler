@@ -143,19 +143,6 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
         sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
 }
 
-fun gjelderBrudd(sykmelding: Sykmelding): Boolean {
-    return (
-        (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S12") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S22") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S32") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S42") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S52") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S62") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S72") ?: false) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode?.startsWith("S82") ?: false)
-        )
-}
-
-fun kommerFraSykehus(sykmelding: Sykmelding): Boolean {
-    return sykmelding.avsenderSystem.navn == "DIPS Arena"
+fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
+    return sykmelding.medisinskVurdering.hovedDiagnose?.isICpc10() ?: false
 }
