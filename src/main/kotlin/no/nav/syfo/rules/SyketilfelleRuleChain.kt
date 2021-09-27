@@ -3,7 +3,6 @@ package no.nav.syfo.rules
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.services.erCoronaRelatert
-import no.nav.syfo.services.gjelderBrudd
 import no.nav.syfo.services.kommerFraSykehus
 
 enum class SyketilfelleRuleChain(
@@ -40,7 +39,7 @@ enum class SyketilfelleRuleChain(
             ruleMetadataSykmelding.erNyttSyketilfelle && ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding != true && !kommerFraSykehus(healthInformation) &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(8) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                !erCoronaRelatert(healthInformation) && !gjelderBrudd(healthInformation) &&
+                !erCoronaRelatert(healthInformation) &&
                 (
                     healthInformation.perioder.sortedFOMDate().first().plusDays(14).isBefore(healthInformation.perioder.sortedTOMDate().last()) ||
                         healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt!!.length < 16
@@ -108,7 +107,7 @@ enum class SyketilfelleRuleChain(
             !ruleMetadataSykmelding.erNyttSyketilfelle && ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding != true && !kommerFraSykehus(healthInformation) &&
                 ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt.toLocalDate() > healthInformation.perioder.sortedFOMDate().first().plusDays(30) &&
                 !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                !erCoronaRelatert(healthInformation) && !gjelderBrudd(healthInformation) &&
+                !erCoronaRelatert(healthInformation) &&
                 !(
                     !healthInformation.kontaktMedPasient.begrunnelseIkkeKontakt!!.contains("""[A-Za-z]""".toRegex()) && healthInformation.utdypendeOpplysninger.isEmpty() &&
                         healthInformation.meldingTilNAV?.beskrivBistand.isNullOrEmpty()
