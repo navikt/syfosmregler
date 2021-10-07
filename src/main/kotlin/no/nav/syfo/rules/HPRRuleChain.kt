@@ -16,7 +16,7 @@ enum class HPRRuleChain(
         1402,
         Status.INVALID,
         "Den som skrev sykmeldingen manglet autorisasjon.",
-        "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt.",
+        "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt. Pasienten har fått beskjed.",
         { (_, behandlerOgStartdato) ->
             !behandlerOgStartdato.behandler.godkjenninger.any {
                 it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv
@@ -29,7 +29,7 @@ enum class HPRRuleChain(
         1403,
         Status.INVALID,
         "Den som skrev sykmeldingen manglet autorisasjon.",
-        "Behandler har ikke gyldig autorisasjon i HPR",
+        "Behandler har ikke gyldig autorisasjon i HPR. Pasienten har fått beskjed.",
         { (_, behandlerOgStartdato) ->
             !behandlerOgStartdato.behandler.godkjenninger.any {
                 it.autorisasjon?.aktiv != null &&
@@ -46,7 +46,7 @@ enum class HPRRuleChain(
         1407,
         Status.INVALID,
         "Den som skrev sykmeldingen manglet autorisasjon.",
-        "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege",
+        "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. Pasienten har fått beskjed.",
         { (_, behandlerOgStartdato) ->
             !behandlerOgStartdato.behandler.godkjenninger.any {
                 it.helsepersonellkategori?.aktiv != null &&
@@ -70,7 +70,7 @@ enum class HPRRuleChain(
         1519,
         Status.INVALID,
         "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
-        "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker)",
+        "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
         { (sykmelding, behandlerOgStartdato) ->
             (
                 (sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 ||

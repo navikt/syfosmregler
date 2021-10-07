@@ -32,7 +32,7 @@ enum class ValidationRuleChain(
         1102,
         Status.INVALID,
         "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
-        "Pasienten er over 70 år. Sykmelding kan ikke benyttes.",
+        "Pasienten er over 70 år. Sykmelding kan ikke benyttes. Pasienten har fått beskjed.",
         { (sykmelding, metadata) ->
             sykmelding.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
         }
@@ -56,7 +56,7 @@ enum class ValidationRuleChain(
         1132,
         Status.INVALID,
         "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
-        "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.",
+        "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger. Pasienten har fått beskjed.",
         { (sykmelding, _) ->
             sykmelding.medisinskVurdering.hovedDiagnose != null &&
                 sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose!!.kode?.startsWith("Z")
