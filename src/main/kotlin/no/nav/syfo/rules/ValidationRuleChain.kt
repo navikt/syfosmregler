@@ -7,8 +7,6 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.validation.extractBornDate
-import no.nav.syfo.validation.validatePersonAndDNumber
-import no.nav.syfo.validation.validatePersonAndDNumber11Digits
 
 enum class ValidationRuleChain(
     override val ruleId: Int?,
@@ -17,54 +15,6 @@ enum class ValidationRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
-
-    @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
-    UGYLDIG_FNR_LENGDE_PASIENT(
-        1002,
-        Status.INVALID,
-        "Fødselsnummer eller D-nummer den sykmeldt er ikke 11 tegn.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
-        { (_, metadata) ->
-            !validatePersonAndDNumber11Digits(metadata.patientPersonNumber)
-        }
-    ),
-
-    @Description("Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
-    UGYLDIG_FNR_LENGDE_BEHANDLER(
-        1002,
-        Status.INVALID,
-        "Fødselsnummer for den som sykmeldte deg, er ikke 11 tegn.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
-        { (sykmelding, _) ->
-            !validatePersonAndDNumber11Digits(sykmelding.behandler.fnr)
-        }
-    ),
-
-    @Description("Pasientens fødselsnummer/D-nummer kan passerer ikke modulus 11")
-    UGYLDIG_FNR_PASIENT(
-        1006,
-        Status.INVALID,
-        "Fødselsnummer for den sykmeldte er ikke gyldig",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Pasientens fødselsnummer/D-nummer er ikke gyldig",
-        { (_, metadata) ->
-            !validatePersonAndDNumber(metadata.patientPersonNumber)
-        }
-    ),
-
-    @Description("Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11")
-    UGYLDIG_FNR_BEHANDLER(
-        1006,
-        Status.INVALID,
-        "Fødselsnummer for den som sykmeldte deg er ikke gyldig.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Behandlers fødselsnummer/D-nummer er ikke gyldig",
-        { (sykmelding, _) ->
-            !validatePersonAndDNumber(sykmelding.behandler.fnr)
-        }
-    ),
 
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
     PASIENT_YNGRE_ENN_13(

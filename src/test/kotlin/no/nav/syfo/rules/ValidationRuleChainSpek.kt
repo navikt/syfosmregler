@@ -3,13 +3,11 @@ package no.nav.syfo.rules
 import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
-import no.nav.syfo.generateAdresse
 import no.nav.syfo.generateBehandler
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.AnnenFraversArsak
-import no.nav.syfo.model.Behandler
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
@@ -41,128 +39,6 @@ object ValidationRuleChainSpek : Spek({
     ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid, avsenderfnr))
 
     describe("Testing validation rules and checking the rule outcomes") {
-
-        it("Should check rule UGYLDIG_FNR_LENGDE, should trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_LENGDE_PASIENT(
-                ruleData(
-                    generateSykmelding(),
-                    patientPersonNumber = "3006310441"
-                )
-            ) shouldBeEqualTo true
-        }
-
-        it("Should check rule UGYLDIG_FNR_LENGDE, should NOT trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_LENGDE_PASIENT(
-                ruleData(
-                    generateSykmelding(),
-                    patientPersonNumber = "04030350265"
-                )
-            ) shouldBeEqualTo false
-        }
-
-        it("Should check rule UGYLDIG_FNR_LENGDE_BEHANDLER, should trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_LENGDE_BEHANDLER(
-                ruleData(
-                    generateSykmelding(
-                        behandler = Behandler(
-                            fornavn = "Fornavn",
-                            mellomnavn = "Mellomnavn",
-                            etternavn = "Etternavnsen",
-                            aktoerId = "128731827",
-                            tlf = "98765432",
-                            fnr = "3006310441",
-                            hpr = null,
-                            her = null,
-                            adresse = generateAdresse()
-                        )
-                    ),
-                    patientPersonNumber = "3006310441"
-                )
-            ) shouldBeEqualTo true
-        }
-
-        it("Should check rule UGYLDIG_FNR_LENGDE, should NOT trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_LENGDE_BEHANDLER(
-                ruleData(
-                    generateSykmelding(
-                        behandler = Behandler(
-                            fornavn = "Fornavn",
-                            mellomnavn = "Mellomnavn",
-                            etternavn = "Etternavnsen",
-                            aktoerId = "128731827",
-                            tlf = "98765432",
-                            fnr = "04030350265",
-                            hpr = null,
-                            her = null,
-                            adresse = generateAdresse()
-                        )
-                    )
-                )
-            ) shouldBeEqualTo false
-        }
-
-        it("Should check rule UGYLDIG_FNR_PASIENT,should trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_PASIENT(
-                ruleData(
-                    generateSykmelding(),
-                    patientPersonNumber = "30063104424"
-                )
-            ) shouldBeEqualTo true
-        }
-
-        it("Should check rule UGYLDIG_FNR_PASIENT,should NOT trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_PASIENT(
-                ruleData(
-                    generateSykmelding(),
-                    patientPersonNumber = "04030350265"
-                )
-            ) shouldBeEqualTo false
-        }
-
-        it("Should check rule UGYLDIG_FNR_BEHANDLER,should trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_BEHANDLER(
-                ruleData(
-                    (
-                        generateSykmelding(
-                            behandler = Behandler(
-                                fornavn = "Fornavn",
-                                mellomnavn = "Mellomnavn",
-                                etternavn = "Etternavnsen",
-                                aktoerId = "128731827",
-                                tlf = "98765432",
-                                fnr = "30063104424",
-                                hpr = null,
-                                her = null,
-                                adresse = generateAdresse()
-                            )
-                        )
-                        )
-                )
-            ) shouldBeEqualTo true
-        }
-
-        it("Should check rule UGYLDIG_FNR_BEHANDLER,should NOT trigger rule") {
-            ValidationRuleChain.UGYLDIG_FNR_BEHANDLER(
-                ruleData(
-                    (
-                        generateSykmelding(
-                            behandler = Behandler(
-                                fornavn = "Fornavn",
-                                mellomnavn = "Mellomnavn",
-                                etternavn = "Etternavnsen",
-                                aktoerId = "128731827",
-                                tlf = "98765432",
-                                fnr = "04030350265",
-                                hpr = null,
-                                her = null,
-                                adresse = generateAdresse()
-                            )
-                        )
-                        )
-                )
-            ) shouldBeEqualTo false
-        }
-
         it("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {
             val person = fairy.person(PersonProperties.ageBetween(PersonProvider.MIN_AGE, 12))
 
