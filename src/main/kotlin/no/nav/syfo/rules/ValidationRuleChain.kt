@@ -7,8 +7,6 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.validation.extractBornDate
-import no.nav.syfo.validation.validatePersonAndDNumber
-import no.nav.syfo.validation.validatePersonAndDNumber11Digits
 
 enum class ValidationRuleChain(
     override val ruleId: Int?,
@@ -18,61 +16,12 @@ enum class ValidationRuleChain(
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
 
-    @Description("Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
-    UGYLDIG_FNR_LENGDE_PASIENT(
-        1002,
-        Status.INVALID,
-        "Fødselsnummer eller D-nummer den sykmeldt er ikke 11 tegn.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Pasienten sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
-        { (_, metadata) ->
-            !validatePersonAndDNumber11Digits(metadata.patientPersonNumber)
-        }
-    ),
-
-    @Description("Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.")
-    UGYLDIG_FNR_LENGDE_BEHANDLER(
-        1002,
-        Status.INVALID,
-        "Fødselsnummer for den som sykmeldte deg, er ikke 11 tegn.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Behandler sitt fødselsnummer eller D-nummer er ikke 11 tegn.",
-        { (sykmelding, _) ->
-            !validatePersonAndDNumber11Digits(sykmelding.behandler.fnr)
-        }
-    ),
-
-    @Description("Pasientens fødselsnummer/D-nummer kan passerer ikke modulus 11")
-    UGYLDIG_FNR_PASIENT(
-        1006,
-        Status.INVALID,
-        "Fødselsnummer for den sykmeldte er ikke gyldig",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Pasientens fødselsnummer/D-nummer er ikke gyldig",
-        { (_, metadata) ->
-            !validatePersonAndDNumber(metadata.patientPersonNumber)
-        }
-    ),
-
-    @Description("Behandlers fødselsnummer/D-nummer kan passerer ikke modulus 11")
-    UGYLDIG_FNR_BEHANDLER(
-        1006,
-        Status.INVALID,
-        "Fødselsnummer for den som sykmeldte deg er ikke gyldig.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Behandlers fødselsnummer/D-nummer er ikke gyldig",
-        { (sykmelding, _) ->
-            !validatePersonAndDNumber(sykmelding.behandler.fnr)
-        }
-    ),
-
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
     PASIENT_YNGRE_ENN_13(
         1101,
         Status.INVALID,
         "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
+        "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
         { (sykmelding, metadata) ->
             sykmelding.perioder.sortedTOMDate().last() < extractBornDate(metadata.patientPersonNumber).plusYears(13)
         }
@@ -83,8 +32,7 @@ enum class ValidationRuleChain(
         1102,
         Status.INVALID,
         "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
-        "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
-            "Pasienten er over 70 år. Sykmelding kan ikke benyttes.",
+        "Pasienten er over 70 år. Sykmelding kan ikke benyttes. Pasienten har fått beskjed.",
         { (sykmelding, metadata) ->
             sykmelding.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
         }
@@ -108,8 +56,7 @@ enum class ValidationRuleChain(
         1132,
         Status.INVALID,
         "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger.",
+        "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger. Pasienten har fått beskjed.",
         { (sykmelding, _) ->
             sykmelding.medisinskVurdering.hovedDiagnose != null &&
                 sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose!!.kode?.startsWith("Z")
@@ -179,7 +126,7 @@ enum class ValidationRuleChain(
         }
     ),
 
-    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
+    @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
         1709,
         Status.INVALID,
@@ -199,7 +146,7 @@ enum class ValidationRuleChain(
         Status.INVALID,
         "Den må ha riktig organisasjonsnummer.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Feil format på organisasjonsnummer. Dette skal være 9 sifre..",
+            "Feil format på organisasjonsnummer. Dette skal være 9 sifre.",
         { (_, metadata) ->
             metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
         }
@@ -213,7 +160,7 @@ enum class ValidationRuleChain(
         "Sykmeldingen kan ikke rettes, Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
             "Avsender fnr er det samme som pasient fnr",
         { (_, metadata) ->
-            metadata.avsenderFnr.equals(metadata.patientPersonNumber)
+            metadata.avsenderFnr == metadata.patientPersonNumber
         }
     ),
 
@@ -225,7 +172,7 @@ enum class ValidationRuleChain(
         "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
             "Behandler fnr er det samme som pasient fnr",
         { (sykmelding, metadata) ->
-            sykmelding.behandler.fnr.equals(metadata.patientPersonNumber)
+            sykmelding.behandler.fnr == metadata.patientPersonNumber
         }
     ),
 }

@@ -14,8 +14,7 @@ enum class LegesuspensjonRuleChain(
         1414,
         Status.INVALID,
         "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
-        "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Behandler er suspendert av NAV på konsultasjonstidspunkt",
+        "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
         { (_, suspended) ->
             suspended
         }

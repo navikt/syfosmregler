@@ -135,7 +135,7 @@ enum class PeriodLogicRuleChain(
         Status.INVALID,
         "Behandlingsdatoen må rettes.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Behandlingsdatoen er etter dato for når nav mottar meldingen",
+            "Behandlingsdatoen er etter dato for når NAV mottok meldingen",
         { (healthInformation, ruleMetadata) ->
             healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusDays(1)
         }
