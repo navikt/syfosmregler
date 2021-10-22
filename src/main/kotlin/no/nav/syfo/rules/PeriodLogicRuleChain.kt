@@ -232,20 +232,7 @@ enum class PeriodLogicRuleChain(
                 it.behandlingsdager != null
             }
         }
-    ),
-
-    @Description("Sykmelding inneholder reisetilskudd")
-    SYKMELDING_MED_REISETILSKUDD(
-        1254,
-        Status.MANUAL_PROCESSING,
-        "Sykmelding inneholder reisetilskudd.",
-        "Sykmelding inneholder reisetilskudd (felt 4.2.4 eller 4.5).",
-        { (healthInformation, _) ->
-            healthInformation.perioder.any {
-                it.reisetilskudd == true || (it.gradert != null && it.gradert!!.reisetilskudd == true)
-            }
-        }
-    ),
+    )
 }
 
 fun List<Periode>.sortedFOMDate(): List<LocalDate> =
