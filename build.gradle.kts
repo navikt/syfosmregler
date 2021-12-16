@@ -5,25 +5,25 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val coroutinesVersion = "1.4.2"
-val jacksonVersion = "2.12.3"
-val kluentVersion = "1.65"
-val ktorVersion = "1.5.1"
-val logbackVersion = "1.2.3"
-val logstashEncoderVersion = "6.5"
-val prometheusVersion = "0.9.0"
-val smCommonVersion = "1.dff6489"
+val coroutinesVersion = "1.5.1"
+val jacksonVersion = "2.13.0"
+val kluentVersion = "1.68"
+val ktorVersion = "1.6.7"
+val logbackVersion = "1.2.8"
+val logstashEncoderVersion = "7.0.1"
+val prometheusVersion = "0.12.0"
+val smCommonVersion = "1.a92720c"
 val spekVersion = "2.0.17"
-val jfairyVersion = "0.6.2"
-val mockkVersion = "1.9.3"
-
+val jfairyVersion = "0.6.4"
+val mockkVersion = "1.12.1"
+val kotlinVersion = "1.6.0"
 
 plugins {
     java
-    kotlin("jvm") version "1.4.21"
-    id("org.jmailen.kotlinter") version "3.3.0"
-    id("com.diffplug.spotless") version "5.8.2"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm") version "1.6.0"
+    id("org.jmailen.kotlinter") version "3.6.0"
+    id("com.diffplug.spotless") version "5.16.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 val githubUser: String by project
@@ -42,7 +42,7 @@ repositories {
 
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
@@ -68,6 +68,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
     testImplementation("com.devskiller:jfairy:$jfairyVersion")
@@ -96,7 +97,7 @@ tasks {
         }
     }
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "12"
+        kotlinOptions.jvmTarget = "17"
     }
 
     withType<ShadowJar> {

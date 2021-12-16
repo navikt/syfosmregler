@@ -7,14 +7,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
-import io.ktor.util.KtorExperimentalAPI
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.VaultCredentials
 import no.nav.syfo.api.log
 import java.io.IOException
 
-@KtorExperimentalAPI
 class LegeSuspensjonClient(private val endpointUrl: String, private val credentials: VaultCredentials, private val stsClient: StsOidcClient, private val httpClient: HttpClient) {
 
     suspend fun checkTherapist(therapistId: String, ediloggid: String, oppslagsdato: String, loggingMeta: LoggingMeta): Suspendert {

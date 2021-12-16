@@ -1,7 +1,6 @@
 package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.syfo.LoggingMeta
@@ -13,7 +12,6 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 
-@KtorExperimentalAPI
 object SyketilfelleClientTest : Spek({
     val loggingMeta = LoggingMeta("", "", "", "")
     val oppfolgingsdato = LocalDate.of(2021, 1, 3)

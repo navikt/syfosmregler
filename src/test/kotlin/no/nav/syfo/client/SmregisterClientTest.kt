@@ -20,7 +20,6 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -37,7 +36,6 @@ import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-@KtorExperimentalAPI
 class SmregisterClientTest : Spek({
     val loggingMeta = LoggingMeta("", "", "", "")
     val accessTokenClientMock = mockk<AccessTokenClientV2>()
