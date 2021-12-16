@@ -8,14 +8,12 @@ import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
-import io.ktor.util.KtorExperimentalAPI
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
 import no.nav.syfo.helpers.retry
 import java.io.IOException
 
-@KtorExperimentalAPI
 class NorskHelsenettClient(
     private val endpointUrl: String,
     private val accessTokenClient: AccessTokenClientV2,

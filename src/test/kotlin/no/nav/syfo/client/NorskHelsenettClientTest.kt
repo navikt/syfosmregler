@@ -19,7 +19,6 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.InternalAPI
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -34,7 +33,6 @@ import kotlin.test.assertFailsWith
 
 private const val fnr = "12345678912"
 @InternalAPI
-@KtorExperimentalAPI
 internal class NorskHelsenettClientTest : Spek({
 
     val accessTokenClientMock = mockk<AccessTokenClientV2>()
