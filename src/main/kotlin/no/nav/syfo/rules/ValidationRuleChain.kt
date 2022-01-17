@@ -42,9 +42,9 @@ enum class ValidationRuleChain(
     UKJENT_DIAGNOSEKODETYPE(
         1137,
         Status.INVALID,
-        "Sykmeldingen må ha et kjent kodeverk for diagnose.",
+        "Sykmeldingen må ha et kjent kodeverk for diagnosen.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-            "Ukjent kodeverk er benyttet for diagnose.",
+            "Ukjent kodeverk er benyttet for diagnosen.",
         { (sykmelding, _) ->
             sykmelding.medisinskVurdering.hovedDiagnose != null &&
                 sykmelding.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
