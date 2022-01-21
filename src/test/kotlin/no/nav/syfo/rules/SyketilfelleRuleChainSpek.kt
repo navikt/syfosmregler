@@ -49,7 +49,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -85,7 +85,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -120,7 +120,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -155,7 +155,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -195,7 +195,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -230,7 +230,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -264,7 +264,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -292,7 +292,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -325,7 +325,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = true
@@ -353,7 +353,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -386,7 +386,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -419,7 +419,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = null
@@ -454,7 +454,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = null
@@ -487,7 +487,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -520,7 +520,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -556,7 +556,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -592,7 +592,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -625,7 +625,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -660,7 +660,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -695,7 +695,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -727,7 +727,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -759,7 +759,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = null
@@ -794,7 +794,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -829,7 +829,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -864,7 +864,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -908,7 +908,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -944,7 +944,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -979,7 +979,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1015,7 +1015,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1046,7 +1046,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1076,7 +1076,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = true
@@ -1111,7 +1111,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1143,7 +1143,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1178,7 +1178,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1211,7 +1211,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1244,7 +1244,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1280,7 +1280,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1313,7 +1313,7 @@ object SyketilfelleRuleChainSpek : Spek({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = fodselsdato
+                    pasientFodselsdato = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false

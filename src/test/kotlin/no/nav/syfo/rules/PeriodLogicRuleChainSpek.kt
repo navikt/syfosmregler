@@ -30,7 +30,7 @@ object PeriodLogicRuleChainSpek : Spek({
         "123456789",
         tssid,
         avsenderFnr,
-        fodselsdato
+        pasientFodselsdato = LocalDate.now()
     ))
 
     describe("Testing validation rules and checking the rule outcomes") {
