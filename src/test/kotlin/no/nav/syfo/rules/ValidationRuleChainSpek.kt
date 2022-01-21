@@ -36,7 +36,17 @@ object ValidationRuleChainSpek : Spek({
         legekontorOrgNr: String = "123456789",
         tssid: String? = "1314445",
         avsenderfnr: String = "12344"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid, avsenderfnr))
+    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(
+        signatureDate,
+        receivedDate,
+        behandletTidspunkt,
+        patientPersonNumber,
+        rulesetVersion,
+        legekontorOrgNr,
+        tssid,
+        avsenderfnr,
+        fodselsdato
+    ))
 
     describe("Testing validation rules and checking the rule outcomes") {
         it("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {

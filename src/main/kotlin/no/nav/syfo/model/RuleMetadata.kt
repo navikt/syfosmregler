@@ -1,5 +1,6 @@
 package no.nav.syfo.model
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class RuleMetadata(
@@ -10,5 +11,6 @@ data class RuleMetadata(
     val rulesetVersion: String?,
     val legekontorOrgnr: String?,
     val tssid: String?,
-    val avsenderFnr: String
+    val avsenderFnr: String,
+    val pasientFodselsdato: LocalDate
 )

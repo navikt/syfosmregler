@@ -41,14 +41,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -76,14 +77,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -110,14 +112,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -144,14 +147,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -183,14 +187,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -217,14 +222,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -250,14 +256,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -277,14 +284,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -309,14 +317,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = true
@@ -336,14 +345,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 20), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -368,14 +378,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -400,14 +411,15 @@ object SyketilfelleRuleChainSpek : Spek({
 
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 8), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = null
@@ -434,14 +446,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now(),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = null
@@ -466,14 +479,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -498,14 +512,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 19), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -533,14 +548,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 18), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -568,14 +584,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 11, 4), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -600,14 +617,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now(),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -634,14 +652,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().minusMonths(1),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -668,14 +687,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().minusMonths(2),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -699,14 +719,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 11, 11), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -730,14 +751,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 8, 20), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = null
@@ -764,14 +786,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 11, 15), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -798,14 +821,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -832,14 +856,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -875,14 +900,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -910,14 +936,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -944,14 +971,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -979,14 +1007,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1009,14 +1038,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1038,14 +1068,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = true
@@ -1072,14 +1103,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(29),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1103,14 +1135,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(30),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1137,14 +1170,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1169,14 +1203,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.now().plusDays(20), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1201,14 +1236,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.now().plusDays(20), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1236,14 +1272,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.now().plusDays(20), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1268,14 +1305,15 @@ object SyketilfelleRuleChainSpek : Spek({
             )
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
-                    receivedDate = LocalDateTime.now(),
                     signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.of(LocalDate.now().plusDays(20), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
-                    avsenderFnr = "1345525522"
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = fodselsdato
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false

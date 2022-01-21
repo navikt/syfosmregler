@@ -52,3 +52,7 @@ spec:
       value: https://syfohelsenettproxy.nais.preprod.local
     - name: SMREGISTER_SCOPE
       value: "api://dev-fss.teamsykmelding.syfosmregister/.default"
+    - name: PDL_GRAPHQL_PATH
+      value: https://pdl-api.nais.preprod.local/graphql
+    - name: PDL_SCOPE
+      value: api://dev-fss.pdl.pdl-api/.default

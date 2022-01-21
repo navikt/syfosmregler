@@ -24,6 +24,8 @@ import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.client.SyketilfelleClient
+import no.nav.syfo.pdl.client.PdlClient
+import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
@@ -86,7 +88,13 @@ fun main() {
     val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyScope, httpClient)
     val smregisterClient = SmregisterClient(env.smregisterEndpointURL, accessTokenClient, env.smregisterScope, httpClient)
 
-    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient, smregisterClient)
+    val pdlClient = PdlClient(
+        httpClient, env.pdlGraphqlPath,
+        PdlClient::class.java.getResource("/graphql/getPerson.graphql").readText().replace(Regex("[\n\t]"), "")
+    )
+    val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = accessTokenClient, env.pdlScope)
+
+    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient, smregisterClient, pdlService)
 
     val applicationEngine = createApplicationEngine(
         ruleService,
