@@ -121,6 +121,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Sjekker om korrekt versjon av sykmeldingen er benyttet
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
     UGYLDIG_REGELSETTVERSJON(
         1708,
@@ -133,6 +134,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Krav om utdypende opplysninger ved uke 39
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
         1709,
@@ -147,6 +149,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Orgnr må være korrekt angitt
     @Description("Organisasjonsnummeret som er oppgitt er ikke 9 tegn.")
     UGYLDIG_ORGNR_LENGDE(
         9999,
@@ -159,6 +162,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Den som signerer sykmeldingen kan ikke sykmelde seg selv
     @Description("Avsender fnr er det samme som pasient fnr")
     AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
         9999,
@@ -171,6 +175,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Behandler kan ikke sykmelde seg selv
     @Description("Behandler fnr er det samme som pasient fnr")
     BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
         9999,
