@@ -40,6 +40,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
     // Kodeverk må være satt i henhold til gyldige kodeverk som angitt av Helsedirektoratet (ICPC-2 og ICD-10).
     @Description("Ukjent houved diagnosekode type")
     UKJENT_DIAGNOSEKODETYPE(
@@ -81,6 +82,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
     // Diagnose må være satt i henhold til angitt kodeverk.
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(
@@ -103,6 +105,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
     // Diagnose må være satt i henhold til angitt kodeverk.
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
