@@ -16,6 +16,7 @@ enum class ValidationRuleChain(
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
 
+    // Opptjening før 13 år er ikke mulig.
     @Description("Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.")
     PASIENT_YNGRE_ENN_13(
         1101,
@@ -27,6 +28,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // §8-3 Det ytes ikke sykepenger til medlem som er fylt 70 år.
     @Description("Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.")
     PASIENT_ELDRE_ENN_70(
         1102,
@@ -38,6 +40,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Kodeverk må være satt i henhold til gyldige kodeverk som angitt av Helsedirektoratet (ICPC-2 og ICD-10).
     @Description("Ukjent houved diagnosekode type")
     UKJENT_DIAGNOSEKODETYPE(
         1137,
@@ -51,6 +54,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // §8-4 Arbeidsuførhet som skyldes sosiale eller økomoniske problemer o.l. gir ikke rett til sykepenger.
     @Description("Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.")
     ICPC_2_Z_DIAGNOSE(
         1132,
@@ -63,6 +67,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
     @Description("Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen")
     HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(
         1133,
@@ -76,6 +81,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Diagnose må være satt i henhold til angitt kodeverk.
     @Description("Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(
         1540,
@@ -97,6 +103,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Diagnose må være satt i henhold til angitt kodeverk.
     @Description("Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.")
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
         1541,
@@ -114,6 +121,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Sjekker om korrekt versjon av sykmeldingen er benyttet
     @Description("Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres")
     UGYLDIG_REGELSETTVERSJON(
         1708,
@@ -126,6 +134,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Krav om utdypende opplysninger ved uke 39
     @Description("Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises")
     MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
         1709,
@@ -140,6 +149,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Orgnr må være korrekt angitt
     @Description("Organisasjonsnummeret som er oppgitt er ikke 9 tegn.")
     UGYLDIG_ORGNR_LENGDE(
         9999,
@@ -152,6 +162,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Den som signerer sykmeldingen kan ikke sykmelde seg selv
     @Description("Avsender fnr er det samme som pasient fnr")
     AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
         9999,
@@ -164,6 +175,7 @@ enum class ValidationRuleChain(
         }
     ),
 
+    // Behandler kan ikke sykmelde seg selv
     @Description("Behandler fnr er det samme som pasient fnr")
     BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
         9999,

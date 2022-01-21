@@ -14,6 +14,8 @@ enum class PeriodLogicRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
+    
+    // Sykmeldingen må inneholden en fom-dato og en tom-dato
     @Description("Hvis ingen perioder er oppgitt skal sykmeldingen avvises.")
     PERIODER_MANGLER(
         1200,
@@ -25,7 +27,8 @@ enum class PeriodLogicRuleChain(
             healthInformation.perioder.isNullOrEmpty()
         }
     ),
-
+    
+    // fom-dato må være før tom-dato
     @Description("Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.")
     FRADATO_ETTER_TILDATO(
         1201,
@@ -38,6 +41,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Hvis sykmeldingen inneholder flere perioden kan ikke periodene overlappe hverandre
     @Description("Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.")
     OVERLAPPENDE_PERIODER(
         1202,
@@ -56,6 +60,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Det kan ikke være opphold mellom perioder i sykmeldingen
     @Description("Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.")
     OPPHOLD_MELLOM_PERIODER(
         1203,
@@ -79,6 +84,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // For hver perioden må det angis om det er 100% sykmelding, gradert, reisetilskudd, behandlingsdager eller avventende sykmelding
     @Description("Hvis det ikke er oppgitt type for perioden skal sykmeldingen avvises.")
     IKKE_DEFINERT_PERIODE(
         1204,
@@ -91,6 +97,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Vi tar ikke imot sykmeldinger som ligger mer enn 3 år tilbake i tid
     @Description("Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.")
     TILBAKEDATERT_MER_ENN_3_AR(
         1206,
@@ -103,6 +110,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // En sykmelding kan ikke fremdateres mer enn 30 dager
     @Description("Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.")
     FREMDATERT(
         1209,
@@ -115,6 +123,8 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    
+    // En sykmelding kan ikke vare mer enn 1 år
     @Description("Hvis sykmeldingen første fom og siste tom har ein varighet som er over 1 år. avvises meldingen.")
     TOTAL_VARIGHET_OVER_ETT_AAR(
         1211,
@@ -129,6 +139,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Behandlet dato skal angi tidspunktet da pasienten oppsøkte legen. Den kan ikke være frem i tid.
     @Description("Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen")
     BEHANDLINGSDATO_ETTER_MOTTATTDATO(
         1123,
@@ -141,6 +152,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Avventende sykmelding kan ikke kombineres med noe annet
     @Description("Hvis avventende sykmelding er funnet og det finnes flere perioder")
     AVVENTENDE_SYKMELDING_KOMBINERT(
         9999,
@@ -154,6 +166,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Avventende sykmelding må inneholde melding til arbeidsgiver om tilrettelegging
     @Description("Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen")
     MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER(
         1241,
@@ -166,7 +179,8 @@ enum class PeriodLogicRuleChain(
                 .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty() }
         }
     ),
-
+    
+    // En avventende sykmelding kan ikke vare mer enn 16 dager
     @Description("Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
     AVVENTENDE_SYKMELDING_OVER_16_DAGER(
         1242,
@@ -181,6 +195,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Sykmelding med behandlingsdager kan ha maks 1 behandlingsdag per uke
     @Description("Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.")
     FOR_MANGE_BEHANDLINGSDAGER_PER_UKE(
         1250,
@@ -195,6 +210,8 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // §8-13: Dersom medlemmet er delvis arbeidsufør, kan det ytes graderte sykepenger.
+    // Det er et vilkår at evnen til å utføre inntektsgivende arbeid er nedsatt med minst 20 prosent.
     @Description("Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen")
     GRADERT_SYKMELDING_UNDER_20_PROSENT(
         1251,
@@ -209,6 +226,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Gradering kan ikke være høyere enn 99 prosent
     @Description("Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen")
     GRADERT_SYKMELDING_OVER_99_PROSENT(
         1252,
@@ -221,6 +239,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
+    // Sykmelding med behandlingsdager skal alltid til manuell behandling
     @Description("Sykmelding inneholder behandlingsdager")
     SYKMELDING_MED_BEHANDLINGSDAGER(
         1253,
