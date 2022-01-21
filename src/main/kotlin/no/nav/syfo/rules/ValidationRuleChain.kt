@@ -6,7 +6,6 @@ import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
-import no.nav.syfo.validation.extractBornDate
 
 enum class ValidationRuleChain(
     override val ruleId: Int?,

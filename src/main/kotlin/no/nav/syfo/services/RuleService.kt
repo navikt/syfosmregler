@@ -57,7 +57,7 @@ class RuleService(
         val fodsel = pdlPerson.foedsel?.firstOrNull()
         val fodselsdato = if (fodsel?.foedselsdato?.isNotEmpty() == true) {
             log.info("Extracting fodeseldato from PDL date")
-            extractBornDate(fodsel.foedselsdato)
+            LocalDate.parse(fodsel.foedselsdato)
         } else {
             log.info("Extracting fodeseldato from personNrPasient")
             extractBornDate(receivedSykmelding.personNrPasient)
