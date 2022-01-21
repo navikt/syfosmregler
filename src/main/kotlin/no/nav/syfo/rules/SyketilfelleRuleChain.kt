@@ -12,6 +12,14 @@ enum class SyketilfelleRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadataSykmelding>) -> Boolean
 ) : Rule<RuleData<RuleMetadataSykmelding>> {
+    
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    //
+    // Dersom sykmeldingen er tilbakedatert mer enn 8 dager uten begrunnelse blir den avvist.
+    //
     @Description("Første gangs sykmelding er tilbakedatert mer enn 8 dager.")
     TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(
         1204,
@@ -28,7 +36,14 @@ enum class SyketilfelleRuleChain(
                 !erCoronaRelatert(healthInformation)
         }
     ),
-
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    //    
+    // Tilbakedatert sykmelding med begrunnelse sendes til manuell vurdering.
+    // Unntak dersom sykmeldingen kommer fra spesialisthelsetjenesten, erstatter en tidligere sykmelding, kun gjelder arbeidsgiverperioden eller er koronarelatert.
+    //
     @Description("Første gangs sykmelding er tilbakedatert mer enn 8 dager med begrunnelse.")
     TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
         1207,
@@ -46,7 +61,13 @@ enum class SyketilfelleRuleChain(
                     )
         }
     ),
-
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    //
+    // Tilbakedateringer mellom 4 og 8 dager godtas ikke dersom sykmeldingen ikke inneholder dato for kontakt eller begrunnelse for tilbakedateringen.
+    //
     @Description("Første gangs sykmelding er tilbakedatert mindre enn 8 dager uten begrunnelse og kontaktdato.")
     TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(
         1204,
@@ -62,7 +83,13 @@ enum class SyketilfelleRuleChain(
                 !erCoronaRelatert(healthInformation)
         }
     ),
-
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    //    
+    // Ved forelengelser er det også behov for begrunnelse dersom sykmeldingen er tilbakedatert mer enn 1 mnd. Ved manglende begrunnelse avvises sykmeldingen.
+    //
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra behandlet-tidspunkt. Skal telles.")
     TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
         null,
@@ -77,7 +104,13 @@ enum class SyketilfelleRuleChain(
                 !erCoronaRelatert(healthInformation)
         }
     ),
-
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    // 
+    // Mer enn 1mnd tilbakedatert. Samme sjekk som TILBAKEDATERT_FORLENGELSE_OVER_1_MND, men sjekker også om det er tekst i begrunnelsen. 
+    //
     @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er utilstrekkelig.")
     TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(
         1207,
@@ -96,8 +129,14 @@ enum class SyketilfelleRuleChain(
                     )
         }
     ),
-
-    @Description("Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er angitt.")
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    //   
+    // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og begrunnelse er angitt går den til manuell behandling
+    //
+    @Description("Sykmeldingen er tilbakedatert mer enn 30 dager og årsak for tilbakedatering er angitt.")
     TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
         1207,
         Status.MANUAL_PROCESSING,
@@ -114,7 +153,13 @@ enum class SyketilfelleRuleChain(
                     )
         }
     ),
-
+    
+    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
+    // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+    //    
+    // En tilbakedatert sykmelding må inneholde dato for kontakt eller begrunnelse for at den skal godkjennes.
+    //
     @Description("Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.")
     TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(
         1207,
