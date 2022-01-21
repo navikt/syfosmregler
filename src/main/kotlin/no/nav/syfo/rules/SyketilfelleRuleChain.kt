@@ -88,7 +88,6 @@ enum class SyketilfelleRuleChain(
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //    
-    // KAN DENNE REGELEN SLETTES?? - ERSTATTES AV TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE ??
     // Ved forelengelser er det også behov for begrunnelse dersom sykmeldingen er tilbakedatert mer enn 1 mnd. Ved manglende begrunnelse avvises sykmeldingen.
     //
     @Description("Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra behandlet-tidspunkt. Skal telles.")
