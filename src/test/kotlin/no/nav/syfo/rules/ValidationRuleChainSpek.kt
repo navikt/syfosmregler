@@ -35,8 +35,22 @@ object ValidationRuleChainSpek : Spek({
         rulesetVersion: String = "1",
         legekontorOrgNr: String = "123456789",
         tssid: String? = "1314445",
-        avsenderfnr: String = "12344"
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(signatureDate, receivedDate, behandletTidspunkt, patientPersonNumber, rulesetVersion, legekontorOrgNr, tssid, avsenderfnr))
+        avsenderfnr: String = "12344",
+        pasientFodselsdato: LocalDate = LocalDate.now()
+    ): RuleData<RuleMetadata> = RuleData(
+        healthInformation,
+        RuleMetadata(
+            signatureDate,
+            receivedDate,
+            behandletTidspunkt,
+            patientPersonNumber,
+            rulesetVersion,
+            legekontorOrgNr,
+            tssid,
+            avsenderfnr,
+            pasientFodselsdato
+        )
+    )
 
     describe("Testing validation rules and checking the rule outcomes") {
         it("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {
@@ -58,7 +72,8 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.PASIENT_YNGRE_ENN_13(
                 ruleData(
                     generateSykmelding(),
-                    patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
+                    patientPersonNumber = generatePersonNumber(person.dateOfBirth, false),
+                    pasientFodselsdato = LocalDate.now().minusYears(14)
                 )
             ) shouldBeEqualTo false
         }
@@ -71,7 +86,8 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.PASIENT_ELDRE_ENN_70(
                 ruleData(
                     generateSykmelding(),
-                    patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
+                    patientPersonNumber = generatePersonNumber(person.dateOfBirth, false),
+                    pasientFodselsdato = LocalDate.now().minusYears(71)
                 )
             ) shouldBeEqualTo true
         }

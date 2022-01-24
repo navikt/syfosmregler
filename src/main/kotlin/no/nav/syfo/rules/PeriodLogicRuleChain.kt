@@ -14,7 +14,7 @@ enum class PeriodLogicRuleChain(
     override val messageForSender: String,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
-    
+
     // Sykmeldingen må inneholden en fom-dato og en tom-dato
     @Description("Hvis ingen perioder er oppgitt skal sykmeldingen avvises.")
     PERIODER_MANGLER(
@@ -27,7 +27,7 @@ enum class PeriodLogicRuleChain(
             healthInformation.perioder.isNullOrEmpty()
         }
     ),
-    
+
     // fom-dato må være før tom-dato
     @Description("Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.")
     FRADATO_ETTER_TILDATO(
@@ -123,7 +123,6 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
-    
     // En sykmelding kan ikke vare mer enn 1 år
     @Description("Hvis sykmeldingen første fom og siste tom har ein varighet som er over 1 år. avvises meldingen.")
     TOTAL_VARIGHET_OVER_ETT_AAR(
@@ -179,7 +178,7 @@ enum class PeriodLogicRuleChain(
                 .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty() }
         }
     ),
-    
+
     // En avventende sykmelding kan ikke vare mer enn 16 dager
     @Description("Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.")
     AVVENTENDE_SYKMELDING_OVER_16_DAGER(

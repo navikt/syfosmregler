@@ -7,6 +7,7 @@ import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
+import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.log
 import no.nav.syfo.model.Periode
 import no.nav.syfo.rules.sortedFOMDate
@@ -15,7 +16,7 @@ import java.time.OffsetDateTime
 
 class SmregisterClient(
     private val smregisterEndpointURL: String,
-    private val accessTokenClientV2: AccessTokenClientV2,
+    private val accessTokenClientV2: AzureAdV2Client,
     private val resourceId: String,
     private val httpClient: HttpClient
 ) {
@@ -41,11 +42,14 @@ class SmregisterClient(
     }
 
     private suspend fun hentSykmeldinger(fnr: String): List<SykmeldingDTO> =
-        httpClient.get<List<SykmeldingDTO>>("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
+        httpClient.get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
             accept(ContentType.Application.Json)
-            val accessToken = accessTokenClientV2.getAccessTokenV2(resourceId)
+            val accessToken = accessTokenClientV2.getAccessToken(resourceId)
+            if (accessToken?.accessToken == null) {
+                throw RuntimeException("Klarte ikke hente ut accessToken for smregister")
+            }
             headers {
-                append("Authorization", "Bearer $accessToken")
+                append("Authorization", "Bearer ${accessToken.accessToken}")
                 append("fnr", fnr)
             }
         }

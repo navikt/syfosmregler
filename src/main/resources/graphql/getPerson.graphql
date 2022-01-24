@@ -1,7 +1,15 @@
 query($ident: ID!){
-  hentPerson(ident: $ident) {
-    adressebeskyttelse {
-      gradering
+  hentIdenter(ident: $ident, historikk: false) {
+    identer {
+      ident,
+      historisk,
+      gruppe
     }
+  }
+  hentPerson(ident: $ident) {
+      foedsel{
+          foedselsaar,
+          foedselsdato
+      }
   }
 }

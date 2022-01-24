@@ -18,12 +18,14 @@ import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
 import no.nav.syfo.application.exception.ServiceUnavailableException
-import no.nav.syfo.client.AccessTokenClientV2
+import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.client.SyketilfelleClient
+import no.nav.syfo.pdl.client.PdlClient
+import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
@@ -82,11 +84,17 @@ fun main() {
     val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
-    val accessTokenClient = AccessTokenClientV2(env.aadAccessTokenV2Url, env.clientIdV2, env.clientSecretV2, httpClientWithProxy)
-    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, accessTokenClient, env.helsenettproxyScope, httpClient)
-    val smregisterClient = SmregisterClient(env.smregisterEndpointURL, accessTokenClient, env.smregisterScope, httpClient)
+    val azureAdV2Client = AzureAdV2Client(env, httpClientWithProxy)
+    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)
+    val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterScope, httpClient)
 
-    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient, smregisterClient)
+    val pdlClient = PdlClient(
+        httpClient, env.pdlGraphqlPath,
+        PdlClient::class.java.getResource("/graphql/getPerson.graphql").readText().replace(Regex("[\n\t]"), "")
+    )
+    val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
+
+    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient, smregisterClient, pdlService)
 
     val applicationEngine = createApplicationEngine(
         ruleService,

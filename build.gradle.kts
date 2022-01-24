@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
+val caffeineVersion = "3.0.4"
 val coroutinesVersion = "1.5.1"
 val jacksonVersion = "2.13.0"
 val kluentVersion = "1.68"
@@ -67,6 +68,8 @@ dependencies {
     implementation ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")

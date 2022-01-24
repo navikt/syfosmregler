@@ -11,12 +11,13 @@ import io.ktor.http.HttpStatusCode.Companion.NotFound
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
+import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
 import java.io.IOException
 
 class NorskHelsenettClient(
     private val endpointUrl: String,
-    private val accessTokenClient: AccessTokenClientV2,
+    private val accessTokenClient: AzureAdV2Client,
     private val resourceId: String,
     private val httpClient: HttpClient
 ) {
@@ -29,9 +30,12 @@ class NorskHelsenettClient(
         try {
             return@retry httpClient.get<Behandler>("$endpointUrl/api/v2/behandler") {
                 accept(ContentType.Application.Json)
-                val accessToken = accessTokenClient.getAccessTokenV2(resourceId)
+                val accessToken = accessTokenClient.getAccessToken(resourceId)
+                if (accessToken?.accessToken == null) {
+                    throw RuntimeException("Klarte ikke hente ut accesstoken for HPR")
+                }
                 headers {
-                    append("Authorization", "Bearer $accessToken")
+                    append("Authorization", "Bearer ${accessToken.accessToken}")
                     append("Nav-CallId", msgId)
                     append("behandlerFnr", behandlerFnr)
                 }

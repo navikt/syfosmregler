@@ -8,6 +8,8 @@ import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
+import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
+import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -15,6 +17,7 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
+import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.BehandlerOgStartdato
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
@@ -27,6 +30,7 @@ import no.nav.syfo.rules.executeFlow
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.sm.isICD10
 import no.nav.syfo.sm.isICPC2
+import no.nav.syfo.validation.extractBornDate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
@@ -36,7 +40,8 @@ class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
     private val norskHelsenettClient: NorskHelsenettClient,
-    private val smregisterClient: SmregisterClient
+    private val smregisterClient: SmregisterClient,
+    private val pdlService: PdlPersonService
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
@@ -50,6 +55,18 @@ class RuleService(
 
         log.info("Received a SM2013, going to rules, {}", fields(loggingMeta))
 
+        val pdlPerson = pdlService.getPdlPerson(receivedSykmelding.personNrPasient, loggingMeta)
+        val fodsel = pdlPerson.foedsel?.firstOrNull()
+        val fodselsdato = if (fodsel?.foedselsdato?.isNotEmpty() == true) {
+            log.info("Extracting fodeseldato from PDL date")
+            FODSELSDATO_FRA_PDL_COUNTER.inc()
+            LocalDate.parse(fodsel.foedselsdato)
+        } else {
+            log.info("Extracting fodeseldato from personNrPasient")
+            FODSELSDATO_FRA_IDENT_COUNTER.inc()
+            extractBornDate(receivedSykmelding.personNrPasient)
+        }
+
         val ruleMetadata = RuleMetadata(
             receivedDate = receivedSykmelding.mottattDato,
             signatureDate = receivedSykmelding.sykmelding.signaturDato,
@@ -58,7 +75,8 @@ class RuleService(
             rulesetVersion = receivedSykmelding.rulesetVersion,
             legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
             tssid = receivedSykmelding.tssid,
-            avsenderFnr = receivedSykmelding.personNrLege
+            avsenderFnr = receivedSykmelding.personNrLege,
+            pasientFodselsdato = fodselsdato
         )
 
         val doctorSuspendDeferred = async {

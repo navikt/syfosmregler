@@ -16,7 +16,9 @@ data class Environment(
     val clientSecretV2: String = getEnvVar("AZURE_APP_CLIENT_SECRET"),
     val helsenettproxyScope: String = getEnvVar("HELSENETT_SCOPE"),
     val smregisterEndpointURL: String = getEnvVar("SMREGISTER_ENDPOINT_URL", "http://syfosmregister"),
-    val smregisterScope: String = getEnvVar("SMREGISTER_SCOPE")
+    val smregisterScope: String = getEnvVar("SMREGISTER_SCOPE"),
+    val pdlScope: String = getEnvVar("PDL_SCOPE"),
+    val pdlGraphqlPath: String = getEnvVar("PDL_GRAPHQL_PATH")
 )
 
 data class VaultCredentials(

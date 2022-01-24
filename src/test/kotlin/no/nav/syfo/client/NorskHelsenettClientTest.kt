@@ -23,11 +23,14 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LoggingMeta
+import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.azuread.v2.AzureAdV2Token
 import org.amshove.kluent.shouldBeEqualTo
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.io.IOException
 import java.net.ServerSocket
+import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
 
@@ -35,7 +38,7 @@ private const val fnr = "12345678912"
 @InternalAPI
 internal class NorskHelsenettClientTest : Spek({
 
-    val accessTokenClientMock = mockk<AccessTokenClientV2>()
+    val accessTokenClientMock = mockk<AzureAdV2Client>()
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
@@ -71,7 +74,7 @@ internal class NorskHelsenettClientTest : Spek({
     }
 
     beforeGroup {
-        coEvery { accessTokenClientMock.getAccessTokenV2(any()) } returns "token"
+        coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
     }
 
     describe("Test NorskHelsenettClient") {

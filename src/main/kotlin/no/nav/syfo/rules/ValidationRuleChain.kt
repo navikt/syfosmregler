@@ -6,7 +6,6 @@ import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
-import no.nav.syfo.validation.extractBornDate
 
 enum class ValidationRuleChain(
     override val ruleId: Int?,
@@ -24,7 +23,7 @@ enum class ValidationRuleChain(
         "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
         "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
         { (sykmelding, metadata) ->
-            sykmelding.perioder.sortedTOMDate().last() < extractBornDate(metadata.patientPersonNumber).plusYears(13)
+            sykmelding.perioder.sortedTOMDate().last() < metadata.pasientFodselsdato.plusYears(13)
         }
     ),
 
@@ -36,7 +35,7 @@ enum class ValidationRuleChain(
         "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
         "Pasienten er over 70 år. Sykmelding kan ikke benyttes. Pasienten har fått beskjed.",
         { (sykmelding, metadata) ->
-            sykmelding.perioder.sortedFOMDate().first() > extractBornDate(metadata.patientPersonNumber).plusYears(70)
+            sykmelding.perioder.sortedFOMDate().first() > metadata.pasientFodselsdato.plusYears(70)
         }
     ),
 
