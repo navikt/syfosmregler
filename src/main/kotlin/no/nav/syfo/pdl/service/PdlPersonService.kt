@@ -27,7 +27,10 @@ class PdlPersonService(
     suspend fun getPdlPerson(fnr: String, loggingMeta: LoggingMeta): PdlPerson {
 
         val cachedPerson = cache.getIfPresent(fnr)
-        if (cachedPerson != null) return cachedPerson
+        if (cachedPerson != null) {
+            log.info("Fant person i PDL cache")
+            return cachedPerson
+        }
 
         val token = accessTokenClientV2.getAccessToken(pdlScope)
         if (token?.accessToken == null) {
