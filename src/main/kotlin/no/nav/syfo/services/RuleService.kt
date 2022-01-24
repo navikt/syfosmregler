@@ -8,6 +8,8 @@ import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
+import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
+import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -57,9 +59,11 @@ class RuleService(
         val fodsel = pdlPerson.foedsel?.firstOrNull()
         val fodselsdato = if (fodsel?.foedselsdato?.isNotEmpty() == true) {
             log.info("Extracting fodeseldato from PDL date")
+            FODSELSDATO_FRA_PDL_COUNTER.inc()
             LocalDate.parse(fodsel.foedselsdato)
         } else {
             log.info("Extracting fodeseldato from personNrPasient")
+            FODSELSDATO_FRA_IDENT_COUNTER.inc()
             extractBornDate(receivedSykmelding.personNrPasient)
         }
 
