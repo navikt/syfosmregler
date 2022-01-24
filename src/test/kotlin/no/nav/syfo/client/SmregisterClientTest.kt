@@ -24,6 +24,8 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LoggingMeta
+import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.azuread.v2.AzureAdV2Token
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.Periode
 import org.amshove.kluent.shouldBeEqualTo
@@ -38,7 +40,7 @@ import java.util.concurrent.TimeUnit
 
 class SmregisterClientTest : Spek({
     val loggingMeta = LoggingMeta("", "", "", "")
-    val accessTokenClientMock = mockk<AccessTokenClientV2>()
+    val accessTokenClientMock = mockk<AzureAdV2Client>()
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
@@ -100,7 +102,7 @@ class SmregisterClientTest : Spek({
     }
 
     beforeEachTest {
-        coEvery { accessTokenClientMock.getAccessTokenV2(any()) } returns "token"
+        coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
     }
 
     describe("Test av SmRegisterClient") {
