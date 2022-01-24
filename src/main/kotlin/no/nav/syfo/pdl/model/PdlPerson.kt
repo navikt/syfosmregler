@@ -9,6 +9,4 @@ data class PdlPerson(
 ) {
     val fnr: String? = identer.firstOrNull { it.gruppe == "FOLKEREGISTERIDENT" }?.ident
     val aktorId: String? = identer.firstOrNull { it.gruppe == "AKTORID" }?.ident
-    val npId: String? = identer.firstOrNull { it.gruppe == "NPID" }?.ident
 }
-

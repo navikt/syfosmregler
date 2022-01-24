@@ -37,17 +37,20 @@ object ValidationRuleChainSpek : Spek({
         tssid: String? = "1314445",
         avsenderfnr: String = "12344",
         pasientFodselsdato: LocalDate = LocalDate.now()
-    ): RuleData<RuleMetadata> = RuleData(healthInformation, RuleMetadata(
-        signatureDate,
-        receivedDate,
-        behandletTidspunkt,
-        patientPersonNumber,
-        rulesetVersion,
-        legekontorOrgNr,
-        tssid,
-        avsenderfnr,
-        pasientFodselsdato
-    ))
+    ): RuleData<RuleMetadata> = RuleData(
+        healthInformation,
+        RuleMetadata(
+            signatureDate,
+            receivedDate,
+            behandletTidspunkt,
+            patientPersonNumber,
+            rulesetVersion,
+            legekontorOrgNr,
+            tssid,
+            avsenderfnr,
+            pasientFodselsdato
+        )
+    )
 
     describe("Testing validation rules and checking the rule outcomes") {
         it("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {
