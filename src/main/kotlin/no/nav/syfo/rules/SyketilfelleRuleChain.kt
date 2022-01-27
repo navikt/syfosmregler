@@ -13,7 +13,7 @@ enum class SyketilfelleRuleChain(
     override val predicate: (RuleData<RuleMetadataSykmelding>) -> Boolean
 ) : Rule<RuleData<RuleMetadataSykmelding>> {
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7, 2. ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //
@@ -36,7 +36,7 @@ enum class SyketilfelleRuleChain(
         }
     ),
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7, 2. ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //    
@@ -61,7 +61,7 @@ enum class SyketilfelleRuleChain(
         }
     ),
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7: 2. ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //
@@ -83,7 +83,7 @@ enum class SyketilfelleRuleChain(
         }
     ),
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7, 2. ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //    
@@ -104,7 +104,7 @@ enum class SyketilfelleRuleChain(
         }
     ),
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7, 2. ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     // 
@@ -129,7 +129,7 @@ enum class SyketilfelleRuleChain(
         }
     ),
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7, 2. ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //   
@@ -153,7 +153,7 @@ enum class SyketilfelleRuleChain(
         }
     ),
 
-    // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+    // §8-7, 2.ledd: Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
     // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært 
     // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
     //    

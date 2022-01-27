@@ -209,7 +209,7 @@ enum class PeriodLogicRuleChain(
         }
     ),
 
-    // §8-13: Dersom medlemmet er delvis arbeidsufør, kan det ytes graderte sykepenger.
+    // §8-13, 1. ledd: Dersom medlemmet er delvis arbeidsufør, kan det ytes graderte sykepenger.
     // Det er et vilkår at evnen til å utføre inntektsgivende arbeid er nedsatt med minst 20 prosent.
     @Description("Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen")
     GRADERT_SYKMELDING_UNDER_20_PROSENT(
