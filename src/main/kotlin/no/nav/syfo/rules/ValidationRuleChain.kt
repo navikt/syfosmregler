@@ -4,6 +4,8 @@ import no.nav.syfo.QuestionGroup
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
 
@@ -12,6 +14,7 @@ enum class ValidationRuleChain(
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
+    override val juridiskHenvisning: JuridiskHenvisning?,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
 
@@ -22,6 +25,7 @@ enum class ValidationRuleChain(
         Status.INVALID,
         "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
         "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
+        null,
         { (sykmelding, metadata) ->
             sykmelding.perioder.sortedTOMDate().last() < metadata.pasientFodselsdato.plusYears(13)
         }
@@ -34,6 +38,13 @@ enum class ValidationRuleChain(
         Status.INVALID,
         "Sykmelding kan ikke benyttes etter at du har fylt 70 år",
         "Pasienten er over 70 år. Sykmelding kan ikke benyttes. Pasienten har fått beskjed.",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-3",
+            ledd = 1,
+            punktum = 2,
+            bokstav = null
+        ),
         { (sykmelding, metadata) ->
             sykmelding.perioder.sortedFOMDate().first() > metadata.pasientFodselsdato.plusYears(70)
         }
@@ -48,6 +59,13 @@ enum class ValidationRuleChain(
         "Sykmeldingen må ha et kjent kodeverk for diagnosen.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Ukjent kodeverk er benyttet for diagnosen.",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-4",
+            ledd = 1,
+            punktum = 1,
+            bokstav = null
+        ),
         { (sykmelding, _) ->
             sykmelding.medisinskVurdering.hovedDiagnose != null &&
                 sykmelding.medisinskVurdering.hovedDiagnose?.system !in Diagnosekoder
@@ -61,6 +79,13 @@ enum class ValidationRuleChain(
         Status.INVALID,
         "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
         "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger. Pasienten har fått beskjed.",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-4",
+            ledd = 1,
+            punktum = 2,
+            bokstav = null
+        ),
         { (sykmelding, _) ->
             sykmelding.medisinskVurdering.hovedDiagnose != null &&
                 sykmelding.medisinskVurdering.hovedDiagnose!!.isICPC2() && sykmelding.medisinskVurdering.hovedDiagnose!!.kode?.startsWith("Z")
@@ -75,6 +100,13 @@ enum class ValidationRuleChain(
         "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-4",
+            ledd = 1,
+            punktum = 1,
+            bokstav = null
+        ),
         { (sykmelding, _) ->
             sykmelding.medisinskVurdering.annenFraversArsak == null &&
                 sykmelding.medisinskVurdering.hovedDiagnose == null
@@ -90,6 +122,13 @@ enum class ValidationRuleChain(
         "Den må ha riktig kode for hoveddiagnose.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Kodeverk for hoveddiagnose er feil eller mangler.",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-4",
+            ledd = 1,
+            punktum = 1,
+            bokstav = null
+        ),
         { (sykmelding, _) ->
             (
                 sykmelding.medisinskVurdering.hovedDiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
@@ -112,6 +151,13 @@ enum class ValidationRuleChain(
         Status.INVALID, "Det er brukt eit ukjent kodeverk for bidiagnosen.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Kodeverk for bidiagnose er ikke angitt eller korrekt",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-4",
+            ledd = 1,
+            punktum = 1,
+            bokstav = null
+        ),
         { (sykmelding, _) ->
             !sykmelding.medisinskVurdering.biDiagnoser.all { diagnose ->
                 if (diagnose.isICPC2()) {
@@ -131,6 +177,7 @@ enum class ValidationRuleChain(
         "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Feil regelsett er brukt i sykmeldingen.",
+        null,
         { (_, ruleMetadata) ->
             ruleMetadata.rulesetVersion !in arrayOf(null, "", "1", "2")
         }
@@ -144,6 +191,7 @@ enum class ValidationRuleChain(
         "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Utdypende opplysninger som kreves ved uke 39 mangler. ",
+        null,
         { (sykmelding, ruleMetadata) ->
             ruleMetadata.rulesetVersion in arrayOf("2") &&
                 sykmelding.perioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
@@ -159,11 +207,13 @@ enum class ValidationRuleChain(
         "Den må ha riktig organisasjonsnummer.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Feil format på organisasjonsnummer. Dette skal være 9 sifre.",
+        null,
         { (_, metadata) ->
             metadata.legekontorOrgnr != null && metadata.legekontorOrgnr.length != 9
         }
     ),
 
+    // Forvaltningsloven §6 1. ledd bokstav a
     // Den som signerer sykmeldingen kan ikke sykmelde seg selv
     @Description("Avsender fnr er det samme som pasient fnr")
     AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
@@ -172,11 +222,19 @@ enum class ValidationRuleChain(
         "Den som signert sykmeldingen er også pasient.",
         "Sykmeldingen kan ikke rettes, Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
             "Avsender fnr er det samme som pasient fnr",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FORVALTNINGSLOVEN,
+            paragraf = "6",
+            ledd = 1,
+            punktum = 1,
+            bokstav = "a"
+        ),
         { (_, metadata) ->
             metadata.avsenderFnr == metadata.patientPersonNumber
         }
     ),
 
+    // Forvaltningsloven §6 1. ledd bokstav a
     // Behandler kan ikke sykmelde seg selv
     @Description("Behandler fnr er det samme som pasient fnr")
     BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
@@ -185,6 +243,13 @@ enum class ValidationRuleChain(
         "Den som er behandler av sykmeldingen er også pasient.",
         "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
             "Behandler fnr er det samme som pasient fnr",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FORVALTNINGSLOVEN,
+            paragraf = "6",
+            ledd = 1,
+            punktum = 1,
+            bokstav = "a"
+        ),
         { (sykmelding, metadata) ->
             sykmelding.behandler.fnr == metadata.patientPersonNumber
         }

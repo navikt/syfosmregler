@@ -3,6 +3,8 @@ package no.nav.syfo.rules
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -12,6 +14,7 @@ enum class PeriodLogicRuleChain(
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
+    override val juridiskHenvisning: JuridiskHenvisning?,
     override val predicate: (RuleData<RuleMetadata>) -> Boolean
 ) : Rule<RuleData<RuleMetadata>> {
 
@@ -23,6 +26,7 @@ enum class PeriodLogicRuleChain(
         "Det er ikke oppgitt hvilken periode sykmeldingen gjelder for.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.isNullOrEmpty()
         }
@@ -36,6 +40,7 @@ enum class PeriodLogicRuleChain(
         "Det er lagt inn datoer som ikke stemmer innbyrdes.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.any { it.fom.isAfter(it.tom) }
         }
@@ -49,6 +54,7 @@ enum class PeriodLogicRuleChain(
         "Periodene må ikke overlappe hverandre.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.any { periodA ->
                 healthInformation.perioder
@@ -68,6 +74,7 @@ enum class PeriodLogicRuleChain(
         "Det er opphold mellom sykmeldingsperiodene.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
+        null,
         { (healthInformation, _) ->
             val ranges = healthInformation.perioder
                 .sortedBy { it.fom }
@@ -92,6 +99,7 @@ enum class PeriodLogicRuleChain(
         "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.any { it.aktivitetIkkeMulig == null && it.gradert == null && it.avventendeInnspillTilArbeidsgiver.isNullOrEmpty() && !it.reisetilskudd && (it.behandlingsdager == null || it.behandlingsdager == 0) }
         }
@@ -105,6 +113,7 @@ enum class PeriodLogicRuleChain(
         "Startdatoen er mer enn tre år tilbake.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.sortedFOMDate().first().atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
         }
@@ -118,6 +127,7 @@ enum class PeriodLogicRuleChain(
         "Sykmeldingen er datert mer enn 30 dager fram i tid.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
+        null,
         { (sykmelding, ruleMetadata) ->
             sykmelding.perioder.sortedFOMDate().first() > ruleMetadata.behandletTidspunkt.plusDays(30).toLocalDate()
         }
@@ -131,6 +141,7 @@ enum class PeriodLogicRuleChain(
         "Den kan ikke ha en varighet på over ett år.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
+        null,
         { (healthInformation, _) ->
             val firstFomDate = healthInformation.perioder.sortedFOMDate().first().atStartOfDay().toLocalDate()
             val lastTomDate = healthInformation.perioder.sortedTOMDate().last().atStartOfDay().toLocalDate()
@@ -146,6 +157,7 @@ enum class PeriodLogicRuleChain(
         "Behandlingsdatoen må rettes.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Behandlingsdatoen er etter dato for når NAV mottok meldingen",
+        null,
         { (healthInformation, ruleMetadata) ->
             healthInformation.behandletTidspunkt > ruleMetadata.receivedDate.plusDays(1)
         }
@@ -159,6 +171,7 @@ enum class PeriodLogicRuleChain(
         "En avventende sykmelding kan bare inneholde én periode.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Avventende sykmelding kan ikke inneholde flere perioder.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.count { it.avventendeInnspillTilArbeidsgiver != null } != 0 &&
                 healthInformation.perioder.size > 1
@@ -173,6 +186,7 @@ enum class PeriodLogicRuleChain(
         "En avventende sykmelding forutsetter at du kan jobbe hvis arbeidsgiveren din legger til rette for det. Den som har sykmeldt deg har ikke foreslått hva arbeidsgiveren kan gjøre, noe som kreves for denne typen sykmelding.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder
                 .any { it.avventendeInnspillTilArbeidsgiver != null && it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty() }
@@ -187,6 +201,7 @@ enum class PeriodLogicRuleChain(
         "En avventende sykmelding kan bare gis for 16 dager.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder
                 .filter { it.avventendeInnspillTilArbeidsgiver != null }
@@ -202,6 +217,7 @@ enum class PeriodLogicRuleChain(
         "Det er angitt for mange behandlingsdager. Det kan bare angis én behandlingsdag per uke.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.any {
                 it.behandlingsdager != null && it.behandlingsdager!! > it.range().startedWeeksBetween()
@@ -218,6 +234,13 @@ enum class PeriodLogicRuleChain(
         "Sykmeldingsgraden kan ikke være mindre enn 20 %.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
+        JuridiskHenvisning(
+            lovverk = Lovverk.FOLKETRYGDLOVEN,
+            paragraf = "8-13",
+            ledd = 1,
+            punktum = null,
+            bokstav = null
+        ),
         { (healthInformation, _) ->
             healthInformation.perioder.any {
                 it.gradert != null && it.gradert!!.grad < 20
@@ -233,6 +256,7 @@ enum class PeriodLogicRuleChain(
         "Sykmeldingsgraden kan ikke være mer enn 99% fordi det er en gradert sykmelding.",
         "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
             "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.mapNotNull { it.gradert }.any { it.grad > 99 }
         }
@@ -245,6 +269,7 @@ enum class PeriodLogicRuleChain(
         Status.MANUAL_PROCESSING,
         "Sykmelding inneholder behandlingsdager.",
         "Sykmelding inneholder behandlingsdager (felt 4.4).",
+        null,
         { (healthInformation, _) ->
             healthInformation.perioder.any {
                 it.behandlingsdager != null

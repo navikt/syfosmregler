@@ -2,6 +2,7 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.model.Status
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import java.time.LocalDate
 
 enum class HPRRuleChain(
@@ -9,6 +10,7 @@ enum class HPRRuleChain(
     override val status: Status,
     override val messageForUser: String,
     override val messageForSender: String,
+    override val juridiskHenvisning: JuridiskHenvisning?,
     override val predicate: (RuleData<BehandlerOgStartdato>) -> Boolean
 ) : Rule<RuleData<BehandlerOgStartdato>> {
     @Description("Behandler er ikke gyldig i HPR på konsultasjonstidspunkt")
@@ -17,6 +19,7 @@ enum class HPRRuleChain(
         Status.INVALID,
         "Den som skrev sykmeldingen manglet autorisasjon.",
         "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt. Pasienten har fått beskjed.",
+        null,
         { (_, behandlerOgStartdato) ->
             !behandlerOgStartdato.behandler.godkjenninger.any {
                 it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv
@@ -30,6 +33,7 @@ enum class HPRRuleChain(
         Status.INVALID,
         "Den som skrev sykmeldingen manglet autorisasjon.",
         "Behandler har ikke gyldig autorisasjon i HPR. Pasienten har fått beskjed.",
+        null,
         { (_, behandlerOgStartdato) ->
             !behandlerOgStartdato.behandler.godkjenninger.any {
                 it.autorisasjon?.aktiv != null &&
@@ -47,6 +51,7 @@ enum class HPRRuleChain(
         Status.INVALID,
         "Den som skrev sykmeldingen manglet autorisasjon.",
         "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. Pasienten har fått beskjed.",
+        null,
         { (_, behandlerOgStartdato) ->
             !behandlerOgStartdato.behandler.godkjenninger.any {
                 it.helsepersonellkategori?.aktiv != null &&
@@ -71,6 +76,7 @@ enum class HPRRuleChain(
         Status.INVALID,
         "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
         "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
+        null,
         { (sykmelding, behandlerOgStartdato) ->
             (
                 (sykmelding.perioder.sortedFOMDate().first()..sykmelding.perioder.sortedTOMDate().last()).daysBetween() > 84 ||

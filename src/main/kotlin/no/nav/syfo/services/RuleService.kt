@@ -17,12 +17,15 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
+import no.nav.syfo.model.juridisk.JuridiskUtfall
+import no.nav.syfo.model.juridisk.JuridiskVurdering
 import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.BehandlerOgStartdato
 import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.LegesuspensjonRuleChain
 import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.Rule
+import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
@@ -35,6 +38,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -97,7 +101,8 @@ class RuleService(
                         messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
                         ruleStatus = Status.INVALID
                     )
-                )
+                ),
+                jurdiskeVurderinger = null
             )
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
@@ -123,7 +128,7 @@ class RuleService(
 
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 
-        return validationResult(results)
+        return validationResult(receivedSykmelding, results)
     }
 
     private fun validationResult(results: List<Rule<Any>>): ValidationResult = ValidationResult(
@@ -161,4 +166,36 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
 
 fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
     return sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false
+}
+
+private fun toJuridiskVurdering(receivedSykmelding: ReceivedSykmelding, rule: Rule<RuleData<RuleMetadata>>): JuridiskVurdering {
+    return JuridiskVurdering(
+        id = UUID.randomUUID().toString(),
+        eventName = "subsumsjon",
+        version = "1.0.0",
+        kilde = "syfosmregler",
+        versjonAvKode = "", // TODO Minimum git commit hash til kildekoden men anbefalingen er å bruke URL til image gitt at commit hashen er en del av taggen.
+        fodselsnummer = receivedSykmelding.personNrPasient,
+        juridiskHenvisning = rule.juridiskHenvisning!!,
+        sporing = mapOf(
+            "sykmeldingsid" to receivedSykmelding.sykmelding.id
+        ),
+        input = mapOf(), // TODO Faktum for subsumsjonen. Eks (§8-2 ledd 1): {"skjæringstidspunkt": "2018-01-01", "tilstrekkeligAntallOpptjeningsdager": 28, "arbeidsforhold": {"orgnummer": "987654321", "fom": "2017-12-04", "tom": "2018-01-31"} }
+        utfall = toJuridiskUtfall(rule)
+    )
+}
+
+private fun toJuridiskUtfall(rule: Rule<RuleData<RuleMetadata>>) = when (rule.status) {
+    Status.OK -> {
+        JuridiskUtfall.VILKAR_OPPFYLT
+    }
+    Status.INVALID -> {
+        JuridiskUtfall.VILKAR_IKKE_OPPFYLT
+    }
+    Status.MANUAL_PROCESSING -> {
+        JuridiskUtfall.VILKAR_UAVKLART
+    }
+    else -> {
+        JuridiskUtfall.VILKAR_UAVKLART
+    }
 }
