@@ -47,6 +47,14 @@ class RuleService(
     private val smregisterClient: SmregisterClient,
     private val pdlService: PdlPersonService
 ) {
+
+    companion object {
+        val VERSJON_KODE = getEnvVar("NAIS_APP_IMAGE")
+        val EVENT_NAME = "subsumsjon"
+        val VERSION = "1.0.0"
+        val KILDE = "syfosmregler"
+
+    }
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
 
@@ -184,10 +192,10 @@ fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
 private fun toJuridiskVurdering(receivedSykmelding: ReceivedSykmelding, rule: Rule<RuleData<RuleMetadata>>): JuridiskVurdering {
     return JuridiskVurdering(
         id = UUID.randomUUID().toString(),
-        eventName = "subsumsjon",
-        version = "1.0.0",
-        kilde = "syfosmregler",
-        versjonAvKode = "", // TODO Minimum git commit hash til kildekoden men anbefalingen er å bruke URL til image gitt at commit hashen er en del av taggen.
+        eventName = RuleService.EVENT_NAME,
+        version = RuleService.VERSION,
+        kilde = RuleService.KILDE,
+        versjonAvKode = RuleService.VERSJON_KODE,
         fodselsnummer = receivedSykmelding.personNrPasient,
         juridiskHenvisning = rule.juridiskHenvisning!!,
         sporing = mapOf(
