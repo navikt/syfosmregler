@@ -131,15 +131,28 @@ class RuleService(
         return validationResult(receivedSykmelding, results)
     }
 
-    private fun validationResult(results: List<Rule<Any>>): ValidationResult = ValidationResult(
-        status = results
-            .map { status -> status.status }.let {
-                it.firstOrNull { status -> status == Status.INVALID }
-                    ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
-                    ?: Status.OK
-            },
-        ruleHits = results.map { rule -> RuleInfo(rule.name, rule.messageForSender!!, rule.messageForUser!!, rule.status) }
-    )
+    private fun validationResult(receivedSykmelding: ReceivedSykmelding, results: List<Rule<Any>>): ValidationResult {
+        val juridiskeVurderinger = results.filter { it.juridiskHenvisning != null }.map {
+            toJuridiskVurdering(receivedSykmelding, it)
+        }
+        return ValidationResult(
+            jurdiskeVurderinger = juridiskeVurderinger,
+            status = results
+                .map { status -> status.status }.let {
+                    it.firstOrNull { status -> status == Status.INVALID }
+                        ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
+                        ?: Status.OK
+                },
+            ruleHits = results.map { rule ->
+                RuleInfo(
+                    rule.name,
+                    rule.messageForSender!!,
+                    rule.messageForUser!!,
+                    rule.status
+                )
+            }
+        )
+    }
 
     private fun erTilbakedatertMedBegrunnelse(receivedSykmelding: ReceivedSykmelding): Boolean =
         receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate().first().plusDays(8) &&
