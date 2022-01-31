@@ -8,28 +8,24 @@ import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
+import no.nav.syfo.getEnvVar
 import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.model.RuleResult
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
 import no.nav.syfo.pdl.service.PdlPersonService
-import no.nav.syfo.rules.BehandlerOgStartdato
-import no.nav.syfo.rules.HPRRuleChain
-import no.nav.syfo.rules.LegesuspensjonRuleChain
-import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.Rule
 import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadataSykmelding
-import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
-import no.nav.syfo.rules.executeFlow
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.sm.isICD10
 import no.nav.syfo.sm.isICPC2
@@ -126,17 +122,49 @@ class RuleService(
             ruleMetadata = ruleMetadata, erNyttSyketilfelle = syketilfelleStartdato == null, erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
         )
 
-        val results = listOf(
-            ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
-            PeriodLogicRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
-            HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, BehandlerOgStartdato(behandler, syketilfelleStartdato)),
-            LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
-            SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
+        val newResults = listOf(
+            ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).rules.map { it.executeRule() },
         ).flatten()
 
-        log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
+        log.info("Rules hit {}, {}", newResults.map { it.rule.name }, fields(loggingMeta))
 
-        return validationResult(receivedSykmelding, results)
+        return validationResult2(receivedSykmelding, newResults)
+
+//        val results: List<Rule<Any>> = listOf(
+//            ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
+//            PeriodLogicRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadata),
+//            HPRRuleChain.values().executeFlow(receivedSykmelding.sykmelding, BehandlerOgStartdato(behandler, syketilfelleStartdato)),
+//            LegesuspensjonRuleChain.values().executeFlow(receivedSykmelding.sykmelding, doctorSuspendDeferred.await()),
+//            SyketilfelleRuleChain.values().executeFlow(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
+//        ).flatten()
+
+//        log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
+
+//        return validationResult(receivedSykmelding, results)
+    }
+
+    private fun validationResult2(receivedSykmelding: ReceivedSykmelding, results: List<RuleResult<*>>): ValidationResult {
+        val juridiskeVurderinger = results.filter { it.rule.juridiskHenvisning != null }.map {
+            toJuridiskVurdering2(receivedSykmelding, it)
+        }
+
+        return ValidationResult(
+            jurdiskeVurderinger = juridiskeVurderinger,
+            status = results
+                .map { ruleThingy -> ruleThingy.rule.status }.let {
+                    it.firstOrNull { status -> status == Status.INVALID }
+                        ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
+                        ?: Status.OK
+                },
+            ruleHits = results.map { rule ->
+                RuleInfo(
+                    rule.rule.name,
+                    rule.rule.messageForSender,
+                    rule.rule.messageForUser,
+                    rule.rule.status
+                )
+            }
+        )
     }
 
     private fun validationResult(receivedSykmelding: ReceivedSykmelding, results: List<Rule<Any>>): ValidationResult {
@@ -189,6 +217,29 @@ fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
     return sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false
 }
 
+private fun toJuridiskVurdering2(receivedSykmelding: ReceivedSykmelding, ruleResult: RuleResult<*>) : JuridiskVurdering {
+    return JuridiskVurdering(
+        id = UUID.randomUUID().toString(),
+        eventName = RuleService.EVENT_NAME,
+        version = RuleService.VERSION,
+        kilde = RuleService.KILDE,
+        versjonAvKode = RuleService.VERSJON_KODE,
+        fodselsnummer = receivedSykmelding.personNrPasient,
+        juridiskHenvisning = ruleResult.rule.juridiskHenvisning
+            ?: throw RuntimeException("JuridiskHenvisning kan ikke være null"),
+        sporing = mapOf(
+            "sykmeldingsid" to receivedSykmelding.sykmelding.id
+        ),
+        input = ruleResult.rule.toInputMap(),
+        utfall = toJuridiskUtfall2(
+            when (ruleResult.result) {
+                true -> ruleResult.rule.status
+                else -> Status.OK
+            }
+        )
+    )
+}
+
 private fun toJuridiskVurdering(receivedSykmelding: ReceivedSykmelding, rule: Rule<RuleData<RuleMetadata>>): JuridiskVurdering {
     return JuridiskVurdering(
         id = UUID.randomUUID().toString(),
@@ -204,6 +255,21 @@ private fun toJuridiskVurdering(receivedSykmelding: ReceivedSykmelding, rule: Ru
         input = mapOf(), // TODO Faktum for subsumsjonen. Eks (§8-2 ledd 1): {"skjæringstidspunkt": "2018-01-01", "tilstrekkeligAntallOpptjeningsdager": 28, "arbeidsforhold": {"orgnummer": "987654321", "fom": "2017-12-04", "tom": "2018-01-31"} }
         utfall = toJuridiskUtfall(rule)
     )
+}
+
+private fun toJuridiskUtfall2(status: Status) = when (status) {
+    Status.OK -> {
+        JuridiskUtfall.VILKAR_OPPFYLT
+    }
+    Status.INVALID -> {
+        JuridiskUtfall.VILKAR_IKKE_OPPFYLT
+    }
+    Status.MANUAL_PROCESSING -> {
+        JuridiskUtfall.VILKAR_UAVKLART
+    }
+    else -> {
+        JuridiskUtfall.VILKAR_UAVKLART
+    }
 }
 
 private fun toJuridiskUtfall(rule: Rule<RuleData<RuleMetadata>>) = when (rule.status) {

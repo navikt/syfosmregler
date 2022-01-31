@@ -1,25 +1,9 @@
 package no.nav.syfo.rules
 
 import com.devskiller.jfairy.Fairy
-import com.devskiller.jfairy.producer.person.PersonProperties
-import com.devskiller.jfairy.producer.person.PersonProvider
-import no.nav.syfo.generateBehandler
-import no.nav.syfo.generateMedisinskVurdering
-import no.nav.syfo.generateSykmelding
-import no.nav.syfo.model.AnnenFraverGrunn
-import no.nav.syfo.model.AnnenFraversArsak
-import no.nav.syfo.model.Diagnose
-import no.nav.syfo.model.RuleMetadata
-import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.sm.Diagnosekoder
-import no.nav.syfo.toDiagnose
-import no.nav.syfo.validation.extractBornYear
 import no.nav.syfo.validation.validatePersonAndDNumber
-import org.amshove.kluent.shouldBeEqualTo
 import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 val fairy: Fairy = Fairy.create() // (Locale("no", "NO"))

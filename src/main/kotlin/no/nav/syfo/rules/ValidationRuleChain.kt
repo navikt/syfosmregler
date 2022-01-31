@@ -2,8 +2,10 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.QuestionGroup
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
+import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.sm.Diagnosekoder
