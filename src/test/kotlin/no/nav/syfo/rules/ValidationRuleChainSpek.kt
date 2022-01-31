@@ -10,7 +10,7 @@ val fairy: Fairy = Fairy.create() // (Locale("no", "NO"))
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
 object ValidationRuleChainSpek : Spek({
-    fun ruleData(
+/*    fun ruleData(
         healthInformation: Sykmelding,
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
@@ -467,7 +467,7 @@ object ValidationRuleChainSpek : Spek({
                 )
             ) shouldBeEqualTo false
         }
-    }
+    }*/
 })
 
 fun generatePersonNumber(bornDate: LocalDate, useDNumber: Boolean = false): String {
