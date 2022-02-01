@@ -25,12 +25,13 @@ class ValidationRuleChain(
             status = Status.INVALID,
             messageForUser = "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
             messageForSender = "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
-            null,
-            object {
+            juridiskHenvisning = null,
+            input = object {
                 val sisteTomDato = sykmelding.perioder.sortedTOMDate().last()
                 val pasientFodselsdato = metadata.pasientFodselsdato
             },
-        ) { it.sisteTomDato < it.pasientFodselsdato.plusYears(13) },
+            predicate = { it.sisteTomDato < it.pasientFodselsdato.plusYears(13) }
+        ),
 
         // §8-3 Det ytes ikke sykepenger til medlem som er fylt 70 år.
         // Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.
@@ -47,13 +48,14 @@ class ValidationRuleChain(
                 punktum = 2,
                 bokstav = null
             ),
-            object {
+            input = object {
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val pasientFodselsdato = metadata.pasientFodselsdato
+            },
+            predicate = {
+                it.forsteFomDato > it.pasientFodselsdato.plusYears(70)
             }
-        ) {
-            it.forsteFomDato > it.pasientFodselsdato.plusYears(70)
-        },
+        ),
 
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Kodeverk må være satt i henhold til gyldige kodeverk som angitt av Helsedirektoratet (ICPC-2 og ICD-10).
@@ -72,12 +74,13 @@ class ValidationRuleChain(
                 punktum = 1,
                 bokstav = null
             ),
-            object {
+            input = object {
                 val hoveddiagnose = sykmelding.medisinskVurdering.hovedDiagnose
+            },
+            predicate = {
+                it.hoveddiagnose != null && it.hoveddiagnose.system !in Diagnosekoder
             }
-        ) {
-            it.hoveddiagnose != null && it.hoveddiagnose.system !in Diagnosekoder
-        },
+        ),
 
         // §8-4 Arbeidsuførhet som skyldes sosiale eller økomoniske problemer o.l. gir ikke rett til sykepenger.
         // Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.
@@ -94,12 +97,13 @@ class ValidationRuleChain(
                 punktum = 2,
                 bokstav = null
             ),
-            object {
+            input = object {
                 val hoveddiagnose = sykmelding.medisinskVurdering.hovedDiagnose
+            },
+            predicate = {
+                it.hoveddiagnose != null && it.hoveddiagnose.isICPC2() && it.hoveddiagnose.kode.startsWith("Z")
             }
-        ) {
-            it.hoveddiagnose != null && it.hoveddiagnose.isICPC2() && it.hoveddiagnose.kode.startsWith("Z")
-        },
+        ),
 
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen
@@ -117,13 +121,14 @@ class ValidationRuleChain(
                 punktum = 1,
                 bokstav = null
             ),
-            object {
+            input = object {
                 val annenFraversArsak = sykmelding.medisinskVurdering.annenFraversArsak
                 val hoveddiagnose = sykmelding.medisinskVurdering.hovedDiagnose
+            },
+            predicate = {
+                it.annenFraversArsak == null && it.hoveddiagnose == null
             }
-        ) {
-            it.annenFraversArsak == null && it.hoveddiagnose == null
-        },
+        ),
 
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Diagnose må være satt i henhold til angitt kodeverk.
@@ -142,21 +147,22 @@ class ValidationRuleChain(
                 punktum = 1,
                 bokstav = null
             ),
-            object {
+            input = object {
                 val hoveddiagnose = sykmelding.medisinskVurdering.hovedDiagnose
                 val annenFravarsArsak = sykmelding.medisinskVurdering.annenFraversArsak
+            },
+            predicate = {
+                (it.hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
+                    it.hoveddiagnose?.let { diagnose ->
+                        if (diagnose.isICPC2()) {
+                            Diagnosekoder.icpc2.containsKey(diagnose.kode)
+                        } else {
+                            Diagnosekoder.icd10.containsKey(diagnose.kode)
+                        }
+                    } != true
+                    ) && it.annenFravarsArsak == null
             }
-        ) {
-            (it.hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
-                it.hoveddiagnose?.let { diagnose ->
-                    if (diagnose.isICPC2()) {
-                        Diagnosekoder.icpc2.containsKey(diagnose.kode)
-                    } else {
-                        Diagnosekoder.icd10.containsKey(diagnose.kode)
-                    }
-                } != true
-                ) && it.annenFravarsArsak == null
-        },
+        ),
 
 
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
@@ -176,18 +182,19 @@ class ValidationRuleChain(
                 punktum = 1,
                 bokstav = null
             ),
-            object {
+            input = object {
                 val biDiagnoser = sykmelding.medisinskVurdering.biDiagnoser
-            }
-        ) {
-            !it.biDiagnoser.all { diagnose ->
-                if (diagnose.isICPC2()) {
-                    Diagnosekoder.icpc2.containsKey(diagnose.kode)
-                } else {
-                    Diagnosekoder.icd10.containsKey(diagnose.kode)
+            },
+            predicate = {
+                !it.biDiagnoser.all { diagnose ->
+                    if (diagnose.isICPC2()) {
+                        Diagnosekoder.icpc2.containsKey(diagnose.kode)
+                    } else {
+                        Diagnosekoder.icd10.containsKey(diagnose.kode)
+                    }
                 }
             }
-        },
+        ),
 
         // Sjekker om korrekt versjon av sykmeldingen er benyttet
         // Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres
@@ -198,13 +205,14 @@ class ValidationRuleChain(
             messageForUser = "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Feil regelsett er brukt i sykmeldingen.",
-            null,
-            object {
+            juridiskHenvisning = null,
+            input = object {
                 val rulesetVersion = metadata.rulesetVersion
+            },
+            predicate = {
+                it.rulesetVersion !in arrayOf(null, "", "1", "2")
             }
-        ) {
-            it.rulesetVersion !in arrayOf(null, "", "1", "2")
-        },
+        ),
 
         // Krav om utdypende opplysninger ved uke 39
         // Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises
@@ -215,17 +223,18 @@ class ValidationRuleChain(
             messageForUser = "Sykmeldingen mangler utdypende opplysninger som kreves når sykefraværet er lengre enn 39 uker til sammen.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Utdypende opplysninger som kreves ved uke 39 mangler. ",
-            null,
-            object {
+            juridiskHenvisning = null,
+            input = object {
                 val rulesetVersion = metadata.rulesetVersion
                 val sykmeldingPerioder = sykmelding.perioder
                 val utdypendeOpplysinger = sykmelding.utdypendeOpplysninger
+            },
+            predicate = { input ->
+                input.rulesetVersion in arrayOf("2") &&
+                    input.sykmeldingPerioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
+                    input.utdypendeOpplysinger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
             }
-        ) { input ->
-            input.rulesetVersion in arrayOf("2") &&
-                input.sykmeldingPerioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
-                input.utdypendeOpplysinger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
-        },
+        ),
 
         // Orgnr må være korrekt angitt
         // Organisasjonsnummeret som er oppgitt er ikke 9 tegn.
@@ -236,13 +245,14 @@ class ValidationRuleChain(
             messageForUser = "Den må ha riktig organisasjonsnummer.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Feil format på organisasjonsnummer. Dette skal være 9 sifre.",
-            null,
-            object {
+            juridiskHenvisning = null,
+            input = object {
                 val legekontorOrgnr = metadata.legekontorOrgnr
+            },
+            predicate = {
+                it.legekontorOrgnr != null && it.legekontorOrgnr.length != 9
             }
-        ) {
-            it.legekontorOrgnr != null && it.legekontorOrgnr.length != 9
-        },
+        ),
 
         // Forvaltningsloven §6 1. ledd bokstav a
         // Den som signerer sykmeldingen kan ikke sykmelde seg selv
@@ -255,19 +265,20 @@ class ValidationRuleChain(
             messageForSender = "Sykmeldingen kan ikke rettes, Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                 "Avsender fnr er det samme som pasient fnr",
             JuridiskHenvisning(
-                lovverk = Lovverk.FORVALTNINGSLOVEN,
+                lovverk = Lovverk.FORVALTNINGSLOVEN, // TODO: Avklar om disse skal logges eller ei. Pågående diskusjon med jurister.
                 paragraf = "6",
                 ledd = 1,
                 punktum = 1,
                 bokstav = "a"
             ),
-            object {
+            input = object {
                 val avsenderFnr = metadata.avsenderFnr
                 val patientPersonNumber = metadata.patientPersonNumber
+            },
+            predicate = {
+                it.avsenderFnr == it.patientPersonNumber
             }
-        ) {
-            it.avsenderFnr == it.patientPersonNumber
-        },
+        ),
 
         // Forvaltningsloven §6 1. ledd bokstav a
         // Behandler kan ikke sykmelde seg selv
@@ -280,17 +291,18 @@ class ValidationRuleChain(
             messageForSender = "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                 "Behandler fnr er det samme som pasient fnr",
             juridiskHenvisning = JuridiskHenvisning(
-                lovverk = Lovverk.FORVALTNINGSLOVEN,
+                lovverk = Lovverk.FORVALTNINGSLOVEN, // TODO: Avklar om disse skal logges eller ei. Pågående diskusjon med jurister.
                 paragraf = "6",
                 ledd = 1,
                 punktum = 1,
                 bokstav = "a"
             ),
-            object {
+            input = object {
                 val behandlerFnr = sykmelding.behandler.fnr
                 val pasientFodselsNummer = metadata.patientPersonNumber
             },
-        ) { it.behandlerFnr == it.pasientFodselsNummer },
+            predicate = { it.behandlerFnr == it.pasientFodselsNummer }
+        ),
     )
 }
 

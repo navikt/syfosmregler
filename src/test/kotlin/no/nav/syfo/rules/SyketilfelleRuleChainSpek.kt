@@ -24,7 +24,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 object SyketilfelleRuleChainSpek : Spek({
-
     describe("Testing validation rules and checking the rule outcomes") {
         fun ruleData(healthInformation: Sykmelding, ruleMetadataSykmelding: RuleMetadataSykmelding) =
             RuleData(healthInformation, ruleMetadataSykmelding)
@@ -55,12 +54,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga lang begrunnelse") {
             val healthInformation = generateSykmelding(
@@ -91,12 +87,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
             val healthInformation = generateSykmelding(
@@ -126,12 +119,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
             val healthInformation = generateSykmelding(
@@ -161,12 +151,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
             val healthInformation = generateSykmelding(
@@ -201,12 +188,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should trigger rule because FOM is before covid19 date") {
             val healthInformation = generateSykmelding(
@@ -236,12 +220,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga ICD-10-diagnose (spesialisthelsetjenesten)") {
             val healthInformation = generateSykmelding(
@@ -270,7 +251,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -298,12 +281,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga ettersending") {
             val healthInformation = generateSykmelding(
@@ -331,7 +311,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -359,12 +341,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should not trigger rule") {
             val healthInformation = generateSykmelding(
@@ -392,12 +371,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -425,12 +401,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = null
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -460,12 +433,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = null
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -493,12 +463,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should not trigger rule") {
             val healthInformation = generateSykmelding(
@@ -526,12 +493,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should not trigger rule") {
             val healthInformation = generateSykmelding(
@@ -562,12 +526,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -598,12 +559,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -631,12 +589,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -666,12 +621,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -701,12 +653,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -733,12 +682,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -765,12 +711,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = null
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
@@ -800,12 +743,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_OVER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
             val healthInformation = generateSykmelding(
@@ -835,12 +775,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo true
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis begrunnelse inneholder bokstaver") {
             val healthInformation = generateSykmelding(
@@ -870,12 +807,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis utdypende opplysninger er satt") {
             val healthInformation = generateSykmelding(
@@ -914,12 +848,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis melding til NAV er satt") {
             val healthInformation = generateSykmelding(
@@ -950,12 +881,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -985,12 +913,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should NOT trigger rule because of covid19") {
             val healthInformation = generateSykmelding(
@@ -1021,7 +946,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, trigger ikke regel pga ICD-10-diagnose (spesialisthelsetjenesten)") {
             val healthInformation = generateSykmelding(
@@ -1052,7 +979,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(ruleData(healthInformation, ruleMetadataSykmelding)) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, trigger ikke regel pga ettersending") {
             val healthInformation = generateSykmelding(
@@ -1082,12 +1011,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = true
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -1117,12 +1043,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -1149,12 +1072,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE trigges ikke hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
             val healthInformation = generateSykmelding(
@@ -1184,12 +1104,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_UNDER_1_MND, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -1217,12 +1134,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+                .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_UNDER_1_MND, should not trigger rule") {
             val healthInformation = generateSykmelding(
@@ -1250,12 +1164,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+                .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_UNDER_1_MND, should not trigger rule") {
             val healthInformation = generateSykmelding(
@@ -1286,12 +1197,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo false
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+                .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND trigges hvis begrunnelse ikke inneholder bokstaver") {
             val healthInformation = generateSykmelding(
@@ -1319,12 +1227,9 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND(
-                ruleData(
-                    healthInformation,
-                    ruleMetadataSykmelding
-                )
-            ) shouldBeEqualTo true
+            SyketilfelleRuleChain(healthInformation,
+                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+                .executeRule().result shouldBeEqualTo true
         }
     }
 })

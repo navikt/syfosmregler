@@ -1,25 +1,25 @@
 package no.nav.syfo.rules
 
+import no.nav.syfo.model.RuleChain
+import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
 
-enum class LegesuspensjonRuleChain(
-    override val ruleId: Int?,
-    override val status: Status,
-    override val messageForUser: String,
-    override val messageForSender: String,
-    override val juridiskHenvisning: JuridiskHenvisning?,
-    override val predicate: (RuleData<Boolean>) -> Boolean
-) : Rule<RuleData<Boolean>> {
-    @Description("Behandler er suspendert av NAV på konsultasjonstidspunkt")
-    BEHANDLER_SUSPENDERT(
-        1414,
-        Status.INVALID,
-        "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
-        "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
-        null,
-        { (_, suspended) ->
-            suspended
-        }
-    ),
+class LegesuspensjonRuleChain(
+    private val behandlerSuspendert: Boolean,
+) : RuleChain {
+    override val rules: List<RuleThingy<*>> = listOf(
+        // Behandler er suspendert av NAV på konsultasjonstidspunkt
+        RuleThingy(
+            name = "BEHANDLER_SUSPENDERT",
+            ruleId = 1414,
+            status = Status.INVALID,
+            messageForSender = "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
+            messageForUser = "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
+            juridiskHenvisning = null,
+            input = object {
+                val suspendert = behandlerSuspendert
+            },
+            predicate = { it.suspendert }
+        ),
+    )
 }
