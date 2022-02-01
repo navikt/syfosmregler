@@ -154,6 +154,7 @@ class RuleService(
 
     private fun validationResult(results: List<RuleResult<*>>): ValidationResult = ValidationResult(
         status = results
+            .filter { it.result }
             .map { result -> result.rule.status }.let {
                 it.firstOrNull { status -> status == Status.INVALID }
                     ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
