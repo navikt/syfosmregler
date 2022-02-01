@@ -54,8 +54,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga lang begrunnelse") {
@@ -87,8 +89,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
@@ -119,8 +123,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
@@ -151,8 +157,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should not trigger rule because of covid19") {
@@ -188,8 +196,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should trigger rule because FOM is before covid19 date") {
@@ -220,8 +230,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga ICD-10-diagnose (spesialisthelsetjenesten)") {
@@ -251,8 +263,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
@@ -281,8 +295,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger ikke regel pga ettersending") {
@@ -311,8 +327,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = true
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should trigger rule") {
@@ -341,8 +359,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should not trigger rule") {
@@ -371,8 +391,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should NOT trigger rule") {
@@ -401,8 +423,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = null
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
@@ -433,8 +457,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = null
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
@@ -463,8 +489,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should not trigger rule") {
@@ -493,8 +521,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should not trigger rule") {
@@ -526,8 +556,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should NOT trigger rule") {
@@ -559,8 +591,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
@@ -589,8 +623,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
@@ -621,8 +657,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
@@ -653,8 +691,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
@@ -682,8 +722,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
@@ -711,8 +753,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = null
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
@@ -743,8 +787,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
@@ -775,8 +821,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo true
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis begrunnelse inneholder bokstaver") {
@@ -807,8 +855,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis utdypende opplysninger er satt") {
@@ -848,8 +898,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis melding til NAV er satt") {
@@ -881,8 +933,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should trigger rule") {
@@ -913,8 +967,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should NOT trigger rule because of covid19") {
@@ -946,8 +1002,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, trigger ikke regel pga ICD-10-diagnose (spesialisthelsetjenesten)") {
@@ -979,8 +1037,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, trigger ikke regel pga ettersending") {
@@ -1011,8 +1071,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = true
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
@@ -1043,8 +1105,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, NOT should trigger rule") {
@@ -1072,8 +1136,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE trigges ikke hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
@@ -1104,8 +1170,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_UNDER_1_MND, should trigger rule") {
@@ -1134,8 +1202,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
                 .executeRule().result shouldBeEqualTo true
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_UNDER_1_MND, should not trigger rule") {
@@ -1164,8 +1234,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
         it("Should check rule TILBAKEDATERT_FORLENGELSE_UNDER_1_MND, should not trigger rule") {
@@ -1197,8 +1269,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
         it("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND trigges hvis begrunnelse ikke inneholder bokstaver") {
@@ -1227,8 +1301,10 @@ object SyketilfelleRuleChainSpek : Spek({
                 erEttersendingAvTidligereSykmelding = false
             )
 
-            SyketilfelleRuleChain(healthInformation,
-                ruleMetadataSykmelding).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND")
                 .executeRule().result shouldBeEqualTo true
         }
     }

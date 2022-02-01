@@ -26,8 +26,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain(healthInformation,
-                BehandlerOgStartdato(behandler, null)).getRuleByName("BEHANDLER_IKKE_GYLDIG_I_HPR")
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_IKKE_GYLDIG_I_HPR")
                 .executeRule().result shouldBeEqualTo true
         }
 
@@ -308,9 +310,13 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain(healthInformation,
-                BehandlerOgStartdato(behandler,
-                    LocalDate.of(2019, 1, 1))).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(
+                    behandler,
+                    LocalDate.of(2019, 1, 1)
+                )
+            ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
                 .executeRule()
                 .result shouldBeEqualTo true
         }
@@ -342,8 +348,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain(healthInformation,
-                BehandlerOgStartdato(behandler, null)).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
                 .executeRule()
                 .result shouldBeEqualTo false
         }
@@ -391,7 +399,6 @@ object HPRRuleChainSpek : Spek({
                 .getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
                 .executeRule()
                 .result shouldBeEqualTo false
-
         }
 
         it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi startdato for tidligere sykefravær gir varighet på mindre enn 12 uker") {
@@ -421,9 +428,13 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain(healthInformation,
-                BehandlerOgStartdato(behandler,
-                    LocalDate.of(2019, 2, 20))).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(
+                    behandler,
+                    LocalDate.of(2019, 2, 20)
+                )
+            ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
                 .executeRule().result shouldBeEqualTo false
         }
     }

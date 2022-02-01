@@ -34,11 +34,13 @@ class JuridiskVurderingService(
                 .filter { it.rule.juridiskHenvisning == null }
                 .map { resultToJuridiskVurdering(receivedSykmelding, it) }
         )
-        kafkaProducer.send(ProducerRecord(
-            juridiskVurderingTopic,
-            receivedSykmelding.sykmelding.id,
-            juridiskVurderingResult
-        )).get()
+        kafkaProducer.send(
+            ProducerRecord(
+                juridiskVurderingTopic,
+                receivedSykmelding.sykmelding.id,
+                juridiskVurderingResult
+            )
+        ).get()
     }
 
     private fun resultToJuridiskVurdering(
@@ -81,5 +83,4 @@ class JuridiskVurderingService(
             JuridiskUtfall.VILKAR_UAVKLART
         }
     }
-
 }

@@ -8,7 +8,6 @@ import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
-import no.nav.syfo.getEnvVar
 import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
@@ -81,20 +80,26 @@ class RuleService(
 
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
-            legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege,
+            legeSuspensjonClient.checkTherapist(
+                receivedSykmelding.personNrLege,
                 receivedSykmelding.navLogId,
                 signaturDatoString,
-                loggingMeta).suspendert
+                loggingMeta
+            ).suspendert
         }
         val syketilfelleStartdatoDeferred = async {
-            syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(receivedSykmelding.sykmelding.pasientAktoerId,
+            syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(
+                receivedSykmelding.sykmelding.pasientAktoerId,
                 receivedSykmelding.sykmelding.perioder,
-                loggingMeta)
+                loggingMeta
+            )
         }
 
-        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege,
+        val behandler = norskHelsenettClient.finnBehandler(
+            behandlerFnr = receivedSykmelding.personNrLege,
             msgId = receivedSykmelding.msgId,
-            loggingMeta = loggingMeta)
+            loggingMeta = loggingMeta
+        )
             ?: return ValidationResult(
                 status = Status.INVALID,
                 ruleHits = listOf(
@@ -110,9 +115,11 @@ class RuleService(
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
         val erEttersendingAvTidligereSykmelding = if (erTilbakedatertMedBegrunnelse(receivedSykmelding)) {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(receivedSykmelding.personNrPasient,
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
-                loggingMeta)
+                loggingMeta
+            )
         } else {
             null
         }
@@ -150,10 +157,12 @@ class RuleService(
                     ?: Status.OK
             },
         ruleHits = results.map { result ->
-            RuleInfo(result.rule.name,
+            RuleInfo(
+                result.rule.name,
                 result.rule.messageForSender,
                 result.rule.messageForUser,
-                result.rule.status)
+                result.rule.status
+            )
         }
     )
 

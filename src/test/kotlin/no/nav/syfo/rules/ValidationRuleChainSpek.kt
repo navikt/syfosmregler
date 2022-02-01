@@ -54,7 +54,8 @@ object ValidationRuleChainSpek : Spek({
             val person = fairy.person(PersonProperties.ageBetween(PersonProvider.MIN_AGE, 12))
 
             ValidationRuleChain(
-                generateSykmelding(), ruleMetadata(
+                generateSykmelding(),
+                ruleMetadata(
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
                 )
             ).getRuleByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo true
@@ -146,16 +147,20 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata()).getRuleByName("HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata()
+            ).getRuleByName("HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER")
                 .executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata()).getRuleByName("HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata()
+            ).getRuleByName("HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER")
                 .executeRule().result shouldBeEqualTo false
         }
 
@@ -277,34 +282,46 @@ object ValidationRuleChainSpek : Spek({
         it("UGYLDIG_ORGNR_LENGDE should trigger on when orgnr lengt is not 9") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata(legekontorOrgNr = "1234567890")).getRuleByName("UGYLDIG_ORGNR_LENGDE")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata(legekontorOrgNr = "1234567890")
+            ).getRuleByName("UGYLDIG_ORGNR_LENGDE")
                 .executeRule().result shouldBeEqualTo true
         }
 
         it("UGYLDIG_ORGNR_LENGDE should not trigger on when orgnr is 9") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata(legekontorOrgNr = "123456789")).getRuleByName("UGYLDIG_ORGNR_LENGDE")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata(legekontorOrgNr = "123456789")
+            ).getRuleByName("UGYLDIG_ORGNR_LENGDE")
                 .executeRule().result shouldBeEqualTo false
         }
 
         it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when avsender fnr and pasient fnr is the same") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata(patientPersonNumber = "123456789",
-                    avsenderfnr = "123456789")).getRuleByName("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata(
+                    patientPersonNumber = "123456789",
+                    avsenderfnr = "123456789"
+                )
+            ).getRuleByName("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR")
                 .executeRule().result shouldBeEqualTo true
         }
 
         it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when avsender fnr and pasient fnr is diffrent") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata(patientPersonNumber = "645646666",
-                    avsenderfnr = "123456789")).getRuleByName("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata(
+                    patientPersonNumber = "645646666",
+                    avsenderfnr = "123456789"
+                )
+            ).getRuleByName("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR")
                 .executeRule().result shouldBeEqualTo false
         }
 
@@ -316,8 +333,10 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata(patientPersonNumber = behandlerFnr)).getRuleByName("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata(patientPersonNumber = behandlerFnr)
+            ).getRuleByName("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR")
                 .executeRule().result shouldBeEqualTo true
         }
 
@@ -329,8 +348,10 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain(healthInformation,
-                ruleMetadata(patientPersonNumber = "645646666")).getRuleByName("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+            ValidationRuleChain(
+                healthInformation,
+                ruleMetadata(patientPersonNumber = "645646666")
+            ).getRuleByName("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR")
                 .executeRule().result shouldBeEqualTo false
         }
     }
@@ -384,7 +405,6 @@ object ValidationRuleChainSpek : Spek({
             beregnetFodselsar4 shouldBeEqualTo 2039
         }
     }
-
 })
 
 fun generatePersonNumber(bornDate: LocalDate, useDNumber: Boolean = false): String {

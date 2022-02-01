@@ -248,8 +248,8 @@ class PeriodLogicRuleChain(
             },
             predicate = { input ->
                 input.perioder.any {
-                    it.avventendeInnspillTilArbeidsgiver != null
-                        && it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty()
+                    it.avventendeInnspillTilArbeidsgiver != null &&
+                        it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty()
                 }
             }
         ),

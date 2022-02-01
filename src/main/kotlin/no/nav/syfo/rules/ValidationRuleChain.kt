@@ -152,8 +152,9 @@ class ValidationRuleChain(
                 val annenFravarsArsak = sykmelding.medisinskVurdering.annenFraversArsak
             },
             predicate = {
-                (it.hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
-                    it.hoveddiagnose?.let { diagnose ->
+                (
+                    it.hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
+                        it.hoveddiagnose?.let { diagnose ->
                         if (diagnose.isICPC2()) {
                             Diagnosekoder.icpc2.containsKey(diagnose.kode)
                         } else {
@@ -163,7 +164,6 @@ class ValidationRuleChain(
                     ) && it.annenFravarsArsak == null
             }
         ),
-
 
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Diagnose må være satt i henhold til angitt kodeverk.

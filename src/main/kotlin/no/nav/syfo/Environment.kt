@@ -5,6 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 data class Environment(
+    val applicationName: String = getEnvVar("NAIS_APP_NAME", "syfosmregler"),
     val legeSuspensjonEndpointURL: String = getEnvVar("LEGE_SUSPENSJON_ENDPOINT_URL", "http://btsys.default"),
     val syketilfelleEndpointURL: String = getEnvVar("SYKETILLFELLE_ENDPOINT_URL", "http://syfosyketilfelle.flex"),
     val applicationPort: Int = getEnvVar("APPLICATION_PORT", "8080").toInt(),
@@ -18,7 +19,8 @@ data class Environment(
     val smregisterEndpointURL: String = getEnvVar("SMREGISTER_ENDPOINT_URL", "http://syfosmregister"),
     val smregisterScope: String = getEnvVar("SMREGISTER_SCOPE"),
     val pdlScope: String = getEnvVar("PDL_SCOPE"),
-    val pdlGraphqlPath: String = getEnvVar("PDL_GRAPHQL_PATH")
+    val pdlGraphqlPath: String = getEnvVar("PDL_GRAPHQL_PATH"),
+    val etterlevelsesTopic: String = "teamsykmelding.paragraf-i-kode"
 )
 
 data class VaultCredentials(

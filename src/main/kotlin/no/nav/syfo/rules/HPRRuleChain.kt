@@ -108,9 +108,11 @@ class HPRRuleChain(
                     ) &&
                     harAktivHelsepersonellAutorisasjonsSom(
                         it.behandlerGodkjenninger,
-                        listOf(HelsepersonellKategori.KIROPRAKTOR.verdi,
+                        listOf(
+                            HelsepersonellKategori.KIROPRAKTOR.verdi,
                             HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                            HelsepersonellKategori.FYSIOTERAPAEUT.verdi)
+                            HelsepersonellKategori.FYSIOTERAPAEUT.verdi
+                        )
                     )
             }
         ),

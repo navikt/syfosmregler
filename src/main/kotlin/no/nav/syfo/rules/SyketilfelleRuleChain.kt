@@ -44,9 +44,9 @@ class SyketilfelleRuleChain(
                 val erKoronaRelatert = erCoronaRelatert(sykmelding)
             },
             predicate = {
-                it.erNyttSyketilfelle
-                    && (it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) && it.begrunnelseIkkeKontakt.isNullOrEmpty())
-                    && !it.erKoronaRelatert
+                it.erNyttSyketilfelle &&
+                    (it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
+                    !it.erKoronaRelatert
             }
         ),
 
@@ -82,15 +82,17 @@ class SyketilfelleRuleChain(
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
             },
             predicate = {
-                it.erNyttSyketilfelle
-                    && it.erEttersendingAvTidligereSykmelding != true
-                    && !it.erFraSpesialisthelsetjenesten
-                    && it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8)
-                    && !it.begrunnelseIkkeKontakt.isNullOrEmpty()
-                    && !it.erCoronaRelatert
-                    && (it.forsteFomDato
-                    .plusDays(14)
-                    .isBefore(it.sisteTomDato) || it.begrunnelseIkkeKontakt.length < 16)
+                it.erNyttSyketilfelle &&
+                    it.erEttersendingAvTidligereSykmelding != true &&
+                    !it.erFraSpesialisthelsetjenesten &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) &&
+                    !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert &&
+                    (
+                        it.forsteFomDato
+                            .plusDays(14)
+                            .isBefore(it.sisteTomDato) || it.begrunnelseIkkeKontakt.length < 16
+                        )
             }
         ),
 
@@ -125,11 +127,11 @@ class SyketilfelleRuleChain(
                 val kontaktMedPasientDato = sykmelding.kontaktMedPasient.kontaktDato
             },
             predicate = {
-                it.erNyttSyketilfelle
-                    && it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4)
-                    && it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8)
-                    && (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty())
-                    && !it.erCoronaRelatert
+                it.erNyttSyketilfelle &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4) &&
+                    it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8) &&
+                    (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
+                    !it.erCoronaRelatert
             }
         ),
 
@@ -161,10 +163,10 @@ class SyketilfelleRuleChain(
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
             },
             predicate = {
-                !it.erNyttSyketilfelle
-                    && it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1)
-                    && it.begrunnelseIkkeKontakt.isNullOrEmpty()
-                    && !it.erCoronaRelatert
+                !it.erNyttSyketilfelle &&
+                    it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
+                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert
             }
         ),
 
@@ -199,15 +201,14 @@ class SyketilfelleRuleChain(
                 val meldingTilNav = sykmelding.meldingTilNAV
             },
             predicate = {
-                !it.erNyttSyketilfelle
-                    && it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30)
-                    && !it.begrunnelseIkkeKontakt.isNullOrEmpty()
-                    && !it.erCoronaRelatert
-                    &&
+                !it.erNyttSyketilfelle &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert &&
                     (
-                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())
-                            && it.utdypendeOpplysninger.isEmpty()
-                            && it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
+                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
+                            it.utdypendeOpplysninger.isEmpty() &&
+                            it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
                         )
             }
         ),
@@ -242,19 +243,18 @@ class SyketilfelleRuleChain(
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
                 val meldingTilNav = sykmelding.meldingTilNAV
-
             },
             predicate = {
-                !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true
-                    && !it.erFraSpesialisthelsetjenesten
-                    && it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30)
-                    && !it.begrunnelseIkkeKontakt.isNullOrEmpty()
-                    && !it.erCoronaRelatert
-                    && !(
-                    !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())
-                        && it.utdypendeOpplysninger.isEmpty()
-                        && it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
-                    )
+                !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
+                    !it.erFraSpesialisthelsetjenesten &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert &&
+                    !(
+                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
+                            it.utdypendeOpplysninger.isEmpty() &&
+                            it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
+                        )
             }
         ),
 
@@ -288,14 +288,14 @@ class SyketilfelleRuleChain(
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
             },
             predicate = { input ->
-                !input.erNyttSyketilfelle
-                    && input.behandletDato > input.forsteFomDato.plusDays(4)
-                    && input.behandletDato <= input.forsteFomDato.plusDays(30)
-                    && (
-                    input.kontaktDato == null
-                        && (input.begrunnelseIkkeKontakt.isNullOrEmpty() || !input.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()))
-                        && !input.erCoronaRelatert
-                    )
+                !input.erNyttSyketilfelle &&
+                    input.behandletDato > input.forsteFomDato.plusDays(4) &&
+                    input.behandletDato <= input.forsteFomDato.plusDays(30) &&
+                    (
+                        input.kontaktDato == null &&
+                            (input.begrunnelseIkkeKontakt.isNullOrEmpty() || !input.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())) &&
+                            !input.erCoronaRelatert
+                        )
             }
         ),
     )
