@@ -1,9 +1,9 @@
 package no.nav.syfo.rules
 
 import no.nav.syfo.model.Periode
+import no.nav.syfo.model.Rule
 import no.nav.syfo.model.RuleChain
 import no.nav.syfo.model.RuleMetadata
-import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
@@ -16,10 +16,10 @@ class PeriodLogicRuleChain(
     sykmelding: Sykmelding,
     metadata: RuleMetadata,
 ) : RuleChain {
-    override val rules: List<RuleThingy<*>> = listOf(
+    override val rules: List<Rule<*>> = listOf(
         // Sykmeldingen må inneholden en fom-dato og en tom-dato
         // Hvis ingen perioder er oppgitt skal sykmeldingen avvises.
-        RuleThingy(
+        Rule(
             name = "PERIODER_MANGLER",
             ruleId = 1200,
             status = Status.INVALID,
@@ -37,7 +37,7 @@ class PeriodLogicRuleChain(
 
         // fom-dato må være før tom-dato
         // Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.
-        RuleThingy(
+        Rule(
             name = "FRADATO_ETTER_TILDATO",
             ruleId = 1201,
             status = Status.INVALID,
@@ -55,7 +55,7 @@ class PeriodLogicRuleChain(
 
         // Hvis sykmeldingen inneholder flere perioden kan ikke periodene overlappe hverandre
         // Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.
-        RuleThingy(
+        Rule(
             name = "OVERLAPPENDE_PERIODER",
             ruleId = 1202,
             status = Status.INVALID,
@@ -79,7 +79,7 @@ class PeriodLogicRuleChain(
 
         // Det kan ikke være opphold mellom perioder i sykmeldingen
         // Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "OPPHOLD_MELLOM_PERIODER",
             ruleId = 1203,
             status = Status.INVALID,
@@ -107,7 +107,7 @@ class PeriodLogicRuleChain(
 
         // For hver perioden må det angis om det er 100% sykmelding, gradert, reisetilskudd, behandlingsdager eller avventende sykmelding
         // Hvis det ikke er oppgitt type for perioden skal sykmeldingen avvises.
-        RuleThingy(
+        Rule(
             name = "IKKE_DEFINERT_PERIODE",
             ruleId = 1204,
             status = Status.INVALID,
@@ -130,7 +130,7 @@ class PeriodLogicRuleChain(
 
         // Vi tar ikke imot sykmeldinger som ligger mer enn 3 år tilbake i tid
         // Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_MER_ENN_3_AR",
             ruleId = 1206,
             status = Status.INVALID,
@@ -151,7 +151,7 @@ class PeriodLogicRuleChain(
 
         // En sykmelding kan ikke fremdateres mer enn 30 dager
         // Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "FREMDATERT",
             ruleId = 1209,
             status = Status.INVALID,
@@ -173,7 +173,7 @@ class PeriodLogicRuleChain(
 
         // En sykmelding kan ikke vare mer enn 1 år
         // Hvis sykmeldingen første fom og siste tom har ein varighet som er over 1 år. avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "TOTAL_VARIGHET_OVER_ETT_AAR",
             ruleId = 1211,
             status = Status.INVALID,
@@ -197,7 +197,7 @@ class PeriodLogicRuleChain(
 
         // Behandlet dato skal angi tidspunktet da pasienten oppsøkte legen. Den kan ikke være frem i tid.
         // Hvis behandletdato er etter dato for mottak av meldingen avvises meldingen
-        RuleThingy(
+        Rule(
             name = "BEHANDLINGSDATO_ETTER_MOTTATTDATO",
             ruleId = 1123,
             status = Status.INVALID,
@@ -216,7 +216,7 @@ class PeriodLogicRuleChain(
 
         // Avventende sykmelding kan ikke kombineres med noe annet
         // Hvis avventende sykmelding er funnet og det finnes flere perioder
-        RuleThingy(
+        Rule(
             name = "AVVENTENDE_SYKMELDING_KOMBINERT",
             ruleId = 9999,
             status = Status.INVALID,
@@ -235,7 +235,7 @@ class PeriodLogicRuleChain(
 
         // Avventende sykmelding må inneholde melding til arbeidsgiver om tilrettelegging
         // Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen
-        RuleThingy(
+        Rule(
             name = "MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER",
             ruleId = 1241,
             status = Status.INVALID,
@@ -256,7 +256,7 @@ class PeriodLogicRuleChain(
 
         // En avventende sykmelding kan ikke vare mer enn 16 dager
         // Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "AVVENTENDE_SYKMELDING_OVER_16_DAGER",
             ruleId = 1242,
             status = Status.INVALID,
@@ -276,7 +276,7 @@ class PeriodLogicRuleChain(
 
         // Sykmelding med behandlingsdager kan ha maks 1 behandlingsdag per uke
         // Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.
-        RuleThingy(
+        Rule(
             name = "FOR_MANGE_BEHANDLINGSDAGER_PER_UKE",
             ruleId = 1250,
             status = Status.INVALID,
@@ -297,7 +297,7 @@ class PeriodLogicRuleChain(
         // §8-13: Dersom medlemmet er delvis arbeidsufør, kan det ytes graderte sykepenger.
         // Det er et vilkår at evnen til å utføre inntektsgivende arbeid er nedsatt med minst 20 prosent.
         // Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen
-        RuleThingy(
+        Rule(
             name = "GRADERT_SYKMELDING_UNDER_20_PROSENT",
             ruleId = 1251,
             status = Status.INVALID,
@@ -323,7 +323,7 @@ class PeriodLogicRuleChain(
 
         // Gradering kan ikke være høyere enn 99 prosent
         // Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen
-        RuleThingy(
+        Rule(
             name = "GRADERT_SYKMELDING_OVER_99_PROSENT",
             ruleId = 1252,
             status = Status.INVALID,
@@ -341,7 +341,7 @@ class PeriodLogicRuleChain(
 
         // Sykmelding med behandlingsdager skal alltid til manuell behandling
         // Sykmelding inneholder behandlingsdager
-        RuleThingy(
+        Rule(
             name = "SYKMELDING_MED_BEHANDLINGSDAGER",
             ruleId = 1253,
             status = Status.MANUAL_PROCESSING,

@@ -13,7 +13,7 @@ val ktorVersion = "1.6.7"
 val logbackVersion = "1.2.8"
 val logstashEncoderVersion = "7.0.1"
 val prometheusVersion = "0.12.0"
-val smCommonVersion = "1.bb83447-SNAPSHOT"
+val smCommonVersion = "1.09338e9-SNAPSHOT"
 val spekVersion = "2.0.17"
 val jfairyVersion = "0.6.4"
 val mockkVersion = "1.12.1"
@@ -59,7 +59,6 @@ dependencies {
     implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-networking:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-rest-sts:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-rules:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
 

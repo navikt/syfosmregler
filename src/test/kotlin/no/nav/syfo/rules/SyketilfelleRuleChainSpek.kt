@@ -13,7 +13,6 @@ import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.SvarRestriksjon
-import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
@@ -25,9 +24,6 @@ import java.time.LocalTime
 
 object SyketilfelleRuleChainSpek : Spek({
     describe("Testing validation rules and checking the rule outcomes") {
-        fun ruleData(healthInformation: Sykmelding, ruleMetadataSykmelding: RuleMetadataSykmelding) =
-            RuleData(healthInformation, ruleMetadataSykmelding)
-
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger regel pga kort begrunnelse") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(

@@ -10,6 +10,7 @@ import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
+import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -142,9 +143,11 @@ class RuleService(
             SyketilfelleRuleChain(receivedSykmelding.sykmelding, ruleMetadataSykmelding).executeRules(),
         ).flatten()
 
-        juridiskVurderingService.handleResult(receivedSykmelding, result)
+        logRuleResultMetrics(result)
 
-        log.info("Rules hit {}, {}", result.map { it.rule.name }, fields(loggingMeta))
+        juridiskVurderingService.processRuleResults(receivedSykmelding, result)
+
+        log.info("Rules hit ${result.filter { it.result }.map { it.rule.name }}, ${fields(loggingMeta)}")
 
         return validationResult(result)
     }
@@ -170,6 +173,14 @@ class RuleService(
         receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate()
             .first().plusDays(8) &&
             !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+
+    private fun logRuleResultMetrics(result: List<RuleResult<*>>) {
+        result
+            .filter { it.result }
+            .forEach {
+                RULE_HIT_COUNTER.labels(it.rule.name).inc()
+            }
+    }
 }
 
 /**

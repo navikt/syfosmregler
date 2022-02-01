@@ -25,13 +25,13 @@ class JuridiskVurderingService(
         val KILDE = "syfosmregler"
     }
 
-    fun handleResult(
+    fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
         result: List<RuleResult<*>>,
     ) {
         val juridiskVurderingResult = JuridiskVurderingResult(
             juridiskeVurderinger = result
-                .filter { it.rule.juridiskHenvisning == null }
+                .filter { it.rule.juridiskHenvisning != null }
                 .map { resultToJuridiskVurdering(receivedSykmelding, it) }
         )
         kafkaProducer.send(

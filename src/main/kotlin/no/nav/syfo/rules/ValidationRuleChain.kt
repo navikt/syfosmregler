@@ -1,9 +1,9 @@
 package no.nav.syfo.rules
 
 import no.nav.syfo.QuestionGroup
+import no.nav.syfo.model.Rule
 import no.nav.syfo.model.RuleChain
 import no.nav.syfo.model.RuleMetadata
-import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
@@ -16,10 +16,10 @@ class ValidationRuleChain(
     private val sykmelding: Sykmelding,
     private val metadata: RuleMetadata,
 ) : RuleChain {
-    override val rules: List<RuleThingy<*>> = listOf(
+    override val rules: List<Rule<*>> = listOf(
         // Opptjening før 13 år er ikke mulig.
         // Hele sykmeldingsperioden er før bruker har fylt 13 år. Pensjonsopptjening kan starte fra 13 år.
-        RuleThingy(
+        Rule(
             name = "PASIENT_YNGRE_ENN_13",
             ruleId = 1101,
             status = Status.INVALID,
@@ -35,7 +35,7 @@ class ValidationRuleChain(
 
         // §8-3 Det ytes ikke sykepenger til medlem som er fylt 70 år.
         // Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.
-        RuleThingy(
+        Rule(
             name = "PASIENT_ELDRE_ENN_70",
             ruleId = 1102,
             status = Status.INVALID,
@@ -60,7 +60,7 @@ class ValidationRuleChain(
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Kodeverk må være satt i henhold til gyldige kodeverk som angitt av Helsedirektoratet (ICPC-2 og ICD-10).
         // Ukjent houved diagnosekode type
-        RuleThingy(
+        Rule(
             name = "UKJENT_DIAGNOSEKODETYPE",
             ruleId = 1137,
             status = Status.INVALID,
@@ -84,7 +84,7 @@ class ValidationRuleChain(
 
         // §8-4 Arbeidsuførhet som skyldes sosiale eller økomoniske problemer o.l. gir ikke rett til sykepenger.
         // Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "ICPC_2_Z_DIAGNOSE",
             ruleId = 1132,
             status = Status.INVALID,
@@ -107,7 +107,7 @@ class ValidationRuleChain(
 
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen
-        RuleThingy(
+        Rule(
             name = "HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER",
             ruleId = 1133,
             status = Status.INVALID,
@@ -133,7 +133,7 @@ class ValidationRuleChain(
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Diagnose må være satt i henhold til angitt kodeverk.
         // Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE",
             ruleId = 1540,
             status = Status.INVALID,
@@ -168,7 +168,7 @@ class ValidationRuleChain(
         // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Diagnose må være satt i henhold til angitt kodeverk.
         // Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.
-        RuleThingy(
+        Rule(
             name = "UGYLDIG_KODEVERK_FOR_BIDIAGNOSE",
             ruleId = 1541,
             status = Status.INVALID,
@@ -198,7 +198,7 @@ class ValidationRuleChain(
 
         // Sjekker om korrekt versjon av sykmeldingen er benyttet
         // Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres
-        RuleThingy(
+        Rule(
             name = "UGYLDIG_REGELSETTVERSJON",
             ruleId = 1708,
             status = Status.INVALID,
@@ -216,7 +216,7 @@ class ValidationRuleChain(
 
         // Krav om utdypende opplysninger ved uke 39
         // Hvis utdypende opplysninger om medisinske eller arbeidsplassrelaterte årsaker ved 100% sykmelding ikke er oppgitt ved 39 uker etter innføring av regelsettversjon \"2\" så skal sykmeldingen avvises
-        RuleThingy(
+        Rule(
             name = "MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39",
             ruleId = 1709,
             status = Status.INVALID,
@@ -238,7 +238,7 @@ class ValidationRuleChain(
 
         // Orgnr må være korrekt angitt
         // Organisasjonsnummeret som er oppgitt er ikke 9 tegn.
-        RuleThingy(
+        Rule(
             name = "UGYLDIG_ORGNR_LENGDE",
             ruleId = 9999,
             status = Status.INVALID,
@@ -257,7 +257,7 @@ class ValidationRuleChain(
         // Forvaltningsloven §6 1. ledd bokstav a
         // Den som signerer sykmeldingen kan ikke sykmelde seg selv
         // Avsender fnr er det samme som pasient fnr
-        RuleThingy(
+        Rule(
             name = "AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR",
             ruleId = 9999,
             status = Status.INVALID,
@@ -283,7 +283,7 @@ class ValidationRuleChain(
         // Forvaltningsloven §6 1. ledd bokstav a
         // Behandler kan ikke sykmelde seg selv
         // Behandler fnr er det samme som pasient fnr
-        RuleThingy(
+        Rule(
             name = "BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR",
             ruleId = 9999,
             status = Status.INVALID,

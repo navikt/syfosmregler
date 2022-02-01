@@ -44,7 +44,7 @@ spec:
         mountPath: /secrets/serviceuser
   webproxy: true
   kafka:
-    pool: nais-dev
+    pool: nav-dev
   ingresses:
     - "https://syfosmregler.nais.preprod.local"
   env:

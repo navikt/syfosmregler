@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.convertValue
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.objectMapper
 
-class RuleThingy<RuleInput>(
+class Rule<RuleInput>(
     val name: String,
     val ruleId: Int?,
     val status: Status,
@@ -29,7 +29,5 @@ class RuleThingy<RuleInput>(
 class RuleResult<RuleInput>(
     val result: Boolean,
     val ruleInput: RuleInput,
-    val rule: RuleThingy<RuleInput>,
+    val rule: Rule<RuleInput>,
 )
-
-fun <RuleInput : Any> RuleResult<RuleInput>.toInputMap(): Map<String, Any> = objectMapper.convertValue(this.ruleInput)

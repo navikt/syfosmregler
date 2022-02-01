@@ -2,8 +2,8 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.Godkjenning
+import no.nav.syfo.model.Rule
 import no.nav.syfo.model.RuleChain
-import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import java.time.LocalDate
@@ -12,9 +12,9 @@ class HPRRuleChain(
     private val sykmelding: Sykmelding,
     private val behandlerOgStartdato: BehandlerOgStartdato,
 ) : RuleChain {
-    override val rules: List<RuleThingy<*>> = listOf(
+    override val rules: List<Rule<*>> = listOf(
         // Behandler er ikke gyldig i HPR på konsultasjonstidspunkt
-        RuleThingy(
+        Rule(
             name = "BEHANDLER_IKKE_GYLDIG_I_HPR",
             ruleId = 1402,
             status = Status.INVALID,
@@ -31,7 +31,7 @@ class HPRRuleChain(
             }
         ),
         // "Behandler har ikke gyldig autorisasjon i HPR"
-        RuleThingy(
+        Rule(
             name = "BEHANDLER_MANGLER_AUTORISASJON_I_HPR",
             ruleId = 1403,
             status = Status.INVALID,
@@ -52,7 +52,7 @@ class HPRRuleChain(
             }
         ),
         // "Behandler finnes i HPR men er ikke lege, kiropraktor, manuellterapeut eller tannlege"
-        RuleThingy(
+        Rule(
             name = "BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR",
             ruleId = 1407,
             status = Status.INVALID,
@@ -81,7 +81,7 @@ class HPRRuleChain(
         ),
 
         // Behandler er manuellterapeuter, kiropraktorer og fysioterapeuter kan skrive sykmeldinger inntil 12 uker varighet
-        RuleThingy(
+        Rule(
             name = "BEHANDLER_MT_FT_KI_OVER_12_UKER",
             ruleId = 1519,
             status = Status.INVALID,

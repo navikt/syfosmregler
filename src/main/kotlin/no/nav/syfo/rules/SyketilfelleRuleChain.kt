@@ -1,8 +1,8 @@
 package no.nav.syfo.rules
 
+import no.nav.syfo.model.Rule
 import no.nav.syfo.model.RuleChain
 import no.nav.syfo.model.RuleMetadata
-import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
@@ -14,7 +14,7 @@ class SyketilfelleRuleChain(
     private val sykmelding: Sykmelding,
     private val ruleMetadataSykmelding: RuleMetadataSykmelding,
 ) : RuleChain {
-    override val rules: List<RuleThingy<*>> = listOf(
+    override val rules: List<Rule<*>> = listOf(
         // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
         // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært
         // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
@@ -22,7 +22,7 @@ class SyketilfelleRuleChain(
         // Dersom sykmeldingen er tilbakedatert mer enn 8 dager uten begrunnelse blir den avvist.
         //
         // Første gangs sykmelding er tilbakedatert mer enn 8 dager.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING",
             ruleId = 1204,
             status = Status.INVALID,
@@ -58,7 +58,7 @@ class SyketilfelleRuleChain(
         // Unntak dersom sykmeldingen kommer fra spesialisthelsetjenesten, erstatter en tidligere sykmelding, kun gjelder arbeidsgiverperioden eller er koronarelatert.
         //
         // Første gangs sykmelding er tilbakedatert mer enn 8 dager med begrunnelse.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE",
             ruleId = 1207,
             status = Status.MANUAL_PROCESSING,
@@ -103,7 +103,7 @@ class SyketilfelleRuleChain(
         // Tilbakedateringer mellom 4 og 8 dager godtas ikke dersom sykmeldingen ikke inneholder dato for kontakt eller begrunnelse for tilbakedateringen.
         //
         // Første gangs sykmelding er tilbakedatert mindre enn 8 dager uten begrunnelse og kontaktdato.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE",
             ruleId = 1204,
             status = Status.INVALID,
@@ -142,7 +142,7 @@ class SyketilfelleRuleChain(
         // Ved forelengelser er det også behov for begrunnelse dersom sykmeldingen er tilbakedatert mer enn 1 mnd. Ved manglende begrunnelse avvises sykmeldingen.
         //
         // Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra behandlet-tidspunkt. Skal telles.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_FORLENGELSE_OVER_1_MND",
             ruleId = null,
             status = Status.INVALID,
@@ -177,7 +177,7 @@ class SyketilfelleRuleChain(
         // Mer enn 1mnd tilbakedatert. Samme sjekk som TILBAKEDATERT_FORLENGELSE_OVER_1_MND, men sjekker også om det er tekst i begrunnelsen.
         //
         // Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er utilstrekkelig.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE",
             ruleId = 1207,
             status = Status.INVALID,
@@ -220,7 +220,7 @@ class SyketilfelleRuleChain(
         // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og begrunnelse er angitt går den til manuell behandling
         //
         // Sykmeldingen er tilbakedatert mer enn 30 dager og årsak for tilbakedatering er angitt.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE",
             ruleId = 1207,
             status = Status.MANUAL_PROCESSING,
@@ -265,7 +265,7 @@ class SyketilfelleRuleChain(
         // En tilbakedatert sykmelding må inneholde dato for kontakt eller begrunnelse for at den skal godkjennes.
         //
         // Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.
-        RuleThingy(
+        Rule(
             name = "TILBAKEDATERT_FORLENGELSE_UNDER_1_MND",
             ruleId = 1207,
             status = Status.INVALID,

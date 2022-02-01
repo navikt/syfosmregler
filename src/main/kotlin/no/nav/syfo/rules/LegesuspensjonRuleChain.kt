@@ -1,15 +1,15 @@
 package no.nav.syfo.rules
 
+import no.nav.syfo.model.Rule
 import no.nav.syfo.model.RuleChain
-import no.nav.syfo.model.RuleThingy
 import no.nav.syfo.model.Status
 
 class LegesuspensjonRuleChain(
     private val behandlerSuspendert: Boolean,
 ) : RuleChain {
-    override val rules: List<RuleThingy<*>> = listOf(
+    override val rules: List<Rule<*>> = listOf(
         // Behandler er suspendert av NAV på konsultasjonstidspunkt
-        RuleThingy(
+        Rule(
             name = "BEHANDLER_SUSPENDERT",
             ruleId = 1414,
             status = Status.INVALID,
