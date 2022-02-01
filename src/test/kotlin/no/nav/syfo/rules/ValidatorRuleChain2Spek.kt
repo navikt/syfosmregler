@@ -8,7 +8,7 @@ import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-object ValidatorRuleChain2Test : Spek({
+object ValidatorRuleChain2Spek : Spek({
     fun ruleData(
         healthInformation: Sykmelding,
         receivedDate: LocalDateTime = LocalDateTime.now(),
@@ -34,4 +34,5 @@ object ValidatorRuleChain2Test : Spek({
             }
         }
     }
+
 })

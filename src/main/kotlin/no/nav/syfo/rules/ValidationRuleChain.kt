@@ -17,6 +17,10 @@ class ValidationRuleChain(
 ) {
     val rules: List<RuleThingy<*>>
 
+    fun getByName(name: String): RuleThingy<*> {
+        return rules.find { name == it.name } ?: throw IllegalArgumentException("Unable to find with name $name")
+    }
+
     init {
         rules = listOf(
             // Opptjening før 13 år er ikke mulig.
