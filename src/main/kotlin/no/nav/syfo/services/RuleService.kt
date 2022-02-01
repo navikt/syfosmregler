@@ -22,6 +22,8 @@ import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
 import no.nav.syfo.pdl.service.PdlPersonService
+import no.nav.syfo.rules.BehandlerOgStartdato
+import no.nav.syfo.rules.HPRRuleChain
 import no.nav.syfo.rules.Rule
 import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadataSykmelding
@@ -41,7 +43,7 @@ class RuleService(
     private val syketilfelleClient: SyketilfelleClient,
     private val norskHelsenettClient: NorskHelsenettClient,
     private val smregisterClient: SmregisterClient,
-    private val pdlService: PdlPersonService
+    private val pdlService: PdlPersonService,
 ) {
 
     companion object {
@@ -51,6 +53,7 @@ class RuleService(
         val KILDE = "syfosmregler"
 
     }
+
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
 
@@ -89,13 +92,20 @@ class RuleService(
 
         val doctorSuspendDeferred = async {
             val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
-            legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege, receivedSykmelding.navLogId, signaturDatoString, loggingMeta).suspendert
+            legeSuspensjonClient.checkTherapist(receivedSykmelding.personNrLege,
+                receivedSykmelding.navLogId,
+                signaturDatoString,
+                loggingMeta).suspendert
         }
         val syketilfelleStartdatoDeferred = async {
-            syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(receivedSykmelding.sykmelding.pasientAktoerId, receivedSykmelding.sykmelding.perioder, loggingMeta)
+            syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(receivedSykmelding.sykmelding.pasientAktoerId,
+                receivedSykmelding.sykmelding.perioder,
+                loggingMeta)
         }
 
-        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege, msgId = receivedSykmelding.msgId, loggingMeta = loggingMeta)
+        val behandler = norskHelsenettClient.finnBehandler(behandlerFnr = receivedSykmelding.personNrLege,
+            msgId = receivedSykmelding.msgId,
+            loggingMeta = loggingMeta)
             ?: return ValidationResult(
                 status = Status.INVALID,
                 ruleHits = listOf(
@@ -112,18 +122,26 @@ class RuleService(
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
         val erEttersendingAvTidligereSykmelding = if (erTilbakedatertMedBegrunnelse(receivedSykmelding)) {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(receivedSykmelding.personNrPasient, receivedSykmelding.sykmelding.perioder, loggingMeta)
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(receivedSykmelding.personNrPasient,
+                receivedSykmelding.sykmelding.perioder,
+                loggingMeta)
         } else {
             null
         }
 
         val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata, erNyttSyketilfelle = syketilfelleStartdato == null, erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
+            ruleMetadata = ruleMetadata,
+            erNyttSyketilfelle = syketilfelleStartdato == null,
+            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
         )
 
         val newResults = listOf(
-            ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).rules.map { it.executeRule() },
+            ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).executeRules(),
+            HPRRuleChain(
+                receivedSykmelding.sykmelding,
+                BehandlerOgStartdato(behandler, syketilfelleStartdato)
+            ).executeRules()
         ).flatten()
 
         log.info("Rules hit {}, {}", newResults.map { it.rule.name }, fields(loggingMeta))
@@ -143,7 +161,10 @@ class RuleService(
 //        return validationResult(receivedSykmelding, results)
     }
 
-    private fun validationResult2(receivedSykmelding: ReceivedSykmelding, results: List<RuleResult<*>>): ValidationResult {
+    private fun validationResult2(
+        receivedSykmelding: ReceivedSykmelding,
+        results: List<RuleResult<*>>,
+    ): ValidationResult {
         val juridiskeVurderinger = results.filter { it.rule.juridiskHenvisning != null }.map {
             toJuridiskVurdering2(receivedSykmelding, it)
         }
@@ -191,7 +212,8 @@ class RuleService(
     }
 
     private fun erTilbakedatertMedBegrunnelse(receivedSykmelding: ReceivedSykmelding): Boolean =
-        receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate().first().plusDays(8) &&
+        receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate()
+            .first().plusDays(8) &&
             !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
 }
 
@@ -217,7 +239,7 @@ fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
     return sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false
 }
 
-private fun toJuridiskVurdering2(receivedSykmelding: ReceivedSykmelding, ruleResult: RuleResult<*>) : JuridiskVurdering {
+private fun toJuridiskVurdering2(receivedSykmelding: ReceivedSykmelding, ruleResult: RuleResult<*>): JuridiskVurdering {
     return JuridiskVurdering(
         id = UUID.randomUUID().toString(),
         eventName = RuleService.EVENT_NAME,
@@ -240,7 +262,10 @@ private fun toJuridiskVurdering2(receivedSykmelding: ReceivedSykmelding, ruleRes
     )
 }
 
-private fun toJuridiskVurdering(receivedSykmelding: ReceivedSykmelding, rule: Rule<RuleData<RuleMetadata>>): JuridiskVurdering {
+private fun toJuridiskVurdering(
+    receivedSykmelding: ReceivedSykmelding,
+    rule: Rule<RuleData<RuleMetadata>>,
+): JuridiskVurdering {
     return JuridiskVurdering(
         id = UUID.randomUUID().toString(),
         eventName = RuleService.EVENT_NAME,

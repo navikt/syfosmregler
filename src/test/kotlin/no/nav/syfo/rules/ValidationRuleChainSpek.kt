@@ -3,8 +3,15 @@ package no.nav.syfo.rules
 import com.devskiller.jfairy.Fairy
 import com.devskiller.jfairy.producer.person.PersonProperties
 import com.devskiller.jfairy.producer.person.PersonProvider
+import no.nav.syfo.generateBehandler
+import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.model.AnnenFraverGrunn
+import no.nav.syfo.model.AnnenFraversArsak
+import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.sm.Diagnosekoder
+import no.nav.syfo.toDiagnose
 import no.nav.syfo.validation.extractBornYear
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
@@ -27,7 +34,7 @@ object ValidationRuleChainSpek : Spek({
         legekontorOrgNr: String = "123456789",
         tssid: String? = "1314445",
         avsenderfnr: String = "12344",
-        pasientFodselsdato: LocalDate = LocalDate.now()
+        pasientFodselsdato: LocalDate = LocalDate.now(),
     ): RuleMetadata {
         return RuleMetadata(
             signatureDate,
@@ -50,7 +57,7 @@ object ValidationRuleChainSpek : Spek({
                 generateSykmelding(), ruleMetadata(
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
                 )
-            ).getByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo true
+            ).getRuleByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule PASIENT_YNGRE_ENN_13,should NOT trigger rule") {
@@ -64,7 +71,7 @@ object ValidationRuleChainSpek : Spek({
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false),
                     pasientFodselsdato = LocalDate.now().minusYears(14)
                 )
-            ).getByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo false
+            ).getRuleByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule PASIENT_ELDRE_ENN_70,should trigger rule") {
@@ -78,7 +85,7 @@ object ValidationRuleChainSpek : Spek({
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false),
                     pasientFodselsdato = LocalDate.now().minusYears(71)
                 )
-            ).getByName("PASIENT_ELDRE_ENN_70").executeRule().result shouldBeEqualTo true
+            ).getRuleByName("PASIENT_ELDRE_ENN_70").executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule PASIENT_ELDRE_ENN_70,should NOT trigger rule") {
@@ -91,15 +98,20 @@ object ValidationRuleChainSpek : Spek({
                 ruleMetadata(
                     patientPersonNumber = generatePersonNumber(person.dateOfBirth, false)
                 )
-            ).getByName("PASIENT_ELDRE_ENN_70").executeRule().result shouldBeEqualTo false
+            ).getRuleByName("PASIENT_ELDRE_ENN_70").executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule ICPC_2_Z_DIAGNOSE,should trigger rule") {
-            ValidationRuleChain(
-                generateSykmelding(), ruleMetadata(),
-            ).getByName("ICPC_2_Z_DIAGNOSE").executeRule().result shouldBeEqualTo true
+            val healthInformation = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose()
+                )
+            )
+
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("ICPC_2_Z_DIAGNOSE")
+                .executeRule().result shouldBeEqualTo true
         }
-/*
+
         it("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
@@ -107,7 +119,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("ICPC_2_Z_DIAGNOSE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
@@ -121,7 +134,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.ICPC_2_Z_DIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("ICPC_2_Z_DIAGNOSE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should trigger rule") {
@@ -132,13 +146,17 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(ruleData(healthInformation)) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation,
+                ruleMetadata()).getRuleByName("HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation,
+                ruleMetadata()).getRuleByName("HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule UKJENT_DIAGNOSEKODETYPE,should trigger rule") {
@@ -152,13 +170,15 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UKJENT_DIAGNOSEKODETYPE(ruleData(healthInformation)) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UKJENT_DIAGNOSEKODETYPE")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule UKJENT_DIAGNOSEKODETYPE,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.UKJENT_DIAGNOSEKODETYPE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UKJENT_DIAGNOSEKODETYPE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
@@ -172,7 +192,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
@@ -186,7 +207,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
@@ -199,7 +221,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
@@ -213,7 +236,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {
@@ -229,7 +253,8 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UGYLDIG_KODEVERK_FOR_BIDIAGNOSE")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, correct kodeverk for biDiagnoser") {
@@ -245,53 +270,42 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(ruleData(healthInformation)) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UGYLDIG_KODEVERK_FOR_BIDIAGNOSE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("UGYLDIG_ORGNR_LENGDE should trigger on when orgnr lengt is not 9") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(
-                ruleData(
-                    healthInformation,
-                    legekontorOrgNr = "1234567890"
-                )
-            ) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation,
+                ruleMetadata(legekontorOrgNr = "1234567890")).getRuleByName("UGYLDIG_ORGNR_LENGDE")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("UGYLDIG_ORGNR_LENGDE should not trigger on when orgnr is 9") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.UGYLDIG_ORGNR_LENGDE(
-                ruleData(
-                    healthInformation,
-                    legekontorOrgNr = "123456789"
-                )
-            ) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation,
+                ruleMetadata(legekontorOrgNr = "123456789")).getRuleByName("UGYLDIG_ORGNR_LENGDE")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when avsender fnr and pasient fnr is the same") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
-                ruleData(
-                    healthInformation,
-                    patientPersonNumber = "123456789",
-                    avsenderfnr = "123456789"
-                )
-            ) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation,
+                ruleMetadata(patientPersonNumber = "123456789",
+                    avsenderfnr = "123456789")).getRuleByName("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when avsender fnr and pasient fnr is diffrent") {
             val healthInformation = generateSykmelding()
 
-            ValidationRuleChain.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
-                ruleData(
-                    healthInformation,
-                    patientPersonNumber = "645646666",
-                    avsenderfnr = "123456789"
-                )
-            ) shouldBeEqualTo false
+            ValidationRuleChain(healthInformation,
+                ruleMetadata(patientPersonNumber = "645646666",
+                    avsenderfnr = "123456789")).getRuleByName("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+                .executeRule().result shouldBeEqualTo false
         }
 
         it("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when behandler fnr and pasient fnr is the same") {
@@ -302,12 +316,9 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
-                ruleData(
-                    healthInformation,
-                    patientPersonNumber = behandlerFnr
-                )
-            ) shouldBeEqualTo true
+            ValidationRuleChain(healthInformation,
+                ruleMetadata(patientPersonNumber = behandlerFnr)).getRuleByName("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when behandler fnr and pasient fnr is diffrent") {
@@ -318,13 +329,10 @@ object ValidationRuleChainSpek : Spek({
                 )
             )
 
-            ValidationRuleChain.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
-                ruleData(
-                    healthInformation,
-                    patientPersonNumber = "645646666"
-                )
-            ) shouldBeEqualTo false
-        }*/
+            ValidationRuleChain(healthInformation,
+                ruleMetadata(patientPersonNumber = "645646666")).getRuleByName("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR")
+                .executeRule().result shouldBeEqualTo false
+        }
     }
 
     describe("extract born year") {

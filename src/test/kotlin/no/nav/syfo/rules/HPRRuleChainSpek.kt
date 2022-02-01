@@ -5,18 +5,13 @@ import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.Kode
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
-import no.nav.syfo.model.Sykmelding
 import org.amshove.kluent.shouldBeEqualTo
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 
 object HPRRuleChainSpek : Spek({
-
     describe("Testing validation rules and checking the rule outcomes") {
-        fun ruleData(healthInformation: Sykmelding, behandlerOgStartdato: BehandlerOgStartdato) =
-            RuleData(healthInformation, behandlerOgStartdato)
-
         it("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
@@ -31,12 +26,9 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_IKKE_GYLDIG_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo true
+            HPRRuleChain(healthInformation,
+                BehandlerOgStartdato(behandler, null)).getRuleByName("BEHANDLER_IKKE_GYLDIG_I_HPR")
+                .executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should NOT trigger rule") {
@@ -53,12 +45,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_IKKE_GYLDIG_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_IKKE_GYLDIG_I_HPR").executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR, should trigger rule") {
@@ -75,12 +65,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo true
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR").executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should NOT trigger rule") {
@@ -97,12 +85,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR").executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
@@ -124,12 +110,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo true
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR").executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR, should NOT trigger rule") {
@@ -151,12 +135,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null),
+            ).getRuleByName("BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR").executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should trigger rule") {
@@ -186,12 +168,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo true
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null),
+            ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER").executeRule().result shouldBeEqualTo true
         }
 
         it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule, when helsepersoner is Lege(LE) and Kiropratkor(KI)") {
@@ -233,12 +213,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null),
+            ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER").executeRule().result shouldBeEqualTo false
         }
 
         it("Should check rule BEHANDLER_MT_FT_KI_OVER_12_UKER, should NOT trigger rule") {
@@ -268,12 +246,12 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+                .executeRule()
+                .result shouldBeEqualTo false
         }
 
         it("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
@@ -295,12 +273,12 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MANGLER_AUTORISASJON_I_HPR(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo true
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null)
+            ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR")
+                .executeRule()
+                .result shouldBeEqualTo true
         }
 
         it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ut fordi startdato for tidligere sykefravær gir varighet på mer enn 12 uker") {
@@ -330,12 +308,11 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1))
-                )
-            ) shouldBeEqualTo true
+            HPRRuleChain(healthInformation,
+                BehandlerOgStartdato(behandler,
+                    LocalDate.of(2019, 1, 1))).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+                .executeRule()
+                .result shouldBeEqualTo true
         }
 
         it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi det er nytt sykefravær") {
@@ -365,12 +342,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, null)
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(healthInformation,
+                BehandlerOgStartdato(behandler, null)).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+                .executeRule()
+                .result shouldBeEqualTo false
         }
 
         it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi behandler er Lege(LE) og Kiropraktor(KI)") {
@@ -412,12 +387,11 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1))
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(healthInformation, BehandlerOgStartdato(behandler, LocalDate.of(2019, 1, 1)))
+                .getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+                .executeRule()
+                .result shouldBeEqualTo false
+
         }
 
         it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi startdato for tidligere sykefravær gir varighet på mindre enn 12 uker") {
@@ -447,12 +421,10 @@ object HPRRuleChainSpek : Spek({
                 )
             )
 
-            HPRRuleChain.BEHANDLER_MT_FT_KI_OVER_12_UKER(
-                ruleData(
-                    healthInformation,
-                    BehandlerOgStartdato(behandler, LocalDate.of(2019, 2, 20))
-                )
-            ) shouldBeEqualTo false
+            HPRRuleChain(healthInformation,
+                BehandlerOgStartdato(behandler,
+                    LocalDate.of(2019, 2, 20))).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER")
+                .executeRule().result shouldBeEqualTo false
         }
     }
 })
