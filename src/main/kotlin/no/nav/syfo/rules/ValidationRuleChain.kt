@@ -254,7 +254,7 @@ class ValidationRuleChain(
             }
         ),
 
-        // Forvaltningsloven §6 1. ledd bokstav a
+        // Helsepersonelloven § 15, Forvaltningsloven §6 1. ledd bokstav a
         // Den som signerer sykmeldingen kan ikke sykmelde seg selv
         // Avsender fnr er det samme som pasient fnr
         Rule(
@@ -264,13 +264,7 @@ class ValidationRuleChain(
             messageForUser = "Den som signert sykmeldingen er også pasient.",
             messageForSender = "Sykmeldingen kan ikke rettes, Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                 "Avsender fnr er det samme som pasient fnr",
-            JuridiskHenvisning(
-                lovverk = Lovverk.FORVALTNINGSLOVEN, // TODO: Avklar om disse skal logges eller ei. Pågående diskusjon med jurister.
-                paragraf = "6",
-                ledd = 1,
-                punktum = 1,
-                bokstav = "a"
-            ),
+            juridiskHenvisning = null,
             input = object {
                 val avsenderFnr = metadata.avsenderFnr
                 val patientPersonNumber = metadata.patientPersonNumber
@@ -280,7 +274,7 @@ class ValidationRuleChain(
             }
         ),
 
-        // Forvaltningsloven §6 1. ledd bokstav a
+        // Helsepersonelloven § 15, Forvaltningsloven §6 1. ledd bokstav a
         // Behandler kan ikke sykmelde seg selv
         // Behandler fnr er det samme som pasient fnr
         Rule(
@@ -290,13 +284,7 @@ class ValidationRuleChain(
             messageForUser = "Den som er behandler av sykmeldingen er også pasient.",
             messageForSender = "Sykmeldingen kan ikke rettes. Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                 "Behandler fnr er det samme som pasient fnr",
-            juridiskHenvisning = JuridiskHenvisning(
-                lovverk = Lovverk.FORVALTNINGSLOVEN, // TODO: Avklar om disse skal logges eller ei. Pågående diskusjon med jurister.
-                paragraf = "6",
-                ledd = 1,
-                punktum = 1,
-                bokstav = "a"
-            ),
+            juridiskHenvisning = null,
             input = object {
                 val behandlerFnr = sykmelding.behandler.fnr
                 val pasientFodselsNummer = metadata.patientPersonNumber
