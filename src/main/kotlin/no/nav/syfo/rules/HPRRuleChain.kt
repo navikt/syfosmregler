@@ -18,8 +18,8 @@ class HPRRuleChain(
             name = "BEHANDLER_IKKE_GYLDIG_I_HPR",
             ruleId = 1402,
             status = Status.INVALID,
-            messageForSender = "Den som skrev sykmeldingen manglet autorisasjon.",
-            messageForUser = "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt. Pasienten har fått beskjed.",
+            messageForUser = "Den som skrev sykmeldingen manglet autorisasjon.",
+            messageForSender = "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt. Pasienten har fått beskjed.",
             juridiskHenvisning = null,
             input = object {
                 val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
@@ -35,8 +35,8 @@ class HPRRuleChain(
             name = "BEHANDLER_MANGLER_AUTORISASJON_I_HPR",
             ruleId = 1403,
             status = Status.INVALID,
-            messageForSender = "Den som skrev sykmeldingen manglet autorisasjon.",
-            messageForUser = "Behandler har ikke gyldig autorisasjon i HPR. Pasienten har fått beskjed.",
+            messageForUser = "Den som skrev sykmeldingen manglet autorisasjon.",
+            messageForSender = "Behandler har ikke gyldig autorisasjon i HPR. Pasienten har fått beskjed.",
             juridiskHenvisning = null,
             input = object {
                 val behandlerGodjenninger = behandlerOgStartdato.behandler.godkjenninger
@@ -56,8 +56,8 @@ class HPRRuleChain(
             name = "BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR",
             ruleId = 1407,
             status = Status.INVALID,
-            messageForSender = "Den som skrev sykmeldingen manglet autorisasjon.",
-            messageForUser = "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. Pasienten har fått beskjed.",
+            messageForUser = "Den som skrev sykmeldingen manglet autorisasjon.",
+            messageForSender = "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. Pasienten har fått beskjed.",
             juridiskHenvisning = null,
             input = object {
                 val behandlerGodjenninger = behandlerOgStartdato.behandler.godkjenninger
@@ -85,8 +85,8 @@ class HPRRuleChain(
             name = "BEHANDLER_MT_FT_KI_OVER_12_UKER",
             ruleId = 1519,
             status = Status.INVALID,
-            messageForSender = "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
-            messageForUser = "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
+            messageForUser = "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
+            messageForSender = "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
             juridiskHenvisning = null,
             input = object {
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()

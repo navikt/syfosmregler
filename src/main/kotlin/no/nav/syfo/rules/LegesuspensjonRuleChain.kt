@@ -13,8 +13,8 @@ class LegesuspensjonRuleChain(
             name = "BEHANDLER_SUSPENDERT",
             ruleId = 1414,
             status = Status.INVALID,
-            messageForSender = "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
-            messageForUser = "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
+            messageForUser = "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
+            messageForSender = "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
             juridiskHenvisning = null,
             input = object {
                 val suspendert = behandlerSuspendert

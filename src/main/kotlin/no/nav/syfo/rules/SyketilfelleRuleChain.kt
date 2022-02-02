@@ -26,8 +26,8 @@ class SyketilfelleRuleChain(
             name = "TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING",
             ruleId = 1204,
             status = Status.INVALID,
-            messageForSender = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
-            messageForUser = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
@@ -62,8 +62,8 @@ class SyketilfelleRuleChain(
             name = "TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE",
             ruleId = 1207,
             status = Status.MANUAL_PROCESSING,
-            messageForSender = "Første sykmelding er tilbakedatert og årsak for tilbakedatering er angitt.",
-            messageForUser = "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
+            messageForUser = "Første sykmelding er tilbakedatert og årsak for tilbakedatering er angitt.",
+            messageForSender = "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
@@ -107,8 +107,8 @@ class SyketilfelleRuleChain(
             name = "TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE",
             ruleId = 1204,
             status = Status.INVALID,
-            messageForSender = "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
-            messageForUser = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Første sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
@@ -146,8 +146,8 @@ class SyketilfelleRuleChain(
             name = "TILBAKEDATERT_FORLENGELSE_OVER_1_MND",
             ruleId = null,
             status = Status.INVALID,
-            messageForSender = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
+            messageForSender = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
@@ -181,8 +181,8 @@ class SyketilfelleRuleChain(
             name = "TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE",
             ruleId = 1207,
             status = Status.INVALID,
-            messageForSender = "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering er god nok",
-            messageForUser = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            messageForUser = "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering er god nok",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering (felt 11.2) er god nok",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
@@ -224,8 +224,8 @@ class SyketilfelleRuleChain(
             name = "TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE",
             ruleId = 1207,
             status = Status.MANUAL_PROCESSING,
-            messageForSender = "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
-            messageForUser = "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
+            messageForUser = "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
+            messageForSender = "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelseIkkeKontakt) er utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",

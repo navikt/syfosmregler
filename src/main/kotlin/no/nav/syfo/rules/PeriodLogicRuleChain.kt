@@ -155,8 +155,8 @@ class PeriodLogicRuleChain(
             name = "FREMDATERT",
             ruleId = 1209,
             status = Status.INVALID,
-            messageForSender = "Sykmeldingen er datert mer enn 30 dager fram i tid.",
-            messageForUser = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            messageForUser = "Sykmeldingen er datert mer enn 30 dager fram i tid.",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
             juridiskHenvisning = null,
             input = object {
@@ -177,8 +177,8 @@ class PeriodLogicRuleChain(
             name = "TOTAL_VARIGHET_OVER_ETT_AAR",
             ruleId = 1211,
             status = Status.INVALID,
-            messageForSender = "Den kan ikke ha en varighet på over ett år.",
-            messageForUser = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            messageForUser = "Den kan ikke ha en varighet på over ett år.",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
             juridiskHenvisning = null,
             input = object {
@@ -201,8 +201,8 @@ class PeriodLogicRuleChain(
             name = "BEHANDLINGSDATO_ETTER_MOTTATTDATO",
             ruleId = 1123,
             status = Status.INVALID,
-            messageForSender = "Behandlingsdatoen må rettes.",
-            messageForUser = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
+            messageForUser = "Behandlingsdatoen må rettes.",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Behandlingsdatoen er etter dato for når NAV mottok meldingen",
             juridiskHenvisning = null,
             input = object {

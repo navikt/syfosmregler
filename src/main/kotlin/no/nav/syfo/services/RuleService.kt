@@ -175,7 +175,7 @@ class RuleService(
     private fun erTilbakedatertMedBegrunnelse(receivedSykmelding: ReceivedSykmelding): Boolean =
         receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate()
             .first().plusDays(8) &&
-                !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+            !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
 
     private fun logRuleResultMetrics(result: List<RuleResult<*>>) {
         result
@@ -191,17 +191,17 @@ class RuleService(
  */
 fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
     return (
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R992") ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R992" }) ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U072") ||
-                    (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U072" }) ||
-                    sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any { it == AnnenFraverGrunn.SMITTEFARE } ?: false
-            ) &&
-            sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
+        (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R992") ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R992" }) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U072") ||
+            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U072" }) ||
+            sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any { it == AnnenFraverGrunn.SMITTEFARE } ?: false
+        ) &&
+        sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
 }
 
 fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
