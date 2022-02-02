@@ -147,7 +147,7 @@ class SyketilfelleRuleChain(
             ruleId = null,
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
-            messageForSender = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
+            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende: Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt.",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
