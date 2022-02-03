@@ -183,7 +183,8 @@ class ValidationRuleChain(
                 val biDiagnoser = sykmelding.medisinskVurdering.biDiagnoser
             },
             predicate = {
-                !it.biDiagnoser.all { diagnose -> if (diagnose.isICPC2()) {
+                !it.biDiagnoser.all { diagnose ->
+                    if (diagnose.isICPC2()) {
                         Diagnosekoder.icpc2.containsKey(diagnose.kode)
                     } else {
                         Diagnosekoder.icd10.containsKey(diagnose.kode)

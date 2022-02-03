@@ -25,7 +25,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Det er ikke oppgitt hvilken periode sykmeldingen gjelder for.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
+                "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -43,7 +43,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Det er lagt inn datoer som ikke stemmer innbyrdes.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
+                "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -61,7 +61,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Periodene må ikke overlappe hverandre.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
+                "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
             null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -85,7 +85,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Det er opphold mellom sykmeldingsperiodene.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
+                "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
             juridiskHenvisning = null,
             input = object {
                 val periodeRanges = sykmelding.perioder
@@ -113,7 +113,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
+                "Det er ikke oppgitt type for sykmeldingen (den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
             null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -121,9 +121,9 @@ class PeriodLogicRuleChain(
             predicate = { input ->
                 input.perioder.any {
                     it.aktivitetIkkeMulig == null &&
-                            it.gradert == null &&
-                            it.avventendeInnspillTilArbeidsgiver.isNullOrEmpty() &&
-                            !it.reisetilskudd && (it.behandlingsdager == null || it.behandlingsdager == 0)
+                        it.gradert == null &&
+                        it.avventendeInnspillTilArbeidsgiver.isNullOrEmpty() &&
+                        !it.reisetilskudd && (it.behandlingsdager == null || it.behandlingsdager == 0)
                 }
             }
         ),
@@ -136,7 +136,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Startdatoen er mer enn tre år tilbake.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
+                "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
             null,
             input = object {
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
@@ -157,7 +157,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er datert mer enn 30 dager fram i tid.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
+                "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
             juridiskHenvisning = null,
             input = object {
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
@@ -179,7 +179,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Den kan ikke ha en varighet på over ett år.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
+                "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
             juridiskHenvisning = null,
             input = object {
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
@@ -203,7 +203,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Behandlingsdatoen må rettes.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Behandlingsdatoen er etter dato for når NAV mottok meldingen",
+                "Behandlingsdatoen er etter dato for når NAV mottok meldingen",
             juridiskHenvisning = null,
             input = object {
                 val behandletTidspunkt = sykmelding.behandletTidspunkt
@@ -222,14 +222,14 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "En avventende sykmelding kan bare inneholde én periode.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Avventende sykmelding kan ikke inneholde flere perioder.",
+                "Avventende sykmelding kan ikke inneholde flere perioder.",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
             },
             predicate = { input ->
                 input.perioder.count { it.avventendeInnspillTilArbeidsgiver != null } != 0 &&
-                        input.perioder.size > 1
+                    input.perioder.size > 1
             }
         ),
 
@@ -241,7 +241,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "En avventende sykmelding forutsetter at du kan jobbe hvis arbeidsgiveren din legger til rette for det. Den som har sykmeldt deg har ikke foreslått hva arbeidsgiveren kan gjøre, noe som kreves for denne typen sykmelding.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
+                "Hvis innspill til arbeidsgiver om tilrettelegging i pkt 4.1.3 ikke er utfylt ved avventende sykmelding avvises meldingen",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -249,7 +249,7 @@ class PeriodLogicRuleChain(
             predicate = { input ->
                 input.perioder.any {
                     it.avventendeInnspillTilArbeidsgiver != null &&
-                            it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty()
+                        it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty()
                 }
             }
         ),
@@ -262,7 +262,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "En avventende sykmelding kan bare gis for 16 dager.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
+                "Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager, avvises meldingen.",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -282,7 +282,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Det er angitt for mange behandlingsdager. Det kan bare angis én behandlingsdag per uke.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
+                "Hvis antall dager oppgitt for behandlingsdager periode er for høyt i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt. 1 dag per påbegynt uke.",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
@@ -294,7 +294,6 @@ class PeriodLogicRuleChain(
             }
         ),
 
-
         // §8-13, 1. ledd: Dersom medlemmet er delvis arbeidsufør, kan det ytes graderte sykepenger.
         // Det er et vilkår at evnen til å utføre inntektsgivende arbeid er nedsatt med minst 20 prosent.
         Rule(
@@ -303,7 +302,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingsgraden kan ikke være mindre enn 20 %.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
+                "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-13",
@@ -321,7 +320,6 @@ class PeriodLogicRuleChain(
             }
         ),
 
-
         // Gradering kan ikke være høyere enn 99 prosent
         // Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen
         Rule(
@@ -330,7 +328,7 @@ class PeriodLogicRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingsgraden kan ikke være mer enn 99% fordi det er en gradert sykmelding.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
+                "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
             juridiskHenvisning = null,
             input = object {
                 val perioder = sykmelding.perioder
