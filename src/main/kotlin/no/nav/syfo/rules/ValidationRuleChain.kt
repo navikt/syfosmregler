@@ -33,7 +33,7 @@ class ValidationRuleChain(
             predicate = { it.sisteTomDato < it.pasientFodselsdato.plusYears(13) }
         ),
 
-        // §8-3 Det ytes ikke sykepenger til medlem som er fylt 70 år.
+        // §8-3, 1 ledd Det ytes ikke sykepenger til medlem som er fylt 70 år.
         // Hele sykmeldingsperioden er etter at bruker har fylt 70 år. Dersom bruker fyller 70 år i perioden skal sykmelding gå gjennom på vanlig måte.
         Rule(
             name = "PASIENT_ELDRE_ENN_70",
@@ -57,7 +57,7 @@ class ValidationRuleChain(
             }
         ),
 
-        // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
+        // §8-4, 1 ledd Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
         // Kodeverk må være satt i henhold til gyldige kodeverk som angitt av Helsedirektoratet (ICPC-2 og ICD-10).
         // Ukjent houved diagnosekode type
         Rule(
@@ -82,7 +82,7 @@ class ValidationRuleChain(
             }
         ),
 
-        // §8-4 Arbeidsuførhet som skyldes sosiale eller økomoniske problemer o.l. gir ikke rett til sykepenger.
+        // §8-4, 1 ledd Arbeidsuførhet som skyldes sosiale eller økomoniske problemer o.l. gir ikke rett til sykepenger.
         // Hvis hoveddiagnose er Z-diagnose (ICPC-2), avvises meldingen.
         Rule(
             name = "ICPC_2_Z_DIAGNOSE",
@@ -105,8 +105,7 @@ class ValidationRuleChain(
             }
         ),
 
-        // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
-        // Hvis hoveddiagnose mangler og det ikke er angitt annen lovfestet fraværsgrunn, avvises meldingen
+        // §8-4, 1. ledd: Sykepenger ytes til den som er arbeidsufør på grunn av en funksjonsnedsettelse som klart skyldes sykdom eller skade.
         Rule(
             name = "HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER",
             ruleId = 1133,
@@ -130,9 +129,8 @@ class ValidationRuleChain(
             }
         ),
 
-        // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
+        // §8-4, 1. ledd: Sykepenger ytes til den som er arbeidsufør på grunn av en funksjonsnedsettelse som klart skyldes sykdom eller skade.
         // Diagnose må være satt i henhold til angitt kodeverk.
-        // Hvis kodeverk ikke er angitt eller korrekt for hoveddiagnose, avvises meldingen.
         Rule(
             name = "UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE",
             ruleId = 1540,
@@ -165,9 +163,8 @@ class ValidationRuleChain(
             }
         ),
 
-        // §8-4 Sykmeldingen må angi sykdom eller skade eller annen gyldig fraværsgrunn som angitt i loven.
+        // §8-4, 1. ledd: Sykepenger ytes til den som er arbeidsufør på grunn av en funksjonsnedsettelse som klart skyldes sykdom eller skade.
         // Diagnose må være satt i henhold til angitt kodeverk.
-        // Hvis kodeverk ikke er angitt eller korrekt for bidiagnose, avvises meldingen.
         Rule(
             name = "UGYLDIG_KODEVERK_FOR_BIDIAGNOSE",
             ruleId = 1541,
@@ -186,8 +183,7 @@ class ValidationRuleChain(
                 val biDiagnoser = sykmelding.medisinskVurdering.biDiagnoser
             },
             predicate = {
-                !it.biDiagnoser.all { diagnose ->
-                    if (diagnose.isICPC2()) {
+                !it.biDiagnoser.all { diagnose -> if (diagnose.isICPC2()) {
                         Diagnosekoder.icpc2.containsKey(diagnose.kode)
                     } else {
                         Diagnosekoder.icd10.containsKey(diagnose.kode)
