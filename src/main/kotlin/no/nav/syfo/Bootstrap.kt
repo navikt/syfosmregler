@@ -24,11 +24,16 @@ import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.client.SyketilfelleClient
+import no.nav.syfo.kafka.aiven.KafkaUtils
+import no.nav.syfo.kafka.toProducerConfig
 import no.nav.syfo.pdl.client.PdlClient
 import no.nav.syfo.pdl.service.PdlPersonService
+import no.nav.syfo.services.JuridiskVurderingService
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
+import no.nav.syfo.utils.JacksonKafkaSerializer
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
+import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.ProxySelector
@@ -38,6 +43,7 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
     registerModule(JavaTimeModule())
+    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
 
@@ -81,11 +87,13 @@ fun main() {
     val httpClientWithProxy = HttpClient(Apache, proxyConfig)
     val httpClient = HttpClient(Apache, config)
 
-    val oidcClient = StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
+    val oidcClient =
+        StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val azureAdV2Client = AzureAdV2Client(env, httpClientWithProxy)
-    val norskHelsenettClient = NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)
+    val norskHelsenettClient =
+        NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)
     val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterScope, httpClient)
 
     val pdlClient = PdlClient(
@@ -94,7 +102,24 @@ fun main() {
     )
     val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
 
-    val ruleService = RuleService(legeSuspensjonClient, syketilfelleClient, norskHelsenettClient, smregisterClient, pdlService)
+    val kafkaBaseConfig = KafkaUtils.getAivenKafkaConfig()
+    val kafkaProperties = kafkaBaseConfig.toProducerConfig(
+        env.applicationName,
+        valueSerializer = JacksonKafkaSerializer::class
+    )
+
+    val juridiskVurderingService = JuridiskVurderingService(
+        KafkaProducer(kafkaProperties),
+        env.etterlevelsesTopic
+    )
+    val ruleService = RuleService(
+        legeSuspensjonClient,
+        syketilfelleClient,
+        norskHelsenettClient,
+        smregisterClient,
+        pdlService,
+        juridiskVurderingService,
+    )
 
     val applicationEngine = createApplicationEngine(
         ruleService,

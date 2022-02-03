@@ -43,6 +43,8 @@ spec:
       - kvPath: serviceuser/data/dev/srvsyfosmregler
         mountPath: /secrets/serviceuser
   webproxy: true
+  kafka:
+    pool: nav-dev
   ingresses:
     - "https://syfosmregler.nais.preprod.local"
   env:
