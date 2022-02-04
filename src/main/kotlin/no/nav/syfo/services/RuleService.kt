@@ -1,5 +1,6 @@
 package no.nav.syfo.services
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.fields
@@ -45,6 +46,8 @@ class RuleService(
     private val juridiskVurderingService: JuridiskVurderingService,
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
+
+    @DelicateCoroutinesApi
     suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
         val loggingMeta = LoggingMeta(
             mottakId = receivedSykmelding.navLogId,
@@ -90,7 +93,7 @@ class RuleService(
         }
         val syketilfelleStartdatoDeferred = async {
             syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(
-                receivedSykmelding.sykmelding.pasientAktoerId,
+                receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
                 loggingMeta
             )

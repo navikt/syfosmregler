@@ -28,7 +28,7 @@ class SyketilfelleRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt",
+                "Første sykmelding er tilbakedatert mer enn det som er tillatt, eller felt 11.2 er ikke utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
@@ -45,8 +45,8 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 it.erNyttSyketilfelle &&
-                        (it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
-                        !it.erKoronaRelatert
+                    (it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
+                    !it.erKoronaRelatert
             }
         ),
 
@@ -83,16 +83,16 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 it.erNyttSyketilfelle &&
-                        it.erEttersendingAvTidligereSykmelding != true &&
-                        !it.erFraSpesialisthelsetjenesten &&
-                        it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) &&
-                        !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                        !it.erCoronaRelatert &&
-                        (
-                                it.forsteFomDato
-                                    .plusDays(14)
-                                    .isBefore(it.sisteTomDato) || it.begrunnelseIkkeKontakt.length < 16
-                                )
+                    it.erEttersendingAvTidligereSykmelding != true &&
+                    !it.erFraSpesialisthelsetjenesten &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) &&
+                    !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert &&
+                    (
+                        it.forsteFomDato
+                            .plusDays(14)
+                            .isBefore(it.sisteTomDato) || it.begrunnelseIkkeKontakt.length < 16
+                        )
             }
         ),
 
@@ -109,7 +109,7 @@ class SyketilfelleRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Første sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
+                "Første sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
@@ -128,10 +128,10 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 it.erNyttSyketilfelle &&
-                        it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4) &&
-                        it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8) &&
-                        (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
-                        !it.erCoronaRelatert
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4) &&
+                    it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8) &&
+                    (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
+                    !it.erCoronaRelatert
             }
         ),
 
@@ -164,9 +164,9 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
-                        it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
-                        it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                        !it.erCoronaRelatert
+                    it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
+                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert
             }
         ),
 
@@ -183,7 +183,7 @@ class SyketilfelleRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering er god nok",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering (felt 11.2) er god nok",
+                "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering (felt 11.2) er god nok",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
@@ -202,14 +202,14 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
-                        it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
-                        !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                        !it.erCoronaRelatert &&
-                        (
-                                !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
-                                        it.utdypendeOpplysninger.isEmpty() &&
-                                        it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
-                                )
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert &&
+                    (
+                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
+                            it.utdypendeOpplysninger.isEmpty() &&
+                            it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
+                        )
             }
         ),
 
@@ -246,15 +246,15 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
-                        !it.erFraSpesialisthelsetjenesten &&
-                        it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
-                        !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                        !it.erCoronaRelatert &&
-                        !(
-                                !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
-                                        it.utdypendeOpplysninger.isEmpty() &&
-                                        it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
-                                )
+                    !it.erFraSpesialisthelsetjenesten &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert &&
+                    !(
+                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
+                            it.utdypendeOpplysninger.isEmpty() &&
+                            it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
+                        )
             }
         ),
 
@@ -271,7 +271,7 @@ class SyketilfelleRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
+                "Sykmelding er tilbakedatert uten at dato for kontakt (felt 11.1) eller at begrunnelse (felt 11.2) er utfylt",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
@@ -289,13 +289,13 @@ class SyketilfelleRuleChain(
             },
             predicate = { input ->
                 !input.erNyttSyketilfelle &&
-                        input.behandletDato > input.forsteFomDato.plusDays(4) &&
-                        input.behandletDato <= input.forsteFomDato.plusDays(30) &&
-                        (
-                                input.kontaktDato == null &&
-                                        (input.begrunnelseIkkeKontakt.isNullOrEmpty() || !input.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())) &&
-                                        !input.erCoronaRelatert
-                                )
+                    input.behandletDato > input.forsteFomDato.plusDays(4) &&
+                    input.behandletDato <= input.forsteFomDato.plusDays(30) &&
+                    (
+                        input.kontaktDato == null &&
+                            (input.begrunnelseIkkeKontakt.isNullOrEmpty() || !input.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())) &&
+                            !input.erCoronaRelatert
+                        )
             }
         )
     )

@@ -90,8 +90,8 @@ fun main() {
     val oidcClient =
         StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
     val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
-    val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, oidcClient, httpClient)
     val azureAdV2Client = AzureAdV2Client(env, httpClientWithProxy)
+    val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, azureAdV2Client, env.syketilfelleScope, httpClient)
     val norskHelsenettClient =
         NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)
     val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterScope, httpClient)

@@ -8,16 +8,22 @@ import io.ktor.http.ContentType
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
+import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.model.Periode
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.sortedTOMDate
 import java.time.LocalDate
 
-class SyketilfelleClient(private val endpointUrl: String, private val stsClient: StsOidcClient, private val httpClient: HttpClient) {
+class SyketilfelleClient(
+    private val endpointUrl: String,
+    private val accessTokenClient: AzureAdV2Client,
+    private val resourceId: String,
+    private val httpClient: HttpClient
+) {
 
-    suspend fun finnStartdatoForSammenhengendeSyketilfelle(aktorId: String, periodeliste: List<Periode>, loggingMeta: LoggingMeta): LocalDate? {
+    suspend fun finnStartdatoForSammenhengendeSyketilfelle(fnr: String, periodeliste: List<Periode>, loggingMeta: LoggingMeta): LocalDate? {
         log.info("Sjekker om nytt syketilfelle mot syfosyketilfelle {}", fields(loggingMeta))
-        val sykeforloep = hentSykeforloep(aktorId)
+        val sykeforloep = hentSykeforloep(fnr)
 
         return finnStartdato(sykeforloep, periodeliste, loggingMeta)
     }
@@ -46,12 +52,16 @@ class SyketilfelleClient(private val endpointUrl: String, private val stsClient:
         return false
     }
 
-    private suspend fun hentSykeforloep(aktorId: String): List<Sykeforloep> =
-        httpClient.get<List<Sykeforloep>>("$endpointUrl/sparenaproxy/$aktorId/sykeforloep") {
+    private suspend fun hentSykeforloep(fnr: String): List<Sykeforloep> =
+        httpClient.get<List<Sykeforloep>>("$endpointUrl/api/v1/sykeforloep?inkluderPapirsykmelding=true") {
             accept(ContentType.Application.Json)
-            val oidcToken = stsClient.oidcToken()
+            val accessToken = accessTokenClient.getAccessToken(resourceId)
+            if (accessToken?.accessToken == null) {
+                throw RuntimeException("Klarte ikke hente ut accesstoken for syfosyketilfelle")
+            }
             headers {
-                append("Authorization", "Bearer ${oidcToken.access_token}")
+                append("Authorization", "Bearer ${accessToken.accessToken}")
+                append("fnr", fnr)
             }
         }
 }
