@@ -183,7 +183,7 @@ class SyketilfelleRuleChain(
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering er god nok",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering er god nok. En sykmelding kan maks være tilbakedatert 1 mnd fra tidspunkt for behandling uten begrunnelse. Her må årsak i pkt. 11.2 fylles ut.",
+                    "Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra tidspunkt for behandling uten begrunnelse. Her må årsak i pkt. 11.2 fylles ut.",
             juridiskHenvisning = JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-7",
