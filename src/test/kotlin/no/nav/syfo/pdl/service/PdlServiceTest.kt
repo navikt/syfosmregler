@@ -33,7 +33,7 @@ class PdlServiceTest : Spek({
             coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse(
                 PdlResponse(
-                    hentPerson = HentPerson(listOf(Foedsel("1900", "1900-01-01"))),
+                    hentPerson = HentPerson(listOf(Foedsel("1900-01-01"))),
                     hentIdenter = Identliste(listOf(IdentInformasjon(ident = "01245678901", gruppe = "FOLKEREGISTERIDENT", historisk = false)))
                 ),
                 errors = null
@@ -42,7 +42,7 @@ class PdlServiceTest : Spek({
             runBlocking {
                 val person = pdlService.getPdlPerson("01245678901", loggingMeta)
                 person.fnr shouldBeEqualTo "01245678901"
-                person.foedsel?.firstOrNull()?.foedselsaar shouldBeEqualTo "1900"
+                person.foedsel?.firstOrNull()?.foedselsdato shouldBeEqualTo "1900-01-01"
             }
         }
 
