@@ -10,7 +10,6 @@ data class HentPerson(
 )
 
 data class Foedsel(
-    val foedselsaar: String,
     val foedselsdato: String?,
 )
 
