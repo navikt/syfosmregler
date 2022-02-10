@@ -5,18 +5,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val caffeineVersion = "3.0.4"
-val coroutinesVersion = "1.5.1"
-val jacksonVersion = "2.13.0"
+val caffeineVersion = "3.0.5"
+val coroutinesVersion = "1.6.0"
+val jacksonVersion = "2.13.1"
 val kluentVersion = "1.68"
 val ktorVersion = "1.6.7"
-val logbackVersion = "1.2.8"
+val logbackVersion = "1.2.10"
 val logstashEncoderVersion = "7.0.1"
-val prometheusVersion = "0.12.0"
+val prometheusVersion = "0.14.1"
 val smCommonVersion = "1.efc6e77"
 val spekVersion = "2.0.17"
 val jfairyVersion = "0.6.4"
-val mockkVersion = "1.12.1"
+val mockkVersion = "1.12.2"
 val kotlinVersion = "1.6.0"
 
 plugins {
@@ -51,8 +51,8 @@ dependencies {
 
     implementation ("io.ktor:ktor-server-netty:$ktorVersion")
     implementation ("io.ktor:ktor-jackson:$ktorVersion")
-
-    implementation("io.ktor:ktor-client-auth-basic:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
 

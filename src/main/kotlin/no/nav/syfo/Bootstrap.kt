@@ -1,5 +1,6 @@
 package no.nav.syfo
 
+import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -14,6 +15,7 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.network.sockets.SocketTimeoutException
 import io.prometheus.client.hotspot.DefaultExports
+import kotlinx.coroutines.DelicateCoroutinesApi
 import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
@@ -37,6 +39,8 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.ProxySelector
+import java.net.URL
+import java.util.concurrent.TimeUnit
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
@@ -47,6 +51,7 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
 
+@DelicateCoroutinesApi
 fun main() {
     val env = Environment()
     val credentials = VaultCredentials()
@@ -56,6 +61,11 @@ fun main() {
 
     val applicationState = ApplicationState()
     DefaultExports.initialize()
+
+    val jwkProviderAad = JwkProviderBuilder(URL(env.jwkKeysUrl))
+        .cached(10, 24, TimeUnit.HOURS)
+        .rateLimited(10, 1, TimeUnit.MINUTES)
+        .build()
 
     val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
         install(JsonFeature) {
@@ -124,7 +134,8 @@ fun main() {
     val applicationEngine = createApplicationEngine(
         ruleService,
         env,
-        applicationState
+        applicationState,
+        jwkProviderAad
     )
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)

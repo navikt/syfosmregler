@@ -21,7 +21,9 @@ data class Environment(
     val smregisterScope: String = getEnvVar("SMREGISTER_SCOPE"),
     val pdlScope: String = getEnvVar("PDL_SCOPE"),
     val pdlGraphqlPath: String = getEnvVar("PDL_GRAPHQL_PATH"),
-    val etterlevelsesTopic: String = "teamsykmelding.paragraf-i-kode"
+    val etterlevelsesTopic: String = "teamsykmelding.paragraf-i-kode",
+    val jwtIssuer: String = getEnvVar("AZURE_OPENID_CONFIG_ISSUER"),
+    val jwkKeysUrl: String = getEnvVar("AZURE_OPENID_CONFIG_JWKS_URI")
 )
 
 data class VaultCredentials(
