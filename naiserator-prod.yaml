@@ -37,6 +37,10 @@ spec:
     application:
       enabled: true
       tenant: nav.no
+  accessPolicy:
+    inbound:
+      rules:
+        - application: syfosmmottak
   vault:
     enabled: true
     paths:
