@@ -137,7 +137,7 @@ class ValidationRuleChain(
             status = Status.INVALID,
             messageForUser = "Den må ha riktig kode for hoveddiagnose.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                "Kodeverk for hoveddiagnose er feil eller mangler.",
+                "Kodeverk for hoveddiagnose er feil eller mangler. Prosesskoder ikke kan benyttes for å angi diagnose.",
             JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-4",
@@ -171,7 +171,7 @@ class ValidationRuleChain(
             status = Status.INVALID,
             messageForUser = "Det er brukt eit ukjent kodeverk for bidiagnosen.",
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                "Kodeverk for bidiagnose er ikke angitt eller korrekt",
+                "Kodeverk for bidiagnose er ikke angitt eller korrekt. Prosesskoder ikke kan benyttes for å angi diagnose.",
             JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
                 paragraf = "8-4",
