@@ -121,7 +121,7 @@ class SyketilfelleRuleChain(
                 val erNyttSyketilfelle = ruleMetadataSykmelding.erNyttSyketilfelle
                 val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
-                val sisteTomDato = sykmelding.perioder.sortedTOMDate().last()
+                val sisteTomDato = sykmelding.perioder.sortedFOMDate().last()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val kontaktMedPasientDato = sykmelding.kontaktMedPasient.kontaktDato
