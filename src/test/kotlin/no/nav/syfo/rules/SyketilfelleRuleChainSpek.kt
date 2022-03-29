@@ -425,6 +425,38 @@ object SyketilfelleRuleChainSpek : Spek({
             ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
                 .executeRule().result shouldBeEqualTo false
         }
+        it("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING trigges fordi begrunnelsen ikke inneholder bokstaver") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.of(2019, 1, 10),
+                        tom = LocalDate.of(2019, 1, 20)
+                    )
+                ),
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "123.4")
+            )
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.of(LocalDate.of(2019, 1, 20), LocalTime.NOON),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = LocalDate.now()
+                ),
+                erNyttSyketilfelle = true,
+                erEttersendingAvTidligereSykmelding = false
+            )
+
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+                .executeRule().result shouldBeEqualTo true
+        }
         it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
