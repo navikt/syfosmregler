@@ -45,8 +45,8 @@ class SyketilfelleRuleChain(
             },
             predicate = {
                 it.erNyttSyketilfelle
-                        && (it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8)
-                        && (it.begrunnelseIkkeKontakt.isNullOrEmpty() || !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())))
+                        && it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8)
+                        && (it.begrunnelseIkkeKontakt.isNullOrEmpty() || !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()))
                         && !it.erKoronaRelatert
             }
         ),
