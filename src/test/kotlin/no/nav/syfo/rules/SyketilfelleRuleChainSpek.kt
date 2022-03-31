@@ -425,6 +425,41 @@ object SyketilfelleRuleChainSpek : Spek({
             ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
                 .executeRule().result shouldBeEqualTo false
         }
+
+        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should not trigger when kontaktDato != null and begrunnelseIkkeKontakt is empty") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.of(2022, 3, 28),
+                        tom = LocalDate.of(2022, 3, 29)
+                    )
+                ),
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = LocalDate.of(2022, 3, 28), begrunnelseIkkeKontakt = "")
+            )
+
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    signatureDate = LocalDateTime.of(2022, 3, 30, 16, 10, 10),
+                    receivedDate = LocalDateTime.of(2022, 3, 30, 12, 0, 0),
+                    behandletTidspunkt = LocalDateTime.of(LocalDate.of(2022, 3, 30), LocalTime.MIDNIGHT),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = LocalDate.now()
+                ),
+                erNyttSyketilfelle = true,
+                erEttersendingAvTidligereSykmelding = null
+            )
+
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING")
+                .executeRule().result shouldBeEqualTo false
+        }
+
         it("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING trigges fordi begrunnelsen ikke inneholder bokstaver") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
