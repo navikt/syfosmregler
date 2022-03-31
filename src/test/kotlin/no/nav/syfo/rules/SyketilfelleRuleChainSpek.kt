@@ -426,7 +426,7 @@ object SyketilfelleRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should not trigger when kontaktDato != null and begrunnelseIkkeKontakt is empty") {
+        it("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING, should not trigger when begrunnelseIkkeKontakt is not empty and date is not tilbakedatert") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -434,7 +434,7 @@ object SyketilfelleRuleChainSpek : Spek({
                         tom = LocalDate.of(2022, 3, 29)
                     )
                 ),
-                kontaktMedPasient = KontaktMedPasient(kontaktDato = LocalDate.of(2022, 3, 28), begrunnelseIkkeKontakt = "")
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = ".")
             )
 
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
