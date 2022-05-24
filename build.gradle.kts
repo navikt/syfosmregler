@@ -13,9 +13,8 @@ val ktorVersion = "2.0.1"
 val logbackVersion = "1.2.10"
 val logstashEncoderVersion = "7.0.1"
 val prometheusVersion = "0.15.0"
-val smCommonVersion = "1.0bee4b3-SNAPSHOT"
+val smCommonVersion = "1.f132f2b"
 val spekVersion = "2.0.17"
-val jfairyVersion = "0.6.4"
 val mockkVersion = "1.12.2"
 val kotlinVersion = "1.6.21"
 
@@ -76,7 +75,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testImplementation("com.devskiller:jfairy:$jfairyVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty") // conflicts with WireMock
