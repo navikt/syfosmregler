@@ -6,12 +6,12 @@ group = "no.nav.syfo"
 version = "1.0.0"
 
 val caffeineVersion = "3.0.5"
-val coroutinesVersion = "1.6.0"
+val coroutinesVersion = "1.6.1"
 val jacksonVersion = "2.13.2"
 val jacksonPatchVersion = "2.13.2.1"
 val jacksonBomVersion = "2.13.2.20220324"
 val kluentVersion = "1.68"
-val ktorVersion = "1.6.8"
+val ktorVersion = "2.0.1"
 val logbackVersion = "1.2.10"
 val logstashEncoderVersion = "7.0.1"
 val prometheusVersion = "0.15.0"
@@ -19,14 +19,13 @@ val smCommonVersion = "1.ed38c78"
 val spekVersion = "2.0.17"
 val jfairyVersion = "0.6.4"
 val mockkVersion = "1.12.2"
-val kotlinVersion = "1.6.0"
+val kotlinVersion = "1.6.21"
 
 plugins {
-    java
-    kotlin("jvm") version "1.6.0"
-    id("org.jmailen.kotlinter") version "3.6.0"
-    id("com.diffplug.spotless") version "5.16.0"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    kotlin("jvm") version "1.6.21"
+    id("org.jmailen.kotlinter") version "3.10.0"
+    id("com.diffplug.spotless") version "6.5.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 val githubUser: String by project
@@ -51,11 +50,15 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
 
-    implementation ("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation ("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-auth:$ktorVersion")
-    implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
 
     implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
