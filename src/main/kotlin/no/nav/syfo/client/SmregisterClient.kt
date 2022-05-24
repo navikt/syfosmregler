@@ -1,6 +1,7 @@
 package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -52,7 +53,7 @@ class SmregisterClient(
                 append("Authorization", "Bearer ${accessToken.accessToken}")
                 append("fnr", fnr)
             }
-        }
+        }.body()
 }
 
 data class SykmeldingDTO(

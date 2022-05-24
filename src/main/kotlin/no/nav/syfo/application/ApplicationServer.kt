@@ -18,7 +18,8 @@ class ApplicationServer(
     }
 
     fun start() {
-        applicationServer.start(false)
         applicationState.alive = true
+        applicationState.ready = true
+        applicationServer.start(true)
     }
 }

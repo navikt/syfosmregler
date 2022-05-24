@@ -4,18 +4,17 @@ import com.auth0.jwk.JwkProvider
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.authenticate
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.jackson
-import io.ktor.response.respond
-import io.ktor.routing.routing
+import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.install
+import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
+import io.ktor.server.routing.routing
 import kotlinx.coroutines.DelicateCoroutinesApi
 import no.nav.syfo.Environment
 import no.nav.syfo.api.registerRuleApi
@@ -50,9 +49,8 @@ fun createApplicationEngine(
             }
         }
         install(StatusPages) {
-            exception<Throwable> { cause ->
+            exception<Throwable> { call, cause ->
                 call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
-
                 log.error("Caught exception while trying to validate against rules", cause)
                 throw cause
             }
