@@ -1,5 +1,6 @@
 package no.nav.syfo.pdl.service
 
+import io.kotest.core.spec.style.FunSpec
 import io.mockk.coEvery
 import io.mockk.mockkClass
 import kotlinx.coroutines.runBlocking
@@ -15,21 +16,18 @@ import no.nav.syfo.pdl.client.model.Identliste
 import no.nav.syfo.pdl.client.model.PdlResponse
 import no.nav.syfo.pdl.error.PersonNotFoundInPdl
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.time.OffsetDateTime
 import kotlin.test.assertFailsWith
 
-class PdlServiceTest : Spek({
+class PdlServiceTest : FunSpec({
     val pdlClient = mockkClass(PdlClient::class)
     val accessTokenClientMock = mockkClass(AzureAdV2Client::class)
     val pdlService = PdlPersonService(pdlClient, accessTokenClientMock, "scope")
 
     val loggingMeta = LoggingMeta("mottakId", "orgNr", "msgId", "sykmeldingId")
 
-    describe("PdlServiceTest") {
-
-        it("hente person fra pdl") {
+    context("PdlServiceTest") {
+        test("hente person fra pdl") {
             coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse(
                 PdlResponse(
@@ -39,14 +37,12 @@ class PdlServiceTest : Spek({
                 errors = null
             )
 
-            runBlocking {
-                val person = pdlService.getPdlPerson("01245678901", loggingMeta)
-                person.fnr shouldBeEqualTo "01245678901"
-                person.foedsel?.firstOrNull()?.foedselsdato shouldBeEqualTo "1900-01-01"
-            }
+            val person = pdlService.getPdlPerson("01245678901", loggingMeta)
+            person.fnr shouldBeEqualTo "01245678901"
+            person.foedsel?.firstOrNull()?.foedselsdato shouldBeEqualTo "1900-01-01"
         }
 
-        it("Skal feile når person ikke finnes") {
+        test("Skal feile når person ikke finnes") {
             coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse<PdlResponse>(
                 PdlResponse(null, null),
@@ -61,7 +57,7 @@ class PdlServiceTest : Spek({
             exception.message shouldBeEqualTo "Klarte ikke hente ut person fra PDL"
         }
 
-        it("Skal feile når ident er tom liste") {
+        test("Skal feile når ident er tom liste") {
             coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse<PdlResponse>(
                 PdlResponse(

@@ -1,17 +1,16 @@
 package no.nav.syfo
 
+import io.kotest.core.spec.style.FunSpec
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.helpers.retry
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.io.IOException
 
-object HelpersSpek : Spek({
+class HelpersSpek : FunSpec({
 
-    describe("Retries") {
-        it("Returns result success") {
+    context("Retries") {
+        test("Returns result success") {
             val result = runBlocking {
                 retry("test_call") {
                     "I'm OK"
@@ -19,7 +18,7 @@ object HelpersSpek : Spek({
             }
             result shouldBeEqualTo "I'm OK"
         }
-        it("Subclass of exception should be caught") {
+        test("Subclass of exception should be caught") {
             class SubIOException : IOException("Connection timed out")
 
             val result = runBlocking {
@@ -35,7 +34,7 @@ object HelpersSpek : Spek({
             }
             result shouldBeEqualTo "I'm OK"
         }
-        it("Returns result on single IOException") {
+        test("Returns result on single IOException") {
             var exceptionCount = 3
             val result = runBlocking {
                 retry("test_call") {
@@ -50,7 +49,7 @@ object HelpersSpek : Spek({
             exceptionCount shouldBeEqualTo 0
             result shouldBeEqualTo "I'm OK"
         }
-        it("Results in exception on non-retrying exceptions") {
+        test("Results in exception on non-retrying exceptions") {
             {
                 runBlocking {
                     retry<Unit>("test_call") {

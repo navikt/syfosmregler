@@ -1,18 +1,17 @@
 package no.nav.syfo.rules
 
+import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.Kode
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 
-object HPRRuleChainSpek : Spek({
-    describe("Testing validation rules and checking the rule outcomes") {
-        it("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should trigger rule") {
+class HPRRuleChainSpek : FunSpec({
+    context("Testing validation rules and checking the rule outcomes") {
+        test("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -33,7 +32,7 @@ object HPRRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should NOT trigger rule") {
+        test("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should NOT trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -53,7 +52,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_IKKE_GYLDIG_I_HPR").executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR, should trigger rule") {
+        test("Should check rule BEHANDLER_NOT_VALID_AUTHORIZATION_IN_HPR, should trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -73,7 +72,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR").executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should NOT trigger rule") {
+        test("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should NOT trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -93,7 +92,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR").executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
+        test("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -118,7 +117,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_MANGLER_AUTORISASJON_I_HPR").executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR, should NOT trigger rule") {
+        test("Should check rule BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR, should NOT trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -143,7 +142,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR").executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should trigger rule") {
+        test("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -176,7 +175,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER").executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule, when helsepersoner is Lege(LE) and Kiropratkor(KI)") {
+        test("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should NOT trigger rule, when helsepersoner is Lege(LE) and Kiropratkor(KI)") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -221,7 +220,7 @@ object HPRRuleChainSpek : Spek({
             ).getRuleByName("BEHANDLER_MT_FT_KI_OVER_12_UKER").executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule BEHANDLER_MT_FT_KI_OVER_12_UKER, should NOT trigger rule") {
+        test("Should check rule BEHANDLER_MT_FT_KI_OVER_12_UKER, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -256,7 +255,7 @@ object HPRRuleChainSpek : Spek({
                 .result shouldBeEqualTo false
         }
 
-        it("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
+        test("Should check rule BEHANDLER_MANGLER_AUTORISASJON_I_HPR, should trigger rule") {
             val healthInformation = generateSykmelding()
             val behandler = Behandler(
                 listOf(
@@ -283,7 +282,7 @@ object HPRRuleChainSpek : Spek({
                 .result shouldBeEqualTo true
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ut fordi startdato for tidligere sykefravær gir varighet på mer enn 12 uker") {
+        test("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ut fordi startdato for tidligere sykefravær gir varighet på mer enn 12 uker") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -321,7 +320,7 @@ object HPRRuleChainSpek : Spek({
                 .result shouldBeEqualTo true
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi det er nytt sykefravær") {
+        test("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi det er nytt sykefravær") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -356,7 +355,7 @@ object HPRRuleChainSpek : Spek({
                 .result shouldBeEqualTo false
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi behandler er Lege(LE) og Kiropraktor(KI)") {
+        test("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi behandler er Lege(LE) og Kiropraktor(KI)") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -401,7 +400,7 @@ object HPRRuleChainSpek : Spek({
                 .result shouldBeEqualTo false
         }
 
-        it("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi startdato for tidligere sykefravær gir varighet på mindre enn 12 uker") {
+        test("Sjekker BEHANDLER_MT_FT_KI_OVER_12_UKER, slår ikke ut fordi startdato for tidligere sykefravær gir varighet på mindre enn 12 uker") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(

@@ -1,5 +1,6 @@
 package no.nav.syfo.rules
 
+import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.generateBehandler
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
@@ -12,15 +13,13 @@ import no.nav.syfo.toDiagnose
 import no.nav.syfo.validation.extractBornYear
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
-object ValidationRuleChainSpek : Spek({
+class ValidationRuleChainSpek : FunSpec({
     fun ruleMetadata(
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),
@@ -45,8 +44,8 @@ object ValidationRuleChainSpek : Spek({
         )
     }
 
-    describe("Testing validation rules and checking the rule outcomes") {
-        it("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {
+    context("Testing validation rules and checking the rule outcomes") {
+        test("Should check rule PASIENT_YNGRE_ENN_13,should trigger rule") {
             val personDateOfBirth = LocalDate.now().minusYears(12)
 
             ValidationRuleChain(
@@ -57,7 +56,7 @@ object ValidationRuleChainSpek : Spek({
             ).getRuleByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule PASIENT_YNGRE_ENN_13,should NOT trigger rule") {
+        test("Should check rule PASIENT_YNGRE_ENN_13,should NOT trigger rule") {
             val Person13Years = LocalDate.now().minusYears(13)
 
             ValidationRuleChain(
@@ -77,7 +76,7 @@ object ValidationRuleChainSpek : Spek({
             ).getRuleByName("PASIENT_YNGRE_ENN_13").executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule PASIENT_ELDRE_ENN_70,should trigger rule") {
+        test("Should check rule PASIENT_ELDRE_ENN_70,should trigger rule") {
             val pasientOlderThan70 = LocalDate.now().minusYears(70).minusDays(1)
             ValidationRuleChain(
                 generateSykmelding(),
@@ -88,7 +87,7 @@ object ValidationRuleChainSpek : Spek({
             ).getRuleByName("PASIENT_ELDRE_ENN_70").executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule PASIENT_ELDRE_ENN_70,should NOT trigger rule") {
+        test("Should check rule PASIENT_ELDRE_ENN_70,should NOT trigger rule") {
             val person = LocalDate.now().minusYears(70)
             ValidationRuleChain(
                 generateSykmelding(),
@@ -98,7 +97,7 @@ object ValidationRuleChainSpek : Spek({
             ).getRuleByName("PASIENT_ELDRE_ENN_70").executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule ICPC_2_Z_DIAGNOSE,should trigger rule") {
+        test("Should check rule ICPC_2_Z_DIAGNOSE,should trigger rule") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose()
@@ -109,7 +108,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
+        test("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnosekoder.icpc2["A09"]!!.toDiagnose()
@@ -120,7 +119,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
+        test("Should check rule ICPC_2_Z_DIAGNOSE,should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
@@ -135,7 +134,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should trigger rule") {
+        test("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should trigger rule") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = null,
@@ -150,7 +149,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should NOT trigger rule") {
+        test("Should check rule HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain(
@@ -160,7 +159,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule UKJENT_DIAGNOSEKODETYPE,should trigger rule") {
+        test("Should check rule UKJENT_DIAGNOSEKODETYPE,should trigger rule") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
@@ -175,14 +174,14 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule UKJENT_DIAGNOSEKODETYPE,should NOT trigger rule") {
+        test("Should check rule UKJENT_DIAGNOSEKODETYPE,should NOT trigger rule") {
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain(healthInformation, ruleMetadata()).getRuleByName("UKJENT_DIAGNOSEKODETYPE")
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+        test("Should check rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
@@ -197,7 +196,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+        test("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
@@ -212,7 +211,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+        test("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     annenFraversArsak = AnnenFraversArsak(
@@ -226,7 +225,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
+        test("Should not trigger rule UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE, wrong kodeverk for hoveddiagnose") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = null,
@@ -241,7 +240,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {
+        test("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, wrong kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     bidiagnoser = listOf(
@@ -258,7 +257,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, correct kodeverk for biDiagnoser") {
+        test("Should check rule UGYLDIG_KODEVERK_FOR_BIDIAGNOSE, correct kodeverk for biDiagnoser") {
             val healthInformation = generateSykmelding(
                 medisinskVurdering = generateMedisinskVurdering(
                     bidiagnoser = listOf(
@@ -275,7 +274,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("UGYLDIG_ORGNR_LENGDE should trigger on when orgnr lengt is not 9") {
+        test("UGYLDIG_ORGNR_LENGDE should trigger on when orgnr lengt is not 9") {
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain(
@@ -285,7 +284,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("UGYLDIG_ORGNR_LENGDE should not trigger on when orgnr is 9") {
+        test("UGYLDIG_ORGNR_LENGDE should not trigger on when orgnr is 9") {
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain(
@@ -295,7 +294,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when avsender fnr and pasient fnr is the same") {
+        test("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when avsender fnr and pasient fnr is the same") {
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain(
@@ -308,7 +307,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when avsender fnr and pasient fnr is diffrent") {
+        test("AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when avsender fnr and pasient fnr is diffrent") {
             val healthInformation = generateSykmelding()
 
             ValidationRuleChain(
@@ -321,7 +320,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo false
         }
 
-        it("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when behandler fnr and pasient fnr is the same") {
+        test("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should trigger on when behandler fnr and pasient fnr is the same") {
             val behandlerFnr = "123456789"
             val healthInformation = generateSykmelding(
                 behandler = generateBehandler(
@@ -336,7 +335,7 @@ object ValidationRuleChainSpek : Spek({
                 .executeRule().result shouldBeEqualTo true
         }
 
-        it("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when behandler fnr and pasient fnr is diffrent") {
+        test("BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR should not trigger on when behandler fnr and pasient fnr is diffrent") {
             val behandlerFnr = "123456789"
             val healthInformation = generateSykmelding(
                 behandler = generateBehandler(
@@ -352,8 +351,8 @@ object ValidationRuleChainSpek : Spek({
         }
     }
 
-    describe("extract born year") {
-        it("Skal håndtere fødselsnummer fra 1854-1899") {
+    context("extract born year") {
+        test("Skal håndtere fødselsnummer fra 1854-1899") {
             val beregnetFodselsar1 = extractBornYear("01015450000")
             val beregnetFodselsar2 = extractBornYear("01015474900")
             val beregnetFodselsar3 = extractBornYear("01019950000")
@@ -365,7 +364,7 @@ object ValidationRuleChainSpek : Spek({
             beregnetFodselsar4 shouldBeEqualTo 1899
         }
 
-        it("Skal håndtere fødselsnummer fra 1900-1999") {
+        test("Skal håndtere fødselsnummer fra 1900-1999") {
             val beregnetFodselsar1 = extractBornYear("01010000000")
             val beregnetFodselsar2 = extractBornYear("01010049900")
             val beregnetFodselsar3 = extractBornYear("01019900000")
@@ -377,7 +376,7 @@ object ValidationRuleChainSpek : Spek({
             beregnetFodselsar4 shouldBeEqualTo 1999
         }
 
-        it("Skal håndtere fødselsnummer fra 1940-1999") {
+        test("Skal håndtere fødselsnummer fra 1940-1999") {
             val beregnetFodselsar1 = extractBornYear("01014090000")
             val beregnetFodselsar2 = extractBornYear("01014099900")
             val beregnetFodselsar3 = extractBornYear("01019990000")
@@ -389,7 +388,7 @@ object ValidationRuleChainSpek : Spek({
             beregnetFodselsar4 shouldBeEqualTo 1999
         }
 
-        it("Skal håndtere fødselsnummer fra 2000-2039") {
+        test("Skal håndtere fødselsnummer fra 2000-2039") {
             val beregnetFodselsar1 = extractBornYear("01010050000")
             val beregnetFodselsar2 = extractBornYear("01010099900")
             val beregnetFodselsar3 = extractBornYear("01013950000")
