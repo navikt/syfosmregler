@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.kotest.core.spec.style.FunSpec
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.call
@@ -17,26 +17,20 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import io.ktor.util.InternalAPI
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.azuread.v2.AzureAdV2Token
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.io.IOException
 import java.net.ServerSocket
 import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
 
-private const val fnr = "12345678912"
-@InternalAPI
-internal class NorskHelsenettClientTest : Spek({
-
+class NorskHelsenettClientTest : FunSpec({
+    val fnr = "12345678912"
     val accessTokenClientMock = mockk<AzureAdV2Client>()
     val httpClient = HttpClient(Apache) {
         install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
@@ -68,23 +62,21 @@ internal class NorskHelsenettClientTest : Spek({
 
     val norskHelsenettClient = NorskHelsenettClient(mockHttpServerUrl, accessTokenClientMock, "resourceId", httpClient)
 
-    afterGroup {
+    afterSpec {
         mockServer.stop(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(1))
     }
 
-    beforeGroup {
+    beforeSpec {
         coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
     }
 
-    describe("Test NorskHelsenettClient") {
-        it("Should get behandler") {
-            var behandler: Behandler?
-            runBlocking {
-                behandler = norskHelsenettClient.finnBehandler(
-                    fnr, "123",
-                    LoggingMeta("", "", "123", "")
-                )
-            }
+    context("Test NorskHelsenettClient") {
+        test("Should get behandler") {
+            val behandler = norskHelsenettClient.finnBehandler(
+                fnr, "123",
+                LoggingMeta("", "", "123", "")
+            )
+
             behandler shouldBeEqualTo Behandler(
                 listOf(
                     Godkjenning(
@@ -95,27 +87,23 @@ internal class NorskHelsenettClientTest : Spek({
             )
         }
 
-        it("Should receive null when 404") {
-            var behandler: Behandler?
-            runBlocking {
-                behandler = norskHelsenettClient.finnBehandler(
-                    "behandlerFinnesIkke", "1",
-                    LoggingMeta("", "", "1", "")
-                )
-            }
+        test("Should receive null when 404") {
+            val behandler = norskHelsenettClient.finnBehandler(
+                "behandlerFinnesIkke", "1",
+                LoggingMeta("", "", "1", "")
+            )
+
             behandler shouldBeEqualTo null
         }
     }
 
-    describe("Test retry") {
-        it("Should retry when getting internal server error") {
-            var behandler: Behandler?
-            runBlocking {
-                behandler = norskHelsenettClient.finnBehandler(
-                    fnr, "1",
-                    LoggingMeta("", "", "1", "")
-                )
-            }
+    context("Test retry") {
+        test("Should retry when getting internal server error") {
+            val behandler = norskHelsenettClient.finnBehandler(
+                fnr, "1",
+                LoggingMeta("", "", "1", "")
+            )
+
             behandler shouldBeEqualTo Behandler(
                 listOf(
                     Godkjenning(
@@ -126,14 +114,12 @@ internal class NorskHelsenettClientTest : Spek({
             )
         }
 
-        it("Should throw exeption when exceeds max retries") {
-            runBlocking {
-                assertFailsWith<IOException> {
-                    norskHelsenettClient.finnBehandler(
-                        "1234", "1",
-                        LoggingMeta("", "", "123", "")
-                    )
-                }
+        test("Should throw exeption when exceeds max retries") {
+            assertFailsWith<IOException> {
+                norskHelsenettClient.finnBehandler(
+                    "1234", "1",
+                    LoggingMeta("", "", "123", "")
+                )
             }
         }
     }

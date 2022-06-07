@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.kotest.core.spec.style.FunSpec
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.http.ContentType
@@ -20,15 +21,12 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.azuread.v2.AzureAdV2Token
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.Periode
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.net.ServerSocket
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -36,7 +34,7 @@ import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-class SmregisterClientTest : Spek({
+class SmregisterClientTest : FunSpec({
     val loggingMeta = LoggingMeta("", "", "", "")
     val accessTokenClientMock = mockk<AzureAdV2Client>()
     val httpClient = HttpClient(Apache) {
@@ -95,68 +93,56 @@ class SmregisterClientTest : Spek({
 
     val smregisterClient = SmregisterClient(mockHttpServerUrl, accessTokenClientMock, "resourceId", httpClient)
 
-    afterGroup {
+    afterSpec {
         mockServer.stop(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(1))
     }
 
-    beforeEachTest {
+    beforeTest {
         coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
     }
 
-    describe("Test av SmRegisterClient") {
-        it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker ikke har andre sykmeldinger") {
-            runBlocking {
-                smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
-                    "fnr",
-                    listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
-                    loggingMeta
-                ) shouldBeEqualTo false
-            }
+    context("Test av SmRegisterClient") {
+        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker ikke har andre sykmeldinger") {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                "fnr",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                loggingMeta
+            ) shouldBeEqualTo false
         }
-        it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med annen fom") {
-            runBlocking {
-                smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
-                    "fnr2",
-                    listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
-                    loggingMeta
-                ) shouldBeEqualTo false
-            }
+        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med annen fom") {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                "fnr2",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
+                loggingMeta
+            ) shouldBeEqualTo false
         }
-        it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med samme fom som er tilbakedatert") {
-            runBlocking {
-                smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
-                    "fnr3",
-                    listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
-                    loggingMeta
-                ) shouldBeEqualTo false
-            }
+        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med samme fom som er tilbakedatert") {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                "fnr3",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                loggingMeta
+            ) shouldBeEqualTo false
         }
-        it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
-            runBlocking {
-                smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
-                    "fnr2",
-                    listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
-                    loggingMeta
-                ) shouldBeEqualTo true
-            }
+        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                "fnr2",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                loggingMeta
+            ) shouldBeEqualTo true
         }
-        it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
-            runBlocking {
-                smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
-                    "fnr4",
-                    listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
-                    loggingMeta
-                ) shouldBeEqualTo true
-            }
+        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                "fnr4",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                loggingMeta
+            ) shouldBeEqualTo true
         }
-        it("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
-            runBlocking {
-                smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
-                    "fnr5",
-                    listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
-                    loggingMeta
-                ) shouldBeEqualTo false
-            }
+        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
+            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+                "fnr5",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                loggingMeta
+            ) shouldBeEqualTo false
         }
     }
 })

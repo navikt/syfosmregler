@@ -5,17 +5,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val caffeineVersion = "3.0.5"
+val caffeineVersion = "3.1.0"
 val coroutinesVersion = "1.6.1"
 val jacksonVersion = "2.13.3"
 val kluentVersion = "1.68"
 val ktorVersion = "2.0.1"
-val logbackVersion = "1.2.10"
-val logstashEncoderVersion = "7.0.1"
+val logbackVersion = "1.2.11"
+val logstashEncoderVersion = "7.1.1"
 val prometheusVersion = "0.15.0"
 val smCommonVersion = "1.f132f2b"
-val spekVersion = "2.0.17"
-val mockkVersion = "1.12.2"
+val kotestVersion = "5.3.0"
+val mockkVersion = "1.12.4"
 val kotlinVersion = "1.6.21"
 
 plugins {
@@ -74,17 +74,10 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
-        exclude(group = "org.eclipse.jetty") // conflicts with WireMock
-    }
-
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.eclipse.jetty")
     }
 }
 
@@ -112,7 +105,6 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform {
-            includeEngines("spek2")
         }
         testLogging {
             showStandardStreams = true
