@@ -66,7 +66,7 @@ class SyketilfelleClientTest : FunSpec({
 
             startdato shouldBeEqualTo null
         }
-        test("Startdato er satt hvis tom i tidligere sykeforløp er mindre enn 16 dager før første fom i sykmelding") {
+        test("Startdato er satt hvis tom i tidligere sykeforløp er 16 dager før første fom i sykmelding") {
             val startdato = syketilfelleClient.finnStartdato(
                 listOf(
                     lagSykeforloep(
@@ -80,6 +80,21 @@ class SyketilfelleClientTest : FunSpec({
             )
 
             startdato shouldBeEqualTo oppfolgingsdato
+        }
+        test("Startdato er satt hvis tom i tidligere sykeforløp er mindre enn 16 dager før første fom i sykmelding") {
+            val startdato = syketilfelleClient.finnStartdato(
+                listOf(
+                    lagSykeforloep(
+                        LocalDate.of(2022, 2, 10),
+                        fom = LocalDate.of(2022, 4, 21),
+                        tom = LocalDate.of(2022, 5, 5)
+                    )
+                ),
+                listOf(lagPeriode(fom = LocalDate.of(2022, 5, 11), tom = LocalDate.of(2022, 5, 18))),
+                loggingMeta
+            )
+
+            startdato shouldBeEqualTo LocalDate.of(2022, 2, 10)
         }
         test("Startdato er null hvis fom i tidligere sykeforløp er mer enn 16 dager før siste tom i sykmelding") {
             val startdato = syketilfelleClient.finnStartdato(
