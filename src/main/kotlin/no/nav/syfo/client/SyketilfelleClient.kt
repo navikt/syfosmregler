@@ -47,7 +47,11 @@ class SyketilfelleClient(
     }
 
     private fun SimpleSykmelding.erSammeOppfolgingstilfelle(periodeRange: ClosedRange<LocalDate>): Boolean {
+        val fomRange = fom.minusDays(16).rangeTo(fom)
+        val tomRange = tom.rangeTo(tom.plusDays(16))
         if (fom.minusDays(16) in periodeRange || tom.plusDays(16) in periodeRange) {
+            return true
+        } else if (periodeRange.start in fomRange || periodeRange.endInclusive in tomRange) {
             return true
         }
         return false
