@@ -207,7 +207,7 @@ class ValidationRuleChain(
                 val rulesetVersion = metadata.rulesetVersion
             },
             predicate = {
-                it.rulesetVersion !in arrayOf(null, "", "1", "2")
+                it.rulesetVersion !in arrayOf(null, "", "1", "2", "3")
             }
         ),
 
