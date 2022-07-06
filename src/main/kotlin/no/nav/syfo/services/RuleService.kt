@@ -122,6 +122,7 @@ class RuleService(
             smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
+                receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,
                 loggingMeta
             )
         } else {
