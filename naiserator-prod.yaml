@@ -64,7 +64,7 @@ spec:
     - name: SMREGISTER_URL
       value: https://smregister.intern.nav.no
     - name: SMREGISTER_AUDIENCE
-      value: prod-gcp:teamsykmelding:syfosmregister
+      value: api://prod-gcp.teamsykmelding.syfosmregister/.default
     - name: PDL_GRAPHQL_PATH
       value: https://pdl-api.nais.adeo.no/graphql
     - name: PDL_SCOPE
