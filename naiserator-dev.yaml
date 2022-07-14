@@ -41,6 +41,11 @@ spec:
     inbound:
       rules:
         - application: syfosmmottak
+    outbound:
+      rules:
+        - application: syfosmregister
+          namespace: teamsykmelding
+          cluster: dev-gcp
   vault:
     enabled: true
     paths:
