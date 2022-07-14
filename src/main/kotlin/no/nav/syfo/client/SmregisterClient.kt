@@ -19,7 +19,7 @@ import java.time.OffsetDateTime
 class SmregisterClient(
     private val smregisterEndpointURL: String,
     private val accessTokenClientV2: AzureAdV2Client,
-    private val resourceId: String,
+    private val scope: String,
     private val httpClient: HttpClient
 ) {
 
@@ -59,7 +59,7 @@ class SmregisterClient(
     private suspend fun hentSykmeldinger(fnr: String): List<SykmeldingDTO> =
         httpClient.get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
             accept(ContentType.Application.Json)
-            val accessToken = accessTokenClientV2.getAccessToken(resourceId)
+            val accessToken = accessTokenClientV2.getAccessToken(scope)
             if (accessToken?.accessToken == null) {
                 throw RuntimeException("Klarte ikke hente ut accessToken for smregister")
             }
