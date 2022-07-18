@@ -41,11 +41,6 @@ spec:
     inbound:
       rules:
         - application: syfosmmottak
-    outbound:
-      rules:
-        - application: syfosmregister
-          namespace: teamsykmelding
-          cluster: dev-gcp
   vault:
     enabled: true
     paths:
@@ -61,10 +56,8 @@ spec:
       value: api://dev-fss.teamsykmelding.syfohelsenettproxy/.default
     - name: HELSENETT_ENDPOINT_URL
       value: https://syfohelsenettproxy.nais.preprod.local
-    - name: SMREGISTER_URL
-      value: https://smregister.dev.nav.no
-    - name: SMREGISTER_AUDIENCE
-      value: api://dev-gcp.teamsykmelding.syfosmregister/.default
+    - name: SMREGISTER_SCOPE
+      value: "api://dev-fss.teamsykmelding.syfosmregister/.default"
     - name: PDL_GRAPHQL_PATH
       value: https://pdl-api.nais.preprod.local/graphql
     - name: PDL_SCOPE
