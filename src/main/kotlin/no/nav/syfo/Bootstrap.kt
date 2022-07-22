@@ -104,7 +104,7 @@ fun main() {
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, azureAdV2Client, env.syketilfelleScope, httpClient)
     val norskHelsenettClient =
         NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)
-    val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterScope, httpClient)
+    val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterAudience, httpClient)
 
     val pdlClient = PdlClient(
         httpClient, env.pdlGraphqlPath,
