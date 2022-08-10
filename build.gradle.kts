@@ -14,8 +14,8 @@ val logbackVersion = "1.2.11"
 val logstashEncoderVersion = "7.2"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "1.cb455aa"
-val kotestVersion = "5.4.0"
-val mockkVersion = "1.12.4"
+val kotestVersion = "5.4.1"
+val mockkVersion = "1.12.5"
 val kotlinVersion = "1.7.10"
 
 plugins {
