@@ -8,6 +8,7 @@ import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
+import java.time.LocalDateTime
 import java.util.UUID
 
 data class JuridiskVurderingResult(
@@ -65,7 +66,8 @@ class JuridiskVurderingService(
                     true -> ruleResult.rule.status
                     else -> Status.OK
                 }
-            )
+            ),
+            tidsstempel = LocalDateTime.now()
         )
     }
 
