@@ -24,7 +24,6 @@ import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
-import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.kafka.aiven.KafkaUtils
 import no.nav.syfo.kafka.toProducerConfig
@@ -34,11 +33,9 @@ import no.nav.syfo.services.JuridiskVurderingService
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.utils.JacksonKafkaSerializer
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.ProxySelector
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -54,7 +51,6 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
 @DelicateCoroutinesApi
 fun main() {
     val env = Environment()
-    val credentials = VaultCredentials()
     if (Diagnosekoder.icd10.isEmpty() || Diagnosekoder.icpc2.isEmpty()) {
         throw RuntimeException("ICD10 or ICPC2 diagnose codes failed to load.")
     }
@@ -85,22 +81,16 @@ fun main() {
         }
     }
 
-    val proxyConfig: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
-        config()
-        engine {
-            customizeClient {
-                setRoutePlanner(SystemDefaultRoutePlanner(ProxySelector.getDefault()))
-            }
-        }
-    }
-
-    val httpClientWithProxy = HttpClient(Apache, proxyConfig)
     val httpClient = HttpClient(Apache, config)
+    val azureAdV2Client = AzureAdV2Client(env, httpClient)
 
-    val oidcClient =
-        StsOidcClient(credentials.serviceuserUsername, credentials.serviceuserPassword, env.securityTokenServiceURL)
-    val legeSuspensjonClient = LegeSuspensjonClient(env.legeSuspensjonEndpointURL, credentials, oidcClient, httpClient)
-    val azureAdV2Client = AzureAdV2Client(env, httpClientWithProxy)
+    val legeSuspensjonClient = LegeSuspensjonClient(
+        endpointUrl = env.legeSuspensjonProxyEndpointURL,
+        azureAdV2Client = azureAdV2Client,
+        httpClient = httpClient,
+        scope = env.legeSuspensjonProxyScope
+    )
+
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, azureAdV2Client, env.syketilfelleScope, httpClient)
     val norskHelsenettClient =
         NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)

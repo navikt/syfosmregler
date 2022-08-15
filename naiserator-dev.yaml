@@ -13,19 +13,19 @@ spec:
     cpuThresholdPercentage: 90
   port: 8080
   liveness:
-    path: /is_alive
+    path: /internal/is_alive
     initialDelay: 10
     timeout: 5
     periodSeconds: 5
     failureThreshold: 30
   readiness:
-    path: /is_ready
+    path: /internal/is_ready
     initialDelay: 30
     periodSeconds: 5
     timeout: 1
   prometheus:
     enabled: true
-    path: /prometheus
+    path: /internal/prometheus
   resources:
     limits:
       cpu: 500m
@@ -41,35 +41,38 @@ spec:
     inbound:
       rules:
         - application: syfosmmottak
+          namespace: teamsykmelding
+          cluster: dev-fss
     outbound:
       rules:
         - application: syfosmregister
           namespace: teamsykmelding
           cluster: dev-gcp
   vault:
-    enabled: true
-    paths:
-      - kvPath: serviceuser/data/dev/srvsyfosmregler
-        mountPath: /secrets/serviceuser
-  webproxy: true
+    enabled: false
+  webproxy: false
   kafka:
     pool: nav-dev
   ingresses:
-    - "https://syfosmregler.nais.preprod.local"
+    - "https://syfosmregler.dev.intern.nav.no"
   env:
     - name: HELSENETT_SCOPE
       value: api://dev-fss.teamsykmelding.syfohelsenettproxy/.default
     - name: HELSENETT_ENDPOINT_URL
-      value: https://syfohelsenettproxy.nais.preprod.local
+      value: https://syfohelsenettproxy.dev-fss-pub.nais.io
     - name: SMREGISTER_URL
       value: https://smregister.dev.nav.no
     - name: SMREGISTER_AUDIENCE
       value: api://dev-gcp.teamsykmelding.syfosmregister/.default
     - name: PDL_GRAPHQL_PATH
-      value: https://pdl-api.nais.preprod.local/graphql
+      value: https://pdl-api.dev-fss-pub.nais.io/graphql
     - name: PDL_SCOPE
       value: api://dev-fss.pdl.pdl-api/.default
     - name: SYKETILLFELLE_ENDPOINT_URL
       value: https://flex-syketilfelle.dev.intern.nav.no
     - name: SYKETILLFELLE_SCOPE
       value: api://dev-gcp.flex.flex-syketilfelle/.default
+    - name: LEGE_SUSPENSJON_PROXY_ENDPOINT_URL
+      value: https://smgcp-proxy.dev-fss-pub.nais.io
+    - name: LEGE_SUSPENSJON_PROXY_SCOPE
+      value: api://dev-fss.teamsykmelding.smgcp-proxy/.default
