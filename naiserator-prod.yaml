@@ -42,7 +42,7 @@ spec:
       rules:
         - application: syfosmmottak
           namespace: teamsykmelding
-          cluster: prod-fss
+          cluster: prod-gcp
     outbound:
       rules:
         - application: syfosmregister
