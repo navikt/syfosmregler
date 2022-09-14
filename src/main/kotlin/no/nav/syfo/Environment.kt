@@ -13,7 +13,7 @@ data class Environment(
     val clientIdV2: String = getEnvVar("AZURE_APP_CLIENT_ID"),
     val clientSecretV2: String = getEnvVar("AZURE_APP_CLIENT_SECRET"),
     val helsenettproxyScope: String = getEnvVar("HELSENETT_SCOPE"),
-    val smregisterEndpointURL: String = getEnvVar("SMREGISTER_URL", "http://smregister"),
+    val smregisterEndpointURL: String = getEnvVar("SMREGISTER_URL", "http://syfosmregister"),
     val smregisterAudience: String = getEnvVar("SMREGISTER_AUDIENCE"),
     val pdlScope: String = getEnvVar("PDL_SCOPE"),
     val pdlGraphqlPath: String = getEnvVar("PDL_GRAPHQL_PATH"),
