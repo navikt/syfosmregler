@@ -4,7 +4,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.fields
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
@@ -31,6 +30,7 @@ import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.sm.isICD10
 import no.nav.syfo.sm.isICPC2
+import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

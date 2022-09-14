@@ -8,8 +8,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.engine.apache.ApacheEngineConfig
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.cio.CIOEngineConfig
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.network.sockets.SocketTimeoutException
@@ -63,7 +64,7 @@ fun main() {
         .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
 
-    val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
+    val config: HttpClientConfig<CIOEngineConfig>.() -> Unit = {
         install(ContentNegotiation) {
             jackson {
                 registerKotlinModule()
@@ -79,9 +80,24 @@ fun main() {
                 }
             }
         }
+        install(HttpRequestRetry) {
+            constantDelay(100, 0, false)
+            retryOnExceptionIf(3) { request, throwable ->
+                log.warn("Caught exception ${throwable.message}, for url ${request.url}")
+                true
+            }
+            retryIf(maxRetries) { request, response ->
+                if (response.status.value.let { it in 500..599 }) {
+                    log.warn("Retrying for statuscode ${response.status.value}, for url ${request.url}")
+                    true
+                } else {
+                    false
+                }
+            }
+        }
     }
 
-    val httpClient = HttpClient(Apache, config)
+    val httpClient = HttpClient(CIO, config)
     val azureAdV2Client = AzureAdV2Client(env, httpClient)
 
     val legeSuspensjonClient = LegeSuspensjonClient(

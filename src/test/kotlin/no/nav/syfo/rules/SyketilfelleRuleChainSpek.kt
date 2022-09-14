@@ -1,8 +1,6 @@
 package no.nav.syfo.rules
 
 import io.kotest.core.spec.style.FunSpec
-import no.nav.syfo.QuestionGroup
-import no.nav.syfo.QuestionId
 import no.nav.syfo.generateKontaktMedPasient
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
@@ -14,6 +12,8 @@ import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.SvarRestriksjon
+import no.nav.syfo.questions.QuestionGroup
+import no.nav.syfo.questions.QuestionId
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo

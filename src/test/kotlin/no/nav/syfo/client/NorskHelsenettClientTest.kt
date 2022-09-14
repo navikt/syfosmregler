@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.core.spec.style.FunSpec
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
+import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.call
@@ -19,9 +19,9 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.azuread.v2.AzureAdV2Token
+import no.nav.syfo.utils.LoggingMeta
 import org.amshove.kluent.shouldBeEqualTo
 import java.io.IOException
 import java.net.ServerSocket
@@ -32,7 +32,7 @@ import kotlin.test.assertFailsWith
 class NorskHelsenettClientTest : FunSpec({
     val fnr = "12345678912"
     val accessTokenClientMock = mockk<AzureAdV2Client>()
-    val httpClient = HttpClient(Apache) {
+    val httpClient = HttpClient(CIO) {
         install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
             jackson {
                 registerKotlinModule()

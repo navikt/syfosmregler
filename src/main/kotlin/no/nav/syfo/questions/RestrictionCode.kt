@@ -1,4 +1,4 @@
-package no.nav.syfo
+package no.nav.syfo.questions
 
 enum class RestrictionCode(val codeValue: String, val text: String, val oid: String = "2.16.578.1.12.4.1.1.8134") {
     RESTRICTED_FOR_EMPLOYER("A", "Informasjonen skal ikke vises arbeidsgiver"),

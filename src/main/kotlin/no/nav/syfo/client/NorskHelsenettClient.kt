@@ -11,10 +11,10 @@ import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
 import net.logstash.logback.argument.StructuredArguments.fields
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
+import no.nav.syfo.utils.LoggingMeta
 import java.io.IOException
 
 class NorskHelsenettClient(

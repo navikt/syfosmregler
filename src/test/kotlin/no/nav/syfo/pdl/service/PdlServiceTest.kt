@@ -4,7 +4,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.mockk.coEvery
 import io.mockk.mockkClass
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.azuread.v2.AzureAdV2Token
 import no.nav.syfo.pdl.client.PdlClient
@@ -15,6 +14,7 @@ import no.nav.syfo.pdl.client.model.IdentInformasjon
 import no.nav.syfo.pdl.client.model.Identliste
 import no.nav.syfo.pdl.client.model.PdlResponse
 import no.nav.syfo.pdl.error.PersonNotFoundInPdl
+import no.nav.syfo.utils.LoggingMeta
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.OffsetDateTime
 import kotlin.test.assertFailsWith

@@ -4,12 +4,12 @@ import io.kotest.core.spec.style.FunSpec
 import io.ktor.client.HttpClient
 import io.mockk.coEvery
 import io.mockk.mockk
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.azuread.v2.AzureAdV2Token
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.MedisinskArsak
 import no.nav.syfo.model.Periode
+import no.nav.syfo.utils.LoggingMeta
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 import java.time.OffsetDateTime
