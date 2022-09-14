@@ -37,9 +37,6 @@ private fun validatePersonAndPersonDNumberRange(personNumber: String): Boolean {
 fun validatePersonAndDNumber(personNumber: String): Boolean =
     validatePersonDNumberMod11(personNumber) && validatePersonAndPersonDNumberRange(personNumber)
 
-fun validatePersonAndDNumber11Digits(personNumber: String): Boolean =
-    personNumber.length == 11
-
 fun validatePersonNumberRange(personNumberFirstAndSecoundChar: String): Boolean {
     return personNumberFirstAndSecoundChar.toInt() in 1..31
 }

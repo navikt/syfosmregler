@@ -1,6 +1,5 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.QuestionGroup
 import no.nav.syfo.model.Rule
 import no.nav.syfo.model.RuleChain
 import no.nav.syfo.model.RuleMetadata
@@ -9,6 +8,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.questions.QuestionGroup
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
 

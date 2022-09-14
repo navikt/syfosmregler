@@ -2,11 +2,11 @@ package no.nav.syfo.pdl.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import net.logstash.logback.argument.StructuredArguments
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.pdl.client.PdlClient
 import no.nav.syfo.pdl.error.PersonNotFoundInPdl
 import no.nav.syfo.pdl.model.PdlPerson
+import no.nav.syfo.utils.LoggingMeta
 import org.slf4j.LoggerFactory
 import java.time.Duration
 

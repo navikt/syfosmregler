@@ -1,4 +1,4 @@
-package no.nav.syfo
+package no.nav.syfo.utils
 
 data class LoggingMeta(
     val mottakId: String,

@@ -9,9 +9,9 @@ import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import net.logstash.logback.argument.StructuredArguments.fields
-import no.nav.syfo.LoggingMeta
 import no.nav.syfo.api.log
 import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.utils.LoggingMeta
 import java.io.IOException
 
 class LegeSuspensjonClient(
