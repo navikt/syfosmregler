@@ -8,6 +8,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.sm.Diagnosekoder
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -31,7 +32,7 @@ class PeriodLogicRuleChain(
                 val perioder = sykmelding.perioder
             },
             predicate = { input ->
-                input.perioder.isNullOrEmpty()
+                input.perioder.isEmpty()
             }
         ),
 
@@ -97,7 +98,7 @@ class PeriodLogicRuleChain(
                 for (i in 1 until input.periodeRanges.size) {
                     gapBetweenPeriods =
                         workdaysBetween(input.periodeRanges[i - 1].second, input.periodeRanges[i].first) > 0
-                    if (gapBetweenPeriods == true) {
+                    if (gapBetweenPeriods) {
                         break
                     }
                 }
@@ -167,6 +168,29 @@ class PeriodLogicRuleChain(
                 when (it.forsteFomDato) {
                     null -> false
                     else -> it.forsteFomDato > it.behandletTidspunkt.plusDays(30).toLocalDate()
+                }
+            }
+        ),
+
+        // En sykmelding kan ikke fremdateres mer enn 30 dager
+        // Hvis sykmeldingen er fremdatert mer enn 30 dager etter konsultasjonsdato/signaturdato og diagnosekode
+        // systemet er ICD-10 sendes meldingen til manuell behanlding.
+        Rule(
+            name = "FREMDATERT_ICD_10",
+            ruleId = 9999,
+            status = Status.MANUAL_PROCESSING,
+            messageForUser = "Sykmeldingen er datert mer enn 30 dager fram i tid og har diagnoskode system ICD-10",
+            messageForSender = "Sykmeldingen er fremdatert mer enn 30 dager etter behandletDato og har diagnoskode system ICD-10",
+            juridiskHenvisning = null,
+            input = object {
+                val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
+                val behandletTidspunkt = metadata.behandletTidspunkt
+                val hovedDiagnose = sykmelding.medisinskVurdering.hovedDiagnose
+            },
+            predicate = {
+                when (it.forsteFomDato) {
+                    null -> false
+                    else -> it.forsteFomDato > it.behandletTidspunkt.plusDays(30).toLocalDate() && it.hovedDiagnose?.system.equals(Diagnosekoder.ICD10_CODE)
                 }
             }
         ),

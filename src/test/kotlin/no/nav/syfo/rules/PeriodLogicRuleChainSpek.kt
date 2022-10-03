@@ -2,10 +2,13 @@ package no.nav.syfo.rules
 
 import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.generateGradert
+import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.sm.Diagnosekoder
+import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -283,6 +286,38 @@ class PeriodLogicRuleChainSpek : FunSpec({
             )
 
             PeriodLogicRuleChain(sykmelding, ruleMetadata()).getRuleByName("FREMDATERT")
+                .executeRule().result shouldBeEqualTo false
+        }
+
+        test("Should check rule FREMDATERT_ICD_10, should trigger rule") {
+            val sykmelding = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icd10["U071"]!!.toDiagnose()),
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().plusDays(31),
+                        tom = LocalDate.now().plusDays(37)
+                    )
+                ),
+                behandletTidspunkt = LocalDateTime.now()
+            )
+
+            PeriodLogicRuleChain(sykmelding, ruleMetadata()).getRuleByName("FREMDATERT_ICD_10")
+                .executeRule().result shouldBeEqualTo true
+        }
+
+        test("Should check rule FREMDATERT_ICD_10, should NOT trigger rule") {
+            val sykmelding = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icd10["U071"]!!.toDiagnose()),
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().plusDays(29),
+                        tom = LocalDate.now().plusDays(31)
+                    )
+                ),
+                behandletTidspunkt = LocalDateTime.now().minusDays(1)
+            )
+
+            PeriodLogicRuleChain(sykmelding, ruleMetadata()).getRuleByName("FREMDATERT_ICD_10")
                 .executeRule().result shouldBeEqualTo false
         }
 
