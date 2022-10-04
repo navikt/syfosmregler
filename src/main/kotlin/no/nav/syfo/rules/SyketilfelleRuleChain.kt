@@ -263,6 +263,45 @@ class SyketilfelleRuleChain(
         // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært
         // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
         //
+        // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
+        //
+        // Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
+        Rule(
+            name = "TILBAKEDATERT_UTEN_BEGRUNNELSE_FORLENGELSE_ICD_10",
+            ruleId = 9999,
+            status = Status.MANUAL_PROCESSING,
+            messageForUser = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
+            messageForSender = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
+            juridiskHenvisning = JuridiskHenvisning(
+                lovverk = Lovverk.FOLKETRYGDLOVEN,
+                paragraf = "8-7",
+                ledd = 2,
+                punktum = null,
+                bokstav = null
+            ),
+            input = object {
+                val erNyttSyketilfelle = ruleMetadataSykmelding.erNyttSyketilfelle
+                val erEttersendingAvTidligereSykmelding = ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding
+                val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
+                val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
+                val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
+                val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
+                val erCoronaRelatert = erCoronaRelatert(sykmelding)
+                val kontaktDato = sykmelding.kontaktMedPasient.kontaktDato
+            },
+            predicate = {
+                !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
+                    it.erFraSpesialisthelsetjenesten &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
+                    !it.erCoronaRelatert && it.kontaktDato == null
+            }
+        ),
+
+        // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
+        // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært
+        // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
+        //
         // En tilbakedatert sykmelding må inneholde dato for kontakt eller begrunnelse for at den skal godkjennes.
         //
         // Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.
