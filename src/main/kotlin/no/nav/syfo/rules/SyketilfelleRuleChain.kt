@@ -263,7 +263,7 @@ class SyketilfelleRuleChain(
         // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært
         // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
         //
-        // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
+        // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10 går den til manuell behandling
         //
         // Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
         Rule(
