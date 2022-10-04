@@ -293,8 +293,11 @@ class SyketilfelleRuleChain(
                 !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
                     it.erFraSpesialisthelsetjenesten &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
-                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert && it.kontaktDato == null
+                    !it.erCoronaRelatert && it.kontaktDato == null &&
+                    (
+                        it.begrunnelseIkkeKontakt.isNullOrEmpty() ||
+                            !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())
+                        )
             }
         ),
 
