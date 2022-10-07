@@ -6,7 +6,7 @@ import no.nav.syfo.rules.workdaysBetween
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 
-class TestHelperSpek : FunSpec({
+object TestHelperSpek : FunSpec({
     fun date(year: Int, month: Int, day: Int) =
         LocalDate.of(year, month, day)
     context("Test helpers") {

@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class SyketilfelleRuleChainSpek : FunSpec({
+object SyketilfelleRuleChainSpek : FunSpec({
     context("Testing validation rules and checking the rule outcomes") {
         test("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger regel pga kort begrunnelse") {
             val healthInformation = generateSykmelding(

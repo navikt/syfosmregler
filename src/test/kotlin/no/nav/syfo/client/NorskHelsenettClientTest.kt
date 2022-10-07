@@ -29,7 +29,7 @@ import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
 
-class NorskHelsenettClientTest : FunSpec({
+object NorskHelsenettClientTest : FunSpec({
     val fnr = "12345678912"
     val accessTokenClientMock = mockk<AzureAdV2Client>()
     val httpClient = HttpClient(CIO) {

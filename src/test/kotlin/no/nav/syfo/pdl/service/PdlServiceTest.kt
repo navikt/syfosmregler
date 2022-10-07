@@ -19,7 +19,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import java.time.OffsetDateTime
 import kotlin.test.assertFailsWith
 
-class PdlServiceTest : FunSpec({
+object PdlServiceTest : FunSpec({
     val pdlClient = mockkClass(PdlClient::class)
     val accessTokenClientMock = mockkClass(AzureAdV2Client::class)
     val pdlService = PdlPersonService(pdlClient, accessTokenClientMock, "scope")

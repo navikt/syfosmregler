@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 
 val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
-class ValidationRuleChainSpek : FunSpec({
+object ValidationRuleChainSpek : FunSpec({
     fun ruleMetadata(
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),

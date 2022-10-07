@@ -35,7 +35,7 @@ import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-class SmregisterClientTest : FunSpec({
+object SmregisterClientTest : FunSpec({
     val loggingMeta = LoggingMeta("", "", "", "")
     val accessTokenClientMock = mockk<AzureAdV2Client>()
     val httpClient = HttpClient(CIO) {

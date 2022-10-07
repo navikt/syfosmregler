@@ -9,7 +9,7 @@ import no.nav.syfo.generateSykmelding
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 
-class HPRRuleChainSpek : FunSpec({
+object HPRRuleChainSpek : FunSpec({
     context("Testing validation rules and checking the rule outcomes") {
         test("Should check rule BEHANDLER_IKKE_GYLDIG_I_HPR, should trigger rule") {
             val healthInformation = generateSykmelding()

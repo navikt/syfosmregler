@@ -10,7 +10,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class PeriodLogicRuleChainSpek : FunSpec({
+object PeriodLogicRuleChainSpek : FunSpec({
     fun ruleMetadata(
         receivedDate: LocalDateTime = LocalDateTime.now(),
         signatureDate: LocalDateTime = LocalDateTime.now(),

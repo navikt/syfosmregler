@@ -14,7 +14,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
-class SyketilfelleClientTest : FunSpec({
+object SyketilfelleClientTest : FunSpec({
     val loggingMeta = LoggingMeta("", "", "", "")
     val oppfolgingsdato = LocalDate.of(2021, 1, 3)
     val accessTokenClientMock = mockk<AzureAdV2Client>()

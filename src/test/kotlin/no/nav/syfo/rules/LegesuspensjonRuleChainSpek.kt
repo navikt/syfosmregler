@@ -3,7 +3,7 @@ package no.nav.syfo.rules
 import io.kotest.core.spec.style.FunSpec
 import org.amshove.kluent.shouldBeEqualTo
 
-class LegesuspensjonRuleChainSpek : FunSpec({
+object LegesuspensjonRuleChainSpek : FunSpec({
     context("Testing validation rules and checking the rule outcomes") {
         test("Should check rule BEHANDLER_SUSPENDERT, should trigger rule") {
             val suspended = true
