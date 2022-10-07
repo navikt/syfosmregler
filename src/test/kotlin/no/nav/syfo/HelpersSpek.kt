@@ -7,7 +7,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import java.io.IOException
 
-class HelpersSpek : FunSpec({
+object HelpersSpek : FunSpec({
 
     context("Retries") {
         test("Returns result success") {

@@ -9,7 +9,7 @@ import io.ktor.server.testing.handleRequest
 import no.nav.syfo.application.ApplicationState
 import org.amshove.kluent.shouldBeEqualTo
 
-class SelftestSpek : FunSpec({
+object SelftestSpek : FunSpec({
 
     context("Successfull liveness and readyness tests") {
         with(TestApplicationEngine()) {

@@ -9,13 +9,13 @@ val caffeineVersion = "3.1.1"
 val coroutinesVersion = "1.6.4"
 val jacksonVersion = "2.13.4"
 val kluentVersion = "1.68"
-val ktorVersion = "2.1.1"
-val logbackVersion = "1.4.0"
+val ktorVersion = "2.1.2"
+val logbackVersion = "1.4.3"
 val logstashEncoderVersion = "7.2"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "1.ea531b3"
-val kotestVersion = "5.4.2"
-val mockkVersion = "1.12.8"
+val kotestVersion = "5.5.0"
+val mockkVersion = "1.13.2"
 val kotlinVersion = "1.7.10"
 
 plugins {
@@ -56,7 +56,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
 
     implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-networking:$smCommonVersion")
