@@ -162,12 +162,13 @@ class SyketilfelleRuleChain(
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
+                val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
                     it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert
+                    !it.erCoronaRelatert && !it.erFraSpesialisthelsetjenesten
             }
         ),
 
@@ -259,11 +260,8 @@ class SyketilfelleRuleChain(
             }
         ),
 
-        // §8-7 Legeerklæring kan ikke godtas for tidsrom før medlemmet ble undersøkt av lege.
-        // En legeerklæring for tidsrom før medlemmet søkte lege kan likevel godtas dersom medlemmet har vært
-        // forhidret fra å søke lege og det er godtgjort at han eller hun har vært arbeidsufør fra et tidligere tidspunkt.
-        //
-        // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10 går den til manuell behandling
+        // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10 går den til
+        // manuell behandling
         //
         // Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
         Rule(
@@ -272,13 +270,7 @@ class SyketilfelleRuleChain(
             status = Status.MANUAL_PROCESSING,
             messageForUser = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
             messageForSender = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
-            juridiskHenvisning = JuridiskHenvisning(
-                lovverk = Lovverk.FOLKETRYGDLOVEN,
-                paragraf = "8-7",
-                ledd = 2,
-                punktum = null,
-                bokstav = null
-            ),
+            juridiskHenvisning = null,
             input = object {
                 val erNyttSyketilfelle = ruleMetadataSykmelding.erNyttSyketilfelle
                 val erEttersendingAvTidligereSykmelding = ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding

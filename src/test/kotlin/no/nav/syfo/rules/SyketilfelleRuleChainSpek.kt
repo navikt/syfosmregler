@@ -725,6 +725,40 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
+        test("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger when rule ICD-10") {
+            val healthInformation = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(hovedDiagnose = Diagnosekoder.icd10["S821"]!!.toDiagnose()),
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().minusMonths(1).minusDays(1),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "")
+            )
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now(),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = LocalDate.now()
+                ),
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false
+            )
+
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
+                .executeRule().result shouldBeEqualTo false
+        }
+
         test("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
