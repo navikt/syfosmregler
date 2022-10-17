@@ -162,12 +162,13 @@ class SyketilfelleRuleChain(
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
+                val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
                     it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert
+                    !it.erCoronaRelatert && !it.erFraSpesialisthelsetjenesten
             }
         ),
 
@@ -255,6 +256,39 @@ class SyketilfelleRuleChain(
                         !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
                             it.utdypendeOpplysninger.isEmpty() &&
                             it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
+                        )
+            }
+        ),
+
+        // Dersom sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10 går den til
+        // manuell behandling
+        //
+        // Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
+        Rule(
+            name = "TILBAKEDATERT_UTEN_BEGRUNNELSE_FORLENGELSE_ICD_10",
+            ruleId = 9999,
+            status = Status.MANUAL_PROCESSING,
+            messageForUser = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
+            messageForSender = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
+            juridiskHenvisning = null,
+            input = object {
+                val erNyttSyketilfelle = ruleMetadataSykmelding.erNyttSyketilfelle
+                val erEttersendingAvTidligereSykmelding = ruleMetadataSykmelding.erEttersendingAvTidligereSykmelding
+                val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
+                val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
+                val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
+                val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
+                val erCoronaRelatert = erCoronaRelatert(sykmelding)
+                val kontaktDato = sykmelding.kontaktMedPasient.kontaktDato
+            },
+            predicate = {
+                !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
+                    it.erFraSpesialisthelsetjenesten &&
+                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    !it.erCoronaRelatert && it.kontaktDato == null &&
+                    (
+                        it.begrunnelseIkkeKontakt.isNullOrEmpty() ||
+                            !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())
                         )
             }
         ),
