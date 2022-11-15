@@ -140,7 +140,50 @@ object HPRRuleChainSpek : FunSpec({
                 healthInformation,
                 BehandlerOgStartdato(behandler, null),
             ).getRuleByName("BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR").executeRule().result shouldBeEqualTo false
+
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null),
+            ).getRuleByName("BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR").executeRule().rule.
+            messageForSender shouldBeEqualTo "Behandler finnes i HPR, men er ikke lege, kiropraktor, fysioterapeut, " +
+                    "manuellterapeut eller tannlege. Pasienten har fått beskjed."
+
         }
+        test("Should check rule BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR, should trigger rule") {
+            val hprNummer = 23123222
+            val healthInformation = generateSykmelding()
+            val behandler = Behandler(
+                godkjenninger = listOf(
+                    Godkjenning(
+                        autorisasjon = Kode(
+                            aktiv = true,
+                            oid = 0,
+                            verdi = ""
+                        ),
+                        helsepersonellkategori = Kode(
+                            aktiv = true,
+                            oid = 0,
+                            verdi = "UR"
+                        )
+                    )
+                ),
+                hprNummer = hprNummer
+            )
+
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null),
+            ).getRuleByName("BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR").executeRule().result shouldBeEqualTo true
+
+            HPRRuleChain(
+                healthInformation,
+                BehandlerOgStartdato(behandler, null),
+            ).getRuleByName("BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR").executeRule().rule.
+            messageForSender shouldBeEqualTo "Behandler med HPR-nummer: $hprNummer finnes i HPR, men er ikke lege, " +
+                    "kiropraktor, fysioterapeut, manuellterapeut eller tannlege. Pasienten har fått beskjed."
+
+        }
+
 
         test("Should check rule BEHANDLER_MT_OR_FT_OR_KI_OVER_12_WEEKS, should trigger rule") {
             val healthInformation = generateSykmelding(

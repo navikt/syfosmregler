@@ -57,7 +57,14 @@ class HPRRuleChain(
             ruleId = 1407,
             status = Status.INVALID,
             messageForUser = "Den som skrev sykmeldingen manglet autorisasjon.",
-            messageForSender = "Behandler finnes i HPR men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. Pasienten har fått beskjed.",
+            messageForSender = if (behandlerOgStartdato.behandler.hprNummer != null) {
+                "Behandler med HPR-nummer: ${behandlerOgStartdato.behandler.hprNummer} finnes i HPR, " +
+                        "men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. " +
+                        "Pasienten har fått beskjed."
+            }
+            else {"Behandler finnes i HPR, " +
+                    "men er ikke lege, kiropraktor, fysioterapeut, manuellterapeut eller tannlege. " +
+                    "Pasienten har fått beskjed."},
             juridiskHenvisning = null,
             input = object {
                 val behandlerGodjenninger = behandlerOgStartdato.behandler.godkjenninger
