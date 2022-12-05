@@ -231,12 +231,12 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo true
         }
-        test("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger regel fordi TOM er etter sluttdato for covid19") {
+        test("Should check rule TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE, trigger regel fordi FOM er etter sluttdato for covid19") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
-                        fom = LocalDate.of(2022, 12, 20),
-                        tom = LocalDate.of(2023, 1, 1)
+                        fom = LocalDate.of(2023, 1, 1),
+                        tom = LocalDate.of(2023, 1, 20)
                     )
                 ),
                 kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "Begrunnelse"),
@@ -247,7 +247,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 ruleMetadata = RuleMetadata(
                     signatureDate = LocalDateTime.now(),
                     receivedDate = LocalDateTime.now(),
-                    behandletTidspunkt = LocalDateTime.of(LocalDate.of(2022, 12, 30), LocalTime.NOON),
+                    behandletTidspunkt = LocalDateTime.of(LocalDate.of(2023, 1, 10), LocalTime.NOON),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",

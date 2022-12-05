@@ -210,7 +210,7 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
         ) &&
         (
             sykmelding.perioder.any { it.fom.isAfter(koronaStartdato) } &&
-                sykmelding.perioder.any { it.tom.isBefore(koronaSluttdato) }
+                sykmelding.perioder.any { it.fom.isBefore(koronaSluttdato) }
             )
 }
 
