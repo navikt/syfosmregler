@@ -190,6 +190,9 @@ class RuleService(
     }
 }
 
+val koronaStartdato: LocalDate = LocalDate.of(2020, 2, 24)
+val koronaSluttdato: LocalDate = LocalDate.of(2023, 1, 1)
+
 /**
  * Spesialsjekk for å avlaste behandlere i kjølvannet av COVID-19-utbruddet mars 2020.
  */
@@ -205,7 +208,10 @@ fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
             (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U072" }) ||
             sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any { it == AnnenFraverGrunn.SMITTEFARE } ?: false
         ) &&
-        sykmelding.perioder.any { it.fom.isAfter(LocalDate.of(2020, 2, 24)) }
+        (
+            sykmelding.perioder.any { it.fom.isAfter(koronaStartdato) } &&
+                sykmelding.perioder.any { it.fom.isBefore(koronaSluttdato) }
+            )
 }
 
 fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
