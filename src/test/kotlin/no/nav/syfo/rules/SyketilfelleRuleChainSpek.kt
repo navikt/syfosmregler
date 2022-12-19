@@ -1478,6 +1478,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 .executeRule().result shouldBeEqualTo false
         }
         test("TILBAKEDATERT_FORLENGELSE_UNDER_1_MND trigges hvis begrunnelse ikke inneholder bokstaver") {
+            val begrunnelseIkkeKontakt = "63"
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -1485,7 +1486,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                         tom = LocalDate.now()
                     )
                 ),
-                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "6.3")
+                kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = begrunnelseIkkeKontakt)
             )
 
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
