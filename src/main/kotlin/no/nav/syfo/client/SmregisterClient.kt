@@ -43,7 +43,9 @@ class SmregisterClient(
                         )
                 ) {
                     log.info(
-                        "Fant sykmelding med delvis overlappende periode og samme diagnose og type som ikke er tilbakedatert {}",
+                        "Fant sykmelding med delvis overlappende periode og samme diagnose og type som ikke er tilbakedatert, " +
+                            "sykmeldingsID {} {}",
+                        it.id,
                         fields(loggingMeta)
                     )
                     return true

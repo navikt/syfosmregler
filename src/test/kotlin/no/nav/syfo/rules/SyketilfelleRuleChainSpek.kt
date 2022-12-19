@@ -1487,6 +1487,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 ),
                 kontaktMedPasient = KontaktMedPasient(kontaktDato = null, begrunnelseIkkeKontakt = "6.3")
             )
+
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = RuleMetadata(
                     signatureDate = LocalDateTime.now(),
