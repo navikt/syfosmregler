@@ -46,7 +46,7 @@ class SyketilfelleRuleChain(
             predicate = {
                 it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(8) &&
-                    (it.begrunnelseIkkeKontakt.isNullOrEmpty() || !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())) &&
+                    (it.begrunnelseIkkeKontakt.isNullOrEmpty() || !containsLetters(it.begrunnelseIkkeKontakt)) &&
                     !it.erKoronaRelatert
             }
         ),
@@ -208,7 +208,7 @@ class SyketilfelleRuleChain(
                     !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                     !it.erCoronaRelatert &&
                     (
-                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
+                        !containsLetters(it.begrunnelseIkkeKontakt) &&
                             it.utdypendeOpplysninger.isEmpty() &&
                             it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
                         )
@@ -253,7 +253,7 @@ class SyketilfelleRuleChain(
                     !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                     !it.erCoronaRelatert &&
                     !(
-                        !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex()) &&
+                        !containsLetters(it.begrunnelseIkkeKontakt) &&
                             it.utdypendeOpplysninger.isEmpty() &&
                             it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
                         )
@@ -287,8 +287,7 @@ class SyketilfelleRuleChain(
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
                     !it.erCoronaRelatert && it.kontaktDato == null &&
                     (
-                        it.begrunnelseIkkeKontakt.isNullOrEmpty() ||
-                            !it.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())
+                        it.begrunnelseIkkeKontakt.isNullOrEmpty() || !containsLetters(it.begrunnelseIkkeKontakt)
                         )
             }
         ),
@@ -328,12 +327,16 @@ class SyketilfelleRuleChain(
                     input.behandletDato <= input.forsteFomDato.plusDays(30) &&
                     (
                         input.kontaktDato == null &&
-                            (input.begrunnelseIkkeKontakt.isNullOrEmpty() || !input.begrunnelseIkkeKontakt.contains("""[A-Za-z]""".toRegex())) &&
+                            (input.begrunnelseIkkeKontakt.isNullOrEmpty() || !containsLetters(input.begrunnelseIkkeKontakt)) &&
                             !input.erCoronaRelatert
                         )
             }
         )
     )
+}
+
+fun containsLetters(text: String): Boolean {
+    return text.contains("""[A-Za-z]""".toRegex())
 }
 
 data class RuleMetadataSykmelding(
