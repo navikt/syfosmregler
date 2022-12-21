@@ -281,6 +281,7 @@ class SyketilfelleRuleChain(
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val kontaktDato = sykmelding.kontaktMedPasient.kontaktDato
             },
+
             predicate = {
                 !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
                     it.erFraSpesialisthelsetjenesten &&

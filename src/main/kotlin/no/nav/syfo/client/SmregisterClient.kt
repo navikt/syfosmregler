@@ -27,19 +27,25 @@ class SmregisterClient(
         log.info("Sjekker om finnes sykmeldinger med samme fom som ikke er tilbakedatert {}", fields(loggingMeta))
         val forsteFomIMottattSykmelding = periodeliste.sortedFOMDate().firstOrNull() ?: return false
         val sisteTomIMottattSykmelding = periodeliste.sortedTOMDate().lastOrNull() ?: return false
-        val mottattSykmeldingRange = forsteFomIMottattSykmelding.minusDays(3).rangeTo(sisteTomIMottattSykmelding.plusDays(3))
+        val mottattSykmeldingRange = forsteFomIMottattSykmelding.rangeTo(sisteTomIMottattSykmelding)
         try {
             val sykmeldinger = hentSykmeldinger(fnr)
             sykmeldinger.filter {
                 it.behandlingsutfall.status != RegelStatusDTO.INVALID && it.behandletTidspunkt.toLocalDate() <= forsteFomIMottattSykmelding.plusDays(8)
             }.forEach {
-                if (it.sykmeldingsperioder.sortedFOMDate().firstOrNull() == forsteFomIMottattSykmelding) {
+                if (it.sykmeldingsperioder.sortedFOMDate().first() == forsteFomIMottattSykmelding) {
                     log.info("Fant sykmelding med samme fom som ikke er tilbakedatert {}", fields(loggingMeta))
                     return true
                 } else if (it.medisinskVurdering?.hovedDiagnose?.kode == diagnosekode &&
                     (
-                        (it.sykmeldingsperioder.sortedFOMDate().firstOrNull() in mottattSykmeldingRange && it.sykmeldingsperioder.minByOrNull { it.fom }!!.periodelisteInneholderSammeType(periodeliste)) ||
-                            (it.sykmeldingsperioder.sortedTOMDate().lastOrNull() in mottattSykmeldingRange && it.sykmeldingsperioder.maxByOrNull { it.tom }!!.periodelisteInneholderSammeType(periodeliste))
+                        (
+                            it.sykmeldingsperioder.sortedFOMDate().first() in mottattSykmeldingRange &&
+                                it.sykmeldingsperioder.minByOrNull { it.fom }!!.periodelisteInneholderSammeType(periodeliste)
+                            ) ||
+                            (
+                                it.sykmeldingsperioder.sortedTOMDate().last() in mottattSykmeldingRange &&
+                                    it.sykmeldingsperioder.maxByOrNull { it.tom }!!.periodelisteInneholderSammeType(periodeliste)
+                                )
                         )
                 ) {
                     log.info(

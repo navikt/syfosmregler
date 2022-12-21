@@ -190,12 +190,13 @@ object SmregisterClientTest : FunSpec({
 private fun sykmeldingRespons(
     fom: LocalDate,
     behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
-    behandletDato: LocalDate? = null
+    behandletDato: LocalDate? = null,
+    tom: LocalDate = fom.plusMonths(1)
 ) = listOf(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
         behandlingsutfall = behandlingsutfallDTO,
-        sykmeldingsperioder = listOf(SykmeldingsperiodeDTO(fom, fom.plusMonths(1), null, PeriodetypeDTO.AKTIVITET_IKKE_MULIG)),
+        sykmeldingsperioder = listOf(SykmeldingsperiodeDTO(fom, tom, null, PeriodetypeDTO.AKTIVITET_IKKE_MULIG)),
         behandletTidspunkt = if (behandletDato != null) {
             OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
         } else {
