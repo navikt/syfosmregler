@@ -9,6 +9,7 @@ import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.services.erCoronaRelatert
 import no.nav.syfo.services.kommerFraSpesialisthelsetjenesten
+import java.time.LocalDate
 
 class SyketilfelleRuleChain(
     private val sykmelding: Sykmelding,
@@ -241,6 +242,7 @@ class SyketilfelleRuleChain(
                 val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
                 val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
+                val sisteTomDato = sykmelding.perioder.sortedTOMDate().last()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
@@ -249,7 +251,8 @@ class SyketilfelleRuleChain(
             predicate = {
                 !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
                     !it.erFraSpesialisthelsetjenesten &&
-                    it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
+                    it.erTilbakedatertOver30Dager &&
+                    it.erOver30dager &&
                     !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                     !it.erCoronaRelatert &&
                     !(
@@ -345,3 +348,7 @@ data class RuleMetadataSykmelding(
     val erNyttSyketilfelle: Boolean,
     val erEttersendingAvTidligereSykmelding: Boolean?,
 )
+
+fun lengdeOver30Dager(fom: LocalDate, tom: LocalDate): Boolean {
+    return (fom..tom).daysBetween() > 30
+}

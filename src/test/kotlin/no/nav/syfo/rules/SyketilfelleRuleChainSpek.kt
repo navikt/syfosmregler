@@ -923,7 +923,10 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_FORLENGELSE_OVER_1_MND")
                 .executeRule().result shouldBeEqualTo false
         }
-        test("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges hvis begrunnelse ikke inneholder bokstaver, og utd.oppl og melding til NAV mangler") {
+        test(
+            "TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges hvis begrunnelse ikke inneholder" +
+                " bokstaver, og utd.oppl og melding til NAV mangler"
+        ) {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -1073,7 +1076,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
-                        fom = LocalDate.now(),
+                        fom = LocalDate.now().minusDays(31),
                         tom = LocalDate.now()
                     )
                 ),
@@ -1361,6 +1364,74 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     signatureDate = LocalDateTime.now(),
                     receivedDate = LocalDateTime.now(),
                     behandletTidspunkt = LocalDateTime.now().plusDays(31),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = LocalDate.now()
+                ),
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false
+            )
+
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo false
+        }
+        test("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE trigges hvis sykmeldingsperioden er over 31 dager") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().minusDays(32),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "Viktig møte på jobb"
+                )
+            )
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now(),
+                    patientPersonNumber = "1232345244",
+                    rulesetVersion = "2",
+                    legekontorOrgnr = "12313",
+                    tssid = "1355435",
+                    avsenderFnr = "1345525522",
+                    pasientFodselsdato = LocalDate.now()
+                ),
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false
+            )
+
+            SyketilfelleRuleChain(
+                healthInformation,
+                ruleMetadataSykmelding
+            ).getRuleByName("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE")
+                .executeRule().result shouldBeEqualTo true
+        }
+        test("TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE trigges ikke hvis sykmeldingsperioden er under 31 dager") {
+            val healthInformation = generateSykmelding(
+                perioder = listOf(
+                    generatePeriode(
+                        fom = LocalDate.now().minusDays(30),
+                        tom = LocalDate.now()
+                    )
+                ),
+                kontaktMedPasient = generateKontaktMedPasient(
+                    begrunnelseIkkeKontakt = "Viktig møte på jobb"
+                )
+            )
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = RuleMetadata(
+                    signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
+                    behandletTidspunkt = LocalDateTime.now(),
                     patientPersonNumber = "1232345244",
                     rulesetVersion = "2",
                     legekontorOrgnr = "12313",
