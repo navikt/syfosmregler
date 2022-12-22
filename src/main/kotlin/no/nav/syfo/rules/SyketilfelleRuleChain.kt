@@ -247,6 +247,8 @@ class SyketilfelleRuleChain(
                 val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
                 val meldingTilNav = sykmelding.meldingTilNAV
+                val erOver30dager = lengdeOver30Dager(forsteFomDato, sisteTomDato)
+                val erTilbakedatertOver30Dager = lengdeOver30Dager(forsteFomDato, behandletTidspunkt.toLocalDate())
             },
             predicate = {
                 !it.erNyttSyketilfelle && it.erEttersendingAvTidligereSykmelding != true &&
