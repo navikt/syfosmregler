@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit
 
 class PeriodLogicRuleChain(
     sykmelding: Sykmelding,
-    metadata: RuleMetadata,
+    metadata: RuleMetadata
 ) : RuleChain {
     override val rules: List<Rule<*>> = listOf(
         // Sykmeldingen må inneholden en fom-dato og en tom-dato
@@ -140,11 +140,12 @@ class PeriodLogicRuleChain(
             null,
             input = object {
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
+                val dagensDato = metadata.currentDate
             },
             predicate = { input ->
                 when (input.forsteFomDato) {
                     null -> false
-                    else -> input.forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
+                    else -> input.forsteFomDato.atStartOfDay().isBefore(input.dagensDato.minusYears(3).atStartOfDay())
                 }
             }
         ),

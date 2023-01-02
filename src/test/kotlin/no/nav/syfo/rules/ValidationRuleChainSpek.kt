@@ -40,7 +40,8 @@ object ValidationRuleChainSpek : FunSpec({
             legekontorOrgNr,
             tssid,
             avsenderfnr,
-            pasientFodselsdato
+            pasientFodselsdato,
+            LocalDate.now()
         )
     }
 

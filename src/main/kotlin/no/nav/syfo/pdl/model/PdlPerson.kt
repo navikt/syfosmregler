@@ -3,10 +3,12 @@ package no.nav.syfo.pdl.model
 import no.nav.syfo.pdl.client.model.Foedsel
 import no.nav.syfo.pdl.client.model.IdentInformasjon
 
+const val FOLKEREGISTERIDENT = "FOLKEREGISTERIDENT"
+const val AKTORID = "AKTORID"
 data class PdlPerson(
     val identer: List<IdentInformasjon>,
     val foedsel: List<Foedsel>?
 ) {
-    val fnr: String? = identer.firstOrNull { it.gruppe == "FOLKEREGISTERIDENT" }?.ident
-    val aktorId: String? = identer.firstOrNull { it.gruppe == "AKTORID" }?.ident
+    val fnr: String? = identer.firstOrNull { it.gruppe == FOLKEREGISTERIDENT }?.ident
+    val aktorId: String? = identer.firstOrNull { it.gruppe == AKTORID }?.ident
 }

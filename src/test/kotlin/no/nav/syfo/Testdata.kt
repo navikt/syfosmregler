@@ -20,6 +20,7 @@ import no.nav.syfo.model.MedisinskVurdering
 import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.Prognose
+import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
@@ -29,6 +30,40 @@ import java.util.UUID
 import kotlin.random.Random
 
 fun Diagnosekoder.DiagnosekodeType.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
+
+fun generateReceivedSykmelding(
+    fom: LocalDate,
+    tom: LocalDate,
+    behandletTidspunkt: LocalDateTime = fom.atStartOfDay(),
+    kontaktMedPasient: KontaktMedPasient = KontaktMedPasient(null, null)
+): ReceivedSykmelding {
+    return ReceivedSykmelding(
+        sykmelding = generateSykmelding(
+            perioder = listOf(generatePeriode(fom = fom, tom = tom)),
+            behandletTidspunkt = behandletTidspunkt,
+            kontaktMedPasient = kontaktMedPasient
+        ),
+        personNrPasient = "1",
+        tlfPasient = null,
+        personNrLege = "2",
+        legeHelsepersonellkategori = "LE",
+        legeHprNr = null,
+        navLogId = UUID.randomUUID().toString(),
+        msgId = UUID.randomUUID().toString(),
+        legekontorOrgNr = null,
+        legekontorHerId = null,
+        legekontorOrgName = "legekontor",
+        legekontorReshId = null,
+        mottattDato = LocalDateTime.now(),
+        rulesetVersion = null,
+        merknader = null,
+        partnerreferanse = null,
+        vedlegg = null,
+        utenlandskSykmelding = null,
+        fellesformat = "felles",
+        tssid = null
+    )
+}
 
 fun generateSykmelding(
     id: String = UUID.randomUUID().toString(),

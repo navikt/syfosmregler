@@ -47,8 +47,8 @@ class RuleService(
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
-    @DelicateCoroutinesApi
-    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding, currentDate: LocalDate = LocalDate.now()): ValidationResult = with(GlobalScope) {
         val loggingMeta = LoggingMeta(
             mottakId = receivedSykmelding.navLogId,
             orgNr = receivedSykmelding.legekontorOrgNr,
@@ -79,7 +79,8 @@ class RuleService(
             legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
             tssid = receivedSykmelding.tssid,
             avsenderFnr = receivedSykmelding.personNrLege,
-            pasientFodselsdato = fodselsdato
+            pasientFodselsdato = fodselsdato,
+            currentDate = currentDate
         )
 
         val doctorSuspendDeferred = async {

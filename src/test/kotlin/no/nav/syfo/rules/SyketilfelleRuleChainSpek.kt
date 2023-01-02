@@ -43,7 +43,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -78,7 +79,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -112,7 +114,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -146,7 +149,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -185,7 +189,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -219,7 +224,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -253,7 +259,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -286,7 +293,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -318,7 +326,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -350,7 +359,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = true
@@ -382,7 +392,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -414,7 +425,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -446,7 +458,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = null
@@ -480,7 +493,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = null
@@ -513,7 +527,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -547,7 +562,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = null
@@ -579,7 +595,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -611,7 +628,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -646,7 +664,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -681,7 +700,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = true,
                 erEttersendingAvTidligereSykmelding = false
@@ -713,7 +733,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -747,7 +768,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -780,7 +802,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -815,7 +838,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -846,7 +870,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -877,7 +902,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = null
@@ -911,7 +937,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -948,7 +975,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -982,7 +1010,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1025,7 +1054,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1060,7 +1090,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1094,7 +1125,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1129,7 +1161,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1165,7 +1198,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1200,7 +1234,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1236,7 +1271,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1270,7 +1306,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = true
@@ -1304,7 +1341,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1335,7 +1373,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1369,7 +1408,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1403,7 +1443,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1437,7 +1478,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1469,7 +1511,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1501,7 +1544,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1536,7 +1580,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false
@@ -1570,7 +1615,8 @@ class SyketilfelleRuleChainSpek : FunSpec({
                     legekontorOrgnr = "12313",
                     tssid = "1355435",
                     avsenderFnr = "1345525522",
-                    pasientFodselsdato = LocalDate.now()
+                    pasientFodselsdato = LocalDate.now(),
+                    currentDate = LocalDate.now()
                 ),
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false

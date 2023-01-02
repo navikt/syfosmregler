@@ -27,7 +27,8 @@ object PeriodLogicRuleChainSpek : FunSpec({
         "123456789",
         tssid,
         avsenderFnr,
-        pasientFodselsdato = LocalDate.now()
+        pasientFodselsdato = LocalDate.now(),
+        currentDate = LocalDate.now()
     )
 
     context("Testing validation rules and checking the rule outcomes") {
