@@ -41,7 +41,7 @@ class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
     private val norskHelsenettClient: NorskHelsenettClient,
-    private val smregisterClient: SmregisterClient,
+    private val sykmeldingService: SykmeldingService,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
 ) {
@@ -120,11 +120,11 @@ class RuleService(
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
         val erEttersendingAvTidligereSykmelding = if (erTilbakedatertMedBegrunnelse(receivedSykmelding)) {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+            sykmeldingService.isOkTilbakedatert(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
                 receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,
-                loggingMeta
+                loggingMeta,
             )
         } else {
             null

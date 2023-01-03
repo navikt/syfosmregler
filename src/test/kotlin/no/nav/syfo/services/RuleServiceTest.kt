@@ -19,6 +19,7 @@ import no.nav.syfo.pdl.client.model.IdentInformasjon
 import no.nav.syfo.pdl.model.FOLKEREGISTERIDENT
 import no.nav.syfo.pdl.model.PdlPerson
 import no.nav.syfo.pdl.service.PdlPersonService
+import no.nav.syfo.sykmeldingRespons
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 
@@ -29,12 +30,12 @@ class RuleServiceTest : FunSpec({
     val smregisterClient = mockk<SmregisterClient>()
     val pdlService = mockk<PdlPersonService>()
     val juridiskVurderingService = mockk<JuridiskVurderingService>(relaxed = true)
-
+    val sykmeldingService = SykmeldingService(smregisterClient)
     val ruleService = RuleService(
         legeSuspensjonClient = legeSuspensjonsClient,
         syketilfelleClient = syketilfelleClient,
         norskHelsenettClient = norskHelsenettClient,
-        smregisterClient = smregisterClient,
+        sykmeldingService = sykmeldingService,
         pdlService = pdlService,
         juridiskVurderingService = juridiskVurderingService
     )
@@ -51,18 +52,21 @@ class RuleServiceTest : FunSpec({
             ),
             1
         )
-        coEvery { smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(any(), any(), any(), any()) } returns false
+        coEvery { smregisterClient.hentSykmeldinger(any()) } returns emptyList()
         coEvery { pdlService.getPdlPerson(any(), any()) } returns PdlPerson(
             identer = listOf(IdentInformasjon("1", false, FOLKEREGISTERIDENT)),
             foedsel = listOf(Foedsel(LocalDate.of(2000, 1, 1).toString()))
         )
     }
-    context("Test rulechain") {
+    context("Tilbakedaterte sykmeldinger") {
         test("Test OK") {
             val sykmelding = generateReceivedSykmelding(
                 LocalDate.of(2020, 1, 1),
                 LocalDate.of(2020, 1, 2),
-                kontaktMedPasient = KontaktMedPasient(kontaktDato = LocalDate.of(2020, 1, 1), begrunnelseIkkeKontakt = null)
+                kontaktMedPasient = KontaktMedPasient(
+                    kontaktDato = LocalDate.of(2020, 1, 1),
+                    begrunnelseIkkeKontakt = null
+                )
             )
             val rules = ruleService.executeRuleChains(sykmelding, currentDate = LocalDate.of(2020, 1, 1))
             rules.ruleHits shouldBeEqualTo emptyList()
@@ -93,7 +97,7 @@ class RuleServiceTest : FunSpec({
             rules.status shouldBeEqualTo Status.INVALID
         }
 
-        test("Over 31 dager skal til manuell") {
+        test("Over 31 dager skal avvises") {
             val sykmelding = generateReceivedSykmelding(
                 fom = LocalDate.of(2020, 1, 1),
                 tom = LocalDate.of(2020, 1, 2),
@@ -103,10 +107,56 @@ class RuleServiceTest : FunSpec({
                     begrunnelseIkkeKontakt = ""
                 )
             )
-            val rules = ruleService.executeRuleChains(sykmelding, LocalDate.of(2020, 1, 1))
+            val rules =
+                ruleService.executeRuleChains(sykmelding, sykmelding.sykmelding.behandletTidspunkt.toLocalDate())
             rules.ruleHits.size shouldBeEqualTo 1
             rules.ruleHits.first().ruleName shouldBeEqualTo "TILBAKEDATERT_FORLENGELSE_OVER_1_MND"
-            rules.status shouldBeEqualTo Status.MANUAL_PROCESSING
+            rules.status shouldBeEqualTo Status.INVALID
+        }
+    }
+
+    context("Test tilbakedaterte symeldinger som dekker et hull") {
+        context("case 1:") {
+            val forsteSykmelding = sykmeldingRespons(
+                fom = LocalDate.of(2020, 9, 1),
+                tom = LocalDate.of(2020, 9, 14)
+            )
+            val andreSykmelding = sykmeldingRespons(
+                fom = LocalDate.of(2020, 9, 18),
+                tom = LocalDate.of(2020, 9, 30)
+            )
+
+            val tilbakedatertSykmelding = generateReceivedSykmelding(
+                fom = LocalDate.of(2020, 9, 15),
+                tom = LocalDate.of(2020, 9, 17),
+                behandletTidspunkt = LocalDate.of(2020, 10, 12).atStartOfDay(),
+                kontaktMedPasient = KontaktMedPasient(LocalDate.of(2020, 10, 17), "")
+            )
+            coEvery { smregisterClient.hentSykmeldinger(any()) } returns forsteSykmelding + andreSykmelding
+
+            test("< 31 dager tilbakedatert, < 31 dager hull") {
+
+                val rules = ruleService.executeRuleChains(tilbakedatertSykmelding, LocalDate.of(2020, 10, 15))
+
+                rules.ruleHits shouldBeEqualTo emptyList()
+                rules.status shouldBeEqualTo Status.OK
+            }
+
+            test(">= 31 dager tilbakedaterst, < 31 dager hull") {
+                val sykmelding = tilbakedatertSykmelding.copy(
+                    sykmelding = tilbakedatertSykmelding.sykmelding.copy(
+                        behandletTidspunkt = LocalDate.of(
+                            2020,
+                            10,
+                            20
+                        ).atStartOfDay()
+                    )
+                )
+                val rules = ruleService.executeRuleChains(sykmelding, sykmelding.sykmelding.behandletTidspunkt.toLocalDate())
+                rules.ruleHits.size shouldBeEqualTo 1
+                rules.ruleHits.first().ruleName shouldBeEqualTo "TILBAKEDATERT_FORLENGELSE_OVER_1_MND"
+                rules.status shouldBeEqualTo Status.MANUAL_PROCESSING
+            }
         }
     }
 })

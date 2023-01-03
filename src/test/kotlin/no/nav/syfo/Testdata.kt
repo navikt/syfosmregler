@@ -1,5 +1,12 @@
 package no.nav.syfo
 
+import no.nav.syfo.client.BehandlingsutfallDTO
+import no.nav.syfo.client.DiagnoseDTO
+import no.nav.syfo.client.MedisinskVurderingDTO
+import no.nav.syfo.client.PeriodetypeDTO
+import no.nav.syfo.client.RegelStatusDTO
+import no.nav.syfo.client.SykmeldingDTO
+import no.nav.syfo.client.SykmeldingsperiodeDTO
 import no.nav.syfo.model.Adresse
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.AnnenFraversArsak
@@ -26,10 +33,41 @@ import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.random.Random
 
 fun Diagnosekoder.DiagnosekodeType.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
+fun sykmeldingRespons(
+    fom: LocalDate,
+    behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
+    behandletDato: LocalDate? = null,
+    tom: LocalDate = fom.plusMonths(1)
+) = listOf(
+    SykmeldingDTO(
+        id = UUID.randomUUID().toString(),
+        behandlingsutfall = behandlingsutfallDTO,
+        sykmeldingsperioder = listOf(SykmeldingsperiodeDTO(fom, tom, null, PeriodetypeDTO.AKTIVITET_IKKE_MULIG)),
+        behandletTidspunkt = if (behandletDato != null) {
+            OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
+        } else {
+            OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
+        },
+        medisinskVurdering = MedisinskVurderingDTO(DiagnoseDTO("L89"))
+    )
+)
+
+fun lagPeriode(fom: LocalDate, tom: LocalDate) =
+    Periode(
+        fom = fom,
+        tom = tom,
+        aktivitetIkkeMulig = AktivitetIkkeMulig(null, null),
+        avventendeInnspillTilArbeidsgiver = null,
+        behandlingsdager = null,
+        gradert = null,
+        reisetilskudd = false
+    )
 
 fun generateReceivedSykmelding(
     fom: LocalDate,

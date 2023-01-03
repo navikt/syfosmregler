@@ -33,6 +33,7 @@ import no.nav.syfo.pdl.client.PdlClient
 import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.services.JuridiskVurderingService
 import no.nav.syfo.services.RuleService
+import no.nav.syfo.services.SykmeldingService
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.utils.JacksonKafkaSerializer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -134,11 +135,15 @@ fun main() {
         KafkaProducer(kafkaProperties),
         env.etterlevelsesTopic
     )
+
+    val sykmeldingService = SykmeldingService(
+        smregisterClient = smregisterClient
+    )
     val ruleService = RuleService(
         legeSuspensjonClient,
         syketilfelleClient,
         norskHelsenettClient,
-        smregisterClient,
+        sykmeldingService,
         pdlService,
         juridiskVurderingService,
     )
