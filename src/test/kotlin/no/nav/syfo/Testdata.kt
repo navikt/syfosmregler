@@ -31,13 +31,15 @@ import kotlin.random.Random
 fun Diagnosekoder.DiagnosekodeType.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
 
 fun generateSykmelding(
+    fom: LocalDate = LocalDate.now(),
+    tom: LocalDate = LocalDate.now().plusDays(10),
     id: String = UUID.randomUUID().toString(),
     pasientAktoerId: String = UUID.randomUUID().toString(),
     signaturDato: LocalDateTime = LocalDateTime.now(),
     syketilfelleStartDato: LocalDate = LocalDate.now(),
     medisinskVurdering: MedisinskVurdering = generateMedisinskVurdering(),
     skjermetForPasient: Boolean = false,
-    perioder: List<Periode> = listOf(generatePeriode()),
+    perioder: List<Periode> = listOf(generatePeriode(fom = fom, tom = tom)),
     prognose: Prognose = generatePrognose(),
     utdypendeOpplysninger: Map<String, Map<String, SporsmalSvar>> = mapOf(),
     tiltakArbeidsplassen: String? = null,
