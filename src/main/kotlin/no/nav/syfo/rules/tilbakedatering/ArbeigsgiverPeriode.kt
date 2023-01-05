@@ -11,6 +11,6 @@ class ArbeigsgiverPeriode(yes: RuleNode, no: RuleNode) : RuleNode(yes, no) {
         val fom = sykmelding.perioder.sortedFOMDate().first()
         val tom = sykmelding.perioder.sortedTOMDate().last()
 
-        return ChronoUnit.DAYS.between(fom, tom) > 16
+        return ChronoUnit.DAYS.between(fom, tom) < 16
     }
 }
