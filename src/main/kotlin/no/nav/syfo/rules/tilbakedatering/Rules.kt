@@ -2,7 +2,6 @@ package no.nav.syfo.rules.tilbakedatering
 
 import no.nav.syfo.rules.containsLetters
 import no.nav.syfo.rules.dsl.Rule
-import no.nav.syfo.rules.dsl.RuleExecution
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.sortedTOMDate
@@ -26,7 +25,8 @@ val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->
 
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
-        ruleResult = RuleExecution(TILBAKEDATERING, (behandletTidspunkt.isAfter(fom.plusDays(3))))
+        rule = TILBAKEDATERING,
+        ruleResult = behandletTidspunkt.isAfter(fom.plusDays(3))
     )
 }
 
@@ -35,7 +35,8 @@ val tilbakedateringInntil31Dager: TilbakedateringRule = { sykmelding, _ ->
     val behandletTidspunkt = sykmelding.behandletTidspunkt.toLocalDate()
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
-        ruleResult = RuleExecution(TILBAKEDATERT_INNTIL_30_DAGER, (behandletTidspunkt.isBefore(fom.plusDays(31))))
+        rule = TILBAKEDATERT_INNTIL_30_DAGER,
+        ruleResult = (behandletTidspunkt.isBefore(fom.plusDays(31)))
     )
 }
 
@@ -44,7 +45,8 @@ val tilbakedateringInntil8Dager: TilbakedateringRule = { sykmelding, _ ->
     val behandletTidspunkt = sykmelding.behandletTidspunkt.toLocalDate()
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
-        ruleResult = RuleExecution(TILBAKEDATERT_INNTIL_8_DAGER, (behandletTidspunkt.isBefore(fom.plusDays(9))))
+        rule = TILBAKEDATERT_INNTIL_8_DAGER,
+        ruleResult = (behandletTidspunkt.isBefore(fom.plusDays(9)))
     )
 }
 
@@ -58,7 +60,8 @@ val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, _ ->
             "tom" to tom,
             "arbeidsgiverperiode" to arbeidsgiverperiode
         ),
-        ruleResult = RuleExecution(ARBEIDSGIVERPERIODE, arbeidsgiverperiode)
+        rule = ARBEIDSGIVERPERIODE,
+        ruleResult = arbeidsgiverperiode
     )
 }
 
@@ -68,7 +71,8 @@ val begrunnelse_min_1_ord: TilbakedateringRule = { sykmelding, _ ->
     val result = wordCount >= 1
     RuleResult(
         ruleInputs = mapOf("begrunnelse" to begrunnelse),
-        ruleResult = RuleExecution(BEGRUNNELSE_MIN_1_ORD, result)
+        rule = BEGRUNNELSE_MIN_1_ORD,
+        ruleResult = result
     )
 }
 
@@ -78,7 +82,8 @@ val begrunnelse_min_3_ord: TilbakedateringRule = { sykmelding, _ ->
     val result = wordCount >= 3
     RuleResult(
         ruleInputs = mapOf("begrunnelse" to begrunnelse),
-        ruleResult = RuleExecution(BEGRUNNELSE_MIN_3_ORD, result)
+        rule = BEGRUNNELSE_MIN_3_ORD,
+        ruleResult = result
     )
 }
 
@@ -86,7 +91,8 @@ val ettersending: TilbakedateringRule = { _, metadata ->
     val result = metadata.erEttersendingAvTidligereSykmelding ?: false
     RuleResult(
         ruleInputs = mutableMapOf("ettersending" to result),
-        ruleResult = RuleExecution(ETTERSENDING, result)
+        rule = ETTERSENDING,
+        ruleResult = result
     )
 }
 
@@ -94,7 +100,8 @@ val forlengelse: TilbakedateringRule = { _, metadata ->
     val forlengelse = !metadata.erNyttSyketilfelle
     RuleResult(
         ruleInputs = mapOf("forlengelse" to forlengelse),
-        ruleResult = RuleExecution(FORLENGELSE, (forlengelse))
+        rule = FORLENGELSE,
+        ruleResult = (forlengelse)
     )
 }
 
@@ -106,7 +113,8 @@ val spesialisthelsetjenesten: TilbakedateringRule = { sykmelding, _ ->
             "hoveddiagnose" to (hoveddiagnose ?: ""),
             "spesialisthelsetjenesten" to spesialhelsetjenesten
         ),
-        ruleResult = RuleExecution(SPESIALISTHELSETJENESTEN, spesialhelsetjenesten)
+        rule = SPESIALISTHELSETJENESTEN,
+        ruleResult = spesialhelsetjenesten
     )
 }
 

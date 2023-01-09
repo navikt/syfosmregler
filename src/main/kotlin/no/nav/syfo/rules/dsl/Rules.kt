@@ -6,31 +6,24 @@ import no.nav.syfo.rules.RuleMetadataSykmelding
 
 typealias Rule<T> = (sykmelding: Sykmelding, metadata: RuleMetadataSykmelding) -> RuleResult<T>
 
-data class RuleExecution<T>(
-    val rule: T,
-    val result: Boolean
-)
-
 data class RuleResult<T>(
     val ruleInputs: Map<String, Any> = emptyMap(),
-    val ruleResult: RuleExecution<T>
+    val ruleResult: Boolean,
+    val rule: T,
 )
 
 data class TreeOutput<T>(
     val ruleInputs: Map<String, Any> = mapOf(),
-    val rulePath: List<RuleExecution<T>> = emptyList(),
+    val rulePath: List<RuleResult<T>> = emptyList(),
     val status: Status
 )
 
-infix fun <T> RuleResult<T>.join(rulesOutput: TreeOutput<T>) =
-    TreeOutput(
-        ruleInputs = ruleInputs + rulesOutput.ruleInputs,
-        rulePath = listOf(ruleResult) + rulesOutput.rulePath,
-        status = rulesOutput.status
-    )
-
-infix fun <T> Status.join(treeOutput: TreeOutput<T>) = TreeOutput(
-    ruleInputs = treeOutput.ruleInputs,
-    rulePath = treeOutput.rulePath,
-    status = this
+fun <T> TreeOutput<T>.printRulePath() {
+    rulePath.joinToString(separator = "->") { "${it.rule}(${if (it.ruleResult) "yes" else "no"})" }
+        .plus("->$status")
+}
+infix fun <T> RuleResult<T>.join(rulesOutput: TreeOutput<T>) = TreeOutput(
+    ruleInputs = ruleInputs + rulesOutput.ruleInputs,
+    rulePath = listOf(this) + rulesOutput.rulePath,
+    status = rulesOutput.status
 )

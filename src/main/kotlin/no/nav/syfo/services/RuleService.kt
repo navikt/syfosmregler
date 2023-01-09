@@ -138,7 +138,7 @@ class RuleService(
             erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
         )
 
-        tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, ruleMetadataSykmelding = ruleMetadataSykmelding)
+        tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, metadata = ruleMetadataSykmelding)
 
         val result = listOf(
             ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).executeRules(),

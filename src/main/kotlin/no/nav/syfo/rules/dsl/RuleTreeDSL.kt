@@ -4,23 +4,26 @@ import no.nav.syfo.model.Status
 
 sealed class TreeNode<T>
 
-class RuleNode<T>(val rule: T) : TreeNode<T>() {
-    lateinit var yes: TreeNode<T>
-    lateinit var no: TreeNode<T>
+class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
 
-    fun yes(rule: T, init: RuleNode<T>.() -> Unit) {
+    private lateinit var yes: TreeNode<T>
+    private lateinit var no: TreeNode<T>
+
+    internal fun yes(rule: T, init: RuleNode<T>.() -> Unit) {
         yes = RuleNode(rule).apply(init)
     }
-    fun no(rule: T, init: RuleNode<T>.() -> Unit) {
+    internal fun no(rule: T, init: RuleNode<T>.() -> Unit) {
         no = RuleNode(rule).apply(init)
     }
 
-    fun yes(result: Status) {
+    internal fun yes(result: Status) {
         yes = ResultNode(result)
     }
-    fun no(result: Status) {
+    internal fun no(result: Status) {
         no = ResultNode(result)
     }
+
+    internal fun nextChildNode(ruleResult: RuleResult<T>) = if (ruleResult.ruleResult) yes else no
 }
 
 class ResultNode<T>(val result: Status) : TreeNode<T>()
