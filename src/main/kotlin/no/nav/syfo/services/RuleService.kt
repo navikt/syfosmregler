@@ -28,6 +28,7 @@ import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.sortedFOMDate
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.sm.isICD10
 import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.utils.LoggingMeta
@@ -44,6 +45,7 @@ class RuleService(
     private val smregisterClient: SmregisterClient,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
+    private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution()
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -135,6 +137,8 @@ class RuleService(
             erNyttSyketilfelle = syketilfelleStartdato == null,
             erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
         )
+
+        tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, ruleMetadataSykmelding = ruleMetadataSykmelding)
 
         val result = listOf(
             ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).executeRules(),
