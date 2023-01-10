@@ -15,19 +15,22 @@ typealias TilbakedateringTreeNode = TreeNode<TilbakedateringRules>
 
 class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNode = tilbakedateringRuleTree) {
     fun runRules(sykmelding: Sykmelding, metadata: RuleMetadataSykmelding): TilbakedateringTreeOutput =
-        rootNode.evaluate(sykmelding, metadata).also { tilbakedateringRulePath ->
-            log.info("Rules ${sykmelding.id}, ${tilbakedateringRulePath.printRulePath()}")
-        }
+        rootNode
+            .evaluate(sykmelding, metadata)
+            .also { tilbakedateringRulePath ->
+                log.info("Rules ${sykmelding.id}, ${tilbakedateringRulePath.printRulePath()}")
+            }
 }
 
 private fun TreeNode<TilbakedateringRules>.evaluate(
     sykmelding: Sykmelding,
-    metadata: RuleMetadataSykmelding
+    metadata: RuleMetadataSykmelding,
 ): TilbakedateringTreeOutput =
     when (this) {
         is ResultNode -> TilbakedateringTreeOutput(status = result)
         is RuleNode -> {
-            val result = getRule(rule)(sykmelding, metadata)
+            val rule = getRule(rule)
+            val result = rule(sykmelding, metadata)
             val childNode = if (result.ruleResult) yes else no
             result join childNode.evaluate(sykmelding, metadata)
         }

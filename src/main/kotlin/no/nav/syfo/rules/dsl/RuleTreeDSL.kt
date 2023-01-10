@@ -12,6 +12,7 @@ class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
     internal fun yes(rule: T, init: RuleNode<T>.() -> Unit) {
         yes = RuleNode(rule).apply(init)
     }
+
     internal fun no(rule: T, init: RuleNode<T>.() -> Unit) {
         no = RuleNode(rule).apply(init)
     }
@@ -19,6 +20,7 @@ class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
     internal fun yes(result: Status) {
         yes = ResultNode(result)
     }
+
     internal fun no(result: Status) {
         no = ResultNode(result)
     }

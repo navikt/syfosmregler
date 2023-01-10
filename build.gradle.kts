@@ -71,8 +71,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
-    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
@@ -91,11 +91,11 @@ tasks {
     }
 
     create("printVersion") {
-
         doLast {
             println(project.version)
         }
     }
+
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }
@@ -115,6 +115,13 @@ tasks {
             showStackTraces = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }
+    }
+
+    register<JavaExec>("generateRuleMermaid") {
+        main = "no.nav.syfo.GenerateMermaidKt"
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram of rules"
     }
 
     "check" {
