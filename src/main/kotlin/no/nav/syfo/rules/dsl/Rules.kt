@@ -1,10 +1,6 @@
 package no.nav.syfo.rules.dsl
 
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.RuleMetadataSykmelding
-
-typealias Rule<T> = (sykmelding: Sykmelding, metadata: RuleMetadataSykmelding) -> RuleResult<T>
 
 data class RuleResult<T>(
     val ruleInputs: Map<String, Any> = emptyMap(),

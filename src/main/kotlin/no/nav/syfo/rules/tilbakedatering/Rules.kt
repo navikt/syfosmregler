@@ -1,7 +1,8 @@
 package no.nav.syfo.rules.tilbakedatering
 
+import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.containsLetters
-import no.nav.syfo.rules.dsl.Rule
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.sortedTOMDate
@@ -17,6 +18,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNT
 import no.nav.syfo.sm.isICD10
 import java.time.temporal.ChronoUnit
 
+typealias Rule<T> = (sykmelding: Sykmelding, metadata: RuleMetadataSykmelding) -> RuleResult<T>
 typealias TilbakedateringRule = Rule<TilbakedateringRules>
 
 val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->

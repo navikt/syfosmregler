@@ -3,7 +3,6 @@ package no.nav.syfo.rules.tilbakedatering
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.MANUAL_PROCESSING
 import no.nav.syfo.model.Status.OK
-import no.nav.syfo.rules.dsl.Rule
 import no.nav.syfo.rules.dsl.tree
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD

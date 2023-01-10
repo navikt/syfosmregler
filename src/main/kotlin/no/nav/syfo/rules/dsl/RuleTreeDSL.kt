@@ -6,8 +6,8 @@ sealed class TreeNode<T>
 
 class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
 
-    private lateinit var yes: TreeNode<T>
-    private lateinit var no: TreeNode<T>
+    lateinit var yes: TreeNode<T>
+    lateinit var no: TreeNode<T>
 
     internal fun yes(rule: T, init: RuleNode<T>.() -> Unit) {
         yes = RuleNode(rule).apply(init)
@@ -22,8 +22,6 @@ class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
     internal fun no(result: Status) {
         no = ResultNode(result)
     }
-
-    internal fun nextChildNode(ruleResult: RuleResult<T>) = if (ruleResult.ruleResult) yes else no
 }
 
 class ResultNode<T>(val result: Status) : TreeNode<T>()
