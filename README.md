@@ -133,5 +133,6 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 
+
 ```
-<!-- TILBAKEDATERING_MARKER_START -->
+<!-- TILBAKEDATERING_MARKER_END -->

@@ -25,29 +25,29 @@ private fun TreeNode<TilbakedateringRules>.traverseTree(
     when (this) {
         is ResultNode -> {
             // Is handled by parent node
-            return;
+            return
         }
 
         is RuleNode -> {
-            val currentNodeKey = "${nodeKey}_${rule}"
+            val currentNodeKey = "${nodeKey}_$rule"
             if (yes is ResultNode) {
                 val childResult = (yes as ResultNode<TilbakedateringRules>).result
-                val childKey = "${currentNodeKey}_${childResult}"
-                builder.append("    ${thisNodeKey}(${rule}) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
+                val childKey = "${currentNodeKey}_$childResult"
+                builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
                 val childRule = (yes as RuleNode<TilbakedateringRules>).rule
-                val childKey = "${currentNodeKey}_${childRule}"
-                builder.append("    ${thisNodeKey}(${rule}) -->|Yes| $childKey($childRule)\n")
+                val childKey = "${currentNodeKey}_$childRule"
+                builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childRule)\n")
                 yes.traverseTree(builder, childKey, currentNodeKey)
             }
             if (no is ResultNode) {
                 val childResult = (no as ResultNode<TilbakedateringRules>).result
-                val childKey = "${currentNodeKey}_${childResult}"
-                builder.append("    ${thisNodeKey}(${rule}) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
+                val childKey = "${currentNodeKey}_$childResult"
+                builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
                 val childRule = (no as RuleNode<TilbakedateringRules>).rule
-                val childKey = "${currentNodeKey}_${childRule}"
-                builder.append("    ${thisNodeKey}(${rule}) -->|No| $childKey($childRule)\n")
+                val childKey = "${currentNodeKey}_$childRule"
+                builder.append("    $thisNodeKey($rule) -->|No| $childKey($childRule)\n")
                 no.traverseTree(builder, "${currentNodeKey}_$childRule", currentNodeKey)
             }
         }
@@ -60,4 +60,3 @@ fun getStyle(childResult: Status): String =
         Status.INVALID -> ":::invalid"
         Status.MANUAL_PROCESSING -> ":::manuell"
     }
-
