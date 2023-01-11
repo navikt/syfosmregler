@@ -7,9 +7,17 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_FORLENGELSE_OVER_1_MND
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_FORLENGELSE_UNDER_1_MND
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_UTEN_BEGRUNNELSE_FORLENGELSE_ICD_10
+import no.nav.syfo.rules.tilbakedatering.getNumberOfWords
 import no.nav.syfo.services.erCoronaRelatert
 import no.nav.syfo.services.kommerFraSpesialisthelsetjenesten
-
 class SyketilfelleRuleChain(
     private val sykmelding: Sykmelding,
     private val ruleMetadataSykmelding: RuleMetadataSykmelding,
@@ -23,7 +31,7 @@ class SyketilfelleRuleChain(
         //
         // Første gangs sykmelding er tilbakedatert mer enn 8 dager.
         Rule(
-            name = "TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING",
+            name = TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING.name,
             ruleId = 1204,
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
@@ -60,7 +68,7 @@ class SyketilfelleRuleChain(
         //
         // Første gangs sykmelding er tilbakedatert mer enn 8 dager med begrunnelse.
         Rule(
-            name = "TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE",
+            name = TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING_MED_BEGRUNNELSE.name,
             ruleId = 1207,
             status = Status.MANUAL_PROCESSING,
             messageForUser = "Første sykmelding er tilbakedatert og årsak for tilbakedatering er angitt.",
@@ -105,7 +113,7 @@ class SyketilfelleRuleChain(
         //
         // Første gangs sykmelding er tilbakedatert mindre enn 8 dager uten begrunnelse og kontaktdato.
         Rule(
-            name = "TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE",
+            name = TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE.name,
             ruleId = 1204,
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",
@@ -124,15 +132,12 @@ class SyketilfelleRuleChain(
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val sisteTomDato = sykmelding.perioder.sortedFOMDate().last()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
-                val erCoronaRelatert = erCoronaRelatert(sykmelding)
-                val kontaktMedPasientDato = sykmelding.kontaktMedPasient.kontaktDato
             },
             predicate = {
                 it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4) &&
                     it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8) &&
-                    (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
-                    !it.erCoronaRelatert
+                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 1)
             }
         ),
 
@@ -144,7 +149,7 @@ class SyketilfelleRuleChain(
         //
         // Fom-dato i ny sykmelding som er en forlengelse kan maks være tilbakedatert 1 mnd fra behandlet-tidspunkt. Skal telles.
         Rule(
-            name = "TILBAKEDATERT_FORLENGELSE_OVER_1_MND",
+            name = TILBAKEDATERT_FORLENGELSE_OVER_1_MND.name,
             ruleId = null,
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse fra den som sykmeldte deg.",
@@ -161,14 +166,13 @@ class SyketilfelleRuleChain(
                 val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
-                val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
-                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert && !it.erFraSpesialisthelsetjenesten
+                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 3) &&
+                    !it.erFraSpesialisthelsetjenesten
             }
         ),
 
@@ -180,7 +184,7 @@ class SyketilfelleRuleChain(
         //
         // Sykmeldingens fom-dato er inntil 3 år tilbake i tid og årsak for tilbakedatering er utilstrekkelig.
         Rule(
-            name = "TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE",
+            name = TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE.name,
             ruleId = 1207,
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten at begrunnelsen for tilbakedatering er god nok",
@@ -198,20 +202,12 @@ class SyketilfelleRuleChain(
                 val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
-                val erCoronaRelatert = erCoronaRelatert(sykmelding)
-                val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
-                val meldingTilNav = sykmelding.meldingTilNAV
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
                     !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert &&
-                    (
-                        !containsLetters(it.begrunnelseIkkeKontakt) &&
-                            it.utdypendeOpplysninger.isEmpty() &&
-                            it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
-                        )
+                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 1)
             }
         ),
 
@@ -223,7 +219,7 @@ class SyketilfelleRuleChain(
         //
         // Sykmeldingen er tilbakedatert mer enn 30 dager og årsak for tilbakedatering er angitt.
         Rule(
-            name = "TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE",
+            name = TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE.name,
             ruleId = 1207,
             status = Status.MANUAL_PROCESSING,
             messageForUser = "Sykmeldingen er tilbakedatert og årsak for tilbakedatering er angitt",
@@ -265,7 +261,7 @@ class SyketilfelleRuleChain(
         //
         // Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10.
         Rule(
-            name = "TILBAKEDATERT_UTEN_BEGRUNNELSE_FORLENGELSE_ICD_10",
+            name = TILBAKEDATERT_UTEN_BEGRUNNELSE_FORLENGELSE_ICD_10.name,
             ruleId = 9999,
             status = Status.MANUAL_PROCESSING,
             messageForUser = "Sykmeldingen er tilbakedatert mer enn 30 dager og har diagnoskode system ICD-10",
@@ -300,7 +296,7 @@ class SyketilfelleRuleChain(
         //
         // Sykmelding som er forlengelse er tilbakedatert mindre enn 30 dager uten begrunnelse og kontaktdato.
         Rule(
-            name = "TILBAKEDATERT_FORLENGELSE_UNDER_1_MND",
+            name = TILBAKEDATERT_FORLENGELSE_UNDER_1_MND.name,
             ruleId = 1207,
             status = Status.INVALID,
             messageForUser = "Sykmeldingen er tilbakedatert uten begrunnelse eller uten at det er opplyst når du kontaktet den som sykmeldte deg.",

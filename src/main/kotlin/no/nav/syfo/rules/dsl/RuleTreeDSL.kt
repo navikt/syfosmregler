@@ -17,15 +17,15 @@ class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
         no = RuleNode(rule).apply(init)
     }
 
-    internal fun yes(result: Status) {
-        yes = ResultNode(result)
+    internal fun yes(result: Status, name: String = "") {
+        yes = ResultNode(result, name)
     }
 
-    internal fun no(result: Status) {
-        no = ResultNode(result)
+    internal fun no(result: Status, name: String = "") {
+        no = ResultNode(result, name)
     }
 }
 
-class ResultNode<T>(val result: Status) : TreeNode<T>()
+class ResultNode<T>(val result: Status, val name: String) : TreeNode<T>()
 
 fun <T> tree(rule: T, init: RuleNode<T>.() -> Unit): RuleNode<T> = RuleNode(rule).apply(init)

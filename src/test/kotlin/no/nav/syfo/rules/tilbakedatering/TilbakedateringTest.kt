@@ -8,6 +8,9 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.RuleMetadataSykmelding
+import no.nav.syfo.rules.SyketilfelleRuleChain
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE
+import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -39,6 +42,7 @@ class TilbakedateringTest : FunSpec({
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate()
             )
+            SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
         }
 
         test("tilbakedatert forlengelse") {
@@ -59,6 +63,7 @@ class TilbakedateringTest : FunSpec({
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to true
             )
+            SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
         }
 
         context("Tilbakedatert") {
@@ -84,6 +89,7 @@ class TilbakedateringTest : FunSpec({
                         "ettersending" to false,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
                     )
+                    SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
                 }
                 test("Med kontaktdato uten begrunnelse, Invalid") {
                     val sykmelding = generateSykmelding(
@@ -110,11 +116,12 @@ class TilbakedateringTest : FunSpec({
                         "forlengelse" to false,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "spesialisthelsetjenesten" to false
-
                     )
+                    val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().first { it.result }
+                    status.ruleName shouldBeEqualTo TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE.name
+                    status.ruleName shouldBeEqualTo r.rule.name
                 }
             }
-
             context("Uten Begrunnelse") {
                 test("Forlengelse, OK") {
                     val sykmelding = generateSykmelding(
@@ -139,6 +146,7 @@ class TilbakedateringTest : FunSpec({
                         "begrunnelse" to "",
                         "forlengelse" to true,
                     )
+                    SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
                 }
                 test("Ikke forlengelse, INVALID") {
                     val sykmelding = generateSykmelding(
@@ -167,6 +175,10 @@ class TilbakedateringTest : FunSpec({
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "spesialisthelsetjenesten" to false
                     )
+
+                    val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().first { it.result }
+                    status.ruleName shouldBeEqualTo TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE.name
+                    status.ruleName shouldBeEqualTo r.rule.name
                 }
 
                 test("Ikke forlengelse, men fra spesialishelsetjenesten, OK") {
@@ -198,6 +210,8 @@ class TilbakedateringTest : FunSpec({
                         "spesialisthelsetjenesten" to true
 
                     )
+
+                    SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
                 }
             }
         }
@@ -232,6 +246,8 @@ class TilbakedateringTest : FunSpec({
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "spesialisthelsetjenesten" to true
                 )
+
+                val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
             }
             test("Ikke fra spesialhelsetjenesten, INVALID") {
                 val sykmelding = generateSykmelding(
@@ -259,6 +275,10 @@ class TilbakedateringTest : FunSpec({
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "spesialisthelsetjenesten" to false
                 )
+
+                val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().first { it.result }
+                status.ruleName shouldBeEqualTo TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING.name
+                status.ruleName shouldBeEqualTo r.rule.name
             }
         }
         context("Med Begrunnelse") {

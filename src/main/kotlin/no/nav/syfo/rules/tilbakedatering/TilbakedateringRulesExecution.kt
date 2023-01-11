@@ -27,7 +27,7 @@ private fun TreeNode<TilbakedateringRules>.evaluate(
     metadata: RuleMetadataSykmelding,
 ): TilbakedateringTreeOutput =
     when (this) {
-        is ResultNode -> TilbakedateringTreeOutput(status = result)
+        is ResultNode -> TilbakedateringTreeOutput(status = result, ruleName = name)
         is RuleNode -> {
             val rule = getRule(rule)
             val result = rule(sykmelding, metadata)

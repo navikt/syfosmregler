@@ -11,7 +11,8 @@ data class RuleResult<T>(
 data class TreeOutput<T>(
     val ruleInputs: Map<String, Any> = mapOf(),
     val rulePath: List<RuleResult<T>> = emptyList(),
-    val status: Status
+    val status: Status,
+    val ruleName: String
 )
 
 fun <T> TreeOutput<T>.printRulePath() {
@@ -21,5 +22,6 @@ fun <T> TreeOutput<T>.printRulePath() {
 infix fun <T> RuleResult<T>.join(rulesOutput: TreeOutput<T>) = TreeOutput(
     ruleInputs = ruleInputs + rulesOutput.ruleInputs,
     rulePath = listOf(this) + rulesOutput.rulePath,
-    status = rulesOutput.status
+    status = rulesOutput.status,
+    ruleName = rulesOutput.ruleName
 )

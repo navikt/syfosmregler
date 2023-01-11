@@ -32,7 +32,7 @@ val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->
     )
 }
 
-val tilbakedateringInntil31Dager: TilbakedateringRule = { sykmelding, _ ->
+val tilbakedateringInntil30Dager: TilbakedateringRule = { sykmelding, _ ->
     val fom = sykmelding.perioder.sortedFOMDate().first()
     val behandletTidspunkt = sykmelding.behandletTidspunkt.toLocalDate()
     RuleResult(
@@ -120,6 +120,6 @@ val spesialisthelsetjenesten: TilbakedateringRule = { sykmelding, _ ->
     )
 }
 
-private fun getNumberOfWords(input: String): Int {
-    return input.trim().split(" ").filter { containsLetters(it) }.size
+fun getNumberOfWords(input: String?): Int {
+    return input?.trim()?.split(" ")?.filter { containsLetters(it) }?.size ?: 0
 }

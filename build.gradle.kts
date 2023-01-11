@@ -108,7 +108,6 @@ tasks {
             include("bus-extensions.txt")
         }
     }
-
     withType<Test> {
         useJUnitPlatform {
         }
