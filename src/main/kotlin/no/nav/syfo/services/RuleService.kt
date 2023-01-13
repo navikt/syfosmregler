@@ -143,7 +143,7 @@ class RuleService(
 
         TILBAKEDATERING_RULE_HIT_COUNTER.labels(
             tilbakedateringResult.treeResult.status.name,
-            tilbakedateringResult.treeResult.ruleHit?.name
+            tilbakedateringResult.treeResult.ruleHit?.name ?: tilbakedateringResult.treeResult.status.name
         ).inc()
 
         val result = listOf(
