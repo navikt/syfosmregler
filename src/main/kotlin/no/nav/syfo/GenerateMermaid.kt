@@ -18,7 +18,7 @@ fun main() {
     println(builder.toString())
 }
 
-private fun TreeNode<TilbakedateringRules, TilbakedateringResult,>.traverseTree(
+private fun TreeNode<TilbakedateringRules, TilbakedateringResult>.traverseTree(
     builder: StringBuilder,
     thisNodeKey: String,
     nodeKey: String,
@@ -31,9 +31,9 @@ private fun TreeNode<TilbakedateringRules, TilbakedateringResult,>.traverseTree(
         is RuleNode -> {
             val currentNodeKey = "${nodeKey}_$rule"
             if (yes is ResultNode) {
-                val childResult = (yes as ResultNode<TilbakedateringRules, TilbakedateringResult>).result
+                val childResult = (yes as ResultNode<TilbakedateringRules, TilbakedateringResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
-                builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult.status)}\n")
+                builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
                 val childRule = (yes as RuleNode<TilbakedateringRules, TilbakedateringResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
@@ -41,9 +41,9 @@ private fun TreeNode<TilbakedateringRules, TilbakedateringResult,>.traverseTree(
                 yes.traverseTree(builder, childKey, currentNodeKey)
             }
             if (no is ResultNode) {
-                val childResult = (no as ResultNode<TilbakedateringRules, TilbakedateringResult>).result
+                val childResult = (no as ResultNode<TilbakedateringRules, TilbakedateringResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
-                builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult.status)}\n")
+                builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
                 val childRule = (no as RuleNode<TilbakedateringRules, TilbakedateringResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
