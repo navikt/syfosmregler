@@ -11,6 +11,7 @@ import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
+import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -138,7 +139,12 @@ class RuleService(
             erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
         )
 
-        tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, metadata = ruleMetadataSykmelding)
+        val tilbakedateringResult = tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, metadata = ruleMetadataSykmelding)
+
+        TILBAKEDATERING_RULE_HIT_COUNTER.labels(
+            tilbakedateringResult.treeResult.status.name,
+            tilbakedateringResult.treeResult.ruleHit?.name
+        ).inc()
 
         val result = listOf(
             ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).executeRules(),

@@ -1,27 +1,24 @@
 package no.nav.syfo.rules.dsl
 
-import no.nav.syfo.model.Status
-
 data class RuleResult<T>(
     val ruleInputs: Map<String, Any> = emptyMap(),
     val ruleResult: Boolean,
     val rule: T,
 )
 
-data class TreeOutput<T>(
+data class TreeOutput<T, S>(
     val ruleInputs: Map<String, Any> = mapOf(),
     val rulePath: List<RuleResult<T>> = emptyList(),
-    val status: Status,
-    val ruleName: String
+    val treeResult: S
 )
 
-fun <T> TreeOutput<T>.printRulePath() {
-    rulePath.joinToString(separator = "->") { "${it.rule}(${if (it.ruleResult) "yes" else "no"})" }
-        .plus("->$status")
+fun <T, S> TreeOutput<T, S>.printRulePath(): String {
+    return rulePath.joinToString(separator = "->") { "${it.rule}(${if (it.ruleResult) "yes" else "no"})" }
+        .plus("->$treeResult")
 }
-infix fun <T> RuleResult<T>.join(rulesOutput: TreeOutput<T>) = TreeOutput(
+
+infix fun <T, S> RuleResult<T>.join(rulesOutput: TreeOutput<T, S>) = TreeOutput(
     ruleInputs = ruleInputs + rulesOutput.ruleInputs,
     rulePath = listOf(this) + rulesOutput.rulePath,
-    status = rulesOutput.status,
-    ruleName = rulesOutput.ruleName
+    treeResult = rulesOutput.treeResult
 )

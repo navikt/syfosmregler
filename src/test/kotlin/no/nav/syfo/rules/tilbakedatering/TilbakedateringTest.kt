@@ -8,9 +8,6 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.RuleMetadataSykmelding
-import no.nav.syfo.rules.SyketilfelleRuleChain
-import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE
-import no.nav.syfo.rules.tilbakedatering.TibakedateringRuleNames.TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -36,13 +33,13 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
-            status.status shouldBeEqualTo Status.OK
+            status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(TILBAKEDATERING to false)
             status.ruleInputs shouldBeEqualTo mapOf(
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate()
             )
-            SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
+            status.treeResult.ruleHit shouldBeEqualTo null
         }
 
         test("tilbakedatert forlengelse") {
@@ -53,7 +50,7 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, true)
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
-            status.status shouldBeEqualTo Status.OK
+            status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to true
@@ -63,7 +60,6 @@ class TilbakedateringTest : FunSpec({
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to true
             )
-            SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
         }
 
         context("Tilbakedatert") {
@@ -76,7 +72,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
-                    status.status shouldBeEqualTo Status.OK
+                    status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
@@ -89,7 +85,7 @@ class TilbakedateringTest : FunSpec({
                         "ettersending" to false,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
                     )
-                    SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
+                    status.treeResult.status shouldBeEqualTo Status.OK
                 }
                 test("Med kontaktdato uten begrunnelse, Invalid") {
                     val sykmelding = generateSykmelding(
@@ -99,7 +95,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
-                    status.status shouldBeEqualTo Status.INVALID
+                    status.treeResult.status shouldBeEqualTo Status.INVALID
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
@@ -117,9 +113,7 @@ class TilbakedateringTest : FunSpec({
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "spesialisthelsetjenesten" to false
                     )
-                    val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().first { it.result }
-                    status.ruleName shouldBeEqualTo TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE.name
-                    status.ruleName shouldBeEqualTo r.rule.name
+                    status.treeResult.ruleHit shouldBeEqualTo RuleHit.INNTIL_8_DAGER
                 }
             }
             context("Uten Begrunnelse") {
@@ -131,7 +125,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), false, false)
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
-                    status.status shouldBeEqualTo Status.OK
+                    status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
@@ -146,7 +140,6 @@ class TilbakedateringTest : FunSpec({
                         "begrunnelse" to "",
                         "forlengelse" to true,
                     )
-                    SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
                 }
                 test("Ikke forlengelse, INVALID") {
                     val sykmelding = generateSykmelding(
@@ -157,7 +150,7 @@ class TilbakedateringTest : FunSpec({
                     val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                    status.status shouldBeEqualTo Status.INVALID
+                    status.treeResult.status shouldBeEqualTo Status.INVALID
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
@@ -175,10 +168,6 @@ class TilbakedateringTest : FunSpec({
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "spesialisthelsetjenesten" to false
                     )
-
-                    val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().first { it.result }
-                    status.ruleName shouldBeEqualTo TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE.name
-                    status.ruleName shouldBeEqualTo r.rule.name
                 }
 
                 test("Ikke forlengelse, men fra spesialishelsetjenesten, OK") {
@@ -191,7 +180,7 @@ class TilbakedateringTest : FunSpec({
                     val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                    status.status shouldBeEqualTo Status.OK
+                    status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
@@ -210,8 +199,6 @@ class TilbakedateringTest : FunSpec({
                         "spesialisthelsetjenesten" to true
 
                     )
-
-                    SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
                 }
             }
         }
@@ -229,7 +216,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.OK
+                status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -246,8 +233,6 @@ class TilbakedateringTest : FunSpec({
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "spesialisthelsetjenesten" to true
                 )
-
-                val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().all { !it.result }
             }
             test("Ikke fra spesialhelsetjenesten, INVALID") {
                 val sykmelding = generateSykmelding(
@@ -258,7 +243,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.INVALID
+                status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -276,9 +261,7 @@ class TilbakedateringTest : FunSpec({
                     "spesialisthelsetjenesten" to false
                 )
 
-                val r = SyketilfelleRuleChain(sykmelding, sykmeldingMetadata).executeRules().first { it.result }
-                status.ruleName shouldBeEqualTo TILBAKEDATERT_MER_ENN_8_DAGER_FORSTE_SYKMELDING.name
-                status.ruleName shouldBeEqualTo r.rule.name
+                status.treeResult.ruleHit shouldBeEqualTo RuleHit.INNTIL_30_DAGER
             }
         }
         context("Med Begrunnelse") {
@@ -291,7 +274,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.INVALID
+                status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -318,7 +301,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), false, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.OK
+                status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -344,7 +327,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.MANUAL_PROCESSING
+                status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -377,7 +360,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.OK
+                status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -406,7 +389,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.MANUAL_PROCESSING
+                status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -440,7 +423,7 @@ class TilbakedateringTest : FunSpec({
                 val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.status shouldBeEqualTo Status.OK
+                status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
@@ -476,7 +459,7 @@ class TilbakedateringTest : FunSpec({
             val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-            status.status shouldBeEqualTo Status.MANUAL_PROCESSING
+            status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
@@ -502,7 +485,7 @@ class TilbakedateringTest : FunSpec({
             val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-            status.status shouldBeEqualTo Status.INVALID
+            status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
@@ -533,7 +516,7 @@ class TilbakedateringTest : FunSpec({
             val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = sykmelding.toRuleMetadata(), true, false)
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-            status.status shouldBeEqualTo Status.MANUAL_PROCESSING
+            status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,

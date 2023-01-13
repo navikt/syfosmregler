@@ -10,8 +10,8 @@ import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
 
-typealias TilbakedateringTreeOutput = TreeOutput<TilbakedateringRules>
-typealias TilbakedateringTreeNode = TreeNode<TilbakedateringRules>
+typealias TilbakedateringTreeOutput = TreeOutput<TilbakedateringRules, TilbakedateringResult>
+typealias TilbakedateringTreeNode = TreeNode<TilbakedateringRules, TilbakedateringResult>
 
 class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNode = tilbakedateringRuleTree) {
     fun runRules(sykmelding: Sykmelding, metadata: RuleMetadataSykmelding): TilbakedateringTreeOutput =
@@ -22,12 +22,12 @@ class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNod
             }
 }
 
-private fun TreeNode<TilbakedateringRules>.evaluate(
+private fun TreeNode<TilbakedateringRules, TilbakedateringResult>.evaluate(
     sykmelding: Sykmelding,
     metadata: RuleMetadataSykmelding,
 ): TilbakedateringTreeOutput =
     when (this) {
-        is ResultNode -> TilbakedateringTreeOutput(status = result, ruleName = name)
+        is ResultNode -> TilbakedateringTreeOutput(treeResult = result)
         is RuleNode -> {
             val rule = getRule(rule)
             val result = rule(sykmelding, metadata)

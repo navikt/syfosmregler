@@ -4,6 +4,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringResult
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules
 import no.nav.syfo.rules.tilbakedatering.tilbakedateringRuleTree
 
@@ -17,7 +18,7 @@ fun main() {
     println(builder.toString())
 }
 
-private fun TreeNode<TilbakedateringRules>.traverseTree(
+private fun TreeNode<TilbakedateringRules, TilbakedateringResult,>.traverseTree(
     builder: StringBuilder,
     thisNodeKey: String,
     nodeKey: String,
@@ -27,25 +28,24 @@ private fun TreeNode<TilbakedateringRules>.traverseTree(
             // Is handled by parent node
             return
         }
-
         is RuleNode -> {
             val currentNodeKey = "${nodeKey}_$rule"
             if (yes is ResultNode) {
-                val childResult = (yes as ResultNode<TilbakedateringRules>).result
+                val childResult = (yes as ResultNode<TilbakedateringRules, TilbakedateringResult>).result
                 val childKey = "${currentNodeKey}_$childResult"
-                builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
+                builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult.status)}\n")
             } else {
-                val childRule = (yes as RuleNode<TilbakedateringRules>).rule
+                val childRule = (yes as RuleNode<TilbakedateringRules, TilbakedateringResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childRule)\n")
                 yes.traverseTree(builder, childKey, currentNodeKey)
             }
             if (no is ResultNode) {
-                val childResult = (no as ResultNode<TilbakedateringRules>).result
+                val childResult = (no as ResultNode<TilbakedateringRules, TilbakedateringResult>).result
                 val childKey = "${currentNodeKey}_$childResult"
-                builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
+                builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult.status)}\n")
             } else {
-                val childRule = (no as RuleNode<TilbakedateringRules>).rule
+                val childRule = (no as RuleNode<TilbakedateringRules, TilbakedateringResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childRule)\n")
                 no.traverseTree(builder, "${currentNodeKey}_$childRule", currentNodeKey)

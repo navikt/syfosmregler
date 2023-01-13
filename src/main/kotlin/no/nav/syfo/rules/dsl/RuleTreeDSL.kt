@@ -1,31 +1,28 @@
 package no.nav.syfo.rules.dsl
 
-import no.nav.syfo.model.Status
+sealed class TreeNode<T, R>
 
-sealed class TreeNode<T>
+class ResultNode<T, R>(val result: R) : TreeNode<T, R>()
 
-class RuleNode<T> internal constructor(val rule: T) : TreeNode<T>() {
+class RuleNode<T, R> internal constructor(val rule: T) : TreeNode<T, R>() {
+    lateinit var yes: TreeNode<T, R>
+    lateinit var no: TreeNode<T, R>
 
-    lateinit var yes: TreeNode<T>
-    lateinit var no: TreeNode<T>
-
-    internal fun yes(rule: T, init: RuleNode<T>.() -> Unit) {
-        yes = RuleNode(rule).apply(init)
+    internal fun yes(rule: T, init: RuleNode<T, R>.() -> Unit) {
+        yes = RuleNode<T, R>(rule).apply(init)
     }
 
-    internal fun no(rule: T, init: RuleNode<T>.() -> Unit) {
-        no = RuleNode(rule).apply(init)
+    internal fun no(rule: T, init: RuleNode<T, R>.() -> Unit) {
+        no = RuleNode<T, R>(rule).apply(init)
     }
 
-    internal fun yes(result: Status, name: String = "") {
-        yes = ResultNode(result, name)
+    internal fun yes(result: R) {
+        yes = ResultNode(result)
     }
 
-    internal fun no(result: Status, name: String = "") {
-        no = ResultNode(result, name)
+    internal fun no(result: R) {
+        no = ResultNode(result)
     }
 }
 
-class ResultNode<T>(val result: Status, val name: String) : TreeNode<T>()
-
-fun <T> tree(rule: T, init: RuleNode<T>.() -> Unit): RuleNode<T> = RuleNode(rule).apply(init)
+fun <T, R> tree(rule: T, init: RuleNode<T, R>.() -> Unit): RuleNode<T, R> = RuleNode<T, R>(rule).apply(init)
