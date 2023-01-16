@@ -30,7 +30,7 @@ val RULE_HIT_COUNTER: Counter = Counter.Builder()
     .help("Counts the amount of times a rule is hit").register()
 
 val TILBAKEDATERING_RULE_HIT_COUNTER: Counter = Counter.Builder()
-    .name("syfosm")
+    .namespace(METRICS_NS)
     .name("tilbakedatering_rule_hit_counter")
     .labelNames("status", "rule_hit")
     .help("Counts tilbakedatering rules")
