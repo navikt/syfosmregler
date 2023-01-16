@@ -31,7 +31,7 @@ enum class RuleHit(val messageForSender: String, val messageForUser: String, val
     INNTIL_30_DAGER_MED_BEGRUNNELSE(
         status = Status.MANUAL_PROCESSING,
         messageForSender = "Første sykmelding er tilbakedatert og felt 11.2 (begrunnelse) er utfylt",
-        messageForUser = "Sykmeldingen blir manuell behandlet fordi den er tilbakedatert",
+        messageForUser = "Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert",
         juridiskHenvisning = getJuridiskHenvisning()
     ),
     OVER_30_DAGER(
