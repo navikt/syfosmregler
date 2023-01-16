@@ -50,7 +50,7 @@ enum class RuleHit(val messageForSender: String, val messageForUser: String, val
     OVER_30_DAGER_SPESIALISTHELSETJENESTEN(
         status = Status.MANUAL_PROCESSING,
         messageForSender = "Sykmeldingen er tilbakedatert over 30 dager og er fra spesialisthelsetjenesten",
-        messageForUser = "Sykmeldingen blir manuell behandlet fordi den er tilbakedatert",
+        messageForUser = "Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert",
         juridiskHenvisning = null
     )
 }
