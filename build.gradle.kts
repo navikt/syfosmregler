@@ -1,6 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateNames
+import java.io.ByteArrayOutputStream
 
 group = "no.nav.syfo"
 version = "1.0.0"
@@ -71,8 +73,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
-    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
@@ -91,11 +93,11 @@ tasks {
     }
 
     create("printVersion") {
-
         doLast {
             println(project.version)
         }
     }
+
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }
@@ -106,7 +108,6 @@ tasks {
             include("bus-extensions.txt")
         }
     }
-
     withType<Test> {
         useJUnitPlatform {
         }
@@ -117,7 +118,39 @@ tasks {
         }
     }
 
+    register<JavaExec>("generateRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- TILBAKEDATERING_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- TILBAKEDATERING_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                    listOf(
+                        "<!-- TILBAKEDATERING_MARKER_START -->",
+                        "```mermaid",
+                    ) +
+                    output.toString().split("\n") +
+                    listOf(
+                        "```",
+                        "<!-- TILBAKEDATERING_MARKER_END -->",
+                        "",
+                    ) +
+                    lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+
     "check" {
         dependsOn("formatKotlin")
+        dependsOn("generateRuleMermaid")
     }
 }

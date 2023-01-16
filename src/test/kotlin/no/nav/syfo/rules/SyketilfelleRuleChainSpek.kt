@@ -623,7 +623,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
-        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should not trigger rule") {
+        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -658,7 +658,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
-        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should NOT trigger rule") {
+        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -691,7 +691,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 healthInformation,
                 ruleMetadataSykmelding
             ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
-                .executeRule().result shouldBeEqualTo false
+                .executeRule().result shouldBeEqualTo true
         }
         test("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
             val healthInformation = generateSykmelding(
@@ -991,7 +991,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
                 .executeRule().result shouldBeEqualTo false
         }
-        test("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis utdypende opplysninger er satt") {
+        test("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges hvis utdypende opplysninger er satt") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -1032,7 +1032,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 healthInformation,
                 ruleMetadataSykmelding
             ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
-                .executeRule().result shouldBeEqualTo false
+                .executeRule().result shouldBeEqualTo true
         }
         test("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE trigges ikke hvis melding til NAV er satt") {
             val healthInformation = generateSykmelding(
@@ -1067,7 +1067,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 healthInformation,
                 ruleMetadataSykmelding
             ).getRuleByName("TILBAKEDATERT_MED_UTILSTREKKELIG_BEGRUNNELSE_FORLENGELSE")
-                .executeRule().result shouldBeEqualTo false
+                .executeRule().result shouldBeEqualTo true
         }
         test("Should check rule TILBAKEDATERT_MED_BEGRUNNELSE_FORLENGELSE, should trigger rule") {
             val healthInformation = generateSykmelding(

@@ -28,7 +28,7 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<RuleResult<*>>,
+        result: List<RuleResult<*>>
     ) {
         val juridiskVurderingResult = JuridiskVurderingResult(
             juridiskeVurderinger = result
@@ -58,7 +58,7 @@ class JuridiskVurderingService(
             juridiskHenvisning = ruleResult.rule.juridiskHenvisning
                 ?: throw RuntimeException("JuridiskHenvisning kan ikke være null"),
             sporing = mapOf(
-                "sykmelding" to receivedSykmelding.sykmelding.id
+                "sykmelding" to receivedSykmelding.sykmelding.id,
             ),
             input = ruleResult.rule.toInputMap(),
             utfall = toJuridiskUtfall(

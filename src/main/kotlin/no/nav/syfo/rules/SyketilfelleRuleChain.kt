@@ -7,9 +7,9 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.tilbakedatering.getNumberOfWords
 import no.nav.syfo.services.erCoronaRelatert
 import no.nav.syfo.services.kommerFraSpesialisthelsetjenesten
-
 class SyketilfelleRuleChain(
     private val sykmelding: Sykmelding,
     private val ruleMetadataSykmelding: RuleMetadataSykmelding,
@@ -124,15 +124,12 @@ class SyketilfelleRuleChain(
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val sisteTomDato = sykmelding.perioder.sortedFOMDate().last()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
-                val erCoronaRelatert = erCoronaRelatert(sykmelding)
-                val kontaktMedPasientDato = sykmelding.kontaktMedPasient.kontaktDato
             },
             predicate = {
                 it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4) &&
                     it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8) &&
-                    (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty()) &&
-                    !it.erCoronaRelatert
+                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 1)
             }
         ),
 
@@ -161,14 +158,13 @@ class SyketilfelleRuleChain(
                 val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
-                val erCoronaRelatert = erCoronaRelatert(sykmelding)
                 val erFraSpesialisthelsetjenesten = kommerFraSpesialisthelsetjenesten(sykmelding)
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
-                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert && !it.erFraSpesialisthelsetjenesten
+                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 3) &&
+                    !it.erFraSpesialisthelsetjenesten
             }
         ),
 
@@ -198,20 +194,12 @@ class SyketilfelleRuleChain(
                 val behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
-                val erCoronaRelatert = erCoronaRelatert(sykmelding)
-                val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
-                val meldingTilNav = sykmelding.meldingTilNAV
             },
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
                     !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    !it.erCoronaRelatert &&
-                    (
-                        !containsLetters(it.begrunnelseIkkeKontakt) &&
-                            it.utdypendeOpplysninger.isEmpty() &&
-                            it.meldingTilNav?.beskrivBistand.isNullOrEmpty()
-                        )
+                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 1)
             }
         ),
 
