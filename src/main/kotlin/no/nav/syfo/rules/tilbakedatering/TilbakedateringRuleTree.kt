@@ -37,7 +37,11 @@ enum class TilbakedateringRules {
 data class TilbakedateringResult(
     val status: Status,
     val ruleHit: RuleHit?
-)
+) {
+    override fun toString(): String {
+        return status.name + (ruleHit?.let { "->${it.name}" } ?: "")
+    }
+}
 
 val tilbakedateringRuleTree = tree<TilbakedateringRules, TilbakedateringResult>(TILBAKEDATERING) {
     yes(ETTERSENDING) {
