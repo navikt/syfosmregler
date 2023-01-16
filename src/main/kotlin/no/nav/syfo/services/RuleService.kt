@@ -12,6 +12,7 @@ import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
+import no.nav.syfo.metrics.TILBAKEDATERING_RULE_PATH_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -28,6 +29,7 @@ import no.nav.syfo.rules.PeriodLogicRuleChain
 import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
+import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.sm.isICD10
@@ -144,6 +146,10 @@ class RuleService(
         TILBAKEDATERING_RULE_HIT_COUNTER.labels(
             tilbakedateringResult.treeResult.status.name,
             tilbakedateringResult.treeResult.ruleHit?.name ?: tilbakedateringResult.treeResult.status.name
+        ).inc()
+
+        TILBAKEDATERING_RULE_PATH_COUNTER.labels(
+            tilbakedateringResult.printRulePath()
         ).inc()
 
         val result = listOf(
