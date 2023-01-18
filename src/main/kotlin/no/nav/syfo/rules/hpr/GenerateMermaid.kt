@@ -1,24 +1,21 @@
-package no.nav.syfo
+package no.nav.syfo.rules.hpr
 
 import no.nav.syfo.model.Status
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringResult
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules
-import no.nav.syfo.rules.tilbakedatering.tilbakedateringRuleTree
 
 fun main() {
     val builder = StringBuilder()
     builder.append("graph TD\n")
-    tilbakedateringRuleTree.traverseTree(builder, "root", "root")
+    hprRuleTree.traverseTree(builder, "root", "root")
     builder.append("    classDef ok fill:#c3ff91,stroke:#004a00,color: black;\n")
     builder.append("    classDef invalid fill:#ff7373,stroke:#ff0000,color: black;\n")
     builder.append("    classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;\n")
     println(builder.toString())
 }
 
-private fun TreeNode<TilbakedateringRules, TilbakedateringResult>.traverseTree(
+private fun TreeNode<HPRRules, HPRResult>.traverseTree(
     builder: StringBuilder,
     thisNodeKey: String,
     nodeKey: String,
@@ -31,21 +28,21 @@ private fun TreeNode<TilbakedateringRules, TilbakedateringResult>.traverseTree(
         is RuleNode -> {
             val currentNodeKey = "${nodeKey}_$rule"
             if (yes is ResultNode) {
-                val childResult = (yes as ResultNode<TilbakedateringRules, TilbakedateringResult>).result.status
+                val childResult = (yes as ResultNode<HPRRules, HPRResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
-                val childRule = (yes as RuleNode<TilbakedateringRules, TilbakedateringResult>).rule
+                val childRule = (yes as RuleNode<HPRRules, HPRResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childRule)\n")
                 yes.traverseTree(builder, childKey, currentNodeKey)
             }
             if (no is ResultNode) {
-                val childResult = (no as ResultNode<TilbakedateringRules, TilbakedateringResult>).result.status
+                val childResult = (no as ResultNode<HPRRules, HPRResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
-                val childRule = (no as RuleNode<TilbakedateringRules, TilbakedateringResult>).rule
+                val childRule = (no as RuleNode<HPRRules, HPRResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childRule)\n")
                 no.traverseTree(builder, "${currentNodeKey}_$childRule", currentNodeKey)

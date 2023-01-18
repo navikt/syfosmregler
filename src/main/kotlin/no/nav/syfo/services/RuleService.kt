@@ -10,6 +10,8 @@ import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
+import no.nav.syfo.metrics.HPR_RULE_HIT_COUNTER
+import no.nav.syfo.metrics.HPR_RULE_PATH_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_PATH_COUNTER
@@ -30,6 +32,7 @@ import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.dsl.printRulePath
+import no.nav.syfo.rules.hpr.HPRRulesExecution
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.sm.isICD10
@@ -48,7 +51,9 @@ class RuleService(
     private val smregisterClient: SmregisterClient,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
-    private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution()
+    private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution(),
+    private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution()
+
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -150,6 +155,20 @@ class RuleService(
 
         TILBAKEDATERING_RULE_PATH_COUNTER.labels(
             tilbakedateringResult.printRulePath()
+        ).inc()
+
+        val hprResult = hprRulesExecution.runRules(
+            sykmelding = receivedSykmelding.sykmelding,
+            behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato)
+        )
+
+        HPR_RULE_HIT_COUNTER.labels(
+            hprResult.treeResult.status.name,
+            hprResult.treeResult.ruleHit?.name ?: hprResult.treeResult.status.name
+        ).inc()
+
+        HPR_RULE_PATH_COUNTER.labels(
+            hprResult.printRulePath()
         ).inc()
 
         val result = listOf(
