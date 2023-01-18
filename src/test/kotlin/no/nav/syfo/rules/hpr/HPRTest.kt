@@ -77,7 +77,7 @@ class HPRTest : FunSpec({
             val status = ruleTree.runRules(sykmelding, behandlerOgStartdato)
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
-            //status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to false)
+            // status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to false)
             // mapOf(
             //    "aktivAutorisasjon" to aktivAutorisasjon
             // ) shouldBeEqualTo status.ruleInputs
