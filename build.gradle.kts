@@ -179,10 +179,41 @@ tasks {
         }
     }
 
+    register<JavaExec>("generateLegesuspensjonRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.legesuspensjon.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of hpr rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- LEGESUSPENSJON_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- LEGESUSPENSJON_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- LEGESUSPENSJON_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- LEGESUSPENSJON_MARKER_END -->",
+                            "",
+                        ) +
+                        lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+
     "check" {
         dependsOn("formatKotlin")
         dependsOn("generateTilbakedateringRuleMermaid")
         dependsOn("generateHPRRuleMermaid")
-
+        dependsOn("generateLegesuspensjonRuleMermaid")
     }
 }

@@ -12,6 +12,8 @@ import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
 import no.nav.syfo.metrics.HPR_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.HPR_RULE_PATH_COUNTER
+import no.nav.syfo.metrics.LEGESUSPENSJON_RULE_HIT_COUNTER
+import no.nav.syfo.metrics.LEGESUSPENSJON_RULE_PATH_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_PATH_COUNTER
@@ -33,6 +35,7 @@ import no.nav.syfo.rules.SyketilfelleRuleChain
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.rules.hpr.HPRRulesExecution
+import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.sm.isICD10
@@ -52,7 +55,8 @@ class RuleService(
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
     private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution(),
-    private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution()
+    private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution(),
+    private val legeSuspensjonRulesExecution: LegeSuspensjonRulesExecution = LegeSuspensjonRulesExecution()
 
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
@@ -169,6 +173,20 @@ class RuleService(
 
         HPR_RULE_PATH_COUNTER.labels(
             hprResult.printRulePath()
+        ).inc()
+
+        val legesuspensjonResult = legeSuspensjonRulesExecution.runRules(
+            sykmeldingId = receivedSykmelding.sykmelding.id,
+            behandlerSuspendert = doctorSuspendDeferred.await()
+        )
+
+        LEGESUSPENSJON_RULE_HIT_COUNTER.labels(
+            legesuspensjonResult.treeResult.status.name,
+            legesuspensjonResult.treeResult.ruleHit?.name ?: legesuspensjonResult.treeResult.status.name
+        ).inc()
+
+        LEGESUSPENSJON_RULE_PATH_COUNTER.labels(
+            legesuspensjonResult.printRulePath()
         ).inc()
 
         val result = listOf(
