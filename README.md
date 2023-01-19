@@ -96,7 +96,7 @@ Questions and/or feature requests? Please create an [issue](https://github.com/n
 If you work in [@navikt](https://github.com/navikt) you can reach us at the Slack
 channel [#team-sykmelding](https://nav-it.slack.com/archives/CMA3XV997).
 
-# Tilbakedatering regelflyt
+# Tilbakedatering rule flow
 
 <!-- TILBAKEDATERING_MARKER_START -->
 ```mermaid
@@ -142,7 +142,7 @@ graph TD
 
 
 
-
+# HPR rule flow
 <!-- HPR_MARKER_START -->
 ```mermaid
 graph TD

@@ -16,13 +16,13 @@ val behanderIkkeGyldigHPR: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val aktivAutorisasjon = behandlerGodkjenninger.any {
-        it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv
+        !(it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv)
     }
 
     RuleResult(
         ruleInputs = mapOf("aktivAutorisasjon" to aktivAutorisasjon),
         rule = HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR,
-        ruleResult = !aktivAutorisasjon
+        ruleResult = aktivAutorisasjon
     )
 }
 
@@ -30,11 +30,13 @@ val behandlerManglerAutorisasjon: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val gyldigeGodkjenninger = behandlerGodkjenninger.any {
-        it.autorisasjon?.aktiv != null &&
-            it.autorisasjon.aktiv &&
-            it.autorisasjon.oid == 7704 &&
-            it.autorisasjon.verdi != null &&
-            it.autorisasjon.verdi in arrayOf("1", "17", "4", "2", "14", "18")
+        !(
+            it.autorisasjon?.aktiv != null &&
+                it.autorisasjon.aktiv &&
+                it.autorisasjon.oid == 7704 &&
+                it.autorisasjon.verdi != null &&
+                it.autorisasjon.verdi in arrayOf("1", "17", "4", "2", "14", "18")
+            )
     }
 
     RuleResult(
@@ -48,23 +50,25 @@ val behandlerIkkeLEKIMTTLFT: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val behandlerLEKIMTTLFT = behandlerGodkjenninger.any {
-        it.helsepersonellkategori?.aktiv != null &&
-            it.autorisasjon?.aktiv == true && it.helsepersonellkategori.verdi != null &&
-            harAktivHelsepersonellAutorisasjonsSom(
-                behandlerGodkjenninger,
-                listOf(
-                    HelsepersonellKategori.LEGE.verdi,
-                    HelsepersonellKategori.KIROPRAKTOR.verdi,
-                    HelsepersonellKategori.MANUELLTERAPEUT.verdi,
-                    HelsepersonellKategori.TANNLEGE.verdi,
-                    HelsepersonellKategori.FYSIOTERAPAEUT.verdi
+        !(
+            it.helsepersonellkategori?.aktiv != null &&
+                it.autorisasjon?.aktiv == true && it.helsepersonellkategori.verdi != null &&
+                harAktivHelsepersonellAutorisasjonsSom(
+                    behandlerGodkjenninger,
+                    listOf(
+                        HelsepersonellKategori.LEGE.verdi,
+                        HelsepersonellKategori.KIROPRAKTOR.verdi,
+                        HelsepersonellKategori.MANUELLTERAPEUT.verdi,
+                        HelsepersonellKategori.TANNLEGE.verdi,
+                        HelsepersonellKategori.FYSIOTERAPAEUT.verdi
+                    )
                 )
             )
     }
 
     RuleResult(
         ruleInputs = mapOf("behandlerLEKIMTTLFT" to behandlerLEKIMTTLFT),
-        rule = HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR,
+        rule = HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR,
         ruleResult = behandlerLEKIMTTLFT
     )
 }
@@ -75,7 +79,7 @@ val behandlerMTFTKISykmeldtOver12Uker: HPRRule = { sykmelding, behandlerOgStartd
     val behandlerStartDato = behandlerOgStartdato.startdato
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
-    val result = (
+    val behandlerMTFTKISykmeldtOver12Uker = (
         (forsteFomDato..sisteTomDato).daysBetween() > 84 ||
             (behandlerStartDato != null && (behandlerStartDato..sisteTomDato).daysBetween() > 84)
         ) &&
@@ -96,9 +100,9 @@ val behandlerMTFTKISykmeldtOver12Uker: HPRRule = { sykmelding, behandlerOgStartd
         )
 
     RuleResult(
-        ruleInputs = mapOf("result" to result),
+        ruleInputs = mapOf("behandlerMTFTKISykmeldtOver12Uker" to behandlerMTFTKISykmeldtOver12Uker),
         rule = HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER,
-        ruleResult = result
+        ruleResult = behandlerMTFTKISykmeldtOver12Uker
     )
 }
 
