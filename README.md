@@ -143,6 +143,7 @@ graph TD
 
 
 
+
 # HPR rule flow
 <!-- HPR_MARKER_START -->
 ```mermaid
@@ -164,6 +165,7 @@ graph TD
 <!-- HPR_MARKER_END -->
 
 
+
 # Legesuspensjon rule flow
 <!-- LEGESUSPENSJON_MARKER_START -->
 ```mermaid
@@ -177,3 +179,18 @@ graph TD
 
 ```
 <!-- LEGESUSPENSJON_MARKER_END -->
+
+
+# PeriodLogic rule flow
+<!-- PERIODLOGIC_MARKER_START -->
+```mermaid
+graph TD
+    root(PERIODER_MANGLER) -->|Yes| root_PERIODER_MANGLER_INVALID(INVALID):::invalid
+    root(PERIODER_MANGLER) -->|No| root_PERIODER_MANGLER_OK(OK):::ok
+    classDef ok fill:#c3ff91,stroke:#004a00,color: black;
+    classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
+    classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
+
+
+```
+<!-- PERIODLOGIC_MARKER_END -->

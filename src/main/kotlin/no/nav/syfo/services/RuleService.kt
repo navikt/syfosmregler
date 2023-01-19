@@ -14,6 +14,8 @@ import no.nav.syfo.metrics.HPR_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.HPR_RULE_PATH_COUNTER
 import no.nav.syfo.metrics.LEGESUSPENSJON_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.LEGESUSPENSJON_RULE_PATH_COUNTER
+import no.nav.syfo.metrics.PERIODLOGIC_RULE_HIT_COUNTER
+import no.nav.syfo.metrics.PERIODLOGIC_RULE_PATH_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_PATH_COUNTER
@@ -36,6 +38,7 @@ import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.rules.hpr.HPRRulesExecution
 import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
+import no.nav.syfo.rules.periodlogic.PeriodLogicRulesExecution
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.sm.isICD10
@@ -56,7 +59,8 @@ class RuleService(
     private val juridiskVurderingService: JuridiskVurderingService,
     private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution(),
     private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution(),
-    private val legeSuspensjonRulesExecution: LegeSuspensjonRulesExecution = LegeSuspensjonRulesExecution()
+    private val legeSuspensjonRulesExecution: LegeSuspensjonRulesExecution = LegeSuspensjonRulesExecution(),
+    private val periodLogicRulesExecution: PeriodLogicRulesExecution = PeriodLogicRulesExecution()
 
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
@@ -187,6 +191,20 @@ class RuleService(
 
         LEGESUSPENSJON_RULE_PATH_COUNTER.labels(
             legesuspensjonResult.printRulePath()
+        ).inc()
+
+        val periodLogicResult = periodLogicRulesExecution.runRules(
+            sykmelding = receivedSykmelding.sykmelding,
+            ruleMetadata = ruleMetadata
+        )
+
+        PERIODLOGIC_RULE_HIT_COUNTER.labels(
+            periodLogicResult.treeResult.status.name,
+            periodLogicResult.treeResult.ruleHit?.name ?: periodLogicResult.treeResult.status.name
+        ).inc()
+
+        PERIODLOGIC_RULE_PATH_COUNTER.labels(
+            periodLogicResult.printRulePath()
         ).inc()
 
         val result = listOf(
