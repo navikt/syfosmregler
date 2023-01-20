@@ -7,7 +7,18 @@ import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
 enum class ValidationRules {
-    PASIENT_YNGRE_ENN_13
+    PASIENT_YNGRE_ENN_13,
+    PASIENT_ELDRE_ENN_70,
+    UKJENT_DIAGNOSEKODETYPE,
+    ICPC_2_Z_DIAGNOSE,
+    HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,
+    UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE,
+    UGYLDIG_KODEVERK_FOR_BIDIAGNOSE,
+    UGYLDIG_REGELSETTVERSJON,
+    MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39,
+    UGYLDIG_ORGNR_LENGDE,
+    AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR,
+    BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR
 }
 
 data class ValidationResult(
@@ -21,7 +32,40 @@ data class ValidationResult(
 
 val validationRuleTree = tree<ValidationRules, ValidationResult>(ValidationRules.PASIENT_YNGRE_ENN_13) {
     yes(INVALID, RuleHit.PASIENT_YNGRE_ENN_13)
-    no(OK)
+    no(ValidationRules.PASIENT_ELDRE_ENN_70) {
+        yes(INVALID, RuleHit.PASIENT_ELDRE_ENN_70)
+        no(ValidationRules.UKJENT_DIAGNOSEKODETYPE) {
+            yes(INVALID, RuleHit.UKJENT_DIAGNOSEKODETYPE)
+            no(ValidationRules.ICPC_2_Z_DIAGNOSE) {
+                yes(INVALID, RuleHit.ICPC_2_Z_DIAGNOSE)
+                no(ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER) {
+                    yes(INVALID, RuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER)
+                    no(ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE) {
+                        yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE)
+                        no(ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
+                            yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
+                            no(ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
+                                yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
+                                no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
+                                    yes(INVALID, RuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39)
+                                    no(ValidationRules.UGYLDIG_ORGNR_LENGDE) {
+                                        yes(INVALID, RuleHit.UGYLDIG_ORGNR_LENGDE)
+                                        no(ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
+                                            yes(INVALID, RuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR)
+                                            no(ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
+                                                yes(INVALID, RuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR)
+                                                no(OK)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 internal fun RuleNode<ValidationRules, ValidationResult>.yes(status: Status, ruleHit: RuleHit? = null) {
@@ -32,8 +76,21 @@ internal fun RuleNode<ValidationRules, ValidationResult>.no(status: Status, rule
     no(ValidationResult(status, ruleHit))
 }
 
+// TODO
 fun getRule(rules: ValidationRules): Rule<ValidationRules> {
     return when (rules) {
         ValidationRules.PASIENT_YNGRE_ENN_13 -> pasientUnder13Aar
+        ValidationRules.PASIENT_ELDRE_ENN_70 -> pasientOver70Aar
+        ValidationRules.UKJENT_DIAGNOSEKODETYPE -> pasientUnder13Aar
+        ValidationRules.ICPC_2_Z_DIAGNOSE -> pasientUnder13Aar
+        ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER -> pasientUnder13Aar
+        ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE -> pasientUnder13Aar
+        ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE -> pasientUnder13Aar
+        ValidationRules.UGYLDIG_REGELSETTVERSJON -> pasientUnder13Aar
+        ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 -> pasientUnder13Aar
+        ValidationRules.UGYLDIG_ORGNR_LENGDE -> pasientUnder13Aar
+        ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR -> pasientUnder13Aar
+        ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> pasientUnder13Aar
+        ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> pasientUnder13Aar
     }
 }
