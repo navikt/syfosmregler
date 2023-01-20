@@ -196,7 +196,7 @@ class ValidationRuleChain(
         // Sjekker om korrekt versjon av sykmeldingen er benyttet
         // Hvis regelsettversjon som er angitt i fagmelding ikke eksisterer så skal meldingen returneres
         Rule(
-            name = "UGYLDIG_KODEVERK_FOR_BIDIAGNOSE",
+            name = "UGYLDIG_REGELSETTVERSJON",
             ruleId = 1708,
             status = Status.INVALID,
             messageForUser = "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",

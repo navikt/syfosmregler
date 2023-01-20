@@ -76,21 +76,19 @@ internal fun RuleNode<ValidationRules, ValidationResult>.no(status: Status, rule
     no(ValidationResult(status, ruleHit))
 }
 
-// TODO
 fun getRule(rules: ValidationRules): Rule<ValidationRules> {
     return when (rules) {
         ValidationRules.PASIENT_YNGRE_ENN_13 -> pasientUnder13Aar
         ValidationRules.PASIENT_ELDRE_ENN_70 -> pasientOver70Aar
-        ValidationRules.UKJENT_DIAGNOSEKODETYPE -> pasientUnder13Aar
-        ValidationRules.ICPC_2_Z_DIAGNOSE -> pasientUnder13Aar
-        ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER -> pasientUnder13Aar
-        ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE -> pasientUnder13Aar
-        ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE -> pasientUnder13Aar
-        ValidationRules.UGYLDIG_REGELSETTVERSJON -> pasientUnder13Aar
-        ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 -> pasientUnder13Aar
-        ValidationRules.UGYLDIG_ORGNR_LENGDE -> pasientUnder13Aar
-        ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR -> pasientUnder13Aar
-        ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> pasientUnder13Aar
-        ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> pasientUnder13Aar
+        ValidationRules.UKJENT_DIAGNOSEKODETYPE -> ukjentDiagnoseKodeType
+        ValidationRules.ICPC_2_Z_DIAGNOSE -> icpc2ZDiagnose
+        ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER -> houvedDiagnoseEllerFraversgrunnMangler
+        ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE -> ugyldigKodeVerkHouvedDiagnose
+        ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE -> ugyldigKodeVerkBiDiagnose
+        ValidationRules.UGYLDIG_REGELSETTVERSJON -> ugyldigRegelsettversjon
+        ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 -> manglendeDynamiskesporsmaalversjon2uke39
+        ValidationRules.UGYLDIG_ORGNR_LENGDE -> ugyldingOrgNummerLengde
+        ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR -> avsenderSammeSomPasient
+        ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> behandlerSammeSomPasient
     }
 }
