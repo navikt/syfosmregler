@@ -1,15 +1,14 @@
 package no.nav.syfo.rules.periodlogic
 
 import io.kotest.core.spec.style.FunSpec
-import java.time.LocalDate
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Status
 import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
 import org.amshove.kluent.shouldBeEqualTo
+import java.time.LocalDate
 
 class PeriodLogicRulesTest : FunSpec({
     val ruleTree = PeriodLogicRulesExecution()
-
 
     context("Testing periodLogic rules and checking the rule outcomes") {
         test("Alt er ok, Status OK") {
@@ -41,7 +40,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT to false,
                 PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to false,
 
-                )
+            )
 
             mapOf(
                 "periodeMangler" to false,
