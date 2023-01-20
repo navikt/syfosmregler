@@ -19,6 +19,8 @@ import no.nav.syfo.metrics.PERIODLOGIC_RULE_PATH_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_PATH_COUNTER
+import no.nav.syfo.metrics.VALIDATION_RULE_HIT_COUNTER
+import no.nav.syfo.metrics.VALIDATION_RULE_PATH_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -41,6 +43,7 @@ import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
 import no.nav.syfo.rules.periodlogic.PeriodLogicRulesExecution
 import no.nav.syfo.rules.sortedFOMDate
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
+import no.nav.syfo.rules.validation.ValidationRulesExecution
 import no.nav.syfo.sm.isICD10
 import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.utils.LoggingMeta
@@ -60,8 +63,8 @@ class RuleService(
     private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution(),
     private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution(),
     private val legeSuspensjonRulesExecution: LegeSuspensjonRulesExecution = LegeSuspensjonRulesExecution(),
-    private val periodLogicRulesExecution: PeriodLogicRulesExecution = PeriodLogicRulesExecution()
-
+    private val periodLogicRulesExecution: PeriodLogicRulesExecution = PeriodLogicRulesExecution(),
+    private val validationRulesExecution: ValidationRulesExecution = ValidationRulesExecution()
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -205,6 +208,20 @@ class RuleService(
 
         PERIODLOGIC_RULE_PATH_COUNTER.labels(
             periodLogicResult.printRulePath()
+        ).inc()
+
+        val validationResult = validationRulesExecution.runRules(
+            sykmelding = receivedSykmelding.sykmelding,
+            ruleMetadata = ruleMetadata
+        )
+
+        VALIDATION_RULE_HIT_COUNTER.labels(
+            validationResult.treeResult.status.name,
+            validationResult.treeResult.ruleHit?.name ?: validationResult.treeResult.status.name
+        ).inc()
+
+        VALIDATION_RULE_PATH_COUNTER.labels(
+            validationResult.printRulePath()
         ).inc()
 
         val result = listOf(

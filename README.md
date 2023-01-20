@@ -138,6 +138,7 @@ graph TD
 <!-- TILBAKEDATERING_MARKER_END -->
 
 
+
 # HPR rule flow
 <!-- HPR_MARKER_START -->
 ```mermaid
@@ -158,6 +159,7 @@ graph TD
 ```
 <!-- HPR_MARKER_END -->
 
+
 # Legesuspensjon rule flow
 <!-- LEGESUSPENSJON_MARKER_START -->
 ```mermaid
@@ -171,6 +173,7 @@ graph TD
 
 ```
 <!-- LEGESUSPENSJON_MARKER_END -->
+
 
 # PeriodLogic rule flow
 <!-- PERIODLOGIC_MARKER_START -->
@@ -215,3 +218,18 @@ graph TD
 
 ```
 <!-- PERIODLOGIC_MARKER_END -->
+
+
+# Validation rule flow
+<!-- VALIDATION_MARKER_START -->
+```mermaid
+graph TD
+    root(PASIENT_YNGRE_ENN_13) -->|Yes| root_PASIENT_YNGRE_ENN_13_INVALID(INVALID):::invalid
+    root(PASIENT_YNGRE_ENN_13) -->|No| root_PASIENT_YNGRE_ENN_13_OK(OK):::ok
+    classDef ok fill:#c3ff91,stroke:#004a00,color: black;
+    classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
+    classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
+
+
+```
+<!-- VALIDATION_MARKER_END -->
