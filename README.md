@@ -138,13 +138,6 @@ graph TD
 <!-- TILBAKEDATERING_MARKER_END -->
 
 
-
-
-
-
-
-
-
 # HPR rule flow
 <!-- HPR_MARKER_START -->
 ```mermaid
@@ -165,9 +158,6 @@ graph TD
 ```
 <!-- HPR_MARKER_END -->
 
-
-
-
 # Legesuspensjon rule flow
 <!-- LEGESUSPENSJON_MARKER_START -->
 ```mermaid
@@ -181,8 +171,6 @@ graph TD
 
 ```
 <!-- LEGESUSPENSJON_MARKER_END -->
-
-
 
 # PeriodLogic rule flow
 <!-- PERIODLOGIC_MARKER_START -->
