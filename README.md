@@ -166,6 +166,7 @@ graph TD
 
 
 
+
 # Legesuspensjon rule flow
 <!-- LEGESUSPENSJON_MARKER_START -->
 ```mermaid
@@ -179,6 +180,7 @@ graph TD
 
 ```
 <!-- LEGESUSPENSJON_MARKER_END -->
+
 
 
 
@@ -227,6 +229,7 @@ graph TD
 
 ```
 <!-- PERIODLOGIC_MARKER_END -->
+
 
 
 

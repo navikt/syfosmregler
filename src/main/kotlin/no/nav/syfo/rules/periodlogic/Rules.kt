@@ -13,10 +13,11 @@ typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadata: RuleMetadata) -> Rule
 typealias PeriodLogicRule = Rule<PeriodLogicRules>
 
 val periodeMangler: PeriodLogicRule = { sykmelding, _ ->
-    val periodeMangler = sykmelding.perioder.isEmpty()
+    val perioder = sykmelding.perioder
+    val periodeMangler = perioder.isEmpty()
 
     RuleResult(
-        ruleInputs = mapOf("periodeMangler" to periodeMangler),
+        ruleInputs = mapOf("perioder" to perioder),
         rule = PeriodLogicRules.PERIODER_MANGLER,
         ruleResult = periodeMangler
     )
@@ -28,7 +29,7 @@ val fraDatoEtterTilDato: PeriodLogicRule = { sykmelding, _ ->
     val fraDatoEtterTilDato = perioder.any { it.fom.isAfter(it.tom) }
 
     RuleResult(
-        ruleInputs = mapOf("fraDatoEtterTilDato" to fraDatoEtterTilDato),
+        ruleInputs = mapOf("perioder" to perioder),
         rule = PeriodLogicRules.FRADATO_ETTER_TILDATO,
         ruleResult = fraDatoEtterTilDato
     )
@@ -46,7 +47,7 @@ val overlappendePerioder: PeriodLogicRule = { sykmelding, _ ->
     }
 
     RuleResult(
-        ruleInputs = mapOf("overlappendePerioder" to overlappendePerioder),
+        ruleInputs = mapOf("perioder" to perioder),
         rule = PeriodLogicRules.OVERLAPPENDE_PERIODER,
         ruleResult = overlappendePerioder
     )
@@ -68,7 +69,7 @@ val oppholdMellomPerioder: PeriodLogicRule = { sykmelding, _ ->
     }
 
     RuleResult(
-        ruleInputs = mapOf("oppholdMellomPerioder" to oppholdMellomPerioder),
+        ruleInputs = mapOf("periodeRanges" to periodeRanges),
         rule = PeriodLogicRules.OPPHOLD_MELLOM_PERIODER,
         ruleResult = oppholdMellomPerioder
     )
@@ -85,7 +86,7 @@ val ikkeDefinertPeriode: PeriodLogicRule = { sykmelding, _ ->
     }
 
     RuleResult(
-        ruleInputs = mapOf("ikkeDefinertPeriode" to ikkeDefinertPeriode),
+        ruleInputs = mapOf("perioder" to perioder),
         rule = PeriodLogicRules.IKKE_DEFINERT_PERIODE,
         ruleResult = ikkeDefinertPeriode
     )

@@ -16,7 +16,8 @@ class HPRTest : FunSpec({
     context("Testing hpr rules and checking the rule outcomes") {
         test("har aktiv autorisasjon, Status OK") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.of(2020, 1, 1), tom = LocalDate.of(2020, 1, 2),
+                fom = LocalDate.of(2020, 1, 1),
+                tom = LocalDate.of(2020, 1, 2),
                 behandletTidspunkt = LocalDate.of(2020, 1, 3).atStartOfDay()
             )
             val behandler = Behandler(
@@ -49,10 +50,10 @@ class HPRTest : FunSpec({
             )
 
             mapOf(
-                "aktivAutorisasjon" to false,
-                "gyldigeGodkjenninger" to false,
-                "behandlerLEKIMTTLFT" to false,
-                "behandlerMTFTKISykmeldtOver12Uker" to false
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo null
@@ -60,7 +61,8 @@ class HPRTest : FunSpec({
 
         test("har ikke aktiv autorisasjon, Status INVALID") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.of(2020, 1, 1), tom = LocalDate.of(2020, 1, 2),
+                fom = LocalDate.of(2020, 1, 1),
+                tom = LocalDate.of(2020, 1, 2),
                 behandletTidspunkt = LocalDate.of(2020, 1, 3).atStartOfDay()
             )
             val behandler = Behandler(
@@ -89,14 +91,15 @@ class HPRTest : FunSpec({
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to true
             )
             mapOf(
-                "aktivAutorisasjon" to true
+                "behandlerGodkjenninger" to behandler.godkjenninger,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR
         }
         test("mangler autorisasjon, Status INVALID") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.of(2020, 1, 1), tom = LocalDate.of(2020, 1, 2),
+                fom = LocalDate.of(2020, 1, 1),
+                tom = LocalDate.of(2020, 1, 2),
                 behandletTidspunkt = LocalDate.of(2020, 1, 3).atStartOfDay()
             )
             val behandler = Behandler(
@@ -127,8 +130,8 @@ class HPRTest : FunSpec({
             )
 
             mapOf(
-                "aktivAutorisasjon" to false,
-                "gyldigeGodkjenninger" to true
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR
@@ -168,9 +171,9 @@ class HPRTest : FunSpec({
             )
 
             mapOf(
-                "aktivAutorisasjon" to false,
-                "gyldigeGodkjenninger" to false,
-                "behandlerLEKIMTTLFT" to true,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR
@@ -212,10 +215,10 @@ class HPRTest : FunSpec({
             )
 
             mapOf(
-                "aktivAutorisasjon" to false,
-                "gyldigeGodkjenninger" to false,
-                "behandlerLEKIMTTLFT" to false,
-                "behandlerMTFTKISykmeldtOver12Uker" to true
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER

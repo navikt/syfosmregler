@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateNames
 import java.io.ByteArrayOutputStream
 
 group = "no.nav.syfo"
@@ -11,19 +10,19 @@ val caffeineVersion = "3.1.2"
 val coroutinesVersion = "1.6.4"
 val jacksonVersion = "2.14.1"
 val kluentVersion = "1.72"
-val ktorVersion = "2.1.3"
+val ktorVersion = "2.2.3"
 val logbackVersion = "1.4.5"
 val logstashEncoderVersion = "7.2"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "1.1e5e122"
 val kotestVersion = "5.5.4"
 val mockkVersion = "1.13.2"
-val kotlinVersion = "1.7.22"
+val kotlinVersion = "1.8.10"
 val nettyCodecVersion = "4.1.86.Final"
 
 
 plugins {
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "1.8.10"
     id("org.jmailen.kotlinter") version "3.10.0"
     id("com.diffplug.spotless") version "6.5.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -140,7 +139,6 @@ tasks {
                     listOf(
                         "```",
                         "<!-- TILBAKEDATERING_MARKER_END -->",
-                        "",
                     ) +
                     lines.subList(end + 1, lines.size)
 
@@ -170,7 +168,6 @@ tasks {
                         listOf(
                             "```",
                             "<!-- HPR_MARKER_END -->",
-                            "",
                         ) +
                         lines.subList(end + 1, lines.size)
 
@@ -201,7 +198,6 @@ tasks {
                         listOf(
                             "```",
                             "<!-- LEGESUSPENSJON_MARKER_END -->",
-                            "",
                         ) +
                         lines.subList(end + 1, lines.size)
 
@@ -231,7 +227,6 @@ tasks {
                         listOf(
                             "```",
                             "<!-- PERIODLOGIC_MARKER_END -->",
-                            "",
                         ) +
                         lines.subList(end + 1, lines.size)
 
@@ -262,7 +257,6 @@ tasks {
                         listOf(
                             "```",
                             "<!-- VALIDATION_MARKER_END -->",
-                            "",
                         ) +
                         lines.subList(end + 1, lines.size)
 

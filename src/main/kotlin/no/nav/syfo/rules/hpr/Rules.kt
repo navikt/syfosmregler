@@ -20,7 +20,7 @@ val behanderIkkeGyldigHPR: HPRRule = { _, behandlerOgStartdato ->
     }
 
     RuleResult(
-        ruleInputs = mapOf("aktivAutorisasjon" to aktivAutorisasjon),
+        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR,
         ruleResult = aktivAutorisasjon
     )
@@ -40,7 +40,7 @@ val behandlerManglerAutorisasjon: HPRRule = { _, behandlerOgStartdato ->
     }
 
     RuleResult(
-        ruleInputs = mapOf("gyldigeGodkjenninger" to gyldigeGodkjenninger),
+        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR,
         ruleResult = gyldigeGodkjenninger
     )
@@ -67,7 +67,7 @@ val behandlerIkkeLEKIMTTLFT: HPRRule = { _, behandlerOgStartdato ->
     }
 
     RuleResult(
-        ruleInputs = mapOf("behandlerLEKIMTTLFT" to behandlerLEKIMTTLFT),
+        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR,
         ruleResult = behandlerLEKIMTTLFT
     )
@@ -100,7 +100,7 @@ val behandlerMTFTKISykmeldtOver12Uker: HPRRule = { sykmelding, behandlerOgStartd
         )
 
     RuleResult(
-        ruleInputs = mapOf("behandlerMTFTKISykmeldtOver12Uker" to behandlerMTFTKISykmeldtOver12Uker),
+        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER,
         ruleResult = behandlerMTFTKISykmeldtOver12Uker
     )

@@ -47,11 +47,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -82,7 +84,7 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to true
+                "perioder" to sykmelding.perioder
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.PERIODER_MANGLER
@@ -109,8 +111,8 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to true
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.FRADATO_ETTER_TILDATO
@@ -142,9 +144,9 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to true
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.OVERLAPPENDE_PERIODER
@@ -185,10 +187,12 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to true
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom }
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.OPPHOLD_MELLOM_PERIODER
@@ -222,11 +226,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to true
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.IKKE_DEFINERT_PERIODE
@@ -262,11 +268,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to true
             ) shouldBeEqualTo status.ruleInputs
 
@@ -300,11 +308,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to true
             ) shouldBeEqualTo status.ruleInputs
@@ -344,11 +354,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to true
@@ -380,11 +392,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -429,11 +443,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -475,11 +491,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -523,11 +541,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -573,11 +593,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -625,11 +647,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -678,11 +702,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
@@ -734,11 +760,13 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "periodeMangler" to false,
-                "fraDatoEtterTilDato" to false,
-                "overlappendePerioder" to false,
-                "oppholdMellomPerioder" to false,
-                "ikkeDefinertPeriode" to false,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,

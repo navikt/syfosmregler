@@ -322,7 +322,7 @@ class ValidationTest : FunSpec({
                     bidiagnoser = listOf(
                         Diagnose(
                             system = "2.16.578.1.12.4.1.1.7110",
-                            kode = "Z09",
+                            kode = "S09",
                             tekst = "Brudd legg/ankel"
                         )
                     )
