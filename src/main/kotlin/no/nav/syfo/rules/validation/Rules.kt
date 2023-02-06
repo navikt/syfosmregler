@@ -83,15 +83,15 @@ val ugyldigKodeVerkHouvedDiagnose: ValidationRule = { sykmelding, _ ->
     val annenFravarsArsak = sykmelding.medisinskVurdering.annenFraversArsak
 
     val ugyldigKodeVerkHouvedDiagnose = (
-            hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
-                    hoveddiagnose?.let { diagnose ->
-                        if (diagnose.isICPC2()) {
-                            Diagnosekoder.icpc2.containsKey(diagnose.kode)
-                        } else {
-                            Diagnosekoder.icd10.containsKey(diagnose.kode)
-                        }
-                    } != true
-            ) && annenFravarsArsak == null
+        hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
+            hoveddiagnose?.let { diagnose ->
+            if (diagnose.isICPC2()) {
+                Diagnosekoder.icpc2.containsKey(diagnose.kode)
+            } else {
+                Diagnosekoder.icd10.containsKey(diagnose.kode)
+            }
+        } != true
+        ) && annenFravarsArsak == null
 
     RuleResult(
         ruleInputs = mapOf("ugyldigKodeVerkHouvedDiagnose" to ugyldigKodeVerkHouvedDiagnose),
@@ -118,9 +118,8 @@ val ugyldigKodeVerkBiDiagnose: ValidationRule = { sykmelding, _ ->
     )
 }
 
-val ugyldigRegelsettversjon: ValidationRule = { sykmelding, ruleMetadata ->
+val ugyldigRegelsettversjon: ValidationRule = { _, ruleMetadata ->
     val rulesetVersion = ruleMetadata.rulesetVersion
-
 
     val ugyldigRegelsettversjon = rulesetVersion !in arrayOf(null, "", "1", "2", "3")
 
@@ -131,7 +130,7 @@ val ugyldigRegelsettversjon: ValidationRule = { sykmelding, ruleMetadata ->
     )
 }
 
-val avsenderSammeSomPasient: ValidationRule = { sykmelding, ruleMetadata ->
+val avsenderSammeSomPasient: ValidationRule = { _, ruleMetadata ->
     val avsenderFnr = ruleMetadata.avsenderFnr
     val patientPersonNumber = ruleMetadata.patientPersonNumber
 
@@ -157,7 +156,7 @@ val behandlerSammeSomPasient: ValidationRule = { sykmelding, ruleMetadata ->
     )
 }
 
-val ugyldingOrgNummerLengde: ValidationRule = { sykmelding, ruleMetadata ->
+val ugyldingOrgNummerLengde: ValidationRule = { _, ruleMetadata ->
     val legekontorOrgnr = ruleMetadata.legekontorOrgnr
 
     val ugyldingOrgNummerLengde = legekontorOrgnr != null && legekontorOrgnr.length != 9
@@ -175,8 +174,8 @@ val manglendeDynamiskesporsmaalversjon2uke39: ValidationRule = { sykmelding, rul
     val utdypendeOpplysinger = sykmelding.utdypendeOpplysninger
 
     val manglendeDynamiskesporsmaalversjon2uke39 = rulesetVersion in arrayOf("2") &&
-            sykmeldingPerioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
-            utdypendeOpplysinger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
+        sykmeldingPerioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
+        utdypendeOpplysinger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
 
     RuleResult(
         ruleInputs = mapOf("manglendeDynamiskesporsmaalversjon2uke39" to manglendeDynamiskesporsmaalversjon2uke39),

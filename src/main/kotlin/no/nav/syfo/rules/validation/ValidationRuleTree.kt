@@ -44,9 +44,7 @@ val validationRuleTree = tree<ValidationRules, ValidationResult>(ValidationRules
                         yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE)
                         no(ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
                             yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
-                            no(ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
-                                yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
-                                no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
+                            no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
                                     yes(INVALID, RuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39)
                                     no(ValidationRules.UGYLDIG_ORGNR_LENGDE) {
                                         yes(INVALID, RuleHit.UGYLDIG_ORGNR_LENGDE)
@@ -65,7 +63,6 @@ val validationRuleTree = tree<ValidationRules, ValidationResult>(ValidationRules
                 }
             }
         }
-    }
 }
 
 internal fun RuleNode<ValidationRules, ValidationResult>.yes(status: Status, ruleHit: RuleHit? = null) {

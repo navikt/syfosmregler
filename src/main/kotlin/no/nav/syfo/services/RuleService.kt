@@ -10,17 +10,9 @@ import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
 import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
-import no.nav.syfo.metrics.HPR_RULE_HIT_COUNTER
-import no.nav.syfo.metrics.HPR_RULE_PATH_COUNTER
-import no.nav.syfo.metrics.LEGESUSPENSJON_RULE_HIT_COUNTER
-import no.nav.syfo.metrics.LEGESUSPENSJON_RULE_PATH_COUNTER
-import no.nav.syfo.metrics.PERIODLOGIC_RULE_HIT_COUNTER
-import no.nav.syfo.metrics.PERIODLOGIC_RULE_PATH_COUNTER
 import no.nav.syfo.metrics.RULE_HIT_COUNTER
-import no.nav.syfo.metrics.TILBAKEDATERING_RULE_HIT_COUNTER
-import no.nav.syfo.metrics.TILBAKEDATERING_RULE_PATH_COUNTER
-import no.nav.syfo.metrics.VALIDATION_RULE_HIT_COUNTER
-import no.nav.syfo.metrics.VALIDATION_RULE_PATH_COUNTER
+import no.nav.syfo.metrics.RULE_NODE_RULE_HIT_COUNTER
+import no.nav.syfo.metrics.RULE_NODE_RULE_PATH_COUNTER
 import no.nav.syfo.model.AnnenFraverGrunn
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
@@ -159,12 +151,12 @@ class RuleService(
 
         val tilbakedateringResult = tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, metadata = ruleMetadataSykmelding)
 
-        TILBAKEDATERING_RULE_HIT_COUNTER.labels(
+        RULE_NODE_RULE_HIT_COUNTER.labels(
             tilbakedateringResult.treeResult.status.name,
             tilbakedateringResult.treeResult.ruleHit?.name ?: tilbakedateringResult.treeResult.status.name
         ).inc()
 
-        TILBAKEDATERING_RULE_PATH_COUNTER.labels(
+        RULE_NODE_RULE_PATH_COUNTER.labels(
             tilbakedateringResult.printRulePath()
         ).inc()
 
@@ -173,12 +165,12 @@ class RuleService(
             behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato)
         )
 
-        HPR_RULE_HIT_COUNTER.labels(
+        RULE_NODE_RULE_HIT_COUNTER.labels(
             hprResult.treeResult.status.name,
             hprResult.treeResult.ruleHit?.name ?: hprResult.treeResult.status.name
         ).inc()
 
-        HPR_RULE_PATH_COUNTER.labels(
+        RULE_NODE_RULE_PATH_COUNTER.labels(
             hprResult.printRulePath()
         ).inc()
 
@@ -187,12 +179,12 @@ class RuleService(
             behandlerSuspendert = doctorSuspendDeferred.await()
         )
 
-        LEGESUSPENSJON_RULE_HIT_COUNTER.labels(
+        RULE_NODE_RULE_HIT_COUNTER.labels(
             legesuspensjonResult.treeResult.status.name,
             legesuspensjonResult.treeResult.ruleHit?.name ?: legesuspensjonResult.treeResult.status.name
         ).inc()
 
-        LEGESUSPENSJON_RULE_PATH_COUNTER.labels(
+        RULE_NODE_RULE_PATH_COUNTER.labels(
             legesuspensjonResult.printRulePath()
         ).inc()
 
@@ -201,12 +193,12 @@ class RuleService(
             ruleMetadata = ruleMetadata
         )
 
-        PERIODLOGIC_RULE_HIT_COUNTER.labels(
+        RULE_NODE_RULE_HIT_COUNTER.labels(
             periodLogicResult.treeResult.status.name,
             periodLogicResult.treeResult.ruleHit?.name ?: periodLogicResult.treeResult.status.name
         ).inc()
 
-        PERIODLOGIC_RULE_PATH_COUNTER.labels(
+        RULE_NODE_RULE_PATH_COUNTER.labels(
             periodLogicResult.printRulePath()
         ).inc()
 
@@ -215,12 +207,12 @@ class RuleService(
             ruleMetadata = ruleMetadata
         )
 
-        VALIDATION_RULE_HIT_COUNTER.labels(
+        RULE_NODE_RULE_HIT_COUNTER.labels(
             validationResult.treeResult.status.name,
             validationResult.treeResult.ruleHit?.name ?: validationResult.treeResult.status.name
         ).inc()
 
-        VALIDATION_RULE_PATH_COUNTER.labels(
+        RULE_NODE_RULE_PATH_COUNTER.labels(
             validationResult.printRulePath()
         ).inc()
 
