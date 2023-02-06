@@ -60,8 +60,7 @@ class ValidationTest : FunSpec({
                 "avsenderSammeSomPasient" to false,
                 "behandlerSammeSomPasient" to false,
 
-             ) shouldBeEqualTo status.ruleInputs
-
+            ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo null
         }
@@ -92,8 +91,7 @@ class ValidationTest : FunSpec({
             mapOf(
                 "pasientUnder13Aar" to true,
 
-                ) shouldBeEqualTo status.ruleInputs
-
+            ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo RuleHit.PASIENT_YNGRE_ENN_13
         }
