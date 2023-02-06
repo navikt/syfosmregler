@@ -44,15 +44,18 @@ val validationRuleTree = tree<ValidationRules, ValidationResult>(ValidationRules
                         yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE)
                         no(ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
                             yes(INVALID, RuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
-                            no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
-                                yes(INVALID, RuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39)
-                                no(ValidationRules.UGYLDIG_ORGNR_LENGDE) {
-                                    yes(INVALID, RuleHit.UGYLDIG_ORGNR_LENGDE)
-                                    no(ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
-                                        yes(INVALID, RuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR)
-                                        no(ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
-                                            yes(INVALID, RuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR)
-                                            no(OK)
+                            no(ValidationRules.UGYLDIG_REGELSETTVERSJON) {
+                                yes(INVALID, RuleHit.UGYLDIG_REGELSETTVERSJON)
+                                no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
+                                    yes(INVALID, RuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39)
+                                    no(ValidationRules.UGYLDIG_ORGNR_LENGDE) {
+                                        yes(INVALID, RuleHit.UGYLDIG_ORGNR_LENGDE)
+                                        no(ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
+                                            yes(INVALID, RuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR)
+                                            no(ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
+                                                yes(INVALID, RuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR)
+                                                no(OK)
+                                            }
                                         }
                                     }
                                 }
