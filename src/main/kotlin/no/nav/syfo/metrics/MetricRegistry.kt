@@ -31,7 +31,7 @@ val RULE_HIT_COUNTER: Counter = Counter.Builder()
 
 val RULE_NODE_RULE_HIT_COUNTER: Counter = Counter.Builder()
     .namespace(METRICS_NS)
-    .name("rulenode")
+    .name("rulenode_rule_hit_counter")
     .labelNames("status", "rule_hit")
     .help("Counts rulenode rules")
     .register()
