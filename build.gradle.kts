@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateNames
 import java.io.ByteArrayOutputStream
 
 group = "no.nav.syfo"
@@ -11,19 +10,19 @@ val caffeineVersion = "3.1.2"
 val coroutinesVersion = "1.6.4"
 val jacksonVersion = "2.14.1"
 val kluentVersion = "1.72"
-val ktorVersion = "2.1.3"
+val ktorVersion = "2.2.3"
 val logbackVersion = "1.4.5"
 val logstashEncoderVersion = "7.2"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "1.1e5e122"
 val kotestVersion = "5.5.4"
 val mockkVersion = "1.13.2"
-val kotlinVersion = "1.7.22"
+val kotlinVersion = "1.8.10"
 val nettyCodecVersion = "4.1.86.Final"
 
 
 plugins {
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "1.8.10"
     id("org.jmailen.kotlinter") version "3.10.0"
     id("com.diffplug.spotless") version "6.5.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -118,12 +117,12 @@ tasks {
         }
     }
 
-    register<JavaExec>("generateRuleMermaid") {
+    register<JavaExec>("generateTilbakedateringRuleMermaid") {
         val output = ByteArrayOutputStream()
-        mainClass.set("no.nav.syfo.GenerateMermaidKt")
+        mainClass.set("no.nav.syfo.rules.tilbakedatering.GenerateMermaidKt")
         classpath = sourceSets["main"].runtimeClasspath
         group = "documentation"
-        description = "Generates mermaid diagram source of rules"
+        description = "Generates mermaid diagram source of tilbakedatering rules"
         standardOutput = output
         doLast {
             val readme = File("README.md")
@@ -140,9 +139,126 @@ tasks {
                     listOf(
                         "```",
                         "<!-- TILBAKEDATERING_MARKER_END -->",
-                        "",
                     ) +
                     lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+    register<JavaExec>("generateHPRRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.hpr.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of hpr rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- HPR_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- HPR_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- HPR_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- HPR_MARKER_END -->",
+                        ) +
+                        lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+
+    register<JavaExec>("generateLegesuspensjonRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.legesuspensjon.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of hpr rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- LEGESUSPENSJON_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- LEGESUSPENSJON_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- LEGESUSPENSJON_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- LEGESUSPENSJON_MARKER_END -->",
+                        ) +
+                        lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+    register<JavaExec>("generatePeriodLogicRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.periodlogic.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of hpr rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- PERIODLOGIC_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- PERIODLOGIC_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- PERIODLOGIC_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- PERIODLOGIC_MARKER_END -->",
+                        ) +
+                        lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+
+    register<JavaExec>("generateValidationRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.validation.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of hpr rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- VALIDATION_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- VALIDATION_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- VALIDATION_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- VALIDATION_MARKER_END -->",
+                        ) +
+                        lines.subList(end + 1, lines.size)
 
 
             readme.writeText(newLines.joinToString("\n"))
@@ -151,6 +267,10 @@ tasks {
 
     "check" {
         dependsOn("formatKotlin")
-        dependsOn("generateRuleMermaid")
+        dependsOn("generateTilbakedateringRuleMermaid")
+        dependsOn("generateHPRRuleMermaid")
+        dependsOn("generateLegesuspensjonRuleMermaid")
+        dependsOn("generatePeriodLogicRuleMermaid")
+        dependsOn("generateValidationRuleMermaid")
     }
 }
