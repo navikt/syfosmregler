@@ -8,7 +8,7 @@ enum class RuleHit(
     val messageForSender: String,
     val messageForUser: String,
     val juridiskHenvisning: JuridiskHenvisning?,
-    status: Status
+    val status: Status
 ) {
     PERIODER_MANGLER(
         status = Status.INVALID,

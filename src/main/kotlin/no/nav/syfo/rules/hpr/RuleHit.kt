@@ -3,7 +3,12 @@ package no.nav.syfo.rules.hpr
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 
-enum class RuleHit(val messageForSender: String, val messageForUser: String, val juridiskHenvisning: JuridiskHenvisning?, status: Status) {
+enum class RuleHit(
+    val messageForSender: String,
+    val messageForUser: String,
+    val juridiskHenvisning: JuridiskHenvisning?,
+    val status: Status
+) {
     BEHANDLER_IKKE_GYLDIG_I_HPR(
         status = Status.INVALID,
         messageForSender = "Behandler er ikke gyldig i HPR på konsultasjonstidspunkt. Pasienten har fått beskjed.",
@@ -25,8 +30,10 @@ enum class RuleHit(val messageForSender: String, val messageForUser: String, val
     ),
     BEHANDLER_MT_FT_KI_OVER_12_UKER(
         status = Status.INVALID,
-        messageForSender = "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
-        messageForUser = "SSykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som gjør at sykefraværet ditt overstiger 12 uker",
+        messageForSender = "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT " +
+            "kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
+        messageForUser = "SSykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som " +
+            "gjør at sykefraværet ditt overstiger 12 uker",
         juridiskHenvisning = null
     )
 }

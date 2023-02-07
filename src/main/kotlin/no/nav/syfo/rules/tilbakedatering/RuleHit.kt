@@ -13,7 +13,12 @@ private fun getJuridiskHenvisning(): JuridiskHenvisning? {
         bokstav = null
     )
 }
-enum class RuleHit(val messageForSender: String, val messageForUser: String, val juridiskHenvisning: JuridiskHenvisning?, status: Status) {
+enum class RuleHit(
+    val messageForSender: String,
+    val messageForUser: String,
+    val juridiskHenvisning: JuridiskHenvisning?,
+    val status: Status
+) {
     INNTIL_8_DAGER(
         status = Status.INVALID,
         messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
