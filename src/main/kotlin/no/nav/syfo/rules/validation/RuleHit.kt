@@ -8,7 +8,7 @@ enum class RuleHit(
     val messageForSender: String,
     val messageForUser: String,
     val juridiskHenvisning: JuridiskHenvisning?,
-    status: Status
+    val status: Status
 ) {
     PASIENT_YNGRE_ENN_13(
         status = Status.INVALID,

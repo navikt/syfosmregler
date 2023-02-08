@@ -23,14 +23,14 @@ class ValidationTest : FunSpec({
             val person14Years = LocalDate.now().minusYears(14)
 
             val sykmelding = generateSykmelding(
-            medisinskVurdering = generateMedisinskVurdering(
+                medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
                         tekst = "Blodig oppspytt/hemoptyse"
                     )
-                  )
                 )
+            )
 
             val ruleMetadata = RuleMetadata(
                 signatureDate = LocalDate.now().atStartOfDay(),
@@ -377,7 +377,15 @@ class ValidationTest : FunSpec({
         test("Ugyldig regelsettversjon, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
 
-            val sykmelding = generateSykmelding()
+            val sykmelding = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(
+                        system = "2.16.578.1.12.4.1.1.7170",
+                        kode = "R24",
+                        tekst = "Blodig oppspytt/hemoptyse"
+                    )
+                )
+            )
 
             val ruleMetadata = RuleMetadata(
                 signatureDate = LocalDate.now().atStartOfDay(),
@@ -475,7 +483,15 @@ class ValidationTest : FunSpec({
         test("Ugyldig orgnummer lengede, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
 
-            val sykmelding = generateSykmelding()
+            val sykmelding = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(
+                        system = "2.16.578.1.12.4.1.1.7170",
+                        kode = "R24",
+                        tekst = "Blodig oppspytt/hemoptyse"
+                    )
+                )
+            )
 
             val ruleMetadata = RuleMetadata(
                 signatureDate = LocalDate.now().atStartOfDay(),
@@ -525,7 +541,15 @@ class ValidationTest : FunSpec({
 
             val patientPersonNumber = generatePersonNumber(person31Years, false)
 
-            val sykmelding = generateSykmelding()
+            val sykmelding = generateSykmelding(
+                medisinskVurdering = generateMedisinskVurdering(
+                    hovedDiagnose = Diagnose(
+                        system = "2.16.578.1.12.4.1.1.7170",
+                        kode = "R24",
+                        tekst = "Blodig oppspytt/hemoptyse"
+                    )
+                )
+            )
 
             val ruleMetadata = RuleMetadata(
                 signatureDate = LocalDate.now().atStartOfDay(),
