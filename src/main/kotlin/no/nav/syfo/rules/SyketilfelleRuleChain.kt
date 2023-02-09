@@ -7,7 +7,6 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
-import no.nav.syfo.rules.tilbakedatering.getNumberOfWords
 import no.nav.syfo.services.erCoronaRelatert
 import no.nav.syfo.services.kommerFraSpesialisthelsetjenesten
 class SyketilfelleRuleChain(
@@ -124,12 +123,13 @@ class SyketilfelleRuleChain(
                 val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
                 val sisteTomDato = sykmelding.perioder.sortedFOMDate().last()
                 val begrunnelseIkkeKontakt = sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
+                val kontaktMedPasientDato = sykmelding.kontaktMedPasient.kontaktDato
             },
             predicate = {
                 it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(4) &&
                     it.behandletTidspunkt.toLocalDate() <= it.sisteTomDato.plusDays(8) &&
-                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 1)
+                    (it.kontaktMedPasientDato == null && it.begrunnelseIkkeKontakt.isNullOrEmpty())
             }
         ),
 
@@ -163,7 +163,7 @@ class SyketilfelleRuleChain(
             predicate = {
                 !it.erNyttSyketilfelle &&
                     it.forsteFomDato < it.behandletTidspunkt.toLocalDate().minusMonths(1) &&
-                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 3) &&
+                    it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
                     !it.erFraSpesialisthelsetjenesten
             }
         ),
@@ -199,7 +199,7 @@ class SyketilfelleRuleChain(
                 !it.erNyttSyketilfelle &&
                     it.behandletTidspunkt.toLocalDate() > it.forsteFomDato.plusDays(30) &&
                     !it.begrunnelseIkkeKontakt.isNullOrEmpty() &&
-                    (getNumberOfWords(it.begrunnelseIkkeKontakt) < 1)
+                    !containsLetters(it.begrunnelseIkkeKontakt)
             }
         ),
 

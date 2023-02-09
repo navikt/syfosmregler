@@ -623,7 +623,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
-        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
+        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -658,7 +658,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
             ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
                 .executeRule().result shouldBeEqualTo false
         }
-        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should trigger rule") {
+        test("Should check rule TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE, should NOT trigger rule") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -691,7 +691,7 @@ class SyketilfelleRuleChainSpek : FunSpec({
                 healthInformation,
                 ruleMetadataSykmelding
             ).getRuleByName("TILBAKEDATERT_INNTIL_8_DAGER_UTEN_KONTAKTDATO_OG_BEGRUNNELSE")
-                .executeRule().result shouldBeEqualTo true
+                .executeRule().result shouldBeEqualTo false
         }
         test("Should check rule TILBAKEDATERT_FORLENGELSE_OVER_1_MND, should trigger rule") {
             val healthInformation = generateSykmelding(
