@@ -1,13 +1,13 @@
 package no.nav.syfo.rules.validation
 
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.questions.QuestionGroup
-import no.nav.syfo.rules.containsAnswersFor
-import no.nav.syfo.rules.daysBetween
 import no.nav.syfo.rules.dsl.RuleResult
-import no.nav.syfo.rules.sortedFOMDate
-import no.nav.syfo.rules.sortedTOMDate
+import no.nav.syfo.services.daysBetween
+import no.nav.syfo.services.sortedFOMDate
+import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.sm.isICPC2
 
@@ -183,3 +183,8 @@ val behandlerSammeSomPasient: ValidationRule = { sykmelding, ruleMetadata ->
         ruleResult = behandlerSammeSomPasient
     )
 }
+
+fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: QuestionGroup) =
+    this[questionGroup.spmGruppeId]?.all { (spmId, _) ->
+        spmId in questionGroup.spmsvar.map { it.spmId }
+    }

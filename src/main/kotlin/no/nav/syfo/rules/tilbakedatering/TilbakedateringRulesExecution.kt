@@ -2,13 +2,13 @@ package no.nav.syfo.rules.tilbakedatering
 
 import no.nav.syfo.log
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
 import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
+import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias TilbakedateringTreeOutput = TreeOutput<TilbakedateringRules, TilbakedateringResult>
 typealias TilbakedateringTreeNode = TreeNode<TilbakedateringRules, TilbakedateringResult>

@@ -6,7 +6,7 @@ import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.Kode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Status
-import no.nav.syfo.rules.BehandlerOgStartdato
+import no.nav.syfo.services.BehandlerOgStartdato
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 

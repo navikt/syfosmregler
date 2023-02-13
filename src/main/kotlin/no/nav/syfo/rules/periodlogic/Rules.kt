@@ -4,7 +4,7 @@ import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
-import no.nav.syfo.rules.range
+import no.nav.syfo.services.daysBetween
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -261,6 +261,5 @@ fun workdaysBetween(a: LocalDate, b: LocalDate): Int = (1..(ChronoUnit.DAYS.betw
     .filter { it.dayOfWeek !in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY) }
     .count()
 
-fun ClosedRange<LocalDate>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)
 fun ClosedRange<LocalDate>.startedWeeksBetween(): Int = ChronoUnit.WEEKS.between(start, endInclusive).toInt() + 1
 fun Periode.range(): ClosedRange<LocalDate> = fom.rangeTo(tom)

@@ -2,13 +2,13 @@ package no.nav.syfo.rules.hpr
 
 import no.nav.syfo.log
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.BehandlerOgStartdato
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
 import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
+import no.nav.syfo.services.BehandlerOgStartdato
 
 typealias HPRTreeOutput = TreeOutput<HPRRules, HPRResult>
 typealias HPRTreeNode = TreeNode<HPRRules, HPRResult>

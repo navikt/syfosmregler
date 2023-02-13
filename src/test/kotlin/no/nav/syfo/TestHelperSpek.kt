@@ -1,8 +1,8 @@
 package no.nav.syfo
 
 import io.kotest.core.spec.style.FunSpec
-import no.nav.syfo.rules.startedWeeksBetween
-import no.nav.syfo.rules.workdaysBetween
+import no.nav.syfo.rules.periodlogic.startedWeeksBetween
+import no.nav.syfo.rules.periodlogic.workdaysBetween
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 

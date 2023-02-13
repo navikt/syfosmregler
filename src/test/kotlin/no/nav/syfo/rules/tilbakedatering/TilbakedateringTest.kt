@@ -7,7 +7,6 @@ import no.nav.syfo.model.MedisinskVurdering
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.RuleMetadataSykmelding
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -17,6 +16,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
+import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo

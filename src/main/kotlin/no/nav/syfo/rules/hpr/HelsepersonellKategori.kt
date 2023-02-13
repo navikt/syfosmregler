@@ -1,4 +1,4 @@
-package no.nav.syfo.rules
+package no.nav.syfo.rules.hpr
 
 enum class HelsepersonellKategori(val beskrivendeHelsepersonellKategoriKategoriVerdi: String, val verdi: String) {
     KIROPRAKTOR("Kiropraktor", "KI"),

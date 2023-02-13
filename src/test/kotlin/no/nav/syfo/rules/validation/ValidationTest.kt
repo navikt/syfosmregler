@@ -8,11 +8,14 @@ import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
-import no.nav.syfo.rules.generatePersonNumber
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
+import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+val personNumberDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy")
 
 class ValidationTest : FunSpec({
 
@@ -664,3 +667,13 @@ class ValidationTest : FunSpec({
         }
     }
 })
+fun generatePersonNumber(bornDate: LocalDate, useDNumber: Boolean = false): String {
+    val personDate = bornDate.format(personNumberDateFormat).let {
+        if (useDNumber) "${it[0] + 4}${it.substring(1)}" else it
+    }
+    return (if (bornDate.year >= 2000) (75011..99999) else (11111..50099))
+        .map { "$personDate$it" }
+        .first {
+            validatePersonAndDNumber(it)
+        }
+}

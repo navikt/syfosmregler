@@ -10,8 +10,8 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.log
 import no.nav.syfo.model.Periode
-import no.nav.syfo.rules.sortedFOMDate
-import no.nav.syfo.rules.sortedTOMDate
+import no.nav.syfo.services.sortedFOMDate
+import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.utils.LoggingMeta
 import java.time.LocalDate
 import java.time.OffsetDateTime
