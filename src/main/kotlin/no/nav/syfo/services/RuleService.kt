@@ -18,6 +18,7 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.pdl.service.PdlPersonService
+import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.rules.hpr.HPRRulesExecution
 import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import no.nav.syfo.rules.dsl.TreeOutput
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -214,9 +214,7 @@ class RuleService(
 
         juridiskVurderingService.processRuleResults(receivedSykmelding, result)
 
-
         return validationResult(result)
-
     }
 
     private fun validationResult(results: List<TreeOutput<out Enum<*>, out Any>>): ValidationResult = ValidationResult(
