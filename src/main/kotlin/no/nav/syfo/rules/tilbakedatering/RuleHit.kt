@@ -23,7 +23,7 @@ enum class TilbakedateringRuleHit(
             rule = INNTIL_8_DAGER.name,
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Første sykmelding er tilbakedatert uten at begrunnelse (felt 11.2) er tilstrekkelig utfylt",
+                "Første sykmelding er tilbakedatert uten at begrunnelse (felt 11.2) er tilstrekkelig utfylt",
             messageForUser = "Sykmeldingen er tilbakedatert uten tilstrekkelig begrunnelse fra den som sykmeldte deg.",
             juridiskHenvisning = getJuridiskHenvisning()
         )
@@ -33,7 +33,7 @@ enum class TilbakedateringRuleHit(
             rule = INNTIL_30_DAGER.name,
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                    "Sykmelding er tilbakedatert uten begrunnelse (felt 11.2) er tilstrekkelig utfylt",
+                "Sykmelding er tilbakedatert uten begrunnelse (felt 11.2) er tilstrekkelig utfylt",
             messageForUser = "Sykmeldingen er tilbakedatert uten tilstrekkelig begrunnelse fra den som sykmeldte deg.",
             juridiskHenvisning = getJuridiskHenvisning()
         )
@@ -52,7 +52,7 @@ enum class TilbakedateringRuleHit(
             rule = OVER_30_DAGER.name,
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. " +
-                    "Grunnet følgende: Sykmelding er tilbakedatert mer enn det som er tillatt og felt 11.2 er ikke utfylt.",
+                "Grunnet følgende: Sykmelding er tilbakedatert mer enn det som er tillatt og felt 11.2 er ikke utfylt.",
             messageForUser = "Sykmeldingen er tilbakedatert uten tilstrekkelig begrunnelse fra den som sykmeldte deg.",
             juridiskHenvisning = getJuridiskHenvisning()
         )

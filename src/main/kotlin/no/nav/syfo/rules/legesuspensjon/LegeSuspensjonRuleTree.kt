@@ -10,7 +10,6 @@ enum class LegeSuspensjonRules {
     BEHANDLER_SUSPENDERT
 }
 
-
 val legeSuspensjonRuleTree = tree<LegeSuspensjonRules, RuleResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {
     yes(Status.INVALID, LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT)
     no(OK)

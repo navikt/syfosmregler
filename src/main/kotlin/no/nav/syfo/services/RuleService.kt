@@ -15,10 +15,10 @@ import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.RuleMetadata
+import no.nav.syfo.model.RuleResult
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.pdl.service.PdlPersonService
-import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.rules.hpr.HPRRulesExecution
 import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import no.nav.syfo.model.RuleResult
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -213,16 +212,18 @@ class RuleService(
             validationResult
         )
 
-        //juridiskVurderingService.processRuleResults(receivedSykmelding, result)
+        // juridiskVurderingService.processRuleResults(receivedSykmelding, result)
 
-        //return validationResult(result)
-        return ValidationResult( status = Status.INVALID, ruleHits = listOf(
-            RuleInfo(
-                ruleName = "BEHANDLER_NOT_IN_HPR",
-                messageForSender = "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
-                messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
-                ruleStatus = Status.INVALID
-            )
+        // return validationResult(result)
+        return ValidationResult(
+            status = Status.INVALID,
+            ruleHits = listOf(
+                RuleInfo(
+                    ruleName = "BEHANDLER_NOT_IN_HPR",
+                    messageForSender = "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
+                    messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
+                    ruleStatus = Status.INVALID
+                )
             )
         )
     }

@@ -30,7 +30,6 @@ enum class TilbakedateringRules {
     TILBAKEDATERT_INNTIL_30_DAGER,
 }
 
-
 val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
     yes(ETTERSENDING) {
         yes(OK)

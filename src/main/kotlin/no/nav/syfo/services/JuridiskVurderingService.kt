@@ -2,6 +2,7 @@ package no.nav.syfo.services
 
 import no.nav.syfo.getEnvVar
 import no.nav.syfo.model.ReceivedSykmelding
+import no.nav.syfo.model.RuleResult
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
@@ -9,7 +10,6 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.time.LocalDateTime
 import java.util.UUID
-import no.nav.syfo.model.RuleResult
 
 data class JuridiskVurderingResult(
     val juridiskeVurderinger: List<JuridiskVurdering>,
