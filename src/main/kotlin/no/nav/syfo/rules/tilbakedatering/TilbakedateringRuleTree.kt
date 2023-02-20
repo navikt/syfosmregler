@@ -71,12 +71,12 @@ val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATE
     no(OK)
 }
 
-internal fun RuleNode<TilbakedateringRules, RuleResult>.yes(status: Status, ruleHit: RuleHit? = null) {
-    yes(RuleResult(status, TilbakedateringRuleHits.getRule(ruleHit)))
+internal fun RuleNode<TilbakedateringRules, RuleResult>.yes(status: Status, ruleHit: TilbakedateringRuleHit? = null) {
+    yes(RuleResult(status, ruleHit?.ruleHit))
 }
 
-internal fun RuleNode<TilbakedateringRules, RuleResult>.no(status: Status, ruleHit: RuleHit? = null) {
-    no(RuleResult(status, TilbakedateringRuleHits.getRule(ruleHit)))
+internal fun RuleNode<TilbakedateringRules, RuleResult>.no(status: Status, ruleHit: TilbakedateringRuleHit? = null) {
+    no(RuleResult(status, ruleHit?.ruleHit))
 }
 
 fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {

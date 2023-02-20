@@ -1,6 +1,7 @@
 package no.nav.syfo.rules.legesuspensjon
 
 import no.nav.syfo.log
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -8,8 +9,8 @@ import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
 
-typealias LegeSuspensjonTreeOutput = TreeOutput<LegeSuspensjonRules, LegeSuspensjonResult>
-typealias LegeSuspensjonTreeNode = TreeNode<LegeSuspensjonRules, LegeSuspensjonResult>
+typealias LegeSuspensjonTreeOutput = TreeOutput<LegeSuspensjonRules, RuleResult>
+typealias LegeSuspensjonTreeNode = TreeNode<LegeSuspensjonRules, RuleResult>
 
 class LegeSuspensjonRulesExecution(private val rootNode: LegeSuspensjonTreeNode = legeSuspensjonRuleTree) {
     fun runRules(sykmeldingId: String, behandlerSuspendert: Boolean): LegeSuspensjonTreeOutput =
@@ -20,7 +21,7 @@ class LegeSuspensjonRulesExecution(private val rootNode: LegeSuspensjonTreeNode 
             }
 }
 
-private fun TreeNode<LegeSuspensjonRules, LegeSuspensjonResult>.evaluate(
+private fun TreeNode<LegeSuspensjonRules, RuleResult>.evaluate(
     sykmeldingId: String,
     behandlerSuspendert: Boolean,
 ): LegeSuspensjonTreeOutput =
