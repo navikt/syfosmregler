@@ -4,14 +4,10 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.MANUAL_PROCESSING
 import no.nav.syfo.model.Status.OK
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
-import no.nav.syfo.rules.tilbakedatering.RuleHit.INNTIL_30_DAGER
-import no.nav.syfo.rules.tilbakedatering.RuleHit.INNTIL_30_DAGER_MED_BEGRUNNELSE
-import no.nav.syfo.rules.tilbakedatering.RuleHit.INNTIL_8_DAGER
-import no.nav.syfo.rules.tilbakedatering.RuleHit.OVER_30_DAGER
-import no.nav.syfo.rules.tilbakedatering.RuleHit.OVER_30_DAGER_MED_BEGRUNNELSE
-import no.nav.syfo.rules.tilbakedatering.RuleHit.OVER_30_DAGER_SPESIALISTHELSETJENESTEN
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.*
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -34,16 +30,8 @@ enum class TilbakedateringRules {
     TILBAKEDATERT_INNTIL_30_DAGER,
 }
 
-data class TilbakedateringResult(
-    val status: Status,
-    val ruleHit: RuleHit?
-) {
-    override fun toString(): String {
-        return status.name + (ruleHit?.let { "->${it.name}" } ?: "")
-    }
-}
 
-val tilbakedateringRuleTree = tree<TilbakedateringRules, TilbakedateringResult>(TILBAKEDATERING) {
+val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
     yes(ETTERSENDING) {
         yes(OK)
         no(TILBAKEDATERT_INNTIL_8_DAGER) {
@@ -87,12 +75,12 @@ val tilbakedateringRuleTree = tree<TilbakedateringRules, TilbakedateringResult>(
     no(OK)
 }
 
-internal fun RuleNode<TilbakedateringRules, TilbakedateringResult>.yes(status: Status, ruleHit: RuleHit? = null) {
-    yes(TilbakedateringResult(status, ruleHit))
+internal fun RuleNode<TilbakedateringRules, RuleResult>.yes(status: Status, ruleHit: RuleHit? = null) {
+    yes(RuleResult(status, TilbakedateringRuleHits.getRule(ruleHit)))
 }
 
-internal fun RuleNode<TilbakedateringRules, TilbakedateringResult>.no(status: Status, ruleHit: RuleHit? = null) {
-    no(TilbakedateringResult(status, ruleHit))
+internal fun RuleNode<TilbakedateringRules, RuleResult>.no(status: Status, ruleHit: RuleHit? = null) {
+    no(RuleResult(status, TilbakedateringRuleHits.getRule(ruleHit)))
 }
 
 fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {

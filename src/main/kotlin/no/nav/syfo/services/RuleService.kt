@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import no.nav.syfo.model.RuleResult
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -141,7 +142,7 @@ class RuleService(
 
         RULE_NODE_RULE_HIT_COUNTER.labels(
             tilbakedateringResult.treeResult.status.name,
-            tilbakedateringResult.treeResult.ruleHit?.name ?: tilbakedateringResult.treeResult.status.name
+            tilbakedateringResult.treeResult.ruleHit?.rule ?: tilbakedateringResult.treeResult.status.name
         ).inc()
 
         RULE_NODE_RULE_PATH_COUNTER.labels(
@@ -212,12 +213,21 @@ class RuleService(
             validationResult
         )
 
-        juridiskVurderingService.processRuleResults(receivedSykmelding, result)
+        //juridiskVurderingService.processRuleResults(receivedSykmelding, result)
 
-        return validationResult(result)
+        //return validationResult(result)
+        return ValidationResult( status = Status.INVALID, ruleHits = listOf(
+            RuleInfo(
+                ruleName = "BEHANDLER_NOT_IN_HPR",
+                messageForSender = "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
+                messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
+                ruleStatus = Status.INVALID
+            )
+            )
+        )
     }
 
-    private fun validationResult(results: List<TreeOutput<out Enum<*>, out Any>>): ValidationResult = ValidationResult(
+    private fun validationResult(results: List<RuleResult<*>>): ValidationResult = ValidationResult(
         status = results
             .filter { it.result }
             .map { result -> result.rule.status }.let {

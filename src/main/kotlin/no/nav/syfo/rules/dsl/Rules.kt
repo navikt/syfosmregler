@@ -1,5 +1,6 @@
 package no.nav.syfo.rules.dsl
 
+
 data class RuleResult<T>(
     val ruleInputs: Map<String, Any> = emptyMap(),
     val ruleResult: Boolean,

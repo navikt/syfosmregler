@@ -5,11 +5,11 @@ import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
-import no.nav.syfo.rules.dsl.TreeOutput
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.syfo.model.RuleResult
 
 data class JuridiskVurderingResult(
     val juridiskeVurderinger: List<JuridiskVurdering>,
@@ -28,7 +28,7 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<TreeOutput<out Enum<*>, out Any>>
+        result: List<RuleResult<*>>
     ) {
         val juridiskVurderingResult = JuridiskVurderingResult(
             juridiskeVurderinger = result
@@ -46,7 +46,7 @@ class JuridiskVurderingService(
 
     private fun resultToJuridiskVurdering(
         receivedSykmelding: ReceivedSykmelding,
-        ruleResult: TreeOutput<out Enum<*>, out Any>,
+        ruleResult: RuleResult<*>,
     ): JuridiskVurdering {
         return JuridiskVurdering(
             id = UUID.randomUUID().toString(),

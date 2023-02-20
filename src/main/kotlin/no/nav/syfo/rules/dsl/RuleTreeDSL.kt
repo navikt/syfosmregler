@@ -1,5 +1,6 @@
 package no.nav.syfo.rules.dsl
 
+
 sealed class TreeNode<T, R>
 
 class ResultNode<T, R>(val result: R) : TreeNode<T, R>()

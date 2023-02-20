@@ -1,18 +1,18 @@
 package no.nav.syfo.rules.legesuspensjon
 
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.rules.common.RuleHit
 
-enum class RuleHit(
-    val messageForSender: String,
-    val messageForUser: String,
-    val juridiskHenvisning: JuridiskHenvisning?,
-    val status: Status
+enum class LegeSuspensjonRuleHit(
+    val ruleHit: RuleHit
 ) {
     BEHANDLER_SUSPENDERT(
-        status = Status.INVALID,
-        messageForSender = "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
-        messageForUser = "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
-        juridiskHenvisning = null
+        ruleHit = RuleHit(
+            rule = BEHANDLER_SUSPENDERT.name,
+            status = Status.INVALID,
+            messageForSender = "Behandler er suspendert av NAV på konsultasjonstidspunkt. Pasienten har fått beskjed.",
+            messageForUser = "Den som sykmeldte deg har mistet retten til å skrive sykmeldinger.",
+            juridiskHenvisning = null
+        )
     )
 }
