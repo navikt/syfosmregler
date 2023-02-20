@@ -3,6 +3,7 @@ package no.nav.syfo.rules.validation
 import no.nav.syfo.log
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -10,8 +11,8 @@ import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
 
-typealias ValidationTreeOutput = TreeOutput<ValidationRules, ValidationResult>
-typealias ValidationTreeNode = TreeNode<ValidationRules, ValidationResult>
+typealias ValidationTreeOutput = TreeOutput<ValidationRules, RuleResult>
+typealias ValidationTreeNode = TreeNode<ValidationRules, RuleResult>
 
 class ValidationRulesExecution(private val rootNode: ValidationTreeNode = validationRuleTree) {
     fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadata): ValidationTreeOutput =
@@ -22,7 +23,7 @@ class ValidationRulesExecution(private val rootNode: ValidationTreeNode = valida
             }
 }
 
-private fun TreeNode<ValidationRules, ValidationResult>.evaluate(
+private fun TreeNode<ValidationRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
     ruleMetadata: RuleMetadata,
 ): ValidationTreeOutput =

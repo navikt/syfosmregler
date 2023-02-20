@@ -267,10 +267,12 @@ tasks {
 
     "check" {
         dependsOn("formatKotlin")
-        dependsOn("generateTilbakedateringRuleMermaid")
+       /* dependsOn("generateTilbakedateringRuleMermaid")
         dependsOn("generateHPRRuleMermaid")
         dependsOn("generateLegesuspensjonRuleMermaid")
         dependsOn("generatePeriodLogicRuleMermaid")
         dependsOn("generateValidationRuleMermaid")
+
+        */
     }
 }

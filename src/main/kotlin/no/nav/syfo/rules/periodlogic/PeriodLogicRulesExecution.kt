@@ -3,6 +3,7 @@ package no.nav.syfo.rules.periodlogic
 import no.nav.syfo.log
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -10,8 +11,8 @@ import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
 
-typealias PeriodLogicTreeOutput = TreeOutput<PeriodLogicRules, PeriodLogicResult>
-typealias PeriodLogicTreeNode = TreeNode<PeriodLogicRules, PeriodLogicResult>
+typealias PeriodLogicTreeOutput = TreeOutput<PeriodLogicRules, RuleResult>
+typealias PeriodLogicTreeNode = TreeNode<PeriodLogicRules, RuleResult>
 
 class PeriodLogicRulesExecution(private val rootNode: PeriodLogicTreeNode = periodLogicRuleTree) {
     fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadata): PeriodLogicTreeOutput =
@@ -22,7 +23,7 @@ class PeriodLogicRulesExecution(private val rootNode: PeriodLogicTreeNode = peri
             }
 }
 
-private fun TreeNode<PeriodLogicRules, PeriodLogicResult>.evaluate(
+private fun TreeNode<PeriodLogicRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
     ruleMetadata: RuleMetadata,
 ): PeriodLogicTreeOutput =

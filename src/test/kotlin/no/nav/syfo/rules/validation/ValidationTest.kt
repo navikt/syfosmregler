@@ -112,7 +112,7 @@ class ValidationTest : FunSpec({
 
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.PASIENT_YNGRE_ENN_13
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.PASIENT_YNGRE_ENN_13
         }
 
         test("Pasient eldre enn 70 Aar, Status INVALID") {
@@ -146,7 +146,7 @@ class ValidationTest : FunSpec({
 
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.PASIENT_ELDRE_ENN_70
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.PASIENT_ELDRE_ENN_70
         }
         test("Ukjent diagnoseKodeType, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -189,7 +189,7 @@ class ValidationTest : FunSpec({
 
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.UKJENT_DIAGNOSEKODETYPE
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UKJENT_DIAGNOSEKODETYPE
         }
         test("Diagnosen er icpz 2 z diagnose, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -230,7 +230,7 @@ class ValidationTest : FunSpec({
 
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.ICPC_2_Z_DIAGNOSE
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.ICPC_2_Z_DIAGNOSE
         }
         test("HouvedDiagnose eller fraversgrunn mangler, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -274,7 +274,7 @@ class ValidationTest : FunSpec({
 
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER
         }
         test("Ugyldig KodeVerk for houvedDiagnose, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -323,7 +323,7 @@ class ValidationTest : FunSpec({
 
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE
         }
         test("Ugyldig kodeVerk for biDiagnose, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -375,7 +375,7 @@ class ValidationTest : FunSpec({
                 "ugyldigKodeVerkBiDiagnose" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE
         }
         test("Ugyldig regelsettversjon, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -427,7 +427,7 @@ class ValidationTest : FunSpec({
                 "ugyldigRegelsettversjon" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.UGYLDIG_REGELSETTVERSJON
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_REGELSETTVERSJON
         }
         test("Mangelde dynamiske sporsmaal versjon 2 uke39, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -480,7 +480,7 @@ class ValidationTest : FunSpec({
                 "manglendeDynamiskesporsmaalversjon2uke39" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39
         }
 
         test("Ugyldig orgnummer lengede, Status INVALID") {
@@ -537,7 +537,7 @@ class ValidationTest : FunSpec({
                 "ugyldingOrgNummerLengde" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.UGYLDIG_ORGNR_LENGDE
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_ORGNR_LENGDE
         }
         test("Avsender samme som pasient, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
@@ -597,7 +597,7 @@ class ValidationTest : FunSpec({
                 "avsenderSammeSomPasient" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR
         }
 
         test("Behandler samme som pasient, Status INVALID") {
@@ -663,7 +663,7 @@ class ValidationTest : FunSpec({
                 "behandlerSammeSomPasient" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo RuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR
+            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR
         }
     }
 })

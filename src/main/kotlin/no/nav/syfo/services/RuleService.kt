@@ -155,7 +155,7 @@ class RuleService(
 
         RULE_NODE_RULE_HIT_COUNTER.labels(
             hprResult.treeResult.status.name,
-            hprResult.treeResult.ruleHit?.name ?: hprResult.treeResult.status.name
+            hprResult.treeResult.ruleHit?.rule ?: hprResult.treeResult.status.name
         ).inc()
 
         RULE_NODE_RULE_PATH_COUNTER.labels(
@@ -169,7 +169,7 @@ class RuleService(
 
         RULE_NODE_RULE_HIT_COUNTER.labels(
             legesuspensjonResult.treeResult.status.name,
-            legesuspensjonResult.treeResult.ruleHit?.name ?: legesuspensjonResult.treeResult.status.name
+            legesuspensjonResult.treeResult.ruleHit?.rule ?: legesuspensjonResult.treeResult.status.name
         ).inc()
 
         RULE_NODE_RULE_PATH_COUNTER.labels(
@@ -183,7 +183,7 @@ class RuleService(
 
         RULE_NODE_RULE_HIT_COUNTER.labels(
             periodLogicResult.treeResult.status.name,
-            periodLogicResult.treeResult.ruleHit?.name ?: periodLogicResult.treeResult.status.name
+            periodLogicResult.treeResult.ruleHit?.rule ?: periodLogicResult.treeResult.status.name
         ).inc()
 
         RULE_NODE_RULE_PATH_COUNTER.labels(
@@ -197,7 +197,7 @@ class RuleService(
 
         RULE_NODE_RULE_HIT_COUNTER.labels(
             validationResult.treeResult.status.name,
-            validationResult.treeResult.ruleHit?.name ?: validationResult.treeResult.status.name
+            validationResult.treeResult.ruleHit?.rule ?: validationResult.treeResult.status.name
         ).inc()
 
         RULE_NODE_RULE_PATH_COUNTER.labels(
