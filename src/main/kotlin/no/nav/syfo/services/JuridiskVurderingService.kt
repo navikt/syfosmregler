@@ -2,10 +2,11 @@ package no.nav.syfo.services
 
 import no.nav.syfo.getEnvVar
 import no.nav.syfo.model.ReceivedSykmelding
-import no.nav.syfo.model.RuleResult
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
+import no.nav.syfo.rules.common.RuleResult
+import no.nav.syfo.rules.dsl.TreeOutput
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.time.LocalDateTime
@@ -28,11 +29,11 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<RuleResult<*>>
+        result: List<TreeOutput<out Enum<*>, RuleResult>>
     ) {
         val juridiskVurderingResult = JuridiskVurderingResult(
             juridiskeVurderinger = result
-                .filter { it.rule.juridiskHenvisning != null }
+                .filter { it.treeResult.ruleHit?.juridiskHenvisning != null }
                 .map { resultToJuridiskVurdering(receivedSykmelding, it) }
         )
         kafkaProducer.send(
@@ -46,7 +47,7 @@ class JuridiskVurderingService(
 
     private fun resultToJuridiskVurdering(
         receivedSykmelding: ReceivedSykmelding,
-        ruleResult: RuleResult<*>,
+        treeOutput: TreeOutput<out Enum<*>, RuleResult>
     ): JuridiskVurdering {
         return JuridiskVurdering(
             id = UUID.randomUUID().toString(),
@@ -55,18 +56,13 @@ class JuridiskVurderingService(
             kilde = KILDE,
             versjonAvKode = VERSJON_KODE,
             fodselsnummer = receivedSykmelding.personNrPasient,
-            juridiskHenvisning = ruleResult.rule.juridiskHenvisning
+            juridiskHenvisning = treeOutput.treeResult.ruleHit?.juridiskHenvisning
                 ?: throw RuntimeException("JuridiskHenvisning kan ikke være null"),
             sporing = mapOf(
                 "sykmelding" to receivedSykmelding.sykmelding.id,
             ),
-            input = ruleResult.rule.toInputMap(),
-            utfall = toJuridiskUtfall(
-                when (ruleResult.result) {
-                    true -> ruleResult.rule.status
-                    else -> Status.OK
-                }
-            ),
+            input = treeOutput.ruleInputs,
+            utfall = toJuridiskUtfall(treeOutput.treeResult.status),
             tidsstempel = LocalDateTime.now()
         )
     }

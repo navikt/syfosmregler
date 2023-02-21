@@ -87,7 +87,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "perioder" to sykmelding.perioder
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.PERIODER_MANGLER
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.PERIODER_MANGLER.ruleHit
         }
 
         test("Fra dato er etter til dato, Status INVALID") {
@@ -115,7 +115,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FRADATO_ETTER_TILDATO
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FRADATO_ETTER_TILDATO.ruleHit
         }
 
         test("Overlapp i perioder, Status INVALID") {
@@ -149,7 +149,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OVERLAPPENDE_PERIODER
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OVERLAPPENDE_PERIODER.ruleHit
         }
 
         test("Opphold mellom perioder, Status INVALID") {
@@ -195,7 +195,7 @@ class PeriodLogicRulesTest : FunSpec({
                     .map { it.fom to it.tom }
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OPPHOLD_MELLOM_PERIODER
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OPPHOLD_MELLOM_PERIODER.ruleHit
         }
         test("Ikke definert periode, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -235,7 +235,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "perioder" to sykmelding.perioder
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.IKKE_DEFINERT_PERIODE
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.IKKE_DEFINERT_PERIODE.ruleHit
         }
         test("Tilbakedatert mer enn 3 år, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -278,7 +278,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "tilbakeDatertMerEnn3AAr" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.TILBAKEDATERT_MER_ENN_3_AR
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.TILBAKEDATERT_MER_ENN_3_AR.ruleHit
         }
 
         test("Fremdater over 30 dager, Status INVALID") {
@@ -319,7 +319,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "fremdatert" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FREMDATERT
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FREMDATERT.ruleHit
         }
 
         test("Varighet over 1 år, Status INVALID") {
@@ -366,7 +366,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "varighetOver1AAr" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.TOTAL_VARIGHET_OVER_ETT_AAR
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.TOTAL_VARIGHET_OVER_ETT_AAR.ruleHit
         }
 
         test("BehandlingsDato etter mottatDato, Status INVALID") {
@@ -405,7 +405,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "behandslingsDatoEtterMottatDato" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.BEHANDLINGSDATO_ETTER_MOTTATTDATO
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.BEHANDLINGSDATO_ETTER_MOTTATTDATO.ruleHit
         }
 
         test("Avvendte kombinert med annen type periode, Status INVALID") {
@@ -457,7 +457,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "avventendeKombinert" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_KOMBINERT
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_KOMBINERT.ruleHit
         }
 
         test("Manglende innstill til arbeidsgiver, Status INVALID") {
@@ -506,7 +506,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "manglendeInnspillArbeidsgiver" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER.ruleHit
         }
 
         test("Avventende over 16 dager, Status INVALID") {
@@ -557,7 +557,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "avventendeOver16Dager" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_OVER_16_DAGER
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_OVER_16_DAGER.ruleHit
         }
 
         test("For mange behandlingsdager pr uke, Status INVALID") {
@@ -610,7 +610,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "forMangeBehandlingsDagerPrUke" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE.ruleHit
         }
 
         test("Gradert under 20 prosent, Status INVALID") {
@@ -665,7 +665,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "gradertUnder20Prosent" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.GRADERT_SYKMELDING_UNDER_20_PROSENT
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.GRADERT_SYKMELDING_UNDER_20_PROSENT.ruleHit
         }
         test("Gradert over 99 prosent, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -721,7 +721,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "gradertOver99Prosent" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.GRADERT_SYKMELDING_OVER_99_PROSENT
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.GRADERT_SYKMELDING_OVER_99_PROSENT.ruleHit
         }
 
         test("Inneholder behandlingsdager, Status MANUAL_PROCESSING") {
@@ -780,7 +780,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "inneholderBehandlingsDager" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER
+            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER.ruleHit
         }
     }
 })

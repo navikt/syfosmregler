@@ -113,7 +113,7 @@ class TilbakedateringTest : FunSpec({
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "spesialisthelsetjenesten" to false
                     )
-                    status.treeResult.ruleHit shouldBeEqualTo TilbakedateringRuleHit.INNTIL_8_DAGER
+                    status.treeResult.ruleHit shouldBeEqualTo TilbakedateringRuleHit.INNTIL_8_DAGER.ruleHit
                 }
             }
             context("Uten Begrunnelse") {
@@ -261,7 +261,7 @@ class TilbakedateringTest : FunSpec({
                     "spesialisthelsetjenesten" to false
                 )
 
-                status.treeResult.ruleHit shouldBeEqualTo TilbakedateringRuleHit.INNTIL_30_DAGER
+                status.treeResult.ruleHit shouldBeEqualTo TilbakedateringRuleHit.INNTIL_30_DAGER.ruleHit
             }
         }
         context("Med Begrunnelse") {

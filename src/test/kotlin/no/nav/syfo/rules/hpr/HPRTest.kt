@@ -94,7 +94,7 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger,
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR
+            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR.ruleHit
         }
         test("mangler autorisasjon, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -134,7 +134,7 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR
+            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR.ruleHit
         }
         test("behandler ikke riktig helsepersonell kategori, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -176,7 +176,7 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR
+            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR.ruleHit
         }
 
         test("behandler KI MT FT over 84 dager, Status INVALID") {
@@ -221,7 +221,7 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER
+            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER.ruleHit
         }
     }
 })

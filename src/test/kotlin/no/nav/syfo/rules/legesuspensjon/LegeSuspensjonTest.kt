@@ -43,7 +43,7 @@ class LegeSuspensjonTest : FunSpec({
                 "suspendert" to true
             ) shouldBeEqualTo status.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT
+            status.treeResult.ruleHit shouldBeEqualTo LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT.ruleHit
         }
     }
 })
