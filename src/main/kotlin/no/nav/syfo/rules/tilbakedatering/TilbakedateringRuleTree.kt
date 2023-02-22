@@ -4,6 +4,8 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.MANUAL_PROCESSING
 import no.nav.syfo.model.Status.OK
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.JuridiskVurdering
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
@@ -24,7 +26,8 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNT
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 
 enum class TilbakedateringRules {
-    ARBEIDSGIVERPERIODE, BEGRUNNELSE_MIN_1_ORD, BEGRUNNELSE_MIN_3_ORD, ETTERSENDING, FORLENGELSE, SPESIALISTHELSETJENESTEN, TILBAKEDATERING, TILBAKEDATERT_INNTIL_8_DAGER, TILBAKEDATERT_INNTIL_30_DAGER,
+    ARBEIDSGIVERPERIODE, BEGRUNNELSE_MIN_1_ORD, BEGRUNNELSE_MIN_3_ORD, ETTERSENDING, FORLENGELSE,
+    SPESIALISTHELSETJENESTEN, TILBAKEDATERING, TILBAKEDATERT_INNTIL_8_DAGER, TILBAKEDATERT_INNTIL_30_DAGER,
 }
 
 val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
@@ -71,12 +74,13 @@ val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATE
     no(OK)
 }
 
-internal fun RuleNode<TilbakedateringRules, RuleResult>.yes(status: Status, ruleHit: TilbakedateringRuleHit? = null) {
-    yes(RuleResult(status, ruleHit?.ruleHit))
+internal fun RuleNode<TilbakedateringRules, RuleResult>.yes(status: Status, ruleHit: TilbakedateringRuleHit? = null,
+                                                            juridiskHenvisning: JuridiskHenvisning? = null) {
+    yes(RuleResult(status = status, ruleHit = ruleHit?.ruleHit, juridiskHenvisning = juridiskHenvisning))
 }
 
-internal fun RuleNode<TilbakedateringRules, RuleResult>.no(status: Status, ruleHit: TilbakedateringRuleHit? = null) {
-    no(RuleResult(status, ruleHit?.ruleHit))
+internal fun RuleNode<TilbakedateringRules, RuleResult>.no(status: Status, ruleHit: TilbakedateringRuleHit? = null, juridiskHenvisning: JuridiskHenvisning? = null) {
+    no(RuleResult(status = status, ruleHit = ruleHit?.ruleHit, juridiskHenvisning = juridiskHenvisning))
 }
 
 fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {

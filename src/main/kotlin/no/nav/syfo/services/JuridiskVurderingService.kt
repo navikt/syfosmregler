@@ -19,9 +19,9 @@ data class JuridiskVurderingResult(
 class JuridiskVurderingService(
     private val kafkaProducer: KafkaProducer<String, JuridiskVurderingResult>,
     val juridiskVurderingTopic: String,
+    val versjonsKode: String = getEnvVar("NAIS_APP_IMAGE")
 ) {
     companion object {
-        val VERSJON_KODE = getEnvVar("NAIS_APP_IMAGE")
         val EVENT_NAME = "subsumsjon"
         val VERSION = "1.0.0"
         val KILDE = "syfosmregler"
@@ -54,7 +54,7 @@ class JuridiskVurderingService(
             eventName = EVENT_NAME,
             version = VERSION,
             kilde = KILDE,
-            versjonAvKode = VERSJON_KODE,
+            versjonAvKode = versjonsKode,
             fodselsnummer = receivedSykmelding.personNrPasient,
             juridiskHenvisning = treeOutput.treeResult.ruleHit?.juridiskHenvisning
                 ?: throw RuntimeException("JuridiskHenvisning kan ikke være null"),
