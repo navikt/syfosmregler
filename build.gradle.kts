@@ -265,6 +265,66 @@ tasks {
         }
     }
 
+    register<JavaExec>("generatepatientAgeOver70RuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.patientageover70.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of patient age over 70 rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- PATIENT_AGE_OVER_70_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- PATIENT_AGE_OVER_70_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- PATIENT_AGE_OVER_70_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- PATIENT_AGE_OVER_70_MARKER_END -->",
+                        ) +
+                        lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+
+    register<JavaExec>("generateArbeidsuforhetRuleMermaid") {
+        val output = ByteArrayOutputStream()
+        mainClass.set("no.nav.syfo.rules.arbeidsuforhet.GenerateMermaidKt")
+        classpath = sourceSets["main"].runtimeClasspath
+        group = "documentation"
+        description = "Generates mermaid diagram source of hpr rules"
+        standardOutput = output
+        doLast {
+            val readme = File("README.md")
+            val lines = readme.readLines()
+            val start = lines.indexOfFirst { it.contains("<!-- ARBEIDSUFOREHET_MARKER_START -->") }
+            val end = lines.indexOfFirst { it.contains("<!-- ARBEIDSUFOREHET_MARKER_END -->") }
+            val newLines: List<String> =
+                lines.subList(0, start) +
+                        listOf(
+                            "<!-- ARBEIDSUFOREHET_MARKER_START -->",
+                            "```mermaid",
+                        ) +
+                        output.toString().split("\n") +
+                        listOf(
+                            "```",
+                            "<!-- ARBEIDSUFOREHET_MARKER_END -->",
+                        ) +
+                        lines.subList(end + 1, lines.size)
+
+
+            readme.writeText(newLines.joinToString("\n"))
+        }
+    }
+
     "check" {
         dependsOn("formatKotlin")
         dependsOn("generateTilbakedateringRuleMermaid")
@@ -272,6 +332,7 @@ tasks {
         dependsOn("generateLegesuspensjonRuleMermaid")
         dependsOn("generatePeriodLogicRuleMermaid")
         dependsOn("generateValidationRuleMermaid")
-
+        dependsOn("generatepatientAgeOver70RuleMermaid")
+        dependsOn("generateArbeidsuforhetRuleMermaid")
     }
 }

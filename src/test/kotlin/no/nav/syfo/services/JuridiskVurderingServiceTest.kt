@@ -1,7 +1,6 @@
 package no.nav.syfo.services
 
 import io.kotest.core.spec.style.FunSpec
-
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.syfo.generateSykmelding
@@ -11,7 +10,6 @@ import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
-import org.amshove.kluent.shouldBeEqualTo
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.time.LocalDateTime
@@ -22,7 +20,6 @@ class JuridiskVurderingServiceTest : FunSpec({
     val kafkaProducer = mockk<KafkaProducer<String, JuridiskVurderingResult>>(relaxed = true)
     val juridiskVurderingTopic = "topic"
     val juridiskVurderingService = JuridiskVurderingService(kafkaProducer, juridiskVurderingTopic, "versjon")
-
 
     context("Test juridiskVudering") {
         test("Returns juridiskVurderingResult is OK") {
@@ -49,11 +46,15 @@ class JuridiskVurderingServiceTest : FunSpec({
                 utenlandskSykmelding = null
             )
 
-            val ruleMetadata = RuleMetadataSykmelding(receivedSykmelding.sykmelding.toRuleMetadata(),
-                false, false)
+            val ruleMetadata = RuleMetadataSykmelding(
+                receivedSykmelding.sykmelding.toRuleMetadata(),
+                false, false
+            )
 
-            val result = TilbakedateringRulesExecution().runRules(sykmelding = receivedSykmelding.sykmelding,
-                metadata = ruleMetadata)
+            val result = TilbakedateringRulesExecution().runRules(
+                sykmelding = receivedSykmelding.sykmelding,
+                metadata = ruleMetadata
+            )
             val results = listOf(result)
             juridiskVurderingService.processRuleResults(receivedSykmelding, results)
             val juridiskVurderingResult = JuridiskVurderingResult(
@@ -74,12 +75,17 @@ class JuridiskVurderingServiceTest : FunSpec({
                         utfall = toJuridiskUtfall(result.treeResult.status),
                         tidsstempel = LocalDateTime.now()
                     )
-            ))
-            verify { kafkaProducer.send(match<ProducerRecord<String, JuridiskVurderingResult>> {
-                val firstResult = it.value().juridiskeVurderinger.first()
-                firstResult.juridiskHenvisning == juridiskVurderingResult.juridiskeVurderinger.first().juridiskHenvisning &&
-                firstResult.utfall == toJuridiskUtfall(Status.OK)
-            }) }
+                )
+            )
+            verify {
+                kafkaProducer.send(
+                    match<ProducerRecord<String, JuridiskVurderingResult>> {
+                        val firstResult = it.value().juridiskeVurderinger.first()
+                        firstResult.juridiskHenvisning == juridiskVurderingResult.juridiskeVurderinger.first().juridiskHenvisning &&
+                            firstResult.utfall == toJuridiskUtfall(Status.OK)
+                    }
+                )
+            }
         }
     }
 })

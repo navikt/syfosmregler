@@ -92,21 +92,6 @@ val ikkeDefinertPeriode: PeriodLogicRule = { sykmelding, _ ->
     )
 }
 
-val tilbakeDatertMerEnn3AAr: PeriodLogicRule = { sykmelding, _ ->
-    val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
-
-    val tilbakeDatertMerEnn3AAr = when (forsteFomDato) {
-        null -> false
-        else -> forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
-    }
-
-    RuleResult(
-        ruleInputs = mapOf("tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr),
-        rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
-        ruleResult = tilbakeDatertMerEnn3AAr
-    )
-}
-
 val fremdatertOver30Dager: PeriodLogicRule = { sykmelding, ruleMetadata ->
     val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
     val behandletTidspunkt = ruleMetadata.behandletTidspunkt

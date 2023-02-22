@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.KontaktMedPasient
 import no.nav.syfo.model.MedisinskVurdering
+import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
@@ -16,11 +17,13 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_OVER_3_AR
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class TilbakedateringTest : FunSpec({
     val ruleTree = TilbakedateringRulesExecution()
@@ -450,6 +453,48 @@ class TilbakedateringTest : FunSpec({
     }
 
     context("Over 30 dager") {
+        test("Tilbakedatert mer enn 3 år, Status INVALID") {
+            val sykmelding = generateSykmelding(
+                perioder = listOf(
+                    Periode(
+                        fom = LocalDate.now().minusYears(3).minusDays(14),
+                        tom = LocalDate.now().minusYears(3),
+                        aktivitetIkkeMulig = null,
+                        avventendeInnspillTilArbeidsgiver = null,
+                        behandlingsdager = 1,
+                        gradert = null,
+                        reisetilskudd = false
+                    )
+                ),
+                behandletTidspunkt = LocalDateTime.now()
+            )
+
+            val ruleMetadata = sykmelding.toRuleMetadata()
+
+            val sykmeldingMetadata = RuleMetadataSykmelding(ruleMetadata = ruleMetadata, true, false)
+
+            val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
+
+            status.treeResult.status shouldBeEqualTo Status.INVALID
+            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+                TILBAKEDATERING to true,
+                ETTERSENDING to false,
+                TILBAKEDATERT_INNTIL_8_DAGER to false,
+                TILBAKEDATERT_INNTIL_30_DAGER to false,
+                TILBAKEDATERT_OVER_3_AR to true,
+            )
+
+            mapOf(
+                "perioder" to sykmelding.perioder,
+                "periodeRanges" to sykmelding.perioder
+                    .sortedBy { it.fom }
+                    .map { it.fom to it.tom },
+                "perioder" to sykmelding.perioder,
+                "tilbakeDatertMerEnn3AAr" to true
+            ) shouldBeEqualTo status.ruleInputs
+
+            status.treeResult.ruleHit shouldBeEqualTo TilbakedateringRuleHit.OVER_3_AR.ruleHit
+        }
         test("Med begrunnelse, MANUELL") {
             val sykmelding = generateSykmelding(
                 fom = LocalDate.of(2020, 1, 1), tom = LocalDate.of(2020, 1, 20),

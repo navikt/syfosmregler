@@ -32,7 +32,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -54,7 +53,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -237,49 +235,6 @@ class PeriodLogicRulesTest : FunSpec({
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.IKKE_DEFINERT_PERIODE.ruleHit
         }
-        test("Tilbakedatert mer enn 3 år, Status INVALID") {
-            val sykmelding = generateSykmelding(
-                perioder = listOf(
-                    Periode(
-                        fom = LocalDate.now().minusYears(3).minusDays(14),
-                        tom = LocalDate.now().minusYears(3),
-                        aktivitetIkkeMulig = null,
-                        avventendeInnspillTilArbeidsgiver = null,
-                        behandlingsdager = 1,
-                        gradert = null,
-                        reisetilskudd = false
-                    )
-                ),
-                behandletTidspunkt = LocalDateTime.now()
-            )
-
-            val ruleMetadata = sykmelding.toRuleMetadata()
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                PeriodLogicRules.PERIODER_MANGLER to false,
-                PeriodLogicRules.FRADATO_ETTER_TILDATO to false,
-                PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
-                PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
-                PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to true
-            )
-
-            mapOf(
-                "perioder" to sykmelding.perioder,
-                "perioder" to sykmelding.perioder,
-                "perioder" to sykmelding.perioder,
-                "periodeRanges" to sykmelding.perioder
-                    .sortedBy { it.fom }
-                    .map { it.fom to it.tom },
-                "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to true
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.TILBAKEDATERT_MER_ENN_3_AR.ruleHit
-        }
 
         test("Fremdater over 30 dager, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -303,7 +258,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to true
             )
 
@@ -315,7 +269,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to true
             ) shouldBeEqualTo status.ruleInputs
 
@@ -348,7 +301,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to true
             )
@@ -361,7 +313,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to true
             ) shouldBeEqualTo status.ruleInputs
@@ -385,7 +336,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to true
@@ -399,7 +349,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to true
@@ -435,7 +384,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -450,7 +398,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -482,7 +429,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -498,7 +444,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -531,7 +476,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -548,7 +492,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -582,7 +525,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -600,7 +542,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -635,7 +576,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -654,7 +594,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -689,7 +628,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -709,7 +647,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
@@ -746,7 +683,6 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
@@ -767,7 +703,6 @@ class PeriodLogicRulesTest : FunSpec({
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
-                "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,

@@ -8,8 +8,6 @@ import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
-import no.nav.syfo.sm.Diagnosekoder
-import no.nav.syfo.toDiagnose
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
@@ -52,12 +50,6 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
@@ -67,12 +59,6 @@ class ValidationTest : FunSpec({
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to false,
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
@@ -115,268 +101,6 @@ class ValidationTest : FunSpec({
             status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.PASIENT_YNGRE_ENN_13.ruleHit
         }
 
-        test("Pasient eldre enn 70 Aar, Status INVALID") {
-            val person71Years = LocalDate.now().minusYears(71)
-
-            val sykmelding = generateSykmelding()
-
-            val ruleMetadata = RuleMetadata(
-                signatureDate = LocalDate.now().atStartOfDay(),
-                receivedDate = LocalDate.now().atStartOfDay(),
-                behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                patientPersonNumber = generatePersonNumber(person71Years, false),
-                rulesetVersion = null,
-                legekontorOrgnr = null,
-                tssid = null,
-                avsenderFnr = "2",
-                pasientFodselsdato = person71Years
-            )
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to true
-            )
-
-            mapOf(
-                "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to true
-
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.PASIENT_ELDRE_ENN_70.ruleHit
-        }
-        test("Ukjent diagnoseKodeType, Status INVALID") {
-            val person31Years = LocalDate.now().minusYears(31)
-
-            val sykmelding = generateSykmelding(
-                medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(
-                        system = "2.16.578.1.12.4.1.1.9999",
-                        kode = "A09",
-                        tekst = "Brudd legg/ankel"
-                    )
-                )
-            )
-
-            val ruleMetadata = RuleMetadata(
-                signatureDate = LocalDate.now().atStartOfDay(),
-                receivedDate = LocalDate.now().atStartOfDay(),
-                behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                patientPersonNumber = generatePersonNumber(person31Years, false),
-                rulesetVersion = null,
-                legekontorOrgnr = null,
-                tssid = null,
-                avsenderFnr = "2",
-                pasientFodselsdato = person31Years
-            )
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to true
-            )
-
-            mapOf(
-                "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to true
-
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UKJENT_DIAGNOSEKODETYPE.ruleHit
-        }
-        test("Diagnosen er icpz 2 z diagnose, Status INVALID") {
-            val person31Years = LocalDate.now().minusYears(31)
-
-            val sykmelding = generateSykmelding(
-                medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose()
-                )
-            )
-
-            val ruleMetadata = RuleMetadata(
-                signatureDate = LocalDate.now().atStartOfDay(),
-                receivedDate = LocalDate.now().atStartOfDay(),
-                behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                patientPersonNumber = generatePersonNumber(person31Years, false),
-                rulesetVersion = null,
-                legekontorOrgnr = null,
-                tssid = null,
-                avsenderFnr = "2",
-                pasientFodselsdato = person31Years
-            )
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to true
-            )
-
-            mapOf(
-                "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to true
-
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.ICPC_2_Z_DIAGNOSE.ruleHit
-        }
-        test("HouvedDiagnose eller fraversgrunn mangler, Status INVALID") {
-            val person31Years = LocalDate.now().minusYears(31)
-
-            val sykmelding = generateSykmelding(
-                medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = null,
-                    annenFraversArsak = null
-                )
-            )
-
-            val ruleMetadata = RuleMetadata(
-                signatureDate = LocalDate.now().atStartOfDay(),
-                receivedDate = LocalDate.now().atStartOfDay(),
-                behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                patientPersonNumber = generatePersonNumber(person31Years, false),
-                rulesetVersion = null,
-                legekontorOrgnr = null,
-                tssid = null,
-                avsenderFnr = "2",
-                pasientFodselsdato = person31Years
-            )
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to true
-            )
-
-            mapOf(
-                "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to true
-
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER.ruleHit
-        }
-        test("Ugyldig KodeVerk for houvedDiagnose, Status INVALID") {
-            val person31Years = LocalDate.now().minusYears(31)
-
-            val sykmelding = generateSykmelding(
-                medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = Diagnose(
-                        system = "2.16.578.1.12.4.1.1.7110",
-                        kode = "Z09",
-                        tekst = "Brudd legg/ankel"
-                    )
-                )
-            )
-
-            val ruleMetadata = RuleMetadata(
-                signatureDate = LocalDate.now().atStartOfDay(),
-                receivedDate = LocalDate.now().atStartOfDay(),
-                behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                patientPersonNumber = generatePersonNumber(person31Years, false),
-                rulesetVersion = null,
-                legekontorOrgnr = null,
-                tssid = null,
-                avsenderFnr = "2",
-                pasientFodselsdato = person31Years
-            )
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true
-            )
-
-            mapOf(
-                "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to true
-
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
-        }
-        test("Ugyldig kodeVerk for biDiagnose, Status INVALID") {
-            val person31Years = LocalDate.now().minusYears(31)
-
-            val sykmelding = generateSykmelding(
-                medisinskVurdering = generateMedisinskVurdering(
-                    bidiagnoser = listOf(
-                        Diagnose(
-                            system = "2.16.578.1.12.4.1.1.7110",
-                            kode = "S09",
-                            tekst = "Brudd legg/ankel"
-                        )
-                    )
-                )
-            )
-
-            val ruleMetadata = RuleMetadata(
-                signatureDate = LocalDate.now().atStartOfDay(),
-                receivedDate = LocalDate.now().atStartOfDay(),
-                behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                patientPersonNumber = generatePersonNumber(person31Years, false),
-                rulesetVersion = null,
-                legekontorOrgnr = null,
-                tssid = null,
-                avsenderFnr = "2",
-                pasientFodselsdato = person31Years
-            )
-
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
-
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true,
-            )
-
-            mapOf(
-                "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to true
-            ) shouldBeEqualTo status.ruleInputs
-
-            status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
-        }
         test("Ugyldig regelsettversjon, Status INVALID") {
             val person31Years = LocalDate.now().minusYears(31)
 
@@ -407,23 +131,11 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to true
             )
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to false,
                 "ugyldigRegelsettversjon" to true
             ) shouldBeEqualTo status.ruleInputs
 
@@ -458,24 +170,12 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true
             )
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to false,
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to true
             ) shouldBeEqualTo status.ruleInputs
@@ -513,12 +213,6 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to true
@@ -526,12 +220,6 @@ class ValidationTest : FunSpec({
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to false,
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to true
@@ -571,12 +259,6 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
@@ -585,12 +267,6 @@ class ValidationTest : FunSpec({
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to false,
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
@@ -635,12 +311,6 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.PASIENT_ELDRE_ENN_70 to false,
-                ValidationRules.UKJENT_DIAGNOSEKODETYPE to false,
-                ValidationRules.ICPC_2_Z_DIAGNOSE to false,
-                ValidationRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-                ValidationRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
@@ -650,12 +320,6 @@ class ValidationTest : FunSpec({
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "pasientOver70Aar" to false,
-                "ukjentDiagnoseKodeType" to false,
-                "icpc2ZDiagnose" to false,
-                "houvedDiagnoseEllerFraversgrunnMangler" to false,
-                "ugyldigKodeVerkHouvedDiagnose" to false,
-                "ugyldigKodeVerkBiDiagnose" to false,
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
