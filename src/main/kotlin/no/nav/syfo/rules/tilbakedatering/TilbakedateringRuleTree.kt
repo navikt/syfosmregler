@@ -32,7 +32,6 @@ enum class TilbakedateringRules {
     SPESIALISTHELSETJENESTEN, TILBAKEDATERING, TILBAKEDATERT_INNTIL_8_DAGER, TILBAKEDATERT_INNTIL_30_DAGER, TILBAKEDATERT_OVER_3_AR
 }
 
-
 class Test() {
     private val rules = listOf(
         TilbakedateringRulesExecution(tilbakedateringRuleTree),
@@ -46,7 +45,6 @@ class Test() {
         }
     }
 }
-
 
 val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
     yes(TILBAKEDATERT_OVER_3_AR) {
