@@ -3,7 +3,7 @@ package no.nav.syfo.rules.validation
 import no.nav.syfo.model.Status
 import no.nav.syfo.rules.common.RuleHit
 
-enum class ValidationRuleHit(
+enum class ValidationRules(
     val ruleHit: RuleHit
 ) {
     PASIENT_YNGRE_ENN_13(

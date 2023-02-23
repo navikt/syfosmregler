@@ -1,5 +1,8 @@
 package no.nav.syfo.rules.dsl
 
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.rules.validation.rule
+
 sealed class TreeNode<T, R>
 
 class ResultNode<T, R>(val result: R) : TreeNode<T, R>()
@@ -26,3 +29,5 @@ class RuleNode<T, R> internal constructor(val rule: T) : TreeNode<T, R>() {
 }
 
 fun <T, R> tree(rule: T, init: RuleNode<T, R>.() -> Unit): RuleNode<T, R> = RuleNode<T, R>(rule).apply(init)
+
+fun <T, R> rule(rule: T, init: RuleNode<T, R>.() -> Unit): RuleNode<T, R> = RuleNode<T, R>(rule).apply(init)
