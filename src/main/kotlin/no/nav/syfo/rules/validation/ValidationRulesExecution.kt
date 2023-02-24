@@ -11,8 +11,8 @@ import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
 
-typealias ValidationTreeOutput = TreeOutput<ValidationRules, RuleResult>
-typealias ValidationTreeNode = TreeNode<ValidationRules, RuleResult>
+typealias ValidationTreeOutput = TreeOutput<ValidationRuleHit, RuleResult>
+typealias ValidationTreeNode = TreeNode<ValidationRuleHit, RuleResult>
 
 class ValidationRulesExecution(private val rootNode: ValidationTreeNode = validationRuleTree) {
     fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadata): ValidationTreeOutput =
@@ -23,7 +23,7 @@ class ValidationRulesExecution(private val rootNode: ValidationTreeNode = valida
             }
 }
 
-private fun TreeNode<ValidationRules, RuleResult>.evaluate(
+private fun TreeNode<ValidationRuleHit, RuleResult>.evaluate(
     sykmelding: Sykmelding,
     ruleMetadata: RuleMetadata,
 ): ValidationTreeOutput =

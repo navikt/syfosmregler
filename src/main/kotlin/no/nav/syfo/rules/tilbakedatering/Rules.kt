@@ -11,12 +11,10 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_OVER_3_AR
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.sortedFOMDate
 import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.sm.isICD10
-import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 typealias Rule<T> = (sykmelding: Sykmelding, metadata: RuleMetadataSykmelding) -> RuleResult<T>
@@ -40,21 +38,6 @@ val tilbakedateringInntil30Dager: TilbakedateringRule = { sykmelding, _ ->
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
         rule = TILBAKEDATERT_INNTIL_30_DAGER,
         ruleResult = behandletTidspunkt.isBefore(fom.plusDays(31))
-    )
-}
-
-val tilbakeDatertOver3Ar: TilbakedateringRule = { sykmelding, _ ->
-    val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
-
-    val tilbakeDatertMerEnn3AAr = forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
-
-    RuleResult(
-        ruleInputs = mapOf(
-            "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
-            "fom" to forsteFomDato
-        ),
-        rule = TILBAKEDATERT_OVER_3_AR,
-        ruleResult = tilbakeDatertMerEnn3AAr
     )
 }
 

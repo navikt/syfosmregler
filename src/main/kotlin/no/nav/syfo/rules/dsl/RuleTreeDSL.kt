@@ -1,8 +1,5 @@
 package no.nav.syfo.rules.dsl
 
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.rules.validation.rule
-
 sealed class TreeNode<T, R>
 
 class ResultNode<T, R>(val result: R) : TreeNode<T, R>()

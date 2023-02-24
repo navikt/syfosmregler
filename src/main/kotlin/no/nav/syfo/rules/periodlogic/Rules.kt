@@ -5,6 +5,7 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.services.daysBetween
+import no.nav.syfo.services.sortedFOMDate
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -105,6 +106,19 @@ val fremdatertOver30Dager: PeriodLogicRule = { sykmelding, ruleMetadata ->
         ruleInputs = mapOf("fremdatert" to fremdatert),
         rule = PeriodLogicRules.FREMDATERT,
         ruleResult = fremdatert
+    )
+}
+val tilbakeDatertOver3Ar: PeriodLogicRule = { sykmelding, _ ->
+    val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
+    val tilbakeDatertMerEnn3AAr = forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
+
+    RuleResult(
+        ruleInputs = mapOf(
+            "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
+            "fom" to forsteFomDato
+        ),
+        rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
+        ruleResult = tilbakeDatertMerEnn3AAr
     )
 }
 

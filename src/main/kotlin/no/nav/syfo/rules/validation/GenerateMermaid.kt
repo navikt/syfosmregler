@@ -16,7 +16,7 @@ fun main() {
     println(builder.toString())
 }
 
-private fun TreeNode<ValidationRules, RuleResult>.traverseTree(
+private fun TreeNode<ValidationRuleHit, RuleResult>.traverseTree(
     builder: StringBuilder,
     thisNodeKey: String,
     nodeKey: String,
@@ -29,21 +29,21 @@ private fun TreeNode<ValidationRules, RuleResult>.traverseTree(
         is RuleNode -> {
             val currentNodeKey = "${nodeKey}_$rule"
             if (yes is ResultNode) {
-                val childResult = (yes as ResultNode<ValidationRules, RuleResult>).result.status
+                val childResult = (yes as ResultNode<ValidationRuleHit, RuleResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
-                val childRule = (yes as RuleNode<ValidationRules, RuleResult>).rule
+                val childRule = (yes as RuleNode<ValidationRuleHit, RuleResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childRule)\n")
                 yes.traverseTree(builder, childKey, currentNodeKey)
             }
             if (no is ResultNode) {
-                val childResult = (no as ResultNode<ValidationRules, RuleResult>).result.status
+                val childResult = (no as ResultNode<ValidationRuleHit, RuleResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
-                val childRule = (no as RuleNode<ValidationRules, RuleResult>).rule
+                val childRule = (no as RuleNode<ValidationRuleHit, RuleResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childRule)\n")
                 no.traverseTree(builder, "${currentNodeKey}_$childRule", currentNodeKey)

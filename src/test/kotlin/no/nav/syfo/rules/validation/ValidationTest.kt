@@ -49,12 +49,12 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
-                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to false,
+                ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
+                ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false
             )
 
             mapOf(
@@ -90,7 +90,7 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to true
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to true
             )
 
             mapOf(
@@ -130,8 +130,8 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to true
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to true
             )
 
             mapOf(
@@ -169,9 +169,9 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true
             )
 
             mapOf(
@@ -212,10 +212,10 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRules.UGYLDIG_ORGNR_LENGDE to true
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to true
             )
 
             mapOf(
@@ -258,11 +258,11 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to false,
+                ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
             )
 
             mapOf(
@@ -310,12 +310,12 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
-                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
+                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to false,
+                ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
+                ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
             )
 
             mapOf(
