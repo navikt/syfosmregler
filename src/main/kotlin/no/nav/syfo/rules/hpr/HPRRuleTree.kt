@@ -2,6 +2,7 @@ package no.nav.syfo.rules.hpr
 
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.OK
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
@@ -12,35 +13,26 @@ enum class HPRRules {
     BEHANDLER_MT_FT_KI_OVER_12_UKER
 }
 
-data class HPRResult(
-    val status: Status,
-    val ruleHit: RuleHit?
-) {
-    override fun toString(): String {
-        return status.name + (ruleHit?.let { "->${it.name}" } ?: "")
-    }
-}
-
-val hprRuleTree = tree<HPRRules, HPRResult>(HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR) {
-    yes(Status.INVALID, RuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR)
+val hprRuleTree = tree<HPRRules, RuleResult>(HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR) {
+    yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR)
     no(HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR) {
-        yes(Status.INVALID, RuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR)
+        yes(Status.INVALID, HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR)
         no(HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR) {
-            yes(Status.INVALID, RuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR)
+            yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR)
             no(HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER) {
-                yes(Status.INVALID, RuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER)
+                yes(Status.INVALID, HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER)
                 no(OK)
             }
         }
     }
 }
 
-internal fun RuleNode<HPRRules, HPRResult>.yes(status: Status, ruleHit: RuleHit? = null) {
-    yes(HPRResult(status, ruleHit))
+internal fun RuleNode<HPRRules, RuleResult>.yes(status: Status, ruleHit: HPRRuleHit? = null) {
+    yes(RuleResult(status, ruleHit?.ruleHit))
 }
 
-internal fun RuleNode<HPRRules, HPRResult>.no(status: Status, ruleHit: RuleHit? = null) {
-    no(HPRResult(status, ruleHit))
+internal fun RuleNode<HPRRules, RuleResult>.no(status: Status, ruleHit: HPRRuleHit? = null) {
+    no(RuleResult(status, ruleHit?.ruleHit))
 }
 
 fun getRule(rules: HPRRules): Rule<HPRRules> {

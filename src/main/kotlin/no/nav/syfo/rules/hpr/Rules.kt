@@ -2,12 +2,11 @@ package no.nav.syfo.rules.hpr
 
 import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.BehandlerOgStartdato
-import no.nav.syfo.rules.HelsepersonellKategori
-import no.nav.syfo.rules.daysBetween
 import no.nav.syfo.rules.dsl.RuleResult
-import no.nav.syfo.rules.sortedFOMDate
-import no.nav.syfo.rules.sortedTOMDate
+import no.nav.syfo.services.BehandlerOgStartdato
+import no.nav.syfo.services.daysBetween
+import no.nav.syfo.services.sortedFOMDate
+import no.nav.syfo.services.sortedTOMDate
 
 typealias Rule<T> = (sykmelding: Sykmelding, behandlerOgStartdato: BehandlerOgStartdato) -> RuleResult<T>
 typealias HPRRule = Rule<HPRRules>

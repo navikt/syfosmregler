@@ -2,6 +2,7 @@ package no.nav.syfo.rules.legesuspensjon
 
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.OK
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
@@ -9,26 +10,17 @@ enum class LegeSuspensjonRules {
     BEHANDLER_SUSPENDERT
 }
 
-data class LegeSuspensjonResult(
-    val status: Status,
-    val ruleHit: RuleHit?
-) {
-    override fun toString(): String {
-        return status.name + (ruleHit?.let { "->${it.name}" } ?: "")
-    }
-}
-
-val legeSuspensjonRuleTree = tree<LegeSuspensjonRules, LegeSuspensjonResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {
-    yes(Status.INVALID, RuleHit.BEHANDLER_SUSPENDERT)
+val legeSuspensjonRuleTree = tree<LegeSuspensjonRules, RuleResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {
+    yes(Status.INVALID, LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT)
     no(OK)
 }
 
-internal fun RuleNode<LegeSuspensjonRules, LegeSuspensjonResult>.yes(status: Status, ruleHit: RuleHit? = null) {
-    yes(LegeSuspensjonResult(status, ruleHit))
+internal fun RuleNode<LegeSuspensjonRules, RuleResult>.yes(status: Status, ruleHit: LegeSuspensjonRuleHit? = null) {
+    yes(RuleResult(status, ruleHit?.ruleHit))
 }
 
-internal fun RuleNode<LegeSuspensjonRules, LegeSuspensjonResult>.no(status: Status, ruleHit: RuleHit? = null) {
-    no(LegeSuspensjonResult(status, ruleHit))
+internal fun RuleNode<LegeSuspensjonRules, RuleResult>.no(status: Status, ruleHit: LegeSuspensjonRuleHit? = null) {
+    no(RuleResult(status, ruleHit?.ruleHit))
 }
 
 fun getRule(rules: LegeSuspensjonRules): Rule<LegeSuspensjonRules> {

@@ -4,46 +4,30 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import net.logstash.logback.argument.StructuredArguments.fields
+import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
-import no.nav.syfo.metrics.FODSELSDATO_FRA_IDENT_COUNTER
-import no.nav.syfo.metrics.FODSELSDATO_FRA_PDL_COUNTER
-import no.nav.syfo.metrics.RULE_HIT_COUNTER
 import no.nav.syfo.metrics.RULE_NODE_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.RULE_NODE_RULE_PATH_COUNTER
-import no.nav.syfo.model.AnnenFraverGrunn
+import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.RuleMetadata
-import no.nav.syfo.model.RuleResult
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.pdl.service.PdlPersonService
-import no.nav.syfo.rules.BehandlerOgStartdato
-import no.nav.syfo.rules.HPRRuleChain
-import no.nav.syfo.rules.LegesuspensjonRuleChain
-import no.nav.syfo.rules.PeriodLogicRuleChain
-import no.nav.syfo.rules.RuleMetadataSykmelding
-import no.nav.syfo.rules.SyketilfelleRuleChain
-import no.nav.syfo.rules.ValidationRuleChain
+import no.nav.syfo.rules.common.RuleResult
+import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.printRulePath
-import no.nav.syfo.rules.hpr.HPRRulesExecution
-import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
-import no.nav.syfo.rules.periodlogic.PeriodLogicRulesExecution
-import no.nav.syfo.rules.sortedFOMDate
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
-import no.nav.syfo.rules.validation.ValidationRulesExecution
-import no.nav.syfo.sm.isICD10
-import no.nav.syfo.sm.isICPC2
 import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -52,11 +36,7 @@ class RuleService(
     private val smregisterClient: SmregisterClient,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
-    private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution(),
-    private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution(),
-    private val legeSuspensjonRulesExecution: LegeSuspensjonRulesExecution = LegeSuspensjonRulesExecution(),
-    private val periodLogicRulesExecution: PeriodLogicRulesExecution = PeriodLogicRulesExecution(),
-    private val validationRulesExecution: ValidationRulesExecution = ValidationRulesExecution()
+    private val ruleExecutionService: RuleExecutionService
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -75,11 +55,9 @@ class RuleService(
         val fodsel = pdlPerson.foedsel?.firstOrNull()
         val fodselsdato = if (fodsel?.foedselsdato?.isNotEmpty() == true) {
             log.info("Extracting fodeseldato from PDL date")
-            FODSELSDATO_FRA_PDL_COUNTER.inc()
             LocalDate.parse(fodsel.foedselsdato)
         } else {
             log.info("Extracting fodeseldato from personNrPasient")
-            FODSELSDATO_FRA_IDENT_COUNTER.inc()
             extractBornDate(receivedSykmelding.personNrPasient)
         }
 
@@ -146,112 +124,43 @@ class RuleService(
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
             erNyttSyketilfelle = syketilfelleStartdato == null,
-            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
-        )
-
-        val tilbakedateringResult = tilbakedateringRulesExecution.runRules(sykmelding = receivedSykmelding.sykmelding, metadata = ruleMetadataSykmelding)
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            tilbakedateringResult.treeResult.status.name,
-            tilbakedateringResult.treeResult.ruleHit?.name ?: tilbakedateringResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            tilbakedateringResult.printRulePath()
-        ).inc()
-
-        val hprResult = hprRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding,
+            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding,
+            doctorSuspensjon = doctorSuspendDeferred.await(),
             behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato)
         )
 
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            hprResult.treeResult.status.name,
-            hprResult.treeResult.ruleHit?.name ?: hprResult.treeResult.status.name
-        ).inc()
+        val result = ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
+        result.forEach {
 
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            hprResult.printRulePath()
-        ).inc()
+            RULE_NODE_RULE_HIT_COUNTER.labels(
+                it.first.treeResult.status.name,
+                it.first.treeResult.ruleHit?.rule ?: it.first.treeResult.status.name
+            ).inc()
 
-        val legesuspensjonResult = legeSuspensjonRulesExecution.runRules(
-            sykmeldingId = receivedSykmelding.sykmelding.id,
-            behandlerSuspendert = doctorSuspendDeferred.await()
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            legesuspensjonResult.treeResult.status.name,
-            legesuspensjonResult.treeResult.ruleHit?.name ?: legesuspensjonResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            legesuspensjonResult.printRulePath()
-        ).inc()
-
-        val periodLogicResult = periodLogicRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding,
-            ruleMetadata = ruleMetadata
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            periodLogicResult.treeResult.status.name,
-            periodLogicResult.treeResult.ruleHit?.name ?: periodLogicResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            periodLogicResult.printRulePath()
-        ).inc()
-
-        val validationResult = validationRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding,
-            ruleMetadata = ruleMetadata
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            validationResult.treeResult.status.name,
-            validationResult.treeResult.ruleHit?.name ?: validationResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            validationResult.printRulePath()
-        ).inc()
-
-        val result = listOf(
-            ValidationRuleChain(receivedSykmelding.sykmelding, ruleMetadata).executeRules(),
-            PeriodLogicRuleChain(receivedSykmelding.sykmelding, ruleMetadata).executeRules(),
-            HPRRuleChain(
-                receivedSykmelding.sykmelding,
-                BehandlerOgStartdato(behandler, syketilfelleStartdato)
-            ).executeRules(),
-            LegesuspensjonRuleChain(doctorSuspendDeferred.await()).executeRules(),
-            SyketilfelleRuleChain(receivedSykmelding.sykmelding, ruleMetadataSykmelding).executeRules(),
-        ).flatten()
-
-        logRuleResultMetrics(result)
+            RULE_NODE_RULE_PATH_COUNTER.labels(
+                it.first.printRulePath()
+            ).inc()
+        }
 
         juridiskVurderingService.processRuleResults(receivedSykmelding, result)
 
-        log.info("Rules hit ${result.filter { it.result }.map { it.rule.name }}, ${fields(loggingMeta)}")
-
-        return validationResult(result)
+        return validationResult(result.map { it.first })
     }
 
-    private fun validationResult(results: List<RuleResult<*>>): ValidationResult = ValidationResult(
+    private fun validationResult(results: List<TreeOutput<out Enum<*>, RuleResult>>): ValidationResult = ValidationResult(
         status = results
-            .filter { it.result }
-            .map { result -> result.rule.status }.let {
+            .map { result -> result.treeResult.status }.let {
                 it.firstOrNull { status -> status == Status.INVALID }
                     ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
                     ?: Status.OK
             },
-        ruleHits = results
-            .filter { it.result }
+        ruleHits = results.mapNotNull { it.treeResult.ruleHit }
             .map { result ->
                 RuleInfo(
-                    result.rule.name,
-                    result.rule.messageForSender,
-                    result.rule.messageForUser,
-                    result.rule.status
+                    result.rule,
+                    result.messageForSender,
+                    result.messageForUser,
+                    result.status
                 )
             }
     )
@@ -260,40 +169,24 @@ class RuleService(
         receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate()
             .first().plusDays(8) &&
             !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
-
-    private fun logRuleResultMetrics(result: List<RuleResult<*>>) {
-        result
-            .filter { it.result }
-            .forEach {
-                RULE_HIT_COUNTER.labels(it.rule.name).inc()
-            }
-    }
 }
+data class BehandlerOgStartdato(
+    val behandler: Behandler,
+    val startdato: LocalDate?,
+)
 
-val koronaStartdato: LocalDate = LocalDate.of(2020, 2, 24)
-val koronaSluttdato: LocalDate = LocalDate.of(2023, 1, 1)
+data class RuleMetadataSykmelding(
+    val ruleMetadata: RuleMetadata,
+    val erNyttSyketilfelle: Boolean,
+    val erEttersendingAvTidligereSykmelding: Boolean?,
+    val doctorSuspensjon: Boolean,
+    val behandlerOgStartdato: BehandlerOgStartdato
+)
 
-/**
- * Spesialsjekk for å avlaste behandlere i kjølvannet av COVID-19-utbruddet mars 2020.
- */
-fun erCoronaRelatert(sykmelding: Sykmelding): Boolean {
-    return (
-        (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R991") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R991" }) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "R992") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICPC2() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "R992" }) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U071") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U071" }) ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.hovedDiagnose?.kode == "U072") ||
-            (sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false && sykmelding.medisinskVurdering.biDiagnoser.any { it.kode == "U072" }) ||
-            sykmelding.medisinskVurdering.annenFraversArsak?.grunn?.any { it == AnnenFraverGrunn.SMITTEFARE } ?: false
-        ) &&
-        (
-            sykmelding.perioder.any { it.fom.isAfter(koronaStartdato) } &&
-                sykmelding.perioder.any { it.fom.isBefore(koronaSluttdato) }
-            )
-}
+fun List<Periode>.sortedFOMDate(): List<LocalDate> =
+    map { it.fom }.sorted()
 
-fun kommerFraSpesialisthelsetjenesten(sykmelding: Sykmelding): Boolean {
-    return sykmelding.medisinskVurdering.hovedDiagnose?.isICD10() ?: false
-}
+fun List<Periode>.sortedTOMDate(): List<LocalDate> =
+    map { it.tom }.sorted()
+
+fun ClosedRange<LocalDate>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)

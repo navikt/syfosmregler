@@ -4,7 +4,8 @@ import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
-import no.nav.syfo.rules.range
+import no.nav.syfo.services.daysBetween
+import no.nav.syfo.services.sortedFOMDate
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -92,21 +93,6 @@ val ikkeDefinertPeriode: PeriodLogicRule = { sykmelding, _ ->
     )
 }
 
-val tilbakeDatertMerEnn3AAr: PeriodLogicRule = { sykmelding, _ ->
-    val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
-
-    val tilbakeDatertMerEnn3AAr = when (forsteFomDato) {
-        null -> false
-        else -> forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
-    }
-
-    RuleResult(
-        ruleInputs = mapOf("tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr),
-        rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
-        ruleResult = tilbakeDatertMerEnn3AAr
-    )
-}
-
 val fremdatertOver30Dager: PeriodLogicRule = { sykmelding, ruleMetadata ->
     val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
     val behandletTidspunkt = ruleMetadata.behandletTidspunkt
@@ -120,6 +106,18 @@ val fremdatertOver30Dager: PeriodLogicRule = { sykmelding, ruleMetadata ->
         ruleInputs = mapOf("fremdatert" to fremdatert),
         rule = PeriodLogicRules.FREMDATERT,
         ruleResult = fremdatert
+    )
+}
+val tilbakeDatertOver3Ar: PeriodLogicRule = { sykmelding, _ ->
+    val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
+    val tilbakeDatertMerEnn3AAr = forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
+
+    RuleResult(
+        ruleInputs = mapOf(
+            "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
+        ),
+        rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
+        ruleResult = tilbakeDatertMerEnn3AAr
     )
 }
 
@@ -210,20 +208,6 @@ val forMangeBehandlingsDagerPrUke: PeriodLogicRule = { sykmelding, _ ->
     )
 }
 
-val gradertUnder20Prosent: PeriodLogicRule = { sykmelding, _ ->
-    val perioder = sykmelding.perioder
-
-    val gradertUnder20Prosent = perioder.any {
-        it.gradert != null && it.gradert!!.grad < 20
-    }
-
-    RuleResult(
-        ruleInputs = mapOf("gradertUnder20Prosent" to gradertUnder20Prosent),
-        rule = PeriodLogicRules.GRADERT_SYKMELDING_UNDER_20_PROSENT,
-        ruleResult = gradertUnder20Prosent
-    )
-}
-
 val gradertOver99Prosent: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
@@ -261,6 +245,5 @@ fun workdaysBetween(a: LocalDate, b: LocalDate): Int = (1..(ChronoUnit.DAYS.betw
     .filter { it.dayOfWeek !in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY) }
     .count()
 
-fun ClosedRange<LocalDate>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)
 fun ClosedRange<LocalDate>.startedWeeksBetween(): Int = ChronoUnit.WEEKS.between(start, endInclusive).toInt() + 1
 fun Periode.range(): ClosedRange<LocalDate> = fom.rangeTo(tom)

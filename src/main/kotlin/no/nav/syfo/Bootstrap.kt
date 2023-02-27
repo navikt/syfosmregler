@@ -32,6 +32,7 @@ import no.nav.syfo.kafka.toProducerConfig
 import no.nav.syfo.pdl.client.PdlClient
 import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.services.JuridiskVurderingService
+import no.nav.syfo.services.RuleExecutionService
 import no.nav.syfo.services.RuleService
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.utils.JacksonKafkaSerializer
@@ -120,7 +121,7 @@ fun main() {
 
     val pdlClient = PdlClient(
         httpClient, env.pdlGraphqlPath,
-        PdlClient::class.java.getResource("/graphql/getPerson.graphql").readText().replace(Regex("[\n\t]"), "")
+        PdlClient::class.java.getResource("/graphql/getPerson.graphql")!!.readText().replace(Regex("[\n\t]"), "")
     )
     val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
 
@@ -141,6 +142,7 @@ fun main() {
         smregisterClient,
         pdlService,
         juridiskVurderingService,
+        RuleExecutionService()
     )
 
     val applicationEngine = createApplicationEngine(

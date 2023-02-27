@@ -6,7 +6,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import kotlinx.coroutines.DelicateCoroutinesApi
-import no.nav.syfo.metrics.RULE_HIT_STATUS_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.ValidationResult
 import no.nav.syfo.services.RuleService
@@ -23,7 +22,6 @@ fun Route.registerRuleApi(ruleService: RuleService) {
         val receivedSykmelding: ReceivedSykmelding = call.receive()
         val validationResult: ValidationResult = ruleService.executeRuleChains(receivedSykmelding)
 
-        RULE_HIT_STATUS_COUNTER.labels(validationResult.status.name).inc()
         call.respond(validationResult)
     }
 }

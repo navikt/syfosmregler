@@ -1,11 +1,7 @@
 package no.nav.syfo.rules.tilbakedatering
 
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.RuleMetadataSykmelding
-import no.nav.syfo.rules.containsLetters
 import no.nav.syfo.rules.dsl.RuleResult
-import no.nav.syfo.rules.sortedFOMDate
-import no.nav.syfo.rules.sortedTOMDate
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -15,6 +11,9 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
+import no.nav.syfo.services.RuleMetadataSykmelding
+import no.nav.syfo.services.sortedFOMDate
+import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.sm.isICD10
 import java.time.temporal.ChronoUnit
 
@@ -63,7 +62,7 @@ val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, _ ->
             "arbeidsgiverperiode" to arbeidsgiverperiode
         ),
         rule = ARBEIDSGIVERPERIODE,
-        ruleResult = arbeidsgiverperiode
+        ruleResult = arbeidsgiverperiode,
     )
 }
 
@@ -122,4 +121,7 @@ val spesialisthelsetjenesten: TilbakedateringRule = { sykmelding, _ ->
 
 fun getNumberOfWords(input: String?): Int {
     return input?.trim()?.split(" ")?.filter { containsLetters(it) }?.size ?: 0
+}
+fun containsLetters(text: String): Boolean {
+    return text.contains("""[A-Za-z]""".toRegex())
 }

@@ -1,6 +1,7 @@
 package no.nav.syfo.rules.periodlogic
 
 import no.nav.syfo.model.Status
+import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -15,7 +16,7 @@ fun main() {
     println(builder.toString())
 }
 
-private fun TreeNode<PeriodLogicRules, PeriodLogicResult>.traverseTree(
+private fun TreeNode<PeriodLogicRules, RuleResult>.traverseTree(
     builder: StringBuilder,
     thisNodeKey: String,
     nodeKey: String,
@@ -28,21 +29,21 @@ private fun TreeNode<PeriodLogicRules, PeriodLogicResult>.traverseTree(
         is RuleNode -> {
             val currentNodeKey = "${nodeKey}_$rule"
             if (yes is ResultNode) {
-                val childResult = (yes as ResultNode<PeriodLogicRules, PeriodLogicResult>).result.status
+                val childResult = (yes as ResultNode<PeriodLogicRules, RuleResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
-                val childRule = (yes as RuleNode<PeriodLogicRules, PeriodLogicResult>).rule
+                val childRule = (yes as RuleNode<PeriodLogicRules, RuleResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|Yes| $childKey($childRule)\n")
                 yes.traverseTree(builder, childKey, currentNodeKey)
             }
             if (no is ResultNode) {
-                val childResult = (no as ResultNode<PeriodLogicRules, PeriodLogicResult>).result.status
+                val childResult = (no as ResultNode<PeriodLogicRules, RuleResult>).result.status
                 val childKey = "${currentNodeKey}_$childResult"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childResult)${getStyle(childResult)}\n")
             } else {
-                val childRule = (no as RuleNode<PeriodLogicRules, PeriodLogicResult>).rule
+                val childRule = (no as RuleNode<PeriodLogicRules, RuleResult>).rule
                 val childKey = "${currentNodeKey}_$childRule"
                 builder.append("    $thisNodeKey($rule) -->|No| $childKey($childRule)\n")
                 no.traverseTree(builder, "${currentNodeKey}_$childRule", currentNodeKey)
