@@ -4,11 +4,8 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.MANUAL_PROCESSING
 import no.nav.syfo.model.Status.OK
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
-import no.nav.syfo.rules.dsl.rule
 import no.nav.syfo.rules.dsl.tree
 
 enum class PeriodLogicRules {
@@ -25,23 +22,9 @@ enum class PeriodLogicRules {
     MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER,
     AVVENTENDE_SYKMELDING_OVER_16_DAGER,
     FOR_MANGE_BEHANDLINGSDAGER_PER_UKE,
-    GRADERT_SYKMELDING_UNDER_20_PROSENT,
     GRADERT_SYKMELDING_OVER_99_PROSENT,
     SYKMELDING_MED_BEHANDLINGSDAGER
 }
-
-val rules = listOf(
-    rule(PeriodLogicRules.GRADERT_SYKMELDING_UNDER_20_PROSENT) {
-        yes(INVALID, PeriodLogicRuleHit.GRADERT_SYKMELDING_UNDER_20_PROSENT)
-        no(OK, null)
-    } to JuridiskHenvisning(
-        lovverk = Lovverk.FOLKETRYGDLOVEN,
-        paragraf = "8-13",
-        ledd = 1,
-        punktum = null,
-        bokstav = null
-    ),
-)
 
 val periodLogicRuleTree = tree<PeriodLogicRules, RuleResult>(PeriodLogicRules.PERIODER_MANGLER) {
     yes(INVALID, PeriodLogicRuleHit.PERIODER_MANGLER)
@@ -69,17 +52,14 @@ val periodLogicRuleTree = tree<PeriodLogicRules, RuleResult>(PeriodLogicRules.PE
                                                 yes(INVALID, PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_OVER_16_DAGER)
                                                 no(PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE) {
                                                     yes(INVALID, PeriodLogicRuleHit.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE)
-                                                    no(PeriodLogicRules.GRADERT_SYKMELDING_UNDER_20_PROSENT) {
-                                                        yes(INVALID, PeriodLogicRuleHit.GRADERT_SYKMELDING_UNDER_20_PROSENT)
-                                                        no(PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT) {
-                                                            yes(INVALID, PeriodLogicRuleHit.GRADERT_SYKMELDING_OVER_99_PROSENT)
-                                                            no(PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER) {
-                                                                yes(
-                                                                    MANUAL_PROCESSING,
-                                                                    PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER
-                                                                )
-                                                                no(OK)
-                                                            }
+                                                    no(PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT) {
+                                                        yes(INVALID, PeriodLogicRuleHit.GRADERT_SYKMELDING_OVER_99_PROSENT)
+                                                        no(PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER) {
+                                                            yes(
+                                                                MANUAL_PROCESSING,
+                                                                PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER
+                                                            )
+                                                            no(OK)
                                                         }
                                                     }
                                                 }
@@ -118,7 +98,6 @@ fun getRule(rules: PeriodLogicRules): Rule<PeriodLogicRules> {
         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER -> manglendeInnspillArbeidsgiver
         PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER -> avventendeOver16Dager
         PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE -> forMangeBehandlingsDagerPrUke
-        PeriodLogicRules.GRADERT_SYKMELDING_UNDER_20_PROSENT -> gradertUnder20Prosent
         PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT -> gradertOver99Prosent
         PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER -> inneholderBehandlingsDager
         PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR -> tilbakeDatertOver3Ar

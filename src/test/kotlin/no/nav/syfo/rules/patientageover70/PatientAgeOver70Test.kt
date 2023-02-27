@@ -6,6 +6,7 @@ import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
+import no.nav.syfo.rules.validation.ruleMetadataSykmelding
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
@@ -42,7 +43,7 @@ class PatientAgeOver70Test : FunSpec({
                 pasientFodselsdato = person14Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
@@ -79,7 +80,7 @@ class PatientAgeOver70Test : FunSpec({
                 pasientFodselsdato = person70Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(

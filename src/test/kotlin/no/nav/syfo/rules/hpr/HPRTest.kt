@@ -6,7 +6,9 @@ import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.Kode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Status
+import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
 import no.nav.syfo.services.BehandlerOgStartdato
+import no.nav.syfo.services.RuleMetadataSykmelding
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 
@@ -37,12 +39,20 @@ class HPRTest : FunSpec({
                 )
             )
 
-            val behandlerOgStartdato = BehandlerOgStartdato(behandler, null)
+            val ruleMetadata = sykmelding.toRuleMetadata()
 
-            val status = ruleTree.runRules(sykmelding, behandlerOgStartdato)
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = ruleMetadata,
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false,
+                doctorSuspensjon = false,
+                behandlerOgStartdato = BehandlerOgStartdato(behandler, null)
+            )
 
-            status.treeResult.status shouldBeEqualTo Status.OK
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+            status.first.treeResult.status shouldBeEqualTo Status.OK
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to false,
                 HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR to false,
                 HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR to false,
@@ -54,9 +64,9 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger,
-            ) shouldBeEqualTo status.ruleInputs
+            ) shouldBeEqualTo status.first.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo null
+            status.first.treeResult.ruleHit shouldBeEqualTo null
         }
 
         test("har ikke aktiv autorisasjon, Status INVALID") {
@@ -84,17 +94,27 @@ class HPRTest : FunSpec({
 
             val behandlerOgStartdato = BehandlerOgStartdato(behandler, null)
 
-            val status = ruleTree.runRules(sykmelding, behandlerOgStartdato)
+            val ruleMetadata = sykmelding.toRuleMetadata()
 
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = ruleMetadata,
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false,
+                doctorSuspensjon = false,
+                behandlerOgStartdato = behandlerOgStartdato
+            )
+
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to true
             )
             mapOf(
                 "behandlerGodkjenninger" to behandler.godkjenninger,
-            ) shouldBeEqualTo status.ruleInputs
+            ) shouldBeEqualTo status.first.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR.ruleHit
+            status.first.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR.ruleHit
         }
         test("mangler autorisasjon, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -121,10 +141,20 @@ class HPRTest : FunSpec({
 
             val behandlerOgStartdato = BehandlerOgStartdato(behandler, null)
 
-            val status = ruleTree.runRules(sykmelding, behandlerOgStartdato)
+            val ruleMetadata = sykmelding.toRuleMetadata()
 
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = ruleMetadata,
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false,
+                doctorSuspensjon = false,
+                behandlerOgStartdato = behandlerOgStartdato
+            )
+
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to false,
                 HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR to true
             )
@@ -132,9 +162,9 @@ class HPRTest : FunSpec({
             mapOf(
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger
-            ) shouldBeEqualTo status.ruleInputs
+            ) shouldBeEqualTo status.first.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR.ruleHit
+            status.first.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR.ruleHit
         }
         test("behandler ikke riktig helsepersonell kategori, Status INVALID") {
             val sykmelding = generateSykmelding(
@@ -161,10 +191,20 @@ class HPRTest : FunSpec({
 
             val behandlerOgStartdato = BehandlerOgStartdato(behandler, null)
 
-            val status = ruleTree.runRules(sykmelding, behandlerOgStartdato)
+            val ruleMetadata = sykmelding.toRuleMetadata()
 
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = ruleMetadata,
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false,
+                doctorSuspensjon = false,
+                behandlerOgStartdato = behandlerOgStartdato
+            )
+
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to false,
                 HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR to false,
                 HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR to true
@@ -174,9 +214,9 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger
-            ) shouldBeEqualTo status.ruleInputs
+            ) shouldBeEqualTo status.first.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR.ruleHit
+            status.first.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR.ruleHit
         }
 
         test("behandler KI MT FT over 84 dager, Status INVALID") {
@@ -204,10 +244,20 @@ class HPRTest : FunSpec({
 
             val behandlerOgStartdato = BehandlerOgStartdato(behandler, null)
 
-            val status = ruleTree.runRules(sykmelding, behandlerOgStartdato)
+            val ruleMetadata = sykmelding.toRuleMetadata()
 
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+            val ruleMetadataSykmelding = RuleMetadataSykmelding(
+                ruleMetadata = ruleMetadata,
+                erNyttSyketilfelle = false,
+                erEttersendingAvTidligereSykmelding = false,
+                doctorSuspensjon = false,
+                behandlerOgStartdato = behandlerOgStartdato
+            )
+
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to false,
                 HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR to false,
                 HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR to false,
@@ -219,9 +269,9 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger
-            ) shouldBeEqualTo status.ruleInputs
+            ) shouldBeEqualTo status.first.ruleInputs
 
-            status.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER.ruleHit
+            status.first.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER.ruleHit
         }
     }
 })

@@ -12,7 +12,6 @@ enum class ValidationRuleHit(
             status = Status.INVALID,
             messageForSender = "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
             messageForUser = "Pasienten er under 13 år. Sykmelding kan ikke benyttes.",
-            juridiskHenvisning = null
         )
     ),
     UGYLDIG_REGELSETTVERSJON(
@@ -23,7 +22,6 @@ enum class ValidationRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Feil regelsett er brukt i sykmeldingen.",
             messageForUser = "Det er brukt en versjon av sykmeldingen som ikke lenger er gyldig.",
-            juridiskHenvisning = null
         )
     ),
     MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39(
@@ -35,7 +33,6 @@ enum class ValidationRuleHit(
                 "Utdypende opplysninger som kreves ved uke 39 mangler. ",
             messageForUser = "Sykmeldingen mangler utdypende opplysninger som kreves når " +
                 "sykefraværet er lengre enn 39 uker til sammen.",
-            juridiskHenvisning = null
         )
     ),
     UGYLDIG_ORGNR_LENGDE(
@@ -46,7 +43,6 @@ enum class ValidationRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Feil format på organisasjonsnummer. Dette skal være 9 sifre.",
             messageForUser = "Den må ha riktig organisasjonsnummer.",
-            juridiskHenvisning = null
         )
     ),
     AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR(
@@ -57,7 +53,6 @@ enum class ValidationRuleHit(
                 "Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                 "Avsender fnr er det samme som pasient fnr",
             messageForUser = "Den som signert sykmeldingen er også pasient.",
-            juridiskHenvisning = null
         )
     ),
     BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR(
@@ -68,7 +63,6 @@ enum class ValidationRuleHit(
                 " Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
                 "Behandler fnr er det samme som pasient fnr",
             messageForUser = "Den som er behandler av sykmeldingen er også pasient.",
-            juridiskHenvisning = null
         )
     )
 }

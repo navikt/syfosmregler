@@ -5,6 +5,8 @@ import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
+import no.nav.syfo.rules.common.Juridisk
+import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.TreeOutput
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -29,12 +31,16 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<TreeOutput<out Enum<*>, RuleResult>>
+        result: List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>>
     ) {
         val juridiskVurderingResult = JuridiskVurderingResult(
             juridiskeVurderinger = result
-                .filter { it.treeResult.ruleHit?.juridiskHenvisning != null }
-                .map { resultToJuridiskVurdering(receivedSykmelding, it) }
+                .mapNotNull {
+                    when (val juridisk = it.second) {
+                        is MedJuridisk -> resultToJuridiskVurdering(receivedSykmelding, it.first, juridisk)
+                        else -> null
+                    }
+                }
         )
         kafkaProducer.send(
             ProducerRecord(
@@ -47,7 +53,8 @@ class JuridiskVurderingService(
 
     private fun resultToJuridiskVurdering(
         receivedSykmelding: ReceivedSykmelding,
-        treeOutput: TreeOutput<out Enum<*>, RuleResult>
+        result: TreeOutput<out Enum<*>, RuleResult>,
+        medJuridisk: MedJuridisk
     ): JuridiskVurdering {
         return JuridiskVurdering(
             id = UUID.randomUUID().toString(),
@@ -56,13 +63,12 @@ class JuridiskVurderingService(
             kilde = KILDE,
             versjonAvKode = versjonsKode,
             fodselsnummer = receivedSykmelding.personNrPasient,
-            juridiskHenvisning = treeOutput.treeResult.ruleHit?.juridiskHenvisning
-                ?: throw RuntimeException("JuridiskHenvisning kan ikke være null"),
+            juridiskHenvisning = medJuridisk.juridiskHenvisning,
             sporing = mapOf(
                 "sykmelding" to receivedSykmelding.sykmelding.id,
             ),
-            input = treeOutput.ruleInputs,
-            utfall = toJuridiskUtfall(treeOutput.treeResult.status),
+            input = result.ruleInputs,
+            utfall = toJuridiskUtfall(result.treeResult.status),
             tidsstempel = LocalDateTime.now()
         )
     }

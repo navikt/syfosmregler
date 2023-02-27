@@ -3,8 +3,6 @@ package no.nav.syfo.rules.patientageover70
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.OK
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
@@ -12,14 +10,6 @@ import no.nav.syfo.rules.dsl.tree
 enum class PatientAgeOver70Rules {
     PASIENT_ELDRE_ENN_70
 }
-
-val getJuridiskHenvisning = JuridiskHenvisning(
-    lovverk = Lovverk.FOLKETRYGDLOVEN,
-    paragraf = "8-3",
-    ledd = 1,
-    punktum = 2,
-    bokstav = null
-)
 
 val patientAgeOver70RuleTree = tree<PatientAgeOver70Rules, RuleResult>(PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70) {
     yes(INVALID, PatientAgeOver70RuleHit.PASIENT_ELDRE_ENN_70)

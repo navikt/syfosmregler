@@ -2,6 +2,8 @@ package no.nav.syfo.rules.tilbakedatering
 
 import no.nav.syfo.log
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.common.MedJuridisk
+import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
@@ -14,13 +16,13 @@ import no.nav.syfo.services.RuleMetadataSykmelding
 typealias TilbakedateringTreeOutput = TreeOutput<TilbakedateringRules, RuleResult>
 typealias TilbakedateringTreeNode = TreeNode<TilbakedateringRules, RuleResult>
 
-class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNode = tilbakedateringRuleTree) {
-    fun runRules(sykmelding: Sykmelding, metadata: RuleMetadataSykmelding): TilbakedateringTreeOutput =
+class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNode = tilbakedateringRuleTree) : RuleExecution<TilbakedateringRules> {
+    override fun runRules(sykmelding: Sykmelding, metadata: RuleMetadataSykmelding) =
         rootNode
             .evaluate(sykmelding, metadata)
             .also { tilbakedateringRulePath ->
                 log.info("Rules ${sykmelding.id}, ${tilbakedateringRulePath.printRulePath()}")
-            }
+            } to MedJuridisk(tilbakeDatertJuridiskHenvisning())
 }
 
 private fun TreeNode<TilbakedateringRules, RuleResult>.evaluate(

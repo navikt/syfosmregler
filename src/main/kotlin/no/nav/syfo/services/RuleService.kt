@@ -21,11 +21,6 @@ import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.printRulePath
-import no.nav.syfo.rules.hpr.HPRRulesExecution
-import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
-import no.nav.syfo.rules.periodlogic.PeriodLogicRulesExecution
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
-import no.nav.syfo.rules.validation.ValidationRulesExecution
 import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
 import org.slf4j.Logger
@@ -41,11 +36,7 @@ class RuleService(
     private val smregisterClient: SmregisterClient,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
-    private val tilbakedateringRulesExecution: TilbakedateringRulesExecution = TilbakedateringRulesExecution(),
-    private val hprRulesExecution: HPRRulesExecution = HPRRulesExecution(),
-    private val legeSuspensjonRulesExecution: LegeSuspensjonRulesExecution = LegeSuspensjonRulesExecution(),
-    private val periodLogicRulesExecution: PeriodLogicRulesExecution = PeriodLogicRulesExecution(),
-    private val validationRulesExecution: ValidationRulesExecution = ValidationRulesExecution()
+    private val ruleExecutionService: RuleExecutionService
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -133,89 +124,27 @@ class RuleService(
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
             erNyttSyketilfelle = syketilfelleStartdato == null,
-            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding
-        )
-
-        val tilbakedateringResult = tilbakedateringRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding, metadata = ruleMetadataSykmelding
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            tilbakedateringResult.treeResult.status.name,
-            tilbakedateringResult.treeResult.ruleHit?.rule ?: tilbakedateringResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            tilbakedateringResult.printRulePath()
-        ).inc()
-
-        val hprResult = hprRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding,
+            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding,
+            doctorSuspensjon = doctorSuspendDeferred.await(),
             behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato)
         )
 
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            hprResult.treeResult.status.name,
-            hprResult.treeResult.ruleHit?.rule ?: hprResult.treeResult.status.name
-        ).inc()
+        val result = ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
+        result.forEach {
 
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            hprResult.printRulePath()
-        ).inc()
+            RULE_NODE_RULE_HIT_COUNTER.labels(
+                it.first.treeResult.status.name,
+                it.first.treeResult.ruleHit?.rule ?: it.first.treeResult.status.name
+            ).inc()
 
-        val legesuspensjonResult = legeSuspensjonRulesExecution.runRules(
-            sykmeldingId = receivedSykmelding.sykmelding.id,
-            behandlerSuspendert = doctorSuspendDeferred.await()
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            legesuspensjonResult.treeResult.status.name,
-            legesuspensjonResult.treeResult.ruleHit?.rule ?: legesuspensjonResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            legesuspensjonResult.printRulePath()
-        ).inc()
-
-        val periodLogicResult = periodLogicRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding,
-            ruleMetadata = ruleMetadata
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            periodLogicResult.treeResult.status.name,
-            periodLogicResult.treeResult.ruleHit?.rule ?: periodLogicResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            periodLogicResult.printRulePath()
-        ).inc()
-
-        val validationResult = validationRulesExecution.runRules(
-            sykmelding = receivedSykmelding.sykmelding,
-            ruleMetadata = ruleMetadata
-        )
-
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            validationResult.treeResult.status.name,
-            validationResult.treeResult.ruleHit?.rule ?: validationResult.treeResult.status.name
-        ).inc()
-
-        RULE_NODE_RULE_PATH_COUNTER.labels(
-            validationResult.printRulePath()
-        ).inc()
-
-        val result = listOf(
-            tilbakedateringResult,
-            hprResult,
-            legesuspensjonResult,
-            periodLogicResult,
-            validationResult
-        )
+            RULE_NODE_RULE_PATH_COUNTER.labels(
+                it.first.printRulePath()
+            ).inc()
+        }
 
         juridiskVurderingService.processRuleResults(receivedSykmelding, result)
 
-        return validationResult(result)
+        return validationResult(result.map { it.first })
     }
 
     private fun validationResult(results: List<TreeOutput<out Enum<*>, RuleResult>>): ValidationResult = ValidationResult(
@@ -250,6 +179,8 @@ data class RuleMetadataSykmelding(
     val ruleMetadata: RuleMetadata,
     val erNyttSyketilfelle: Boolean,
     val erEttersendingAvTidligereSykmelding: Boolean?,
+    val doctorSuspensjon: Boolean,
+    val behandlerOgStartdato: BehandlerOgStartdato
 )
 
 fun List<Periode>.sortedFOMDate(): List<LocalDate> =

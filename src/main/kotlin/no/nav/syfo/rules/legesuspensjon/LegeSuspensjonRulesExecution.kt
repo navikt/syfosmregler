@@ -1,24 +1,29 @@
 package no.nav.syfo.rules.legesuspensjon
 
 import no.nav.syfo.log
+import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.common.Juridisk
+import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
+import no.nav.syfo.rules.common.UtenJuridisk
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
 import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
+import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias LegeSuspensjonTreeOutput = TreeOutput<LegeSuspensjonRules, RuleResult>
 typealias LegeSuspensjonTreeNode = TreeNode<LegeSuspensjonRules, RuleResult>
 
-class LegeSuspensjonRulesExecution(private val rootNode: LegeSuspensjonTreeNode = legeSuspensjonRuleTree) {
-    fun runRules(sykmeldingId: String, behandlerSuspendert: Boolean): LegeSuspensjonTreeOutput =
+class LegeSuspensjonRulesExecution(val rootNode: TreeNode<LegeSuspensjonRules, RuleResult> = legeSuspensjonRuleTree) : RuleExecution<LegeSuspensjonRules> {
+    override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding): Pair<LegeSuspensjonTreeOutput, Juridisk> =
         rootNode
-            .evaluate(sykmeldingId, behandlerSuspendert)
+            .evaluate(sykmelding.id, ruleMetadata.doctorSuspensjon)
             .also { legeSuspensjonRulePath ->
-                log.info("Rules $sykmeldingId, ${legeSuspensjonRulePath.printRulePath()}")
-            }
+                log.info("Rules ${sykmelding.id}, ${legeSuspensjonRulePath.printRulePath()}")
+            } to UtenJuridisk
 }
 
 private fun TreeNode<LegeSuspensjonRules, RuleResult>.evaluate(

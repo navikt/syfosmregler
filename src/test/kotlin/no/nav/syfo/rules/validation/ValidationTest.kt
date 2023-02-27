@@ -1,6 +1,7 @@
 package no.nav.syfo.rules.validation
 
 import io.kotest.core.spec.style.FunSpec
+import no.nav.syfo.client.Behandler
 import no.nav.syfo.generateBehandler
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generatePeriode
@@ -8,6 +9,8 @@ import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
+import no.nav.syfo.services.BehandlerOgStartdato
+import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
@@ -45,16 +48,18 @@ class ValidationTest : FunSpec({
                 pasientFodselsdato = person14Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
+
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
 
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
-                ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false
+                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
+                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
+                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false
             )
 
             mapOf(
@@ -85,12 +90,13 @@ class ValidationTest : FunSpec({
                 avsenderFnr = "2",
                 pasientFodselsdato = person12Years
             )
+            val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to true
             )
 
             mapOf(
@@ -125,13 +131,14 @@ class ValidationTest : FunSpec({
                 avsenderFnr = "2",
                 pasientFodselsdato = person31Years
             )
+            val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to true
             )
 
             mapOf(
@@ -165,13 +172,13 @@ class ValidationTest : FunSpec({
                 pasientFodselsdato = person31Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true
             )
 
             mapOf(
@@ -208,14 +215,14 @@ class ValidationTest : FunSpec({
                 pasientFodselsdato = person31Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRules.UGYLDIG_ORGNR_LENGDE to true
             )
 
             mapOf(
@@ -254,15 +261,15 @@ class ValidationTest : FunSpec({
                 pasientFodselsdato = person31Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
+                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
             )
 
             mapOf(
@@ -306,16 +313,16 @@ class ValidationTest : FunSpec({
                 pasientFodselsdato = person31Years
             )
 
-            val status = ruleTree.runRules(sykmelding, ruleMetadata)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRuleHit.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRuleHit.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRuleHit.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
-                ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to false,
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
+                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
+                ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
+                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
+                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
             )
 
             mapOf(
@@ -331,6 +338,15 @@ class ValidationTest : FunSpec({
         }
     }
 })
+
+fun ruleMetadataSykmelding(ruleMetadata: RuleMetadata) = RuleMetadataSykmelding(
+    ruleMetadata = ruleMetadata,
+    erEttersendingAvTidligereSykmelding = false,
+    erNyttSyketilfelle = false,
+    doctorSuspensjon = false,
+    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+)
+
 fun generatePersonNumber(bornDate: LocalDate, useDNumber: Boolean = false): String {
     val personDate = bornDate.format(personNumberDateFormat).let {
         if (useDNumber) "${it[0] + 4}${it.substring(1)}" else it

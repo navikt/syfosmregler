@@ -1,9 +1,10 @@
-package no.nav.syfo.rules.patientageover70
+package no.nav.syfo.rules.gradert
 
 import no.nav.syfo.log
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
@@ -15,32 +16,31 @@ import no.nav.syfo.rules.dsl.join
 import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.services.RuleMetadataSykmelding
 
-typealias PatientAgeOver70TreeOutput = TreeOutput<PatientAgeOver70Rules, RuleResult>
+typealias GradertTreeOutput = TreeOutput<GradertRules, RuleResult>
 
-class PatientAgeOver70RulesExecution(val rootNode: TreeNode<PatientAgeOver70Rules, RuleResult> = patientAgeOver70RuleTree) :
-    RuleExecution<PatientAgeOver70Rules> {
-    override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
+class GradertRulesExecution(val rootNode: TreeNode<GradertRules, RuleResult> = gradertRuleTree) : RuleExecution<GradertRules> {
+    override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding): Pair<GradertTreeOutput, Juridisk> =
         rootNode
             .evaluate(sykmelding, ruleMetadata)
-            .also { patientAgeOver70RulePath ->
-                log.info("Rules ${sykmelding.id}, ${patientAgeOver70RulePath.printRulePath()}")
+            .also { gradertRulePath ->
+                log.info("Rules ${sykmelding.id}, ${gradertRulePath.printRulePath()}")
             } to MedJuridisk(
             JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
-                paragraf = "8-3",
+                paragraf = "8-13",
                 ledd = 1,
-                punktum = 2,
+                punktum = null,
                 bokstav = null
             )
         )
 }
 
-private fun TreeNode<PatientAgeOver70Rules, RuleResult>.evaluate(
+private fun TreeNode<GradertRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
     ruleMetadata: RuleMetadataSykmelding,
-): PatientAgeOver70TreeOutput =
+): GradertTreeOutput =
     when (this) {
-        is ResultNode -> PatientAgeOver70TreeOutput(treeResult = result)
+        is ResultNode -> GradertTreeOutput(treeResult = result)
         is RuleNode -> {
             val rule = getRule(rule)
             val result = rule(sykmelding, ruleMetadata)

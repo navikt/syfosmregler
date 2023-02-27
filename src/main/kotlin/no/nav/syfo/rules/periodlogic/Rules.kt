@@ -115,7 +115,6 @@ val tilbakeDatertOver3Ar: PeriodLogicRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf(
             "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
-            "fom" to forsteFomDato
         ),
         rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
         ruleResult = tilbakeDatertMerEnn3AAr
@@ -206,20 +205,6 @@ val forMangeBehandlingsDagerPrUke: PeriodLogicRule = { sykmelding, _ ->
         ruleInputs = mapOf("forMangeBehandlingsDagerPrUke" to forMangeBehandlingsDagerPrUke),
         rule = PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE,
         ruleResult = forMangeBehandlingsDagerPrUke
-    )
-}
-
-val gradertUnder20Prosent: PeriodLogicRule = { sykmelding, _ ->
-    val perioder = sykmelding.perioder
-
-    val gradertUnder20Prosent = perioder.any {
-        it.gradert != null && it.gradert!!.grad < 20
-    }
-
-    RuleResult(
-        ruleInputs = mapOf("gradertUnder20Prosent" to gradertUnder20Prosent),
-        rule = PeriodLogicRules.GRADERT_SYKMELDING_UNDER_20_PROSENT,
-        ruleResult = gradertUnder20Prosent
     )
 }
 

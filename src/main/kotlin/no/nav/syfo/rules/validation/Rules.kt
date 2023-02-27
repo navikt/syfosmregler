@@ -9,7 +9,7 @@ import no.nav.syfo.services.daysBetween
 import no.nav.syfo.services.sortedTOMDate
 
 typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadata: RuleMetadata) -> RuleResult<T>
-typealias ValidationRule = Rule<ValidationRuleHit>
+typealias ValidationRule = Rule<ValidationRules>
 
 val pasientUnder13Aar: ValidationRule = { sykmelding, ruleMetadata ->
 
@@ -20,7 +20,7 @@ val pasientUnder13Aar: ValidationRule = { sykmelding, ruleMetadata ->
 
     RuleResult(
         ruleInputs = mapOf("pasientUnder13Aar" to pasientUnder13Aar),
-        rule = ValidationRuleHit.PASIENT_YNGRE_ENN_13,
+        rule = ValidationRules.PASIENT_YNGRE_ENN_13,
         ruleResult = pasientUnder13Aar
     )
 }
@@ -32,7 +32,7 @@ val ugyldigRegelsettversjon: ValidationRule = { _, ruleMetadata ->
 
     RuleResult(
         ruleInputs = mapOf("ugyldigRegelsettversjon" to ugyldigRegelsettversjon),
-        rule = ValidationRuleHit.UGYLDIG_REGELSETTVERSJON,
+        rule = ValidationRules.UGYLDIG_REGELSETTVERSJON,
         ruleResult = ugyldigRegelsettversjon
     )
 }
@@ -48,7 +48,7 @@ val manglendeDynamiskesporsmaalversjon2uke39: ValidationRule = { sykmelding, rul
 
     RuleResult(
         ruleInputs = mapOf("manglendeDynamiskesporsmaalversjon2uke39" to manglendeDynamiskesporsmaalversjon2uke39),
-        rule = ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39,
+        rule = ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39,
         ruleResult = manglendeDynamiskesporsmaalversjon2uke39
     )
 }
@@ -60,7 +60,7 @@ val ugyldingOrgNummerLengde: ValidationRule = { _, ruleMetadata ->
 
     RuleResult(
         ruleInputs = mapOf("ugyldingOrgNummerLengde" to ugyldingOrgNummerLengde),
-        rule = ValidationRuleHit.UGYLDIG_ORGNR_LENGDE,
+        rule = ValidationRules.UGYLDIG_ORGNR_LENGDE,
         ruleResult = ugyldingOrgNummerLengde
     )
 }
@@ -73,7 +73,7 @@ val avsenderSammeSomPasient: ValidationRule = { _, ruleMetadata ->
 
     RuleResult(
         ruleInputs = mapOf("avsenderSammeSomPasient" to avsenderSammeSomPasient),
-        rule = ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR,
+        rule = ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR,
         ruleResult = avsenderSammeSomPasient
     )
 }
@@ -86,7 +86,7 @@ val behandlerSammeSomPasient: ValidationRule = { sykmelding, ruleMetadata ->
 
     RuleResult(
         ruleInputs = mapOf("behandlerSammeSomPasient" to behandlerSammeSomPasient),
-        rule = ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR,
+        rule = ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR,
         ruleResult = behandlerSammeSomPasient
     )
 }

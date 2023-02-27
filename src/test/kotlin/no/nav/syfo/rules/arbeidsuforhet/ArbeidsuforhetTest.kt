@@ -1,12 +1,15 @@
 package no.nav.syfo.rules.arbeidsuforhet
 
 import io.kotest.core.spec.style.FunSpec
+import no.nav.syfo.client.Behandler
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.rules.validation.generatePersonNumber
+import no.nav.syfo.services.BehandlerOgStartdato
+import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
@@ -41,19 +44,27 @@ class ArbeidsuforhetTest : FunSpec({
             pasientFodselsdato = person31Years
         )
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadata)
+        val ruleMetadataSykmelding = RuleMetadataSykmelding(
+            ruleMetadata = ruleMetadata,
+            erNyttSyketilfelle = false,
+            erEttersendingAvTidligereSykmelding = false,
+            doctorSuspensjon = false,
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+        )
 
-        status.treeResult.status shouldBeEqualTo Status.INVALID
-        status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+        status.first.treeResult.status shouldBeEqualTo Status.INVALID
+        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to true
         )
 
         mapOf(
             "ukjentDiagnoseKodeType" to true
 
-        ) shouldBeEqualTo status.ruleInputs
+        ) shouldBeEqualTo status.first.ruleInputs
 
-        status.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UKJENT_DIAGNOSEKODETYPE.ruleHit
+        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UKJENT_DIAGNOSEKODETYPE.ruleHit
     }
 
     test("Diagnosen er icpz 2 z diagnose, Status INVALID") {
@@ -77,10 +88,18 @@ class ArbeidsuforhetTest : FunSpec({
             pasientFodselsdato = person31Years
         )
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadata)
+        val ruleMetadataSykmelding = RuleMetadataSykmelding(
+            ruleMetadata = ruleMetadata,
+            erNyttSyketilfelle = false,
+            erEttersendingAvTidligereSykmelding = false,
+            doctorSuspensjon = false,
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+        )
 
-        status.treeResult.status shouldBeEqualTo Status.INVALID
-        status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+        status.first.treeResult.status shouldBeEqualTo Status.INVALID
+        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to true
         )
@@ -89,9 +108,9 @@ class ArbeidsuforhetTest : FunSpec({
             "ukjentDiagnoseKodeType" to false,
             "icpc2ZDiagnose" to true
 
-        ) shouldBeEqualTo status.ruleInputs
+        ) shouldBeEqualTo status.first.ruleInputs
 
-        status.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE.ruleHit
+        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE.ruleHit
     }
     test("HouvedDiagnose eller fraversgrunn mangler, Status INVALID") {
         val person31Years = LocalDate.now().minusYears(31)
@@ -115,10 +134,18 @@ class ArbeidsuforhetTest : FunSpec({
             pasientFodselsdato = person31Years
         )
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadata)
+        val ruleMetadataSykmelding = RuleMetadataSykmelding(
+            ruleMetadata = ruleMetadata,
+            erNyttSyketilfelle = false,
+            erEttersendingAvTidligereSykmelding = false,
+            doctorSuspensjon = false,
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+        )
 
-        status.treeResult.status shouldBeEqualTo Status.INVALID
-        status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+        status.first.treeResult.status shouldBeEqualTo Status.INVALID
+        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
             ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to true
@@ -129,9 +156,9 @@ class ArbeidsuforhetTest : FunSpec({
             "icpc2ZDiagnose" to false,
             "houvedDiagnoseEllerFraversgrunnMangler" to true
 
-        ) shouldBeEqualTo status.ruleInputs
+        ) shouldBeEqualTo status.first.ruleInputs
 
-        status.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER.ruleHit
+        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER.ruleHit
     }
     test("Ugyldig KodeVerk for houvedDiagnose, Status INVALID") {
         val person31Years = LocalDate.now().minusYears(31)
@@ -158,10 +185,18 @@ class ArbeidsuforhetTest : FunSpec({
             pasientFodselsdato = person31Years
         )
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadata)
+        val ruleMetadataSykmelding = RuleMetadataSykmelding(
+            ruleMetadata = ruleMetadata,
+            erNyttSyketilfelle = false,
+            erEttersendingAvTidligereSykmelding = false,
+            doctorSuspensjon = false,
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+        )
 
-        status.treeResult.status shouldBeEqualTo Status.INVALID
-        status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+        status.first.treeResult.status shouldBeEqualTo Status.INVALID
+        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
             ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
@@ -174,9 +209,9 @@ class ArbeidsuforhetTest : FunSpec({
             "houvedDiagnoseEllerFraversgrunnMangler" to false,
             "ugyldigKodeVerkHouvedDiagnose" to true
 
-        ) shouldBeEqualTo status.ruleInputs
+        ) shouldBeEqualTo status.first.ruleInputs
 
-        status.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
+        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
     }
     test("Ugyldig kodeVerk for biDiagnose, Status INVALID") {
         val person31Years = LocalDate.now().minusYears(31)
@@ -205,10 +240,18 @@ class ArbeidsuforhetTest : FunSpec({
             pasientFodselsdato = person31Years
         )
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadata)
+        val ruleMetadataSykmelding = RuleMetadataSykmelding(
+            ruleMetadata = ruleMetadata,
+            erNyttSyketilfelle = false,
+            erEttersendingAvTidligereSykmelding = false,
+            doctorSuspensjon = false,
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+        )
 
-        status.treeResult.status shouldBeEqualTo Status.INVALID
-        status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+
+        status.first.treeResult.status shouldBeEqualTo Status.INVALID
+        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
             ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
@@ -222,8 +265,8 @@ class ArbeidsuforhetTest : FunSpec({
             "houvedDiagnoseEllerFraversgrunnMangler" to false,
             "ugyldigKodeVerkHouvedDiagnose" to false,
             "ugyldigKodeVerkBiDiagnose" to true
-        ) shouldBeEqualTo status.ruleInputs
+        ) shouldBeEqualTo status.first.ruleInputs
 
-        status.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
+        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
     }
 })

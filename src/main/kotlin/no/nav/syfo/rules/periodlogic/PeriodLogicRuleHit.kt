@@ -1,8 +1,6 @@
 package no.nav.syfo.rules.periodlogic
 
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.rules.common.RuleHit
 
 enum class PeriodLogicRuleHit(
@@ -16,7 +14,6 @@ enum class PeriodLogicRuleHit(
                 "vente på ny sykmelding fra deg. Grunnet følgende: " +
                 "Hvis ingen perioder er oppgitt skal sykmeldingen avvises.",
             messageForUser = "Det er ikke oppgitt hvilken periode sykmeldingen gjelder for.",
-            juridiskHenvisning = null
         )
     ),
     FRADATO_ETTER_TILDATO(
@@ -27,7 +24,6 @@ enum class PeriodLogicRuleHit(
                 "på ny sykmelding fra deg. Grunnet følgende: " +
                 "Hvis tildato for en periode ligger før fradato avvises meldingen og hvilken periode det gjelder oppgis.",
             messageForUser = "Det er lagt inn datoer som ikke stemmer innbyrdes.",
-            juridiskHenvisning = null
         )
     ),
     OVERLAPPENDE_PERIODER(
@@ -38,7 +34,6 @@ enum class PeriodLogicRuleHit(
                 " ny sykmelding fra deg. Grunnet følgende: " +
                 "Hvis en eller flere perioder er overlappende avvises meldingen og hvilken periode det gjelder oppgis.",
             messageForUser = "Periodene må ikke overlappe hverandre.",
-            juridiskHenvisning = null
         )
     ),
     OPPHOLD_MELLOM_PERIODER(
@@ -49,7 +44,6 @@ enum class PeriodLogicRuleHit(
                 "vente på ny sykmelding fra deg. Grunnet følgende: " +
                 "Hvis det finnes opphold mellom perioder i sykmeldingen avvises meldingen.",
             messageForUser = "Det er opphold mellom sykmeldingsperiodene.",
-            juridiskHenvisning = null
         )
     ),
     IKKE_DEFINERT_PERIODE(
@@ -62,7 +56,6 @@ enum class PeriodLogicRuleHit(
                 "(den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
             messageForUser = "Det er ikke oppgitt type for sykmeldingen " +
                 "(den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
-            juridiskHenvisning = null
         )
     ),
     TILBAKEDATERT_MER_ENN_3_AR(
@@ -73,7 +66,6 @@ enum class PeriodLogicRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende: " +
                 "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
             messageForUser = "Startdatoen er mer enn tre år tilbake.",
-            juridiskHenvisning = null
         )
     ),
     FREMDATERT(
@@ -84,7 +76,6 @@ enum class PeriodLogicRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
             messageForUser = "Sykmeldingen er datert mer enn 30 dager fram i tid.",
-            juridiskHenvisning = null
         )
     ),
     TOTAL_VARIGHET_OVER_ETT_AAR(
@@ -95,7 +86,6 @@ enum class PeriodLogicRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
             messageForUser = "Den kan ikke ha en varighet på over ett år.",
-            juridiskHenvisning = null
         )
     ),
     BEHANDLINGSDATO_ETTER_MOTTATTDATO(
@@ -106,7 +96,6 @@ enum class PeriodLogicRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Behandlingsdatoen er etter dato for når NAV mottok meldingen",
             messageForUser = "Behandlingsdatoen må rettes.",
-            juridiskHenvisning = null
         )
     ),
     AVVENTENDE_SYKMELDING_KOMBINERT(
@@ -117,7 +106,6 @@ enum class PeriodLogicRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Avventende sykmelding kan ikke inneholde flere perioder.",
             messageForUser = "En avventende sykmelding kan bare inneholde én periode.",
-            juridiskHenvisning = null
         )
     ),
     MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER(
@@ -129,7 +117,6 @@ enum class PeriodLogicRuleHit(
             messageForUser = "En avventende sykmelding forutsetter at du kan jobbe hvis arbeidsgiveren din legger til " +
                 "rette for det. Den som har sykmeldt deg har ikke foreslått hva arbeidsgiveren kan gjøre, " +
                 "noe som kreves for denne typen sykmelding.",
-            juridiskHenvisning = null
         )
     ),
     AVVENTENDE_SYKMELDING_OVER_16_DAGER(
@@ -141,7 +128,6 @@ enum class PeriodLogicRuleHit(
                 "Hvis avventende sykmelding benyttes utover arbeidsgiverperioden på 16 kalenderdager," +
                 " avvises meldingen.",
             messageForUser = "En avventende sykmelding kan bare gis for 16 dager.",
-            juridiskHenvisning = null
         )
     ),
     FOR_MANGE_BEHANDLINGSDAGER_PER_UKE(
@@ -154,24 +140,6 @@ enum class PeriodLogicRuleHit(
                 " i forhold til periodens lengde avvises meldingen. Mer enn en dag per uke er for høyt." +
                 " 1 dag per påbegynt uke.",
             messageForUser = "Det er angitt for mange behandlingsdager. Det kan bare angis én behandlingsdag per uke.",
-            juridiskHenvisning = null
-        )
-    ),
-    GRADERT_SYKMELDING_UNDER_20_PROSENT(
-        ruleHit = RuleHit(
-            rule = "GRADERT_SYKMELDING_UNDER_20_PROSENT",
-            status = Status.INVALID,
-            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
-                "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                "Hvis sykmeldingsgrad er mindre enn 20% for gradert sykmelding, avvises meldingen",
-            messageForUser = "Sykmeldingsgraden kan ikke være mindre enn 20 %.",
-            juridiskHenvisning = JuridiskHenvisning(
-                lovverk = Lovverk.FOLKETRYGDLOVEN,
-                paragraf = "8-13",
-                ledd = 1,
-                punktum = null,
-                bokstav = null
-            )
         )
     ),
     GRADERT_SYKMELDING_OVER_99_PROSENT(
@@ -182,7 +150,6 @@ enum class PeriodLogicRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Hvis sykmeldingsgrad er høyere enn 99% for delvis sykmelding avvises meldingen",
             messageForUser = "Sykmeldingsgraden kan ikke være mer enn 99% fordi det er en gradert sykmelding.",
-            juridiskHenvisning = null
         )
     ),
     SYKMELDING_MED_BEHANDLINGSDAGER(
@@ -191,7 +158,6 @@ enum class PeriodLogicRuleHit(
             status = Status.MANUAL_PROCESSING,
             messageForSender = "Sykmelding inneholder behandlingsdager (felt 4.4).",
             messageForUser = "Sykmelding inneholder behandlingsdager.",
-            juridiskHenvisning = null
         )
     )
 }
