@@ -17,9 +17,9 @@ typealias TilbakedateringTreeOutput = TreeOutput<TilbakedateringRules, RuleResul
 typealias TilbakedateringTreeNode = TreeNode<TilbakedateringRules, RuleResult>
 
 class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNode = tilbakedateringRuleTree) : RuleExecution<TilbakedateringRules> {
-    override fun runRules(sykmelding: Sykmelding, metadata: RuleMetadataSykmelding) =
+    override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode
-            .evaluate(sykmelding, metadata)
+            .evaluate(sykmelding, ruleMetadata)
             .also { tilbakedateringRulePath ->
                 log.info("Rules ${sykmelding.id}, ${tilbakedateringRulePath.printRulePath()}")
             } to MedJuridisk(tilbakeDatertJuridiskHenvisning())

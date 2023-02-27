@@ -51,7 +51,7 @@ class JuridiskVurderingServiceTest : FunSpec({
 
             val result = TilbakedateringRulesExecution().runRules(
                 sykmelding = receivedSykmelding.sykmelding,
-                metadata = ruleMetadata
+                ruleMetadata = ruleMetadata
             )
             val results = listOf(result)
             juridiskVurderingService.processRuleResults(receivedSykmelding, results)
@@ -65,8 +65,7 @@ class JuridiskVurderingServiceTest : FunSpec({
                         kilde = JuridiskVurderingService.KILDE,
                         versjonAvKode = "versjon",
                         fodselsnummer = receivedSykmelding.personNrPasient,
-                        juridiskHenvisning = result.second.juridiskHenvisning // result.treeResult.ruleHit?.juridiskHenvisning
-                            ?: throw RuntimeException("JuridiskHenvisning kan ikke være null"),
+                        juridiskHenvisning = result.second.juridiskHenvisning,
                         sporing = mapOf(
                             "sykmelding" to receivedSykmelding.sykmelding.id,
                         ),

@@ -293,5 +293,14 @@ graph TD
 
 
 <!-- GRADERT_MARKER_START -->
+```mermaid
+graph TD
+    root(GRADERT_UNDER_20_PROSENT) -->|Yes| root_GRADERT_UNDER_20_PROSENT_INVALID(INVALID):::invalid
+    root(GRADERT_UNDER_20_PROSENT) -->|No| root_GRADERT_UNDER_20_PROSENT_OK(OK):::ok
+    classDef ok fill:#c3ff91,stroke:#004a00,color: black;
+    classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
+    classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 
+
+```
 <!-- GRADERT_MARKER_END -->
