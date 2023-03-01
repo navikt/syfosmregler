@@ -25,7 +25,7 @@ enum class HPRRuleHit(
     BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR(
         ruleHit = RuleHit(
             rule = "BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR",
-            status = Status.MANUAL_PROCESSING,
+            status = Status.INVALID,
             messageForSender = "Behandler finnes i HPR, men er ikke lege, kiropraktor, fysioterapeut, " +
                 "manuellterapeut eller tannlege. Pasienten har fått beskjed.",
             messageForUser = "Den som skrev sykmeldingen manglet autorisasjon.",
