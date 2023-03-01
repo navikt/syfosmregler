@@ -132,19 +132,18 @@ class RuleService(
         val result = ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
         result.forEach {
 
-            RULE_NODE_RULE_HIT_COUNTER.labels(
-                it.first.treeResult.status.name,
-                it.first.treeResult.ruleHit?.rule ?: it.first.treeResult.status.name
-            ).inc()
-
             RULE_NODE_RULE_PATH_COUNTER.labels(
                 it.first.printRulePath()
             ).inc()
         }
 
         juridiskVurderingService.processRuleResults(receivedSykmelding, result)
-
-        return validationResult(result.map { it.first })
+        val validationResult = validationResult(result.map { it.first })
+        RULE_NODE_RULE_HIT_COUNTER.labels(
+            validationResult.status.name,
+            validationResult.ruleHits.firstOrNull()?.ruleName ?: validationResult.status.name
+        ).inc()
+        return validationResult
     }
 
     private fun validationResult(results: List<TreeOutput<out Enum<*>, RuleResult>>): ValidationResult = ValidationResult(
