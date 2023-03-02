@@ -1,6 +1,8 @@
 package no.nav.syfo.rules.hpr
 
 import io.kotest.core.spec.style.FunSpec
+import io.mockk.every
+import io.mockk.mockk
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.Kode
@@ -273,5 +275,37 @@ class HPRTest : FunSpec({
 
             status.first.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER.ruleHit
         }
+    }
+
+    test("test") {
+        val behandler = Behandler(
+            listOf(
+                Godkjenning(
+                    autorisasjon = Kode(
+                        aktiv = false,
+                        oid = 7704,
+                        verdi = "99"
+                    ),
+                    helsepersonellkategori = Kode(
+                        aktiv = true,
+                        oid = 9060,
+                        verdi = "HP"
+                    )
+                ),
+                Godkjenning(
+                    helsepersonellkategori = Kode(aktiv = true, verdi = "LE", oid = 9060),
+                    autorisasjon = Kode(aktiv = true, oid = 7704, verdi = "1")
+                )
+            )
+        )
+        val sykmelding = generateSykmelding(
+            fom = LocalDate.of(2020, 1, 1),
+            tom = LocalDate.of(2020, 4, 2),
+            behandletTidspunkt = LocalDate.of(2020, 1, 3).atStartOfDay()
+        )
+        val mockRuleMetadata = mockk<RuleMetadataSykmelding>()
+        every { mockRuleMetadata.behandlerOgStartdato } returns BehandlerOgStartdato(behandler, null)
+        val result = ruleTree.runRules(sykmelding, mockRuleMetadata)
+        result.first.treeResult.status shouldBeEqualTo Status.OK
     }
 })

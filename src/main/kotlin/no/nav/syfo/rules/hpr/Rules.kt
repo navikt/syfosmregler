@@ -15,13 +15,13 @@ val behanderIkkeGyldigHPR: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val aktivAutorisasjon = behandlerGodkjenninger.any {
-        !(it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv)
+        (it.autorisasjon?.aktiv != null && it.autorisasjon.aktiv)
     }
 
     RuleResult(
         ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR,
-        ruleResult = aktivAutorisasjon
+        ruleResult = !aktivAutorisasjon
     )
 }
 
@@ -29,7 +29,7 @@ val behandlerManglerAutorisasjon: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val gyldigeGodkjenninger = behandlerGodkjenninger.any {
-        !(
+        (
             it.autorisasjon?.aktiv != null &&
                 it.autorisasjon.aktiv &&
                 it.autorisasjon.oid == 7704 &&
@@ -41,7 +41,7 @@ val behandlerManglerAutorisasjon: HPRRule = { _, behandlerOgStartdato ->
     RuleResult(
         ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR,
-        ruleResult = gyldigeGodkjenninger
+        ruleResult = !gyldigeGodkjenninger
     )
 }
 
@@ -49,7 +49,7 @@ val behandlerIkkeLEKIMTTLFT: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val behandlerLEKIMTTLFT = behandlerGodkjenninger.any {
-        !(
+        (
             it.helsepersonellkategori?.aktiv != null &&
                 it.autorisasjon?.aktiv == true && it.helsepersonellkategori.verdi != null &&
                 harAktivHelsepersonellAutorisasjonsSom(
@@ -68,7 +68,7 @@ val behandlerIkkeLEKIMTTLFT: HPRRule = { _, behandlerOgStartdato ->
     RuleResult(
         ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
         rule = HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR,
-        ruleResult = behandlerLEKIMTTLFT
+        ruleResult = !behandlerLEKIMTTLFT
     )
 }
 
