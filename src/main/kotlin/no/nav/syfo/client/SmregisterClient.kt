@@ -23,6 +23,16 @@ class SmregisterClient(
     private val httpClient: HttpClient
 ) {
 
+    suspend fun harOverlappendeSykmelding(fnr: String, periodeliste: List<Periode>, diagnosekode: String?, loggingMeta: LoggingMeta): Boolean {
+        val sykmeldinger = hentSykmeldinger(fnr)
+        sykmeldinger.filter {
+            it.behandlingsutfall.status != RegelStatusDTO.INVALID
+        }.filter {
+            true
+            // it.sykmeldingsperioder.any { //TODO }
+        }
+        return false
+    }
     suspend fun finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(fnr: String, periodeliste: List<Periode>, diagnosekode: String?, loggingMeta: LoggingMeta): Boolean {
         log.info("Sjekker om finnes sykmeldinger med samme fom som ikke er tilbakedatert {}", fields(loggingMeta))
         val forsteFomIMottattSykmelding = periodeliste.sortedFOMDate().firstOrNull() ?: return false

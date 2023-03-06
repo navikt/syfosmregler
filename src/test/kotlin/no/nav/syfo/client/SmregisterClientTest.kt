@@ -72,6 +72,7 @@ object SmregisterClientTest : FunSpec({
                                 behandletDato = LocalDate.of(2021, 3, 1)
                             )
                         )
+
                         "fnr4" -> call.respond(
                             HttpStatusCode.OK,
                             sykmeldingRespons(
@@ -79,6 +80,7 @@ object SmregisterClientTest : FunSpec({
                                 behandletDato = LocalDate.of(2021, 2, 22)
                             )
                         )
+
                         "fnr5" -> call.respond(
                             HttpStatusCode.OK,
                             sykmeldingRespons(
@@ -99,7 +101,10 @@ object SmregisterClientTest : FunSpec({
     }
 
     beforeTest {
-        coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
+        coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token(
+            "accessToken",
+            OffsetDateTime.now().plusHours(1)
+        )
     }
 
     context("Test av SmRegisterClient") {
@@ -185,6 +190,58 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
     }
+
+    context("Test av ny regel") {
+        test("Test av overlappende datoer, skal returnere false når periodene ikke stemmer") {
+            smregisterClient.harOverlappendeSykmelding(
+                fnr = "fnr2",
+                listOf(
+                    Periode(
+                        fom = LocalDate.of(2021, 2, 13),
+                        tom = LocalDate.of(2021, 2, 15),
+                        aktivitetIkkeMulig = null,
+                        avventendeInnspillTilArbeidsgiver = null,
+                        behandlingsdager = null,
+                        gradert = Gradert(false, 50),
+                        reisetilskudd = false
+                    )
+                ),
+                "L89",
+                loggingMeta
+            ) shouldBeEqualTo false
+        }
+
+        test("Test med samme fom og tom med forskjellig gradering skal gi false") {
+            smregisterClient.harOverlappendeSykmelding(
+                fnr = "fnr2",
+                listOf(
+                    Periode(
+                        fom = LocalDate.of(2021, 2, 15),
+                        tom = LocalDate.of(2021, 3, 15),
+                        aktivitetIkkeMulig = null,
+                        avventendeInnspillTilArbeidsgiver = null,
+                        behandlingsdager = null,
+                        gradert = Gradert(false, 50),
+                        reisetilskudd = false
+                    )
+                ),
+                "L89",
+                loggingMeta
+            ) shouldBeEqualTo false
+        }
+
+        test("Test med samme fom og tom med lik gradering skal gi true") {
+            smregisterClient.harOverlappendeSykmelding(
+                fnr = "fnr2",
+                listOf(lagPeriode(
+                    fom = LocalDate.of(2021, 2, 15),
+                    tom = LocalDate.of(2021, 3, 15))),
+                "L87",
+                loggingMeta
+            ) shouldBeEqualTo true
+        }
+    }
+
 })
 
 private fun sykmeldingRespons(
@@ -195,7 +252,14 @@ private fun sykmeldingRespons(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
         behandlingsutfall = behandlingsutfallDTO,
-        sykmeldingsperioder = listOf(SykmeldingsperiodeDTO(fom, fom.plusMonths(1), null, PeriodetypeDTO.AKTIVITET_IKKE_MULIG)),
+        sykmeldingsperioder = listOf(
+            SykmeldingsperiodeDTO(
+                fom,
+                fom.plusMonths(1),
+                null,
+                PeriodetypeDTO.AKTIVITET_IKKE_MULIG
+            )
+        ),
         behandletTidspunkt = if (behandletDato != null) {
             OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
         } else {
