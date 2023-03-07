@@ -10,8 +10,6 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.log
 import no.nav.syfo.model.Periode
-import no.nav.syfo.services.sortedFOMDate
-import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.utils.LoggingMeta
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -23,39 +21,39 @@ class SmregisterClient(
     private val httpClient: HttpClient
 ) {
 
-    suspend fun finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(fnr: String, periodeliste: List<Periode>, diagnosekode: String?, loggingMeta: LoggingMeta): Boolean {
-        log.info("Sjekker om finnes sykmeldinger med samme fom som ikke er tilbakedatert {}", fields(loggingMeta))
-        val forsteFomIMottattSykmelding = periodeliste.sortedFOMDate().firstOrNull() ?: return false
-        val sisteTomIMottattSykmelding = periodeliste.sortedTOMDate().lastOrNull() ?: return false
-        val mottattSykmeldingRange = forsteFomIMottattSykmelding.minusDays(3).rangeTo(sisteTomIMottattSykmelding.plusDays(3))
-        try {
-            val sykmeldinger = hentSykmeldinger(fnr)
-            sykmeldinger.filter {
-                it.behandlingsutfall.status != RegelStatusDTO.INVALID && it.behandletTidspunkt.toLocalDate() <= forsteFomIMottattSykmelding.plusDays(8)
-            }.forEach {
-                if (it.sykmeldingsperioder.sortedFOMDate().firstOrNull() == forsteFomIMottattSykmelding) {
-                    log.info("Fant sykmelding med samme fom som ikke er tilbakedatert {}", fields(loggingMeta))
-                    return true
-                } else if (it.medisinskVurdering?.hovedDiagnose?.kode == diagnosekode &&
-                    (
-                        (it.sykmeldingsperioder.sortedFOMDate().firstOrNull() in mottattSykmeldingRange && it.sykmeldingsperioder.minByOrNull { it.fom }!!.periodelisteInneholderSammeType(periodeliste)) ||
-                            (it.sykmeldingsperioder.sortedTOMDate().lastOrNull() in mottattSykmeldingRange && it.sykmeldingsperioder.maxByOrNull { it.tom }!!.periodelisteInneholderSammeType(periodeliste))
-                        )
-                ) {
-                    log.info(
-                        "Fant sykmelding med delvis overlappende periode og samme diagnose og type som ikke er tilbakedatert, " +
-                            "sykmeldingsID {} {}",
-                        it.id,
-                        fields(loggingMeta)
-                    )
-                    return true
-                }
-            }
+    suspend fun harOverlappendeSykmelding(
+        fnr: String,
+        periodeliste: List<Periode>,
+        diagnosekode: String?,
+        loggingMeta: LoggingMeta
+    ): Boolean {
+        if (periodeliste.size > 1) {
+            log.info("Flere perioder i periodelisten returnerer false {}", fields(loggingMeta))
             return false
-        } catch (e: Exception) {
-            log.error("Feil ved henting av tidligere sykmeldinger {}", fields(loggingMeta))
-            throw e
         }
+        if (diagnosekode.isNullOrEmpty()) {
+            log.info("Diagnosekode mangler {}", fields(loggingMeta))
+            return false
+        }
+        val periode = periodeliste.first()
+        val sykmeldinger = hentSykmeldinger(fnr)
+        sykmeldinger.filter {
+            it.behandlingsutfall.status == RegelStatusDTO.OK &&
+                it.medisinskVurdering?.hovedDiagnose?.kode == diagnosekode &&
+                it.behandletTidspunkt.toLocalDate() <= periode.fom.plusDays(8)
+        }.forEach { sykmelding ->
+            if (sykmelding.sykmeldingsperioder.any { p ->
+                p.fom == periode.fom &&
+                    p.tom == periode.tom &&
+                    p.gradert?.grad == periode.gradert?.grad &&
+                    p.type == periode.tilPeriodetypeDTO()
+            }
+            ) {
+                log.info("Fant tidligere innsendt sykmelding ${sykmelding.id} {}", fields(loggingMeta))
+                return true
+            }
+        }
+        return false
     }
 
     private suspend fun hentSykmeldinger(fnr: String): List<SykmeldingDTO> =

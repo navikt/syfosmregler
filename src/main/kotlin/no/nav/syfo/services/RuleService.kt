@@ -109,8 +109,8 @@ class RuleService(
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
-        val erEttersendingAvTidligereSykmelding = if (erTilbakedatertMedBegrunnelse(receivedSykmelding)) {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        val erEttersendingAvTidligereSykmelding = if (erTilbakedatert(receivedSykmelding)) {
+            smregisterClient.harOverlappendeSykmelding(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
                 receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,
@@ -164,11 +164,11 @@ class RuleService(
             }
     )
 
-    private fun erTilbakedatertMedBegrunnelse(receivedSykmelding: ReceivedSykmelding): Boolean =
+    private fun erTilbakedatert(receivedSykmelding: ReceivedSykmelding): Boolean =
         receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate()
-            .first().plusDays(8) &&
-            !receivedSykmelding.sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt.isNullOrEmpty()
+            .first().plusDays(8)
 }
+
 data class BehandlerOgStartdato(
     val behandler: Behandler,
     val startdato: LocalDate?,
