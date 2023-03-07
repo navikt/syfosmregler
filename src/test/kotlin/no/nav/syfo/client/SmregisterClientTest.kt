@@ -23,6 +23,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.azuread.v2.AzureAdV2Token
+import no.nav.syfo.generateGradert
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.Gradert
 import no.nav.syfo.model.Periode
@@ -88,6 +89,8 @@ object SmregisterClientTest : FunSpec({
                                 behandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.INVALID)
                             )
                         )
+
+                        "fnr6" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(fom = LocalDate.of(2021, 2, 15), diagnosekode = null))
                     }
                 }
             }
@@ -108,71 +111,71 @@ object SmregisterClientTest : FunSpec({
     }
 
     context("Test av SmRegisterClient") {
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker ikke har andre sykmeldinger") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker ikke har andre sykmeldinger") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med annen fom") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har sykmelding med annen fom") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))), "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med samme fom som er tilbakedatert") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har sykmelding med samme fom som er tilbakedatert") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr3",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("True hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
                 loggingMeta
             ) shouldBeEqualTo true
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("True hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr4",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
                 loggingMeta
             ) shouldBeEqualTo true
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr5",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med fom 2 dager før ny fom") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har sykmelding med fom 2 dager før ny fom") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))), "L89",
                 loggingMeta
-            ) shouldBeEqualTo true
+            ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er true hvis bruker har sykmelding med tom 2 dager etter ny tom") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har sykmelding med tom 2 dager etter ny tom") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 3, 15), tom = LocalDate.of(2021, 3, 17))), "L89",
                 loggingMeta
-            ) shouldBeEqualTo true
+            ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med fom 2 dager før ny fom men annen diagnose") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen diagnose") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))), "L87",
                 loggingMeta
             ) shouldBeEqualTo false
         }
-        test("finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert er false hvis bruker har sykmelding med fom 2 dager før ny fom men annen grad") {
-            smregisterClient.finnesSykmeldingMedSammeFomSomIkkeErTilbakedatert(
+        test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen grad") {
+            smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
                 listOf(
                     Periode(
@@ -211,7 +214,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
 
-        test("Test med samme fom og tom med forskjellig gradering skal gi false") {
+        test("Test med samme fom og tom med ulik gradering skal gi false") {
             smregisterClient.harOverlappendeSykmelding(
                 fnr = "fnr2",
                 listOf(
@@ -233,21 +236,66 @@ object SmregisterClientTest : FunSpec({
         test("Test med samme fom og tom med lik gradering skal gi true") {
             smregisterClient.harOverlappendeSykmelding(
                 fnr = "fnr2",
-                listOf(lagPeriode(
-                    fom = LocalDate.of(2021, 2, 15),
-                    tom = LocalDate.of(2021, 3, 15))),
-                "L87",
+                listOf(
+                    lagPeriode(
+                        fom = LocalDate.of(2021, 2, 15),
+                        tom = LocalDate.of(2021, 3, 15)
+                    )
+                ),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo true
         }
     }
 
+    test("Test med samme fom og tom med lik gradering og ulik diagnose skal gi false") {
+        smregisterClient.harOverlappendeSykmelding(
+            fnr = "fnr2",
+            listOf(
+                lagPeriode(
+                    fom = LocalDate.of(2021, 2, 15),
+                    tom = LocalDate.of(2021, 3, 15)
+                )
+            ),
+            "LA8PV",
+            loggingMeta
+        ) shouldBeEqualTo false
+    }
+
+    test("Test med samme fom og tom med ulik gradering og lik diagnose skal gi false") {
+        smregisterClient.harOverlappendeSykmelding(
+            fnr = "fnr2",
+            listOf(
+                lagPeriode(
+                    fom = LocalDate.of(2021, 2, 15),
+                    tom = LocalDate.of(2021, 3, 15)
+                ).copy(gradert = generateGradert(false, 37))
+            ),
+            "L89",
+            loggingMeta
+        ) shouldBeEqualTo false
+    }
+
+    test("Test med samme fom og tom med lik gradering og manglende diagnoser skal gi false") {
+        smregisterClient.harOverlappendeSykmelding(
+            fnr = "fnr6",
+            listOf(
+                lagPeriode(
+                    fom = LocalDate.of(2021, 2, 15),
+                    tom = LocalDate.of(2021, 3, 15)
+                )
+            ),
+            diagnosekode = null,
+            loggingMeta
+        ) shouldBeEqualTo false
+    }
 })
 
 private fun sykmeldingRespons(
     fom: LocalDate,
     behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
-    behandletDato: LocalDate? = null
+    behandletDato: LocalDate? = null,
+    diagnosekode: String? = "L89"
 ) = listOf(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
@@ -265,7 +313,7 @@ private fun sykmeldingRespons(
         } else {
             OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
         },
-        medisinskVurdering = MedisinskVurderingDTO(DiagnoseDTO("L89"))
+        medisinskVurdering = MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) })
     )
 )
 
