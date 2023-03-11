@@ -28,7 +28,7 @@ class ArbeidsuforhetRulesExecution(private val rootNode: ArbeidsuforhetTreeNode 
 
 private fun TreeNode<ArbeidsuforhetRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
-    ruleMetadata: RuleMetadata,
+    ruleMetadata: RuleMetadata
 ): ArbeidsuforhetTreeOutput =
     when (this) {
         is ResultNode -> ArbeidsuforhetTreeOutput(treeResult = result)

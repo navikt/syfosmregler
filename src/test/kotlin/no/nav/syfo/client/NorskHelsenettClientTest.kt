@@ -73,7 +73,8 @@ object NorskHelsenettClientTest : FunSpec({
     context("Test NorskHelsenettClient") {
         test("Should get behandler") {
             val behandler = norskHelsenettClient.finnBehandler(
-                fnr, "123",
+                fnr,
+                "123",
                 LoggingMeta("", "", "123", "")
             )
 
@@ -89,7 +90,8 @@ object NorskHelsenettClientTest : FunSpec({
 
         test("Should receive null when 404") {
             val behandler = norskHelsenettClient.finnBehandler(
-                "behandlerFinnesIkke", "1",
+                "behandlerFinnesIkke",
+                "1",
                 LoggingMeta("", "", "1", "")
             )
 
@@ -100,7 +102,8 @@ object NorskHelsenettClientTest : FunSpec({
     context("Test retry") {
         test("Should retry when getting internal server error") {
             val behandler = norskHelsenettClient.finnBehandler(
-                fnr, "1",
+                fnr,
+                "1",
                 LoggingMeta("", "", "1", "")
             )
 
@@ -117,7 +120,8 @@ object NorskHelsenettClientTest : FunSpec({
         test("Should throw exeption when exceeds max retries") {
             assertFailsWith<IOException> {
                 norskHelsenettClient.finnBehandler(
-                    "1234", "1",
+                    "1234",
+                    "1",
                     LoggingMeta("", "", "123", "")
                 )
             }

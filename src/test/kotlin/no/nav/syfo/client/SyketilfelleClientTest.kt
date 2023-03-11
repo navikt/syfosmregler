@@ -172,5 +172,7 @@ private fun lagPeriode(fom: LocalDate, tom: LocalDate): Periode =
         tom = tom,
         aktivitetIkkeMulig = AktivitetIkkeMulig(medisinskArsak = MedisinskArsak(null, emptyList()), arbeidsrelatertArsak = null),
         avventendeInnspillTilArbeidsgiver = null,
-        gradert = null, behandlingsdager = null, reisetilskudd = false
+        gradert = null,
+        behandlingsdager = null,
+        reisetilskudd = false
     )

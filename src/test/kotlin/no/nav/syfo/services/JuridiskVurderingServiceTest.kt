@@ -67,7 +67,7 @@ class JuridiskVurderingServiceTest : FunSpec({
                         fodselsnummer = receivedSykmelding.personNrPasient,
                         juridiskHenvisning = result.second.juridiskHenvisning,
                         sporing = mapOf(
-                            "sykmelding" to receivedSykmelding.sykmelding.id,
+                            "sykmelding" to receivedSykmelding.sykmelding.id
                         ),
                         input = result.first.ruleInputs,
                         utfall = toJuridiskUtfall(result.first.treeResult.status),

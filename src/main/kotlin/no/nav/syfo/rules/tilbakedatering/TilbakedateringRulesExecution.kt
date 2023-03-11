@@ -27,7 +27,7 @@ class TilbakedateringRulesExecution(private val rootNode: TilbakedateringTreeNod
 
 private fun TreeNode<TilbakedateringRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
-    metadata: RuleMetadataSykmelding,
+    metadata: RuleMetadataSykmelding
 ): TilbakedateringTreeOutput =
     when (this) {
         is ResultNode -> {

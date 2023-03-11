@@ -47,7 +47,7 @@ class PatientAgeOver70Test : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70 to false,
+                PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70 to false
             )
 
             mapOf("pasientOver70Aar" to false) shouldBeEqualTo status.ruleInputs

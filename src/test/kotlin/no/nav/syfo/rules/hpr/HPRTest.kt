@@ -65,7 +65,7 @@ class HPRTest : FunSpec({
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger,
                 "behandlerGodkjenninger" to behandler.godkjenninger,
-                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.first.ruleInputs
 
             status.first.treeResult.ruleHit shouldBeEqualTo null
@@ -113,7 +113,7 @@ class HPRTest : FunSpec({
                 HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR to true
             )
             mapOf(
-                "behandlerGodkjenninger" to behandler.godkjenninger,
+                "behandlerGodkjenninger" to behandler.godkjenninger
             ) shouldBeEqualTo status.first.ruleInputs
 
             status.first.treeResult.ruleHit shouldBeEqualTo HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR.ruleHit

@@ -114,63 +114,72 @@ object SmregisterClientTest : FunSpec({
         test("False hvis bruker ikke har andre sykmeldinger") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med annen fom") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med samme fom som er tilbakedatert") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr3",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
         test("True hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo true
         }
         test("True hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr4",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo true
         }
         test("False hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr5",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med tom 2 dager etter ny tom") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 3, 15), tom = LocalDate.of(2021, 3, 17))), "L89",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 3, 15), tom = LocalDate.of(2021, 3, 17))),
+                "L89",
                 loggingMeta
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen diagnose") {
             smregisterClient.harOverlappendeSykmelding(
                 "fnr2",
-                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))), "L87",
+                listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))),
+                "L87",
                 loggingMeta
             ) shouldBeEqualTo false
         }

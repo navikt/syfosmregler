@@ -131,7 +131,6 @@ class RuleService(
 
         val result = ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
         result.forEach {
-
             RULE_NODE_RULE_PATH_COUNTER.labels(
                 it.first.printRulePath()
             ).inc()
@@ -171,7 +170,7 @@ class RuleService(
 
 data class BehandlerOgStartdato(
     val behandler: Behandler,
-    val startdato: LocalDate?,
+    val startdato: LocalDate?
 )
 
 data class RuleMetadataSykmelding(

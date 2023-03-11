@@ -25,7 +25,6 @@ class PdlPersonService(
         .build<String, PdlPerson>()
 
     suspend fun getPdlPerson(fnr: String, loggingMeta: LoggingMeta): PdlPerson {
-
         val cachedPerson = cache.getIfPresent(fnr)
         if (cachedPerson != null) {
             log.info("Fant person i PDL cache")

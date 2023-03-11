@@ -23,7 +23,7 @@ enum class ArbeidsuforhetRuleHit(
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Ukjent kodeverk er benyttet for diagnosen.",
-            messageForUser = "Sykmeldingen må ha et kjent kodeverk for diagnosen.",
+            messageForUser = "Sykmeldingen må ha et kjent kodeverk for diagnosen."
         )
     ),
     ICPC_2_Z_DIAGNOSE(
@@ -31,7 +31,7 @@ enum class ArbeidsuforhetRuleHit(
             rule = "ICPC_2_Z_DIAGNOSE",
             status = Status.INVALID,
             messageForSender = "Angitt hoveddiagnose (z-diagnose) gir ikke rett til sykepenger. Pasienten har fått beskjed.",
-            messageForUser = "Den må ha en gyldig diagnosekode som gir rett til sykepenger.",
+            messageForUser = "Den må ha en gyldig diagnosekode som gir rett til sykepenger."
         )
     ),
     HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER(
@@ -41,7 +41,7 @@ enum class ArbeidsuforhetRuleHit(
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Hoveddiagnose eller annen lovfestet fraværsgrunn mangler. ",
-            messageForUser = "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn.",
+            messageForUser = "Den må ha en hoveddiagnose eller en annen gyldig fraværsgrunn."
         )
     ),
     UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE(
@@ -51,7 +51,7 @@ enum class ArbeidsuforhetRuleHit(
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Kodeverk for hoveddiagnose er feil eller mangler. Prosesskoder ikke kan benyttes for å angi diagnose.",
-            messageForUser = "Den må ha riktig kode for hoveddiagnose.",
+            messageForUser = "Den må ha riktig kode for hoveddiagnose."
         )
     ),
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE(
@@ -62,7 +62,7 @@ enum class ArbeidsuforhetRuleHit(
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
                 "Kodeverk for bidiagnose er ikke angitt eller korrekt. " +
                 "Prosesskoder ikke kan benyttes for å angi diagnose.",
-            messageForUser = "Det er brukt eit ukjent kodeverk for bidiagnosen.",
+            messageForUser = "Det er brukt eit ukjent kodeverk for bidiagnosen."
         )
     )
 }

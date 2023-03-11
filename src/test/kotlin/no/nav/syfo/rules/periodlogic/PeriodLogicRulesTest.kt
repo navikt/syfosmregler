@@ -42,7 +42,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to false,
                 PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE to false,
                 PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT to false,
-                PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to false,
+                PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to false
 
             )
 
@@ -107,7 +107,7 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder
 
             ) shouldBeEqualTo status.ruleInputs
 
@@ -140,7 +140,7 @@ class PeriodLogicRulesTest : FunSpec({
             )
 
             mapOf(
-                "perioder" to sykmelding.perioder,
+                "perioder" to sykmelding.perioder
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OVERLAPPENDE_PERIODER.ruleHit

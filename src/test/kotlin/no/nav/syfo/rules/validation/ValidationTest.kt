@@ -68,7 +68,7 @@ class ValidationTest : FunSpec({
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
                 "avsenderSammeSomPasient" to false,
-                "behandlerSammeSomPasient" to false,
+                "behandlerSammeSomPasient" to false
 
             ) shouldBeEqualTo status.ruleInputs
 
@@ -100,7 +100,7 @@ class ValidationTest : FunSpec({
             )
 
             mapOf(
-                "pasientUnder13Aar" to true,
+                "pasientUnder13Aar" to true
 
             ) shouldBeEqualTo status.ruleInputs
 
@@ -290,7 +290,12 @@ class ValidationTest : FunSpec({
 
             val sykmelding = generateSykmelding(
                 behandler = generateBehandler(
-                    "Per", "", "Hansen", "134", "113", patientPersonNumber
+                    "Per",
+                    "",
+                    "Hansen",
+                    "134",
+                    "113",
+                    patientPersonNumber
                 ),
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(

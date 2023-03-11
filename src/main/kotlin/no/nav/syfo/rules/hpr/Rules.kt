@@ -107,7 +107,7 @@ val behandlerMTFTKISykmeldtOver12Uker: HPRRule = { sykmelding, behandlerOgStartd
 
 private fun harAktivHelsepersonellAutorisasjonsSom(
     behandlerGodkjenninger: List<Godkjenning>,
-    helsepersonerVerdi: List<String>,
+    helsepersonerVerdi: List<String>
 ): Boolean =
     behandlerGodkjenninger.any { godkjenning ->
         godkjenning.helsepersonellkategori?.aktiv != null &&

@@ -37,7 +37,7 @@ class GradertRulesExecution(val rootNode: TreeNode<GradertRules, RuleResult> = g
 
 private fun TreeNode<GradertRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
-    ruleMetadata: RuleMetadataSykmelding,
+    ruleMetadata: RuleMetadataSykmelding
 ): GradertTreeOutput =
     when (this) {
         is ResultNode -> GradertTreeOutput(treeResult = result)

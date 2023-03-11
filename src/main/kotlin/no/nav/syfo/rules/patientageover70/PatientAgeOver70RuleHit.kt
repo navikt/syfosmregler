@@ -13,5 +13,5 @@ enum class PatientAgeOver70RuleHit(
             messageForSender = "Pasienten er over 70 år. Sykmelding kan ikke benyttes. Pasienten har fått beskjed.",
             messageForUser = "Sykmelding kan ikke benyttes etter at du har fylt 70 år"
         )
-    ),
+    )
 }

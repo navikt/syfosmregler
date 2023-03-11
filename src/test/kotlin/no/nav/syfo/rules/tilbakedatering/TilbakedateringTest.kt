@@ -30,13 +30,18 @@ class TilbakedateringTest : FunSpec({
     context("Test tilbakedateringsregler mindre enn 9 dager") {
         test("ikke tilbakedatert, Status OK") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                fom = LocalDate.now(),
+                tom = LocalDate.now().plusDays(1),
                 behandletTidspunkt = LocalDate.now().plusDays(2).atStartOfDay()
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
-                ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                ruleMetadata = sykmelding.toRuleMetadata(),
+                true,
+                false,
+                doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
-                    Behandler(emptyList(), null), null
+                    Behandler(emptyList(), null),
+                    null
                 )
             )
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -51,14 +56,19 @@ class TilbakedateringTest : FunSpec({
 
         test("tilbakedatert forlengelse") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                fom = LocalDate.now(),
+                tom = LocalDate.now().plusDays(1),
                 behandletTidspunkt = LocalDate.now().plusDays(8).atStartOfDay(),
                 kontaktMedPasient = KontaktMedPasient(null, null)
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
-                ruleMetadata = sykmelding.toRuleMetadata(), true, true, doctorSuspensjon = false,
+                ruleMetadata = sykmelding.toRuleMetadata(),
+                true,
+                true,
+                doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
-                    Behandler(emptyList(), null), null
+                    Behandler(emptyList(), null),
+                    null
                 )
             )
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -78,14 +88,19 @@ class TilbakedateringTest : FunSpec({
             context("med begrunnelse") {
                 test("Med begrunnelse OK") {
                     val sykmelding = generateSykmelding(
-                        fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
                         behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
-                        kontaktMedPasient = KontaktMedPasient(null, "arst"),
+                        kontaktMedPasient = KontaktMedPasient(null, "arst")
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
-                        ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        true,
+                        false,
+                        doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
-                            Behandler(emptyList(), null), null
+                            Behandler(emptyList(), null),
+                            null
                         )
                     )
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -106,14 +121,19 @@ class TilbakedateringTest : FunSpec({
                 }
                 test("Med kontaktdato uten begrunnelse, Invalid") {
                     val sykmelding = generateSykmelding(
-                        fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
                         behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
-                        kontaktMedPasient = KontaktMedPasient(LocalDate.now(), null),
+                        kontaktMedPasient = KontaktMedPasient(LocalDate.now(), null)
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
-                        ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        true,
+                        false,
+                        doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
-                            Behandler(emptyList(), null), null
+                            Behandler(emptyList(), null),
+                            null
                         )
                     )
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -141,14 +161,19 @@ class TilbakedateringTest : FunSpec({
             context("Uten Begrunnelse") {
                 test("Forlengelse, OK") {
                     val sykmelding = generateSykmelding(
-                        fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
                         behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
-                        kontaktMedPasient = KontaktMedPasient(null, null),
+                        kontaktMedPasient = KontaktMedPasient(null, null)
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
-                        ruleMetadata = sykmelding.toRuleMetadata(), false, false, doctorSuspensjon = false,
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        false,
+                        false,
+                        doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
-                            Behandler(emptyList(), null), null
+                            Behandler(emptyList(), null),
+                            null
                         )
                     )
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -158,26 +183,31 @@ class TilbakedateringTest : FunSpec({
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
-                        FORLENGELSE to true,
+                        FORLENGELSE to true
                     )
                     status.ruleInputs shouldBeEqualTo mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                         "ettersending" to false,
                         "begrunnelse" to "",
-                        "forlengelse" to true,
+                        "forlengelse" to true
                     )
                 }
                 test("Ikke forlengelse, INVALID") {
                     val sykmelding = generateSykmelding(
-                        fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
                         behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
-                        kontaktMedPasient = KontaktMedPasient(null, ""),
+                        kontaktMedPasient = KontaktMedPasient(null, "")
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
-                        ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        true,
+                        false,
+                        doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
-                            Behandler(emptyList(), null), null
+                            Behandler(emptyList(), null),
+                            null
                         )
                     )
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -204,15 +234,20 @@ class TilbakedateringTest : FunSpec({
 
                 test("Ikke forlengelse, men fra spesialishelsetjenesten, OK") {
                     val sykmelding = generateSykmelding(
-                        fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
                         behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, ""),
                         medisinskVurdering = fraSpesialhelsetjenesten()
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
-                        ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        true,
+                        false,
+                        doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
-                            Behandler(emptyList(), null), null
+                            Behandler(emptyList(), null),
+                            null
                         )
                     )
                     val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -245,15 +280,20 @@ class TilbakedateringTest : FunSpec({
         context("uten begrunnelse") {
             test("Fra Spesialhelsetjenesten, OK") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(1),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, ""),
                     medisinskVurdering = fraSpesialhelsetjenesten()
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -278,14 +318,19 @@ class TilbakedateringTest : FunSpec({
             }
             test("Ikke fra spesialhelsetjenesten, INVALID") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(1),
                     behandletTidspunkt = LocalDate.now().plusDays(20).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, null)
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -314,14 +359,19 @@ class TilbakedateringTest : FunSpec({
         context("Med Begrunnelse") {
             test("ikke god nok begrunnelse, INVALID") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(1),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
-                    kontaktMedPasient = KontaktMedPasient(null, "12344123112341232....,,,..12"),
+                    kontaktMedPasient = KontaktMedPasient(null, "12344123112341232....,,,..12")
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -333,7 +383,7 @@ class TilbakedateringTest : FunSpec({
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
-                    SPESIALISTHELSETJENESTEN to false,
+                    SPESIALISTHELSETJENESTEN to false
                 )
                 status.ruleInputs shouldBeEqualTo mapOf(
                     "fom" to sykmelding.perioder.first().fom,
@@ -341,19 +391,24 @@ class TilbakedateringTest : FunSpec({
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                    "spesialisthelsetjenesten" to false,
+                    "spesialisthelsetjenesten" to false
                 )
             }
             test("Forlengelse, OK") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(1),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq")
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), false, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    false,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -372,19 +427,24 @@ class TilbakedateringTest : FunSpec({
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                    "forlengelse" to true,
+                    "forlengelse" to true
                 )
             }
             test("Ikke forlengelse, MANUELL") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(16),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(16),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq")
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -409,20 +469,25 @@ class TilbakedateringTest : FunSpec({
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to false,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                    "spesialisthelsetjenesten" to false,
+                    "spesialisthelsetjenesten" to false
                 )
             }
 
             test("Innenfor arbeidsgiverperioden, OK") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(1),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(1),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq")
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -435,7 +500,7 @@ class TilbakedateringTest : FunSpec({
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
                     FORLENGELSE to false,
-                    ARBEIDSGIVERPERIODE to true,
+                    ARBEIDSGIVERPERIODE to true
                 )
                 status.ruleInputs shouldBeEqualTo mapOf(
                     "fom" to sykmelding.perioder.first().fom,
@@ -444,19 +509,24 @@ class TilbakedateringTest : FunSpec({
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
                     "tom" to sykmelding.perioder.first().tom,
-                    "arbeidsgiverperiode" to true,
+                    "arbeidsgiverperiode" to true
                 )
             }
             test("Utenfor arbeidsgiverperioden, MANUELL") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(19),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(19),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq")
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -481,21 +551,26 @@ class TilbakedateringTest : FunSpec({
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to false,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                    "spesialisthelsetjenesten" to false,
+                    "spesialisthelsetjenesten" to false
                 )
             }
 
             test("Fra spesialisthelsetjenesten, OK") {
                 val sykmelding = generateSykmelding(
-                    fom = LocalDate.now(), tom = LocalDate.now().plusDays(19),
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(19),
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                     medisinskVurdering = fraSpesialhelsetjenesten()
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
-                    ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    true,
+                    false,
+                    doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
-                        Behandler(emptyList(), null), null
+                        Behandler(emptyList(), null),
+                        null
                     )
                 )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -520,7 +595,7 @@ class TilbakedateringTest : FunSpec({
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to false,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                    "spesialisthelsetjenesten" to true,
+                    "spesialisthelsetjenesten" to true
                 )
             }
         }
@@ -529,14 +604,19 @@ class TilbakedateringTest : FunSpec({
     context("Over 30 dager") {
         test("Med begrunnelse, MANUELL") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.now(), tom = LocalDate.now().plusDays(19),
+                fom = LocalDate.now(),
+                tom = LocalDate.now().plusDays(19),
                 behandletTidspunkt = LocalDate.now().plusDays(31).atStartOfDay(),
                 kontaktMedPasient = KontaktMedPasient(null, "abc defgij kmnopq")
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
-                ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                ruleMetadata = sykmelding.toRuleMetadata(),
+                true,
+                false,
+                doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
-                    Behandler(emptyList(), null), null
+                    Behandler(emptyList(), null),
+                    null
                 )
             )
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -547,27 +627,32 @@ class TilbakedateringTest : FunSpec({
                 ETTERSENDING to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
-                BEGRUNNELSE_MIN_3_ORD to true,
+                BEGRUNNELSE_MIN_3_ORD to true
             )
 
             status.ruleInputs shouldBeEqualTo mapOf(
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to false,
-                "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt
             )
         }
 
         test("Ikke god nok begrunnelse, INVALID") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.now(), tom = LocalDate.now().plusDays(19),
+                fom = LocalDate.now(),
+                tom = LocalDate.now().plusDays(19),
                 behandletTidspunkt = LocalDate.now().plusDays(31).atStartOfDay(),
                 kontaktMedPasient = KontaktMedPasient(null, "abc defghijklmno")
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
-                ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                ruleMetadata = sykmelding.toRuleMetadata(),
+                true,
+                false,
+                doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
-                    Behandler(emptyList(), null), null
+                    Behandler(emptyList(), null),
+                    null
                 )
             )
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -588,23 +673,28 @@ class TilbakedateringTest : FunSpec({
                 "ettersending" to false,
                 "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                 "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                "spesialisthelsetjenesten" to false,
+                "spesialisthelsetjenesten" to false
 
             )
         }
 
         test("Fra spesialisthelsetjenesten, MANUELL") {
             val sykmelding = generateSykmelding(
-                fom = LocalDate.now(), tom = LocalDate.now().plusDays(19),
+                fom = LocalDate.now(),
+                tom = LocalDate.now().plusDays(19),
                 behandletTidspunkt = LocalDate.now().plusDays(31).atStartOfDay(),
                 kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmno"),
                 medisinskVurdering = fraSpesialhelsetjenesten()
 
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
-                ruleMetadata = sykmelding.toRuleMetadata(), true, false, doctorSuspensjon = false,
+                ruleMetadata = sykmelding.toRuleMetadata(),
+                true,
+                false,
+                doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
-                    Behandler(emptyList(), null), null
+                    Behandler(emptyList(), null),
+                    null
                 )
             )
             val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
@@ -626,7 +716,7 @@ class TilbakedateringTest : FunSpec({
                 "ettersending" to false,
                 "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                 "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                "spesialisthelsetjenesten" to true,
+                "spesialisthelsetjenesten" to true
 
             )
         }
@@ -636,7 +726,11 @@ class TilbakedateringTest : FunSpec({
 private fun fraSpesialhelsetjenesten() = MedisinskVurdering(
     hovedDiagnose =
     Diagnosekoder.icd10.values.first().toDiagnose(),
-    emptyList(), false, false, null, null
+    emptyList(),
+    false,
+    false,
+    null,
+    null
 )
 
 fun Sykmelding.toRuleMetadata() = RuleMetadata(

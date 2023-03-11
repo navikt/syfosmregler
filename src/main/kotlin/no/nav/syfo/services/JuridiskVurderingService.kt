@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class JuridiskVurderingResult(
-    val juridiskeVurderinger: List<JuridiskVurdering>,
+    val juridiskeVurderinger: List<JuridiskVurdering>
 )
 
 class JuridiskVurderingService(
@@ -65,7 +65,7 @@ class JuridiskVurderingService(
             fodselsnummer = receivedSykmelding.personNrPasient,
             juridiskHenvisning = medJuridisk.juridiskHenvisning,
             sporing = mapOf(
-                "sykmelding" to receivedSykmelding.sykmelding.id,
+                "sykmelding" to receivedSykmelding.sykmelding.id
             ),
             input = result.ruleInputs,
             utfall = toJuridiskUtfall(result.treeResult.status),

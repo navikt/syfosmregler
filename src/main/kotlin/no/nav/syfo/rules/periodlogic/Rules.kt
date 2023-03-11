@@ -114,7 +114,7 @@ val tilbakeDatertOver3Ar: PeriodLogicRule = { sykmelding, _ ->
 
     RuleResult(
         ruleInputs = mapOf(
-            "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
+            "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr
         ),
         rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
         ruleResult = tilbakeDatertMerEnn3AAr
@@ -125,8 +125,9 @@ val varighetOver1AAr: PeriodLogicRule = { sykmelding, _ ->
     val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
     val sisteTomDato = sykmelding.perioder.sortedTOMDate().lastOrNull()
 
-    val varighetOver1AAr = if (forsteFomDato == null || sisteTomDato == null) false
-    else {
+    val varighetOver1AAr = if (forsteFomDato == null || sisteTomDato == null) {
+        false
+    } else {
         val firstFomDate = forsteFomDato.atStartOfDay().toLocalDate()
         val lastFomDate = sisteTomDato.atStartOfDay().toLocalDate()
         (firstFomDate..lastFomDate).daysBetween() > 365

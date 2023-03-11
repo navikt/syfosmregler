@@ -120,7 +120,8 @@ fun main() {
     val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterAudience, httpClient)
 
     val pdlClient = PdlClient(
-        httpClient, env.pdlGraphqlPath,
+        httpClient,
+        env.pdlGraphqlPath,
         PdlClient::class.java.getResource("/graphql/getPerson.graphql")!!.readText().replace(Regex("[\n\t]"), "")
     )
     val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)

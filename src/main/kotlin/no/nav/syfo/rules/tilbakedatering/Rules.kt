@@ -62,7 +62,7 @@ val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, _ ->
             "arbeidsgiverperiode" to arbeidsgiverperiode
         ),
         rule = ARBEIDSGIVERPERIODE,
-        ruleResult = arbeidsgiverperiode,
+        ruleResult = arbeidsgiverperiode
     )
 }
 

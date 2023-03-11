@@ -12,14 +12,14 @@ class Rule<RuleInput>(
     val messageForSender: String,
     val juridiskHenvisning: JuridiskHenvisning?,
     val input: RuleInput,
-    val predicate: (input: RuleInput) -> Boolean,
+    val predicate: (input: RuleInput) -> Boolean
 ) {
     fun executeRule(): RuleResult<RuleInput> {
         val result = predicate(input)
         return RuleResult(
             result = result,
             ruleInput = input,
-            rule = this,
+            rule = this
         )
     }
 
@@ -29,5 +29,5 @@ class Rule<RuleInput>(
 class RuleResult<RuleInput>(
     val result: Boolean,
     val ruleInput: RuleInput,
-    val rule: Rule<RuleInput>,
+    val rule: Rule<RuleInput>
 )

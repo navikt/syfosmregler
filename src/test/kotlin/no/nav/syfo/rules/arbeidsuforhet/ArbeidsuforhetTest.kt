@@ -256,7 +256,7 @@ class ArbeidsuforhetTest : FunSpec({
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
             ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
             ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true,
+            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true
         )
 
         mapOf(
