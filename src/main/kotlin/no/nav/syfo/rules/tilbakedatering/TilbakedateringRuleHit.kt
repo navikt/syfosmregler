@@ -49,7 +49,7 @@ enum class TilbakedateringRuleHit(
             rule = "OVER_30_DAGER",
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. " +
-                "Grunnet følgende: Sykmelding er tilbakedatert mer enn det som er tillatt og felt 11.2 er ikke utfylt.",
+                "Grunnet følgende: Sykmelding er tilbakedatert mer enn det som er tillatt og felt 11.2 (begrunnelse) er utfylt uten tilstrekkelig begrunnelse",
             messageForUser = "Sykmeldingen er tilbakedatert uten tilstrekkelig begrunnelse fra den som sykmeldte deg."
         )
     ),
