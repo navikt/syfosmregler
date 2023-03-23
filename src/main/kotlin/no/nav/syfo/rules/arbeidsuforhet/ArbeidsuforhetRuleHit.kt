@@ -50,7 +50,7 @@ enum class ArbeidsuforhetRuleHit(
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                "Kodeverk for hoveddiagnose er feil eller mangler. Prosesskoder ikke kan benyttes for å angi diagnose.",
+                "Kodeverk for hoveddiagnose er ikke angitt eller ukjent.",
             messageForUser = "Den må ha riktig kode for hoveddiagnose."
         )
     ),
@@ -60,8 +60,7 @@ enum class ArbeidsuforhetRuleHit(
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
                 "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                "Kodeverk for bidiagnose er ikke angitt eller korrekt. " +
-                "Prosesskoder ikke kan benyttes for å angi diagnose.",
+                "Kodeverk for bidiagnose er ikke angitt eller ukjent.",
             messageForUser = "Det er brukt eit ukjent kodeverk for bidiagnosen."
         )
     )
