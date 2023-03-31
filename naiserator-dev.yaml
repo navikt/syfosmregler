@@ -52,9 +52,10 @@ spec:
         - application: flex-syketilfelle
           namespace: flex
           cluster: dev-gcp
-  vault:
-    enabled: false
-  webproxy: false
+      external:
+        - host: syfohelsenettproxy.dev-fss-pub.nais.io
+        - host: pdl-api.dev-fss-pub.nais.io
+        - host: smgcp-proxy.dev-fss-pub.nais.io
   kafka:
     pool: nav-dev
   env:

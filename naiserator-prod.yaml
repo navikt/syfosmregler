@@ -51,9 +51,10 @@ spec:
         - application: flex-syketilfelle
           namespace: flex
           cluster: prod-gcp
-  vault:
-    enabled: false
-  webproxy: false
+      external:
+        - host: syfohelsenettproxy.prod-fss-pub.nais.io
+        - host: pdl-api.prod-fss-pub.nais.io
+        - host: smgcp-proxy.prod-fss-pub.nais.io
   kafka:
     pool: nav-prod
   env:
