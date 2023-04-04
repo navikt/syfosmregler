@@ -17,13 +17,13 @@ val prometheusVersion = "0.16.0"
 val smCommonVersion = "1.fbf33a9"
 val kotestVersion = "5.5.4"
 val mockkVersion = "1.13.2"
-val kotlinVersion = "1.8.10"
+val kotlinVersion = "1.8.20"
 val nettyCodecVersion = "4.1.86.Final"
 val commonsCodecVersion = "1.15"
 
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.8.20"
     id("org.jmailen.kotlinter") version "3.13.0"
     id("com.diffplug.spotless") version "6.16.0"
     id("com.github.johnrengelman.shadow") version "8.1.0"
