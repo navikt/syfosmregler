@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val caffeineVersion = "3.1.2"
+val caffeineVersion = "3.1.5"
 val coroutinesVersion = "1.6.4"
 val jacksonVersion = "2.14.2"
 val kluentVersion = "1.72"
