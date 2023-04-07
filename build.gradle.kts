@@ -18,7 +18,6 @@ val smCommonVersion = "1.fbf33a9"
 val kotestVersion = "5.5.5"
 val mockkVersion = "1.13.4"
 val kotlinVersion = "1.8.20"
-val nettyCodecVersion = "4.1.86.Final"
 val commonsCodecVersion = "1.15"
 
 
@@ -53,9 +52,6 @@ dependencies {
 
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    //This is to override version that is in io.ktor:ktor-server-netty
-    //https://www.cve.org/CVERecord?id=CVE-2022-41915
-    implementation("io.netty:netty-codec:$nettyCodecVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
