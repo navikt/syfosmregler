@@ -18,7 +18,7 @@ val smCommonVersion = "1.fbf33a9"
 val kotestVersion = "5.5.4"
 val mockkVersion = "1.13.2"
 val kotlinVersion = "1.8.20"
-val nettyCodecVersion = "4.1.86.Final"
+val nettyCodecVersion = "4.1.91.Final"
 val commonsCodecVersion = "1.15"
 
 
