@@ -16,7 +16,7 @@ val logstashEncoderVersion = "7.3"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "1.fbf33a9"
 val kotestVersion = "5.5.5"
-val mockkVersion = "1.13.4"
+val mockkVersion = "1.13.5"
 val kotlinVersion = "1.8.20"
 val commonsCodecVersion = "1.15"
 
