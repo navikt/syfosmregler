@@ -25,7 +25,8 @@ val behanderIkkeGyldigHPR: HPRRule = { _, behandlerOgStartdato ->
     )
 }
 
-val behandlerManglerAutorisasjon: HPRRule = { _, behandlerOgStartdato ->
+val
+        behandlerManglerAutorisasjon: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 
     val gyldigeGodkjenninger = behandlerGodkjenninger.any {
