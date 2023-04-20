@@ -70,24 +70,24 @@ object SmregisterClientTest : FunSpec({
                             HttpStatusCode.OK,
                             sykmeldingRespons(
                                 fom = LocalDate.of(2021, 2, 15),
-                                behandletDato = LocalDate.of(2021, 3, 1)
-                            )
+                                behandletDato = LocalDate.of(2021, 3, 1),
+                            ),
                         )
 
                         "fnr4" -> call.respond(
                             HttpStatusCode.OK,
                             sykmeldingRespons(
                                 fom = LocalDate.of(2021, 2, 15),
-                                behandletDato = LocalDate.of(2021, 2, 22)
-                            )
+                                behandletDato = LocalDate.of(2021, 2, 22),
+                            ),
                         )
 
                         "fnr5" -> call.respond(
                             HttpStatusCode.OK,
                             sykmeldingRespons(
                                 fom = LocalDate.of(2021, 2, 15),
-                                behandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.INVALID)
-                            )
+                                behandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.INVALID),
+                            ),
                         )
 
                         "fnr6" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(fom = LocalDate.of(2021, 2, 15), diagnosekode = null))
@@ -106,7 +106,7 @@ object SmregisterClientTest : FunSpec({
     beforeTest {
         coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token(
             "accessToken",
-            OffsetDateTime.now().plusHours(1)
+            OffsetDateTime.now().plusHours(1),
         )
     }
 
@@ -116,7 +116,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med annen fom") {
@@ -124,7 +124,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med samme fom som er tilbakedatert") {
@@ -132,7 +132,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr3",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("True hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
@@ -140,7 +140,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo true
         }
         test("True hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
@@ -148,7 +148,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr4",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo true
         }
         test("False hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
@@ -156,7 +156,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr5",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom") {
@@ -164,7 +164,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med tom 2 dager etter ny tom") {
@@ -172,7 +172,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 3, 15), tom = LocalDate.of(2021, 3, 17))),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen diagnose") {
@@ -180,7 +180,7 @@ object SmregisterClientTest : FunSpec({
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))),
                 "L87",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen grad") {
@@ -194,11 +194,11 @@ object SmregisterClientTest : FunSpec({
                         avventendeInnspillTilArbeidsgiver = null,
                         behandlingsdager = null,
                         gradert = Gradert(false, 50),
-                        reisetilskudd = false
-                    )
+                        reisetilskudd = false,
+                    ),
                 ),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
     }
@@ -215,11 +215,11 @@ object SmregisterClientTest : FunSpec({
                         avventendeInnspillTilArbeidsgiver = null,
                         behandlingsdager = null,
                         gradert = Gradert(false, 50),
-                        reisetilskudd = false
-                    )
+                        reisetilskudd = false,
+                    ),
                 ),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
 
@@ -234,11 +234,11 @@ object SmregisterClientTest : FunSpec({
                         avventendeInnspillTilArbeidsgiver = null,
                         behandlingsdager = null,
                         gradert = Gradert(false, 50),
-                        reisetilskudd = false
-                    )
+                        reisetilskudd = false,
+                    ),
                 ),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo false
         }
 
@@ -248,11 +248,11 @@ object SmregisterClientTest : FunSpec({
                 listOf(
                     lagPeriode(
                         fom = LocalDate.of(2021, 2, 15),
-                        tom = LocalDate.of(2021, 3, 15)
-                    )
+                        tom = LocalDate.of(2021, 3, 15),
+                    ),
                 ),
                 "L89",
-                loggingMeta
+                loggingMeta,
             ) shouldBeEqualTo true
         }
     }
@@ -263,11 +263,11 @@ object SmregisterClientTest : FunSpec({
             listOf(
                 lagPeriode(
                     fom = LocalDate.of(2021, 2, 15),
-                    tom = LocalDate.of(2021, 3, 15)
-                )
+                    tom = LocalDate.of(2021, 3, 15),
+                ),
             ),
             "LA8PV",
-            loggingMeta
+            loggingMeta,
         ) shouldBeEqualTo false
     }
 
@@ -277,11 +277,11 @@ object SmregisterClientTest : FunSpec({
             listOf(
                 lagPeriode(
                     fom = LocalDate.of(2021, 2, 15),
-                    tom = LocalDate.of(2021, 3, 15)
-                ).copy(gradert = generateGradert(false, 37))
+                    tom = LocalDate.of(2021, 3, 15),
+                ).copy(gradert = generateGradert(false, 37)),
             ),
             "L89",
-            loggingMeta
+            loggingMeta,
         ) shouldBeEqualTo false
     }
 
@@ -291,11 +291,11 @@ object SmregisterClientTest : FunSpec({
             listOf(
                 lagPeriode(
                     fom = LocalDate.of(2021, 2, 15),
-                    tom = LocalDate.of(2021, 3, 15)
-                )
+                    tom = LocalDate.of(2021, 3, 15),
+                ),
             ),
             diagnosekode = null,
-            loggingMeta
+            loggingMeta,
         ) shouldBeEqualTo false
     }
 })
@@ -304,7 +304,7 @@ private fun sykmeldingRespons(
     fom: LocalDate,
     behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
     behandletDato: LocalDate? = null,
-    diagnosekode: String? = "L89"
+    diagnosekode: String? = "L89",
 ) = listOf(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
@@ -314,16 +314,16 @@ private fun sykmeldingRespons(
                 fom,
                 fom.plusMonths(1),
                 null,
-                PeriodetypeDTO.AKTIVITET_IKKE_MULIG
-            )
+                PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
+            ),
         ),
         behandletTidspunkt = if (behandletDato != null) {
             OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
         } else {
             OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
         },
-        medisinskVurdering = MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) })
-    )
+        medisinskVurdering = MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) }),
+    ),
 )
 
 private fun lagPeriode(fom: LocalDate, tom: LocalDate) =
@@ -334,5 +334,5 @@ private fun lagPeriode(fom: LocalDate, tom: LocalDate) =
         avventendeInnspillTilArbeidsgiver = null,
         behandlingsdager = null,
         gradert = null,
-        reisetilskudd = false
+        reisetilskudd = false,
     )

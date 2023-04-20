@@ -31,9 +31,9 @@ class ValidationTest : FunSpec({
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -45,7 +45,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person14Years
+                pasientFodselsdato = person14Years,
             )
 
             val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
@@ -59,7 +59,7 @@ class ValidationTest : FunSpec({
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                 ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
-                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false
+                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
             )
 
             mapOf(
@@ -68,7 +68,7 @@ class ValidationTest : FunSpec({
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
                 "avsenderSammeSomPasient" to false,
-                "behandlerSammeSomPasient" to false
+                "behandlerSammeSomPasient" to false,
 
             ) shouldBeEqualTo status.ruleInputs
 
@@ -88,7 +88,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person12Years
+                pasientFodselsdato = person12Years,
             )
             val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
@@ -96,11 +96,11 @@ class ValidationTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                ValidationRules.PASIENT_YNGRE_ENN_13 to true
+                ValidationRules.PASIENT_YNGRE_ENN_13 to true,
             )
 
             mapOf(
-                "pasientUnder13Aar" to true
+                "pasientUnder13Aar" to true,
 
             ) shouldBeEqualTo status.ruleInputs
 
@@ -115,9 +115,9 @@ class ValidationTest : FunSpec({
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -129,7 +129,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person31Years
+                pasientFodselsdato = person31Years,
             )
             val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
@@ -138,12 +138,12 @@ class ValidationTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
-                ValidationRules.UGYLDIG_REGELSETTVERSJON to true
+                ValidationRules.UGYLDIG_REGELSETTVERSJON to true,
             )
 
             mapOf(
                 "pasientUnder13Aar" to false,
-                "ugyldigRegelsettversjon" to true
+                "ugyldigRegelsettversjon" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_REGELSETTVERSJON.ruleHit
@@ -155,9 +155,9 @@ class ValidationTest : FunSpec({
                 perioder = listOf(
                     generatePeriode(
                         fom = LocalDate.now().minusDays(274),
-                        tom = LocalDate.now()
-                    )
-                )
+                        tom = LocalDate.now(),
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -169,7 +169,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person31Years
+                pasientFodselsdato = person31Years,
             )
 
             val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
@@ -178,13 +178,13 @@ class ValidationTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true
+                ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true,
             )
 
             mapOf(
                 "pasientUnder13Aar" to false,
                 "ugyldigRegelsettversjon" to false,
-                "manglendeDynamiskesporsmaalversjon2uke39" to true
+                "manglendeDynamiskesporsmaalversjon2uke39" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39.ruleHit
@@ -198,9 +198,9 @@ class ValidationTest : FunSpec({
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -212,7 +212,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = "1232344",
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person31Years
+                pasientFodselsdato = person31Years,
             )
 
             val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
@@ -222,14 +222,14 @@ class ValidationTest : FunSpec({
                 ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                ValidationRules.UGYLDIG_ORGNR_LENGDE to true
+                ValidationRules.UGYLDIG_ORGNR_LENGDE to true,
             )
 
             mapOf(
                 "pasientUnder13Aar" to false,
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
-                "ugyldingOrgNummerLengde" to true
+                "ugyldingOrgNummerLengde" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.UGYLDIG_ORGNR_LENGDE.ruleHit
@@ -244,9 +244,9 @@ class ValidationTest : FunSpec({
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -258,7 +258,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = patientPersonNumber,
-                pasientFodselsdato = person31Years
+                pasientFodselsdato = person31Years,
             )
 
             val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
@@ -269,7 +269,7 @@ class ValidationTest : FunSpec({
                 ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
-                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
+                ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true,
             )
 
             mapOf(
@@ -277,7 +277,7 @@ class ValidationTest : FunSpec({
                 "ugyldigRegelsettversjon" to false,
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
-                "avsenderSammeSomPasient" to true
+                "avsenderSammeSomPasient" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR.ruleHit
@@ -295,15 +295,15 @@ class ValidationTest : FunSpec({
                     "Hansen",
                     "134",
                     "113",
-                    patientPersonNumber
+                    patientPersonNumber,
                 ),
                 medisinskVurdering = generateMedisinskVurdering(
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -315,7 +315,7 @@ class ValidationTest : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person31Years
+                pasientFodselsdato = person31Years,
             )
 
             val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
@@ -327,7 +327,7 @@ class ValidationTest : FunSpec({
                 ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                 ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                 ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
-                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true
+                ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true,
             )
 
             mapOf(
@@ -336,7 +336,7 @@ class ValidationTest : FunSpec({
                 "manglendeDynamiskesporsmaalversjon2uke39" to false,
                 "ugyldingOrgNummerLengde" to false,
                 "avsenderSammeSomPasient" to false,
-                "behandlerSammeSomPasient" to true
+                "behandlerSammeSomPasient" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR.ruleHit
@@ -349,7 +349,7 @@ fun ruleMetadataSykmelding(ruleMetadata: RuleMetadata) = RuleMetadataSykmelding(
     erEttersendingAvTidligereSykmelding = false,
     erNyttSyketilfelle = false,
     doctorSuspensjon = false,
-    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
 )
 
 fun generatePersonNumber(bornDate: LocalDate, useDNumber: Boolean = false): String {

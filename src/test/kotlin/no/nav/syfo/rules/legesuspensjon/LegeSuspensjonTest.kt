@@ -22,7 +22,7 @@ class LegeSuspensjonTest : FunSpec({
         legekontorOrgnr = null,
         tssid = null,
         avsenderFnr = "2",
-        pasientFodselsdato = LocalDate.now().minusYears(31)
+        pasientFodselsdato = LocalDate.now().minusYears(31),
     )
     val sykmeldingRuleMetadata = ruleMetadataSykmelding(ruleMetadata)
     val sykmelding = mockk<Sykmelding>(relaxed = true)
@@ -32,11 +32,11 @@ class LegeSuspensjonTest : FunSpec({
             val status = ruleTree.runRules(sykmelding, sykmeldingRuleMetadata).first
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                LegeSuspensjonRules.BEHANDLER_SUSPENDERT to false
+                LegeSuspensjonRules.BEHANDLER_SUSPENDERT to false,
             )
 
             mapOf(
-                "suspendert" to false
+                "suspendert" to false,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo null
@@ -47,10 +47,10 @@ class LegeSuspensjonTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                LegeSuspensjonRules.BEHANDLER_SUSPENDERT to true
+                LegeSuspensjonRules.BEHANDLER_SUSPENDERT to true,
             )
             mapOf(
-                "suspendert" to true
+                "suspendert" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT.ruleHit

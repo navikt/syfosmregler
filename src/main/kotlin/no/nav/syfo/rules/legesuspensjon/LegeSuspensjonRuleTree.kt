@@ -7,7 +7,7 @@ import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
 enum class LegeSuspensjonRules {
-    BEHANDLER_SUSPENDERT
+    BEHANDLER_SUSPENDERT,
 }
 
 val legeSuspensjonRuleTree = tree<LegeSuspensjonRules, RuleResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {

@@ -12,7 +12,7 @@ enum class ArbeidsuforhetRules {
     ICPC_2_Z_DIAGNOSE,
     HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,
     UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE,
-    UGYLDIG_KODEVERK_FOR_BIDIAGNOSE
+    UGYLDIG_KODEVERK_FOR_BIDIAGNOSE,
 }
 
 val arbeidsuforhetRuleTree = tree<ArbeidsuforhetRules, RuleResult>(ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE) {

@@ -28,14 +28,14 @@ class RuleExecutionServiceTest : FunSpec({
         every {
             rulesExecution.runRules(
                 any(),
-                any()
+                any(),
             )
         } returns (
             TreeOutput<TestRules, RuleResult>(
                 treeResult = RuleResult(
                     status = Status.OK,
-                    ruleHit = null
-                )
+                    ruleHit = null,
+                ),
             ) to UtenJuridisk
             )
 
@@ -51,8 +51,8 @@ class RuleExecutionServiceTest : FunSpec({
                 TreeOutput<TestRules, RuleResult>(
                     treeResult = RuleResult(
                         status = Status.OK,
-                        ruleHit = null
-                    )
+                        ruleHit = null,
+                    ),
                 ) to UtenJuridisk
                 )
         }
@@ -61,8 +61,8 @@ class RuleExecutionServiceTest : FunSpec({
                 TreeOutput<TestRules, RuleResult>(
                     treeResult = RuleResult(
                         status = Status.INVALID,
-                        ruleHit = RuleHit(Status.INVALID, TestRules.RULE2.name, "message", "message")
-                    )
+                        ruleHit = RuleHit(Status.INVALID, TestRules.RULE2.name, "message", "message"),
+                    ),
                 ) to UtenJuridisk
                 )
         }

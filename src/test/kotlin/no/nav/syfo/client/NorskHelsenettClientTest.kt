@@ -75,16 +75,16 @@ object NorskHelsenettClientTest : FunSpec({
             val behandler = norskHelsenettClient.finnBehandler(
                 fnr,
                 "123",
-                LoggingMeta("", "", "123", "")
+                LoggingMeta("", "", "123", ""),
             )
 
             behandler shouldBeEqualTo Behandler(
                 listOf(
                     Godkjenning(
                         helsepersonellkategori = Kode(true, 1, "verdi"),
-                        autorisasjon = Kode(true, 2, "annenVerdi")
-                    )
-                )
+                        autorisasjon = Kode(true, 2, "annenVerdi"),
+                    ),
+                ),
             )
         }
 
@@ -92,7 +92,7 @@ object NorskHelsenettClientTest : FunSpec({
             val behandler = norskHelsenettClient.finnBehandler(
                 "behandlerFinnesIkke",
                 "1",
-                LoggingMeta("", "", "1", "")
+                LoggingMeta("", "", "1", ""),
             )
 
             behandler shouldBeEqualTo null
@@ -104,16 +104,16 @@ object NorskHelsenettClientTest : FunSpec({
             val behandler = norskHelsenettClient.finnBehandler(
                 fnr,
                 "1",
-                LoggingMeta("", "", "1", "")
+                LoggingMeta("", "", "1", ""),
             )
 
             behandler shouldBeEqualTo Behandler(
                 listOf(
                     Godkjenning(
                         helsepersonellkategori = Kode(true, 1, "verdi"),
-                        autorisasjon = Kode(true, 2, "annenVerdi")
-                    )
-                )
+                        autorisasjon = Kode(true, 2, "annenVerdi"),
+                    ),
+                ),
             )
         }
 
@@ -122,7 +122,7 @@ object NorskHelsenettClientTest : FunSpec({
                 norskHelsenettClient.finnBehandler(
                     "1234",
                     "1",
-                    LoggingMeta("", "", "123", "")
+                    LoggingMeta("", "", "123", ""),
                 )
             }
         }

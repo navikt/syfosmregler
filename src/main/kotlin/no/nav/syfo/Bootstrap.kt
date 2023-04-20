@@ -111,7 +111,7 @@ fun main() {
         endpointUrl = env.legeSuspensjonProxyEndpointURL,
         azureAdV2Client = azureAdV2Client,
         httpClient = httpClient,
-        scope = env.legeSuspensjonProxyScope
+        scope = env.legeSuspensjonProxyScope,
     )
 
     val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, azureAdV2Client, env.syketilfelleScope, httpClient)
@@ -122,19 +122,19 @@ fun main() {
     val pdlClient = PdlClient(
         httpClient,
         env.pdlGraphqlPath,
-        PdlClient::class.java.getResource("/graphql/getPerson.graphql")!!.readText().replace(Regex("[\n\t]"), "")
+        PdlClient::class.java.getResource("/graphql/getPerson.graphql")!!.readText().replace(Regex("[\n\t]"), ""),
     )
     val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
 
     val kafkaBaseConfig = KafkaUtils.getAivenKafkaConfig()
     val kafkaProperties = kafkaBaseConfig.toProducerConfig(
         env.applicationName,
-        valueSerializer = JacksonKafkaSerializer::class
+        valueSerializer = JacksonKafkaSerializer::class,
     )
 
     val juridiskVurderingService = JuridiskVurderingService(
         KafkaProducer(kafkaProperties),
-        env.etterlevelsesTopic
+        env.etterlevelsesTopic,
     )
     val ruleService = RuleService(
         legeSuspensjonClient,
@@ -143,14 +143,14 @@ fun main() {
         smregisterClient,
         pdlService,
         juridiskVurderingService,
-        RuleExecutionService()
+        RuleExecutionService(),
     )
 
     val applicationEngine = createApplicationEngine(
         ruleService,
         env,
         applicationState,
-        jwkProviderAad
+        jwkProviderAad,
     )
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)

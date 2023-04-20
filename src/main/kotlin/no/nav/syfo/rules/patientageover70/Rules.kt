@@ -17,6 +17,6 @@ val pasientOver70Aar: PatientAgeOver70Rule = { sykmelding, ruleMetadataSykmeldin
     RuleResult(
         ruleInputs = mapOf("pasientOver70Aar" to pasientOver70Aar),
         rule = PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70,
-        ruleResult = pasientOver70Aar
+        ruleResult = pasientOver70Aar,
     )
 }

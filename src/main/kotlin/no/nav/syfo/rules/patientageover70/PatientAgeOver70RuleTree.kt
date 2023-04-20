@@ -8,7 +8,7 @@ import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
 enum class PatientAgeOver70Rules {
-    PASIENT_ELDRE_ENN_70
+    PASIENT_ELDRE_ENN_70,
 }
 
 val patientAgeOver70RuleTree = tree<PatientAgeOver70Rules, RuleResult>(PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70) {

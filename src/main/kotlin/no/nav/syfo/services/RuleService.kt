@@ -36,7 +36,7 @@ class RuleService(
     private val smregisterClient: SmregisterClient,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
-    private val ruleExecutionService: RuleExecutionService
+    private val ruleExecutionService: RuleExecutionService,
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -46,7 +46,7 @@ class RuleService(
             mottakId = receivedSykmelding.navLogId,
             orgNr = receivedSykmelding.legekontorOrgNr,
             msgId = receivedSykmelding.msgId,
-            sykmeldingId = receivedSykmelding.sykmelding.id
+            sykmeldingId = receivedSykmelding.sykmelding.id,
         )
 
         log.info("Received a SM2013, going to rules, {}", fields(loggingMeta))
@@ -70,7 +70,7 @@ class RuleService(
             legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
             tssid = receivedSykmelding.tssid,
             avsenderFnr = receivedSykmelding.personNrLege,
-            pasientFodselsdato = fodselsdato
+            pasientFodselsdato = fodselsdato,
         )
 
         val doctorSuspendDeferred = async {
@@ -79,21 +79,21 @@ class RuleService(
                 receivedSykmelding.personNrLege,
                 receivedSykmelding.navLogId,
                 signaturDatoString,
-                loggingMeta
+                loggingMeta,
             ).suspendert
         }
         val syketilfelleStartdatoDeferred = async {
             syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
-                loggingMeta
+                loggingMeta,
             )
         }
 
         val behandler = norskHelsenettClient.finnBehandler(
             behandlerFnr = receivedSykmelding.personNrLege,
             msgId = receivedSykmelding.msgId,
-            loggingMeta = loggingMeta
+            loggingMeta = loggingMeta,
         )
             ?: return ValidationResult(
                 status = Status.INVALID,
@@ -102,9 +102,9 @@ class RuleService(
                         ruleName = "BEHANDLER_NOT_IN_HPR",
                         messageForSender = "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
                         messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
-                        ruleStatus = Status.INVALID
-                    )
-                )
+                        ruleStatus = Status.INVALID,
+                    ),
+                ),
             )
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
@@ -114,7 +114,7 @@ class RuleService(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
                 receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,
-                loggingMeta
+                loggingMeta,
             )
         } else {
             null
@@ -126,13 +126,13 @@ class RuleService(
             erNyttSyketilfelle = syketilfelleStartdato == null,
             erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding,
             doctorSuspensjon = doctorSuspendDeferred.await(),
-            behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato)
+            behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
         )
 
         val result = ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
         result.forEach {
             RULE_NODE_RULE_PATH_COUNTER.labels(
-                it.first.printRulePath()
+                it.first.printRulePath(),
             ).inc()
         }
 
@@ -140,7 +140,7 @@ class RuleService(
         val validationResult = validationResult(result.map { it.first })
         RULE_NODE_RULE_HIT_COUNTER.labels(
             validationResult.status.name,
-            validationResult.ruleHits.firstOrNull()?.ruleName ?: validationResult.status.name
+            validationResult.ruleHits.firstOrNull()?.ruleName ?: validationResult.status.name,
         ).inc()
         return validationResult
     }
@@ -158,9 +158,9 @@ class RuleService(
                     result.rule,
                     result.messageForSender,
                     result.messageForUser,
-                    result.status
+                    result.status,
                 )
-            }
+            },
     )
 
     private fun erTilbakedatert(receivedSykmelding: ReceivedSykmelding): Boolean =
@@ -170,7 +170,7 @@ class RuleService(
 
 data class BehandlerOgStartdato(
     val behandler: Behandler,
-    val startdato: LocalDate?
+    val startdato: LocalDate?,
 )
 
 data class RuleMetadataSykmelding(
@@ -178,7 +178,7 @@ data class RuleMetadataSykmelding(
     val erNyttSyketilfelle: Boolean,
     val erEttersendingAvTidligereSykmelding: Boolean?,
     val doctorSuspensjon: Boolean,
-    val behandlerOgStartdato: BehandlerOgStartdato
+    val behandlerOgStartdato: BehandlerOgStartdato,
 )
 
 fun List<Periode>.sortedFOMDate(): List<LocalDate> =

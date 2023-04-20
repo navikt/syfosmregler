@@ -17,7 +17,7 @@ val ukjentDiagnoseKodeType: ArbeidsuforhetRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("ukjentDiagnoseKodeType" to ukjentDiagnoseKodeType),
         rule = ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE,
-        ruleResult = ukjentDiagnoseKodeType
+        ruleResult = ukjentDiagnoseKodeType,
     )
 }
 
@@ -29,7 +29,7 @@ val icpc2ZDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("icpc2ZDiagnose" to icpc2ZDiagnose),
         rule = ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE,
-        ruleResult = icpc2ZDiagnose
+        ruleResult = icpc2ZDiagnose,
     )
 }
 
@@ -42,7 +42,7 @@ val houvedDiagnoseEllerFraversgrunnMangler: ArbeidsuforhetRule = { sykmelding, _
     RuleResult(
         ruleInputs = mapOf("houvedDiagnoseEllerFraversgrunnMangler" to houvedDiagnoseEllerFraversgrunnMangler),
         rule = ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,
-        ruleResult = houvedDiagnoseEllerFraversgrunnMangler
+        ruleResult = houvedDiagnoseEllerFraversgrunnMangler,
     )
 }
 
@@ -53,18 +53,18 @@ val ugyldigKodeVerkHouvedDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
     val ugyldigKodeVerkHouvedDiagnose = (
         hoveddiagnose?.system !in arrayOf(Diagnosekoder.ICPC2_CODE, Diagnosekoder.ICD10_CODE) ||
             hoveddiagnose?.let { diagnose ->
-            if (diagnose.isICPC2()) {
-                Diagnosekoder.icpc2.containsKey(diagnose.kode)
-            } else {
-                Diagnosekoder.icd10.containsKey(diagnose.kode)
-            }
-        } != true
+                if (diagnose.isICPC2()) {
+                    Diagnosekoder.icpc2.containsKey(diagnose.kode)
+                } else {
+                    Diagnosekoder.icd10.containsKey(diagnose.kode)
+                }
+            } != true
         ) && annenFravarsArsak == null
 
     RuleResult(
         ruleInputs = mapOf("ugyldigKodeVerkHouvedDiagnose" to ugyldigKodeVerkHouvedDiagnose),
         rule = ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE,
-        ruleResult = ugyldigKodeVerkHouvedDiagnose
+        ruleResult = ugyldigKodeVerkHouvedDiagnose,
     )
 }
 
@@ -82,6 +82,6 @@ val ugyldigKodeVerkBiDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("ugyldigKodeVerkBiDiagnose" to ugyldigKodeVerkBiDiagnose),
         rule = ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE,
-        ruleResult = ugyldigKodeVerkBiDiagnose
+        ruleResult = ugyldigKodeVerkBiDiagnose,
     )
 }

@@ -20,7 +20,7 @@ class PeriodLogicRulesTest : FunSpec({
             val sykmelding = generateSykmelding(
                 fom = LocalDate.now(),
                 tom = LocalDate.now().plusDays(15),
-                behandletTidspunkt = LocalDate.now().atStartOfDay()
+                behandletTidspunkt = LocalDate.now().atStartOfDay(),
             )
             val ruleMetadata = sykmelding.toRuleMetadata()
 
@@ -42,7 +42,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to false,
                 PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE to false,
                 PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT to false,
-                PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to false
+                PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to false,
 
             )
 
@@ -60,7 +60,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "avventendeOver16Dager" to false,
                 "forMangeBehandlingsDagerPrUke" to false,
                 "gradertOver99Prosent" to false,
-                "inneholderBehandlingsDager" to false
+                "inneholderBehandlingsDager" to false,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo null
@@ -68,7 +68,7 @@ class PeriodLogicRulesTest : FunSpec({
 
         test("Periode mangler, Status INVALID") {
             val sykmelding = generateSykmelding(
-                perioder = listOf()
+                perioder = listOf(),
             )
             val ruleMetadata = sykmelding.toRuleMetadata()
 
@@ -76,11 +76,11 @@ class PeriodLogicRulesTest : FunSpec({
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                PeriodLogicRules.PERIODER_MANGLER to true
+                PeriodLogicRules.PERIODER_MANGLER to true,
             )
 
             mapOf(
-                "perioder" to sykmelding.perioder
+                "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.PERIODER_MANGLER.ruleHit
@@ -91,9 +91,9 @@ class PeriodLogicRulesTest : FunSpec({
                 perioder = listOf(
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 9),
-                        tom = LocalDate.of(2018, 1, 7)
-                    )
-                )
+                        tom = LocalDate.of(2018, 1, 7),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -103,11 +103,11 @@ class PeriodLogicRulesTest : FunSpec({
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 PeriodLogicRules.PERIODER_MANGLER to false,
-                PeriodLogicRules.FRADATO_ETTER_TILDATO to true
+                PeriodLogicRules.FRADATO_ETTER_TILDATO to true,
             )
 
             mapOf(
-                "perioder" to sykmelding.perioder
+                "perioder" to sykmelding.perioder,
 
             ) shouldBeEqualTo status.ruleInputs
 
@@ -119,13 +119,13 @@ class PeriodLogicRulesTest : FunSpec({
                 perioder = listOf(
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 7),
-                        tom = LocalDate.of(2018, 1, 9)
+                        tom = LocalDate.of(2018, 1, 9),
                     ),
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 8),
-                        tom = LocalDate.of(2018, 1, 12)
-                    )
-                )
+                        tom = LocalDate.of(2018, 1, 12),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -136,11 +136,11 @@ class PeriodLogicRulesTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 PeriodLogicRules.PERIODER_MANGLER to false,
                 PeriodLogicRules.FRADATO_ETTER_TILDATO to false,
-                PeriodLogicRules.OVERLAPPENDE_PERIODER to true
+                PeriodLogicRules.OVERLAPPENDE_PERIODER to true,
             )
 
             mapOf(
-                "perioder" to sykmelding.perioder
+                "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OVERLAPPENDE_PERIODER.ruleHit
@@ -151,21 +151,21 @@ class PeriodLogicRulesTest : FunSpec({
                 perioder = listOf(
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 1),
-                        tom = LocalDate.of(2018, 1, 3)
+                        tom = LocalDate.of(2018, 1, 3),
                     ),
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 4),
-                        tom = LocalDate.of(2018, 1, 9)
+                        tom = LocalDate.of(2018, 1, 9),
                     ),
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 10),
-                        tom = LocalDate.of(2018, 1, 11)
+                        tom = LocalDate.of(2018, 1, 11),
                     ),
                     generatePeriode(
                         fom = LocalDate.of(2018, 1, 15),
-                        tom = LocalDate.of(2018, 1, 20)
-                    )
-                )
+                        tom = LocalDate.of(2018, 1, 20),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -177,14 +177,14 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.PERIODER_MANGLER to false,
                 PeriodLogicRules.FRADATO_ETTER_TILDATO to false,
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
-                PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to true
+                PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to true,
             )
 
             mapOf(
                 "perioder" to sykmelding.perioder,
                 "periodeRanges" to sykmelding.perioder
                     .sortedBy { it.fom }
-                    .map { it.fom to it.tom }
+                    .map { it.fom to it.tom },
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.OPPHOLD_MELLOM_PERIODER.ruleHit
@@ -199,9 +199,9 @@ class PeriodLogicRulesTest : FunSpec({
                         gradert = null,
                         avventendeInnspillTilArbeidsgiver = null,
                         reisetilskudd = false,
-                        behandlingsdager = 0
-                    )
-                )
+                        behandlingsdager = 0,
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -214,7 +214,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.FRADATO_ETTER_TILDATO to false,
                 PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
-                PeriodLogicRules.IKKE_DEFINERT_PERIODE to true
+                PeriodLogicRules.IKKE_DEFINERT_PERIODE to true,
             )
 
             mapOf(
@@ -222,7 +222,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "periodeRanges" to sykmelding.perioder
                     .sortedBy { it.fom }
                     .map { it.fom to it.tom },
-                "perioder" to sykmelding.perioder
+                "perioder" to sykmelding.perioder,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.IKKE_DEFINERT_PERIODE.ruleHit
@@ -233,10 +233,10 @@ class PeriodLogicRulesTest : FunSpec({
                 perioder = listOf(
                     generatePeriode(
                         fom = LocalDate.now().plusDays(31),
-                        tom = LocalDate.now().plusDays(37)
-                    )
+                        tom = LocalDate.now().plusDays(37),
+                    ),
                 ),
-                behandletTidspunkt = LocalDateTime.now()
+                behandletTidspunkt = LocalDateTime.now(),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -251,7 +251,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
                 PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                PeriodLogicRules.FREMDATERT to true
+                PeriodLogicRules.FREMDATERT to true,
             )
 
             mapOf(
@@ -261,7 +261,7 @@ class PeriodLogicRulesTest : FunSpec({
                     .map { it.fom to it.tom },
                 "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
-                "fremdatert" to true
+                "fremdatert" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FREMDATERT.ruleHit
@@ -272,14 +272,14 @@ class PeriodLogicRulesTest : FunSpec({
                 perioder = listOf(
                     generatePeriode(
                         fom = LocalDate.now(),
-                        tom = LocalDate.now()
+                        tom = LocalDate.now(),
                     ),
                     generatePeriode(
                         fom = LocalDate.now().plusDays(1),
-                        tom = LocalDate.now().plusDays(366)
-                    )
+                        tom = LocalDate.now().plusDays(366),
+                    ),
                 ),
-                behandletTidspunkt = LocalDateTime.now()
+                behandletTidspunkt = LocalDateTime.now(),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -295,7 +295,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
                 PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
-                PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to true
+                PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to true,
             )
 
             mapOf(
@@ -306,7 +306,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "perioder" to sykmelding.perioder,
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
-                "varighetOver1AAr" to true
+                "varighetOver1AAr" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.TOTAL_VARIGHET_OVER_ETT_AAR.ruleHit
@@ -314,7 +314,7 @@ class PeriodLogicRulesTest : FunSpec({
 
         test("BehandlingsDato etter mottatDato, Status INVALID") {
             val sykmelding = generateSykmelding(
-                behandletTidspunkt = LocalDateTime.now().plusDays(2)
+                behandletTidspunkt = LocalDateTime.now().plusDays(2),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -331,7 +331,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
-                PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to true
+                PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to true,
             )
 
             mapOf(
@@ -343,7 +343,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "tilbakeDatertMerEnn3AAr" to false,
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
-                "behandslingsDatoEtterMottatDato" to true
+                "behandslingsDatoEtterMottatDato" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.BEHANDLINGSDATO_ETTER_MOTTATTDATO.ruleHit
@@ -355,14 +355,14 @@ class PeriodLogicRulesTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(5),
-                        avventendeInnspillTilArbeidsgiver = "Bør gå minst mulig på jobb"
+                        avventendeInnspillTilArbeidsgiver = "Bør gå minst mulig på jobb",
                     ),
 
                     generatePeriode(
                         fom = LocalDate.now().plusDays(6),
-                        tom = LocalDate.now().plusDays(10)
-                    )
-                )
+                        tom = LocalDate.now().plusDays(10),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -380,7 +380,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.FREMDATERT to false,
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
-                PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to true
+                PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to true,
             )
 
             mapOf(
@@ -393,7 +393,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "fremdatert" to false,
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
-                "avventendeKombinert" to true
+                "avventendeKombinert" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_KOMBINERT.ruleHit
@@ -405,9 +405,9 @@ class PeriodLogicRulesTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(5),
-                        avventendeInnspillTilArbeidsgiver = "      "
-                    )
-                )
+                        avventendeInnspillTilArbeidsgiver = "      ",
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -426,7 +426,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
-                PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to true
+                PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to true,
             )
 
             mapOf(
@@ -442,7 +442,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "varighetOver1AAr" to false,
                 "behandslingsDatoEtterMottatDato" to false,
                 "avventendeKombinert" to false,
-                "manglendeInnspillArbeidsgiver" to true
+                "manglendeInnspillArbeidsgiver" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER.ruleHit
@@ -454,9 +454,9 @@ class PeriodLogicRulesTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(17),
-                        avventendeInnspillTilArbeidsgiver = "Bør gå minst mulig på jobb"
-                    )
-                )
+                        avventendeInnspillTilArbeidsgiver = "Bør gå minst mulig på jobb",
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -476,7 +476,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                 PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
-                PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to true
+                PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to true,
             )
 
             mapOf(
@@ -493,7 +493,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "behandslingsDatoEtterMottatDato" to false,
                 "avventendeKombinert" to false,
                 "manglendeInnspillArbeidsgiver" to false,
-                "avventendeOver16Dager" to true
+                "avventendeOver16Dager" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_OVER_16_DAGER.ruleHit
@@ -505,9 +505,9 @@ class PeriodLogicRulesTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now(),
-                        behandlingsdager = 2
-                    )
-                )
+                        behandlingsdager = 2,
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -528,7 +528,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                 PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to false,
-                PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE to true
+                PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE to true,
             )
 
             mapOf(
@@ -546,7 +546,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "avventendeKombinert" to false,
                 "manglendeInnspillArbeidsgiver" to false,
                 "avventendeOver16Dager" to false,
-                "forMangeBehandlingsDagerPrUke" to true
+                "forMangeBehandlingsDagerPrUke" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE.ruleHit
@@ -558,9 +558,9 @@ class PeriodLogicRulesTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now(),
-                        gradert = generateGradert(grad = 100)
-                    )
-                )
+                        gradert = generateGradert(grad = 100),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -582,7 +582,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to false,
                 PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE to false,
-                PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT to true
+                PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT to true,
             )
 
             mapOf(
@@ -601,7 +601,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "manglendeInnspillArbeidsgiver" to false,
                 "avventendeOver16Dager" to false,
                 "forMangeBehandlingsDagerPrUke" to false,
-                "gradertOver99Prosent" to true
+                "gradertOver99Prosent" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.GRADERT_SYKMELDING_OVER_99_PROSENT.ruleHit
@@ -613,9 +613,9 @@ class PeriodLogicRulesTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now(),
-                        behandlingsdager = 1
-                    )
-                )
+                        behandlingsdager = 1,
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -638,7 +638,7 @@ class PeriodLogicRulesTest : FunSpec({
                 PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER to false,
                 PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE to false,
                 PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT to false,
-                PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to true
+                PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER to true,
             )
 
             mapOf(
@@ -658,7 +658,7 @@ class PeriodLogicRulesTest : FunSpec({
                 "avventendeOver16Dager" to false,
                 "forMangeBehandlingsDagerPrUke" to false,
                 "gradertOver99Prosent" to false,
-                "inneholderBehandlingsDager" to true
+                "inneholderBehandlingsDager" to true,
             ) shouldBeEqualTo status.ruleInputs
 
             status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER.ruleHit

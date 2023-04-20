@@ -44,14 +44,14 @@ class JuridiskVurderingServiceTest : FunSpec({
                 merknader = null,
                 partnerreferanse = "16524",
                 vedlegg = null,
-                utenlandskSykmelding = null
+                utenlandskSykmelding = null,
             )
 
             val ruleMetadata = ruleMetadataSykmelding(receivedSykmelding.sykmelding.toRuleMetadata())
 
             val result = TilbakedateringRulesExecution().runRules(
                 sykmelding = receivedSykmelding.sykmelding,
-                ruleMetadata = ruleMetadata
+                ruleMetadata = ruleMetadata,
             )
             val results = listOf(result)
             juridiskVurderingService.processRuleResults(receivedSykmelding, results)
@@ -67,13 +67,13 @@ class JuridiskVurderingServiceTest : FunSpec({
                         fodselsnummer = receivedSykmelding.personNrPasient,
                         juridiskHenvisning = result.second.juridiskHenvisning,
                         sporing = mapOf(
-                            "sykmelding" to receivedSykmelding.sykmelding.id
+                            "sykmelding" to receivedSykmelding.sykmelding.id,
                         ),
                         input = result.first.ruleInputs,
                         utfall = toJuridiskUtfall(result.first.treeResult.status),
-                        tidsstempel = LocalDateTime.now()
-                    )
-                )
+                        tidsstempel = LocalDateTime.now(),
+                    ),
+                ),
             )
             verify {
                 kafkaProducer.send(
@@ -81,7 +81,7 @@ class JuridiskVurderingServiceTest : FunSpec({
                         val firstResult = it.value().juridiskeVurderinger.first()
                         firstResult.juridiskHenvisning == juridiskVurderingResult.juridiskeVurderinger.first().juridiskHenvisning &&
                             firstResult.utfall == toJuridiskUtfall(Status.OK)
-                    }
+                    },
                 )
             }
         }

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 class AzureAdV2Client(
     environment: Environment,
     private val httpClient: HttpClient,
-    private val azureAdV2Cache: AzureAdV2Cache = AzureAdV2Cache()
+    private val azureAdV2Cache: AzureAdV2Cache = AzureAdV2Cache(),
 ) {
     private val azureAppClientId = environment.clientIdV2
     private val azureAppClientSecret = environment.clientSecretV2
@@ -28,7 +28,7 @@ class AzureAdV2Client(
      * Returns a non-obo access token authenticated using app specific client credentials
      */
     suspend fun getAccessToken(
-        scope: String
+        scope: String,
     ): AzureAdV2Token? {
         return azureAdV2Cache.getAccessToken(scope)
             ?: getClientSecretAccessToken(scope)?.let {
@@ -37,7 +37,7 @@ class AzureAdV2Client(
     }
 
     private suspend fun getClientSecretAccessToken(
-        scope: String
+        scope: String,
     ): AzureAdV2Token? {
         return getAccessToken(
             Parameters.build {
@@ -45,12 +45,12 @@ class AzureAdV2Client(
                 append("client_secret", azureAppClientSecret)
                 append("scope", scope)
                 append("grant_type", "client_credentials")
-            }
+            },
         )?.toAzureAdV2Token()
     }
 
     private suspend fun getAccessToken(
-        formParameters: Parameters
+        formParameters: Parameters,
     ): AzureAdV2TokenResponse? {
         return try {
             val response: HttpResponse = httpClient.post(azureTokenEndpoint) {
@@ -66,11 +66,11 @@ class AzureAdV2Client(
     }
 
     private fun handleUnexpectedResponseException(
-        responseException: ResponseException
+        responseException: ResponseException,
     ): AzureAdV2TokenResponse? {
         log.error(
             "Error while requesting AzureAdAccessToken with statusCode=${responseException.response.status.value}",
-            responseException
+            responseException,
         )
         return null
     }

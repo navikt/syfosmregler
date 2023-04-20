@@ -32,9 +32,9 @@ object PdlServiceTest : FunSpec({
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse(
                 PdlResponse(
                     hentPerson = HentPerson(listOf(Foedsel("1900-01-01"))),
-                    hentIdenter = Identliste(listOf(IdentInformasjon(ident = "01245678901", gruppe = "FOLKEREGISTERIDENT", historisk = false)))
+                    hentIdenter = Identliste(listOf(IdentInformasjon(ident = "01245678901", gruppe = "FOLKEREGISTERIDENT", historisk = false))),
                 ),
-                errors = null
+                errors = null,
             )
 
             val person = pdlService.getPdlPerson("01245678901", loggingMeta)
@@ -46,7 +46,7 @@ object PdlServiceTest : FunSpec({
             coEvery { accessTokenClientMock.getAccessToken(any()) } returns AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse<PdlResponse>(
                 PdlResponse(null, null),
-                errors = null
+                errors = null,
             )
 
             val exception = assertFailsWith<PersonNotFoundInPdl> {
@@ -62,11 +62,11 @@ object PdlServiceTest : FunSpec({
             coEvery { pdlClient.getPerson(any(), any()) } returns GraphQLResponse<PdlResponse>(
                 PdlResponse(
                     hentPerson = HentPerson(
-                        foedsel = emptyList()
+                        foedsel = emptyList(),
                     ),
-                    hentIdenter = Identliste(emptyList())
+                    hentIdenter = Identliste(emptyList()),
                 ),
-                errors = null
+                errors = null,
             )
             val exception = assertFailsWith<PersonNotFoundInPdl> {
                 runBlocking {

@@ -27,7 +27,7 @@ val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
         rule = TILBAKEDATERING,
-        ruleResult = behandletTidspunkt.isAfter(fom.plusDays(3))
+        ruleResult = behandletTidspunkt.isAfter(fom.plusDays(3)),
     )
 }
 
@@ -37,7 +37,7 @@ val tilbakedateringInntil30Dager: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
         rule = TILBAKEDATERT_INNTIL_30_DAGER,
-        ruleResult = behandletTidspunkt.isBefore(fom.plusDays(31))
+        ruleResult = behandletTidspunkt.isBefore(fom.plusDays(31)),
     )
 }
 
@@ -47,7 +47,7 @@ val tilbakedateringInntil8Dager: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
         rule = TILBAKEDATERT_INNTIL_8_DAGER,
-        ruleResult = behandletTidspunkt.isBefore(fom.plusDays(9))
+        ruleResult = behandletTidspunkt.isBefore(fom.plusDays(9)),
     )
 }
 
@@ -59,10 +59,10 @@ val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, _ ->
         ruleInputs = mapOf(
             "fom" to fom,
             "tom" to tom,
-            "arbeidsgiverperiode" to arbeidsgiverperiode
+            "arbeidsgiverperiode" to arbeidsgiverperiode,
         ),
         rule = ARBEIDSGIVERPERIODE,
-        ruleResult = arbeidsgiverperiode
+        ruleResult = arbeidsgiverperiode,
     )
 }
 
@@ -73,7 +73,7 @@ val begrunnelse_min_1_ord: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("begrunnelse" to begrunnelse),
         rule = BEGRUNNELSE_MIN_1_ORD,
-        ruleResult = result
+        ruleResult = result,
     )
 }
 
@@ -84,7 +84,7 @@ val begrunnelse_min_3_ord: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("begrunnelse" to begrunnelse),
         rule = BEGRUNNELSE_MIN_3_ORD,
-        ruleResult = result
+        ruleResult = result,
     )
 }
 
@@ -93,7 +93,7 @@ val ettersending: TilbakedateringRule = { _, metadata ->
     RuleResult(
         ruleInputs = mutableMapOf("ettersending" to result),
         rule = ETTERSENDING,
-        ruleResult = result
+        ruleResult = result,
     )
 }
 
@@ -102,7 +102,7 @@ val forlengelse: TilbakedateringRule = { _, metadata ->
     RuleResult(
         ruleInputs = mapOf("forlengelse" to forlengelse),
         rule = FORLENGELSE,
-        ruleResult = forlengelse
+        ruleResult = forlengelse,
     )
 }
 
@@ -112,10 +112,10 @@ val spesialisthelsetjenesten: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf(
             "hoveddiagnose" to (hoveddiagnose ?: ""),
-            "spesialisthelsetjenesten" to spesialhelsetjenesten
+            "spesialisthelsetjenesten" to spesialhelsetjenesten,
         ),
         rule = SPESIALISTHELSETJENESTEN,
-        ruleResult = spesialhelsetjenesten
+        ruleResult = spesialhelsetjenesten,
     )
 }
 

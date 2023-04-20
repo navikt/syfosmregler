@@ -17,6 +17,6 @@ val gradertUnder20Prosent: GradertRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("gradertUnder20Prosent" to gradertUnder20Prosent),
         rule = GradertRules.GRADERT_UNDER_20_PROSENT,
-        ruleResult = gradertUnder20Prosent
+        ruleResult = gradertUnder20Prosent,
     )
 }

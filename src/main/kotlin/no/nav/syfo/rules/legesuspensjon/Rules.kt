@@ -11,6 +11,6 @@ val behandlerSuspendert: LegeSuspensjonRule = { behandlerSuspendert ->
     RuleResult(
         ruleInputs = mapOf("suspendert" to suspendert),
         rule = LegeSuspensjonRules.BEHANDLER_SUSPENDERT,
-        ruleResult = suspendert
+        ruleResult = suspendert,
     )
 }

@@ -23,7 +23,7 @@ enum class PeriodLogicRules {
     AVVENTENDE_SYKMELDING_OVER_16_DAGER,
     FOR_MANGE_BEHANDLINGSDAGER_PER_UKE,
     GRADERT_SYKMELDING_OVER_99_PROSENT,
-    SYKMELDING_MED_BEHANDLINGSDAGER
+    SYKMELDING_MED_BEHANDLINGSDAGER,
 }
 
 val periodLogicRuleTree = tree<PeriodLogicRules, RuleResult>(PeriodLogicRules.PERIODER_MANGLER) {
@@ -57,7 +57,7 @@ val periodLogicRuleTree = tree<PeriodLogicRules, RuleResult>(PeriodLogicRules.PE
                                                         no(PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER) {
                                                             yes(
                                                                 MANUAL_PROCESSING,
-                                                                PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER
+                                                                PeriodLogicRuleHit.SYKMELDING_MED_BEHANDLINGSDAGER,
                                                             )
                                                             no(OK)
                                                         }

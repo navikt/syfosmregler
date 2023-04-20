@@ -18,14 +18,14 @@ class SmregisterClient(
     private val smregisterEndpointURL: String,
     private val accessTokenClientV2: AzureAdV2Client,
     private val scope: String,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) {
 
     suspend fun harOverlappendeSykmelding(
         fnr: String,
         periodeliste: List<Periode>,
         diagnosekode: String?,
-        loggingMeta: LoggingMeta
+        loggingMeta: LoggingMeta,
     ): Boolean {
         if (periodeliste.size > 1) {
             log.info("Flere perioder i periodelisten returnerer false {}", fields(loggingMeta))
@@ -43,11 +43,11 @@ class SmregisterClient(
                 it.behandletTidspunkt.toLocalDate() <= periode.fom.plusDays(8)
         }.forEach { sykmelding ->
             if (sykmelding.sykmeldingsperioder.any { p ->
-                p.fom == periode.fom &&
-                    p.tom == periode.tom &&
-                    p.gradert?.grad == periode.gradert?.grad &&
-                    p.type == periode.tilPeriodetypeDTO()
-            }
+                    p.fom == periode.fom &&
+                        p.tom == periode.tom &&
+                        p.gradert?.grad == periode.gradert?.grad &&
+                        p.type == periode.tilPeriodetypeDTO()
+                }
             ) {
                 log.info("Fant tidligere innsendt sykmelding ${sykmelding.id} {}", fields(loggingMeta))
                 return true
@@ -75,27 +75,27 @@ data class SykmeldingDTO(
     val behandlingsutfall: BehandlingsutfallDTO,
     val sykmeldingsperioder: List<SykmeldingsperiodeDTO>,
     val behandletTidspunkt: OffsetDateTime,
-    val medisinskVurdering: MedisinskVurderingDTO?
+    val medisinskVurdering: MedisinskVurderingDTO?,
 )
 
 data class SykmeldingsperiodeDTO(
     val fom: LocalDate,
     val tom: LocalDate,
     val gradert: GradertDTO?,
-    val type: PeriodetypeDTO
+    val type: PeriodetypeDTO,
 )
 
 data class MedisinskVurderingDTO(
-    val hovedDiagnose: DiagnoseDTO?
+    val hovedDiagnose: DiagnoseDTO?,
 )
 
 data class DiagnoseDTO(
-    val kode: String
+    val kode: String,
 )
 
 data class GradertDTO(
     val grad: Int,
-    val reisetilskudd: Boolean
+    val reisetilskudd: Boolean,
 )
 
 enum class PeriodetypeDTO {
@@ -103,11 +103,11 @@ enum class PeriodetypeDTO {
     AVVENTENDE,
     BEHANDLINGSDAGER,
     GRADERT,
-    REISETILSKUDD
+    REISETILSKUDD,
 }
 
 data class BehandlingsutfallDTO(
-    val status: RegelStatusDTO
+    val status: RegelStatusDTO,
 )
 
 enum class RegelStatusDTO {

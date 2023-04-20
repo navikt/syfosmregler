@@ -22,9 +22,9 @@ class GradertTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now(),
-                        gradert = generateGradert(grad = 21)
-                    )
-                )
+                        gradert = generateGradert(grad = 21),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -34,7 +34,7 @@ class GradertTest : FunSpec({
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false,
                 doctorSuspensjon = false,
-                behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+                behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
             )
 
             val result = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
@@ -48,9 +48,9 @@ class GradertTest : FunSpec({
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now(),
-                        gradert = generateGradert(grad = 19)
-                    )
-                )
+                        gradert = generateGradert(grad = 19),
+                    ),
+                ),
             )
 
             val ruleMetadata = sykmelding.toRuleMetadata()
@@ -60,7 +60,7 @@ class GradertTest : FunSpec({
                 erNyttSyketilfelle = false,
                 erEttersendingAvTidligereSykmelding = false,
                 doctorSuspensjon = false,
-                behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+                behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
             )
 
             val result = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)

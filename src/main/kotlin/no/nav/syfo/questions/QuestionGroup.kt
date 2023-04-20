@@ -9,8 +9,8 @@ enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, va
             QuestionId.ID_6_1_2,
             QuestionId.ID_6_1_3,
             QuestionId.ID_6_1_4,
-            QuestionId.ID_6_1_5
-        )
+            QuestionId.ID_6_1_5,
+        ),
     ),
     GROUP_6_2(
         "6.2",
@@ -19,8 +19,8 @@ enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, va
             QuestionId.ID_6_2_1,
             QuestionId.ID_6_2_2,
             QuestionId.ID_6_2_3,
-            QuestionId.ID_6_2_4
-        )
+            QuestionId.ID_6_2_4,
+        ),
     ),
     GROUP_6_3("6.3", "Opplysninger ved vurdering av aktivitetskravet", listOf(QuestionId.ID_6_3_1, QuestionId.ID_6_3_2)),
     GROUP_6_4(
@@ -29,8 +29,8 @@ enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, va
         listOf(
             QuestionId.ID_6_4_1,
             QuestionId.ID_6_4_2,
-            QuestionId.ID_6_4_3
-        )
+            QuestionId.ID_6_4_3,
+        ),
     ),
     GROUP_6_5(
         "6.5",
@@ -39,8 +39,8 @@ enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, va
             QuestionId.ID_6_5_1,
             QuestionId.ID_6_5_2,
             QuestionId.ID_6_5_3,
-            QuestionId.ID_6_5_4
-        )
+            QuestionId.ID_6_5_4,
+        ),
     ),
     GROUP_6_6(
         "6.6",
@@ -48,7 +48,7 @@ enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, va
         listOf(
             QuestionId.ID_6_6_1,
             QuestionId.ID_6_6_2,
-            QuestionId.ID_6_6_3
-        )
-    )
+            QuestionId.ID_6_6_3,
+        ),
+    ),
 }

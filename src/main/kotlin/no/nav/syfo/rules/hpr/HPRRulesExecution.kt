@@ -28,7 +28,7 @@ class HPRRulesExecution(private val rootNode: HPRTreeNode = hprRuleTree) : RuleE
 
 private fun TreeNode<HPRRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
-    behandlerOgStartdato: BehandlerOgStartdato
+    behandlerOgStartdato: BehandlerOgStartdato,
 ): HPRTreeOutput =
     when (this) {
         is ResultNode -> HPRTreeOutput(treeResult = result)

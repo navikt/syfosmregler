@@ -27,9 +27,9 @@ class ArbeidsuforhetTest : FunSpec({
                 hovedDiagnose = Diagnose(
                     system = "2.16.578.1.12.4.1.1.9999",
                     kode = "A09",
-                    tekst = "Brudd legg/ankel"
-                )
-            )
+                    tekst = "Brudd legg/ankel",
+                ),
+            ),
         )
 
         val ruleMetadata = RuleMetadata(
@@ -41,7 +41,7 @@ class ArbeidsuforhetTest : FunSpec({
             legekontorOrgnr = null,
             tssid = null,
             avsenderFnr = "2",
-            pasientFodselsdato = person31Years
+            pasientFodselsdato = person31Years,
         )
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
@@ -49,18 +49,18 @@ class ArbeidsuforhetTest : FunSpec({
             erNyttSyketilfelle = false,
             erEttersendingAvTidligereSykmelding = false,
             doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
 
         val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
         status.first.treeResult.status shouldBeEqualTo Status.INVALID
         status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to true
+            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to true,
         )
 
         mapOf(
-            "ukjentDiagnoseKodeType" to true
+            "ukjentDiagnoseKodeType" to true,
 
         ) shouldBeEqualTo status.first.ruleInputs
 
@@ -72,8 +72,8 @@ class ArbeidsuforhetTest : FunSpec({
 
         val sykmelding = generateSykmelding(
             medisinskVurdering = generateMedisinskVurdering(
-                hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose()
-            )
+                hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose(),
+            ),
         )
 
         val ruleMetadata = RuleMetadata(
@@ -85,7 +85,7 @@ class ArbeidsuforhetTest : FunSpec({
             legekontorOrgnr = null,
             tssid = null,
             avsenderFnr = "2",
-            pasientFodselsdato = person31Years
+            pasientFodselsdato = person31Years,
         )
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
@@ -93,7 +93,7 @@ class ArbeidsuforhetTest : FunSpec({
             erNyttSyketilfelle = false,
             erEttersendingAvTidligereSykmelding = false,
             doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
 
         val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
@@ -101,12 +101,12 @@ class ArbeidsuforhetTest : FunSpec({
         status.first.treeResult.status shouldBeEqualTo Status.INVALID
         status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
-            ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to true
+            ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to true,
         )
 
         mapOf(
             "ukjentDiagnoseKodeType" to false,
-            "icpc2ZDiagnose" to true
+            "icpc2ZDiagnose" to true,
 
         ) shouldBeEqualTo status.first.ruleInputs
 
@@ -118,8 +118,8 @@ class ArbeidsuforhetTest : FunSpec({
         val sykmelding = generateSykmelding(
             medisinskVurdering = generateMedisinskVurdering(
                 hovedDiagnose = null,
-                annenFraversArsak = null
-            )
+                annenFraversArsak = null,
+            ),
         )
 
         val ruleMetadata = RuleMetadata(
@@ -131,7 +131,7 @@ class ArbeidsuforhetTest : FunSpec({
             legekontorOrgnr = null,
             tssid = null,
             avsenderFnr = "2",
-            pasientFodselsdato = person31Years
+            pasientFodselsdato = person31Years,
         )
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
@@ -139,7 +139,7 @@ class ArbeidsuforhetTest : FunSpec({
             erNyttSyketilfelle = false,
             erEttersendingAvTidligereSykmelding = false,
             doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
 
         val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
@@ -148,13 +148,13 @@ class ArbeidsuforhetTest : FunSpec({
         status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
-            ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to true
+            ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to true,
         )
 
         mapOf(
             "ukjentDiagnoseKodeType" to false,
             "icpc2ZDiagnose" to false,
-            "houvedDiagnoseEllerFraversgrunnMangler" to true
+            "houvedDiagnoseEllerFraversgrunnMangler" to true,
 
         ) shouldBeEqualTo status.first.ruleInputs
 
@@ -168,9 +168,9 @@ class ArbeidsuforhetTest : FunSpec({
                 hovedDiagnose = Diagnose(
                     system = "2.16.578.1.12.4.1.1.7110",
                     kode = "Z09",
-                    tekst = "Brudd legg/ankel"
-                )
-            )
+                    tekst = "Brudd legg/ankel",
+                ),
+            ),
         )
 
         val ruleMetadata = RuleMetadata(
@@ -182,7 +182,7 @@ class ArbeidsuforhetTest : FunSpec({
             legekontorOrgnr = null,
             tssid = null,
             avsenderFnr = "2",
-            pasientFodselsdato = person31Years
+            pasientFodselsdato = person31Years,
         )
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
@@ -190,7 +190,7 @@ class ArbeidsuforhetTest : FunSpec({
             erNyttSyketilfelle = false,
             erEttersendingAvTidligereSykmelding = false,
             doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
 
         val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
@@ -200,14 +200,14 @@ class ArbeidsuforhetTest : FunSpec({
             ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
             ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true
+            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true,
         )
 
         mapOf(
             "ukjentDiagnoseKodeType" to false,
             "icpc2ZDiagnose" to false,
             "houvedDiagnoseEllerFraversgrunnMangler" to false,
-            "ugyldigKodeVerkHouvedDiagnose" to true
+            "ugyldigKodeVerkHouvedDiagnose" to true,
 
         ) shouldBeEqualTo status.first.ruleInputs
 
@@ -222,10 +222,10 @@ class ArbeidsuforhetTest : FunSpec({
                     Diagnose(
                         system = "2.16.578.1.12.4.1.1.7110",
                         kode = "S09",
-                        tekst = "Brudd legg/ankel"
-                    )
-                )
-            )
+                        tekst = "Brudd legg/ankel",
+                    ),
+                ),
+            ),
         )
 
         val ruleMetadata = RuleMetadata(
@@ -237,7 +237,7 @@ class ArbeidsuforhetTest : FunSpec({
             legekontorOrgnr = null,
             tssid = null,
             avsenderFnr = "2",
-            pasientFodselsdato = person31Years
+            pasientFodselsdato = person31Years,
         )
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
@@ -245,7 +245,7 @@ class ArbeidsuforhetTest : FunSpec({
             erNyttSyketilfelle = false,
             erEttersendingAvTidligereSykmelding = false,
             doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null)
+            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
 
         val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
@@ -256,7 +256,7 @@ class ArbeidsuforhetTest : FunSpec({
             ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
             ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
             ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true
+            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true,
         )
 
         mapOf(
@@ -264,7 +264,7 @@ class ArbeidsuforhetTest : FunSpec({
             "icpc2ZDiagnose" to false,
             "houvedDiagnoseEllerFraversgrunnMangler" to false,
             "ugyldigKodeVerkHouvedDiagnose" to false,
-            "ugyldigKodeVerkBiDiagnose" to true
+            "ugyldigKodeVerkBiDiagnose" to true,
         ) shouldBeEqualTo status.first.ruleInputs
 
         status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit

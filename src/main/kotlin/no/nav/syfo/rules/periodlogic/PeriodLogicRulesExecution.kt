@@ -28,7 +28,7 @@ class PeriodLogicRulesExecution(private val rootNode: TreeNode<PeriodLogicRules,
 
 private fun TreeNode<PeriodLogicRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
-    ruleMetadata: RuleMetadataSykmelding
+    ruleMetadata: RuleMetadataSykmelding,
 ): PeriodLogicTreeOutput =
     when (this) {
         is ResultNode -> PeriodLogicTreeOutput(treeResult = result)

@@ -22,7 +22,7 @@ fun main() {
         "Pasient over 70" to patientAgeOver70RuleTree,
         "Periode" to periodLogicRuleTree,
         "Tilbakedatering" to tilbakedateringRuleTree,
-        "Gradert" to gradertRuleTree
+        "Gradert" to gradertRuleTree,
     )
 
     ruleTrees.forEach {
@@ -42,7 +42,7 @@ fun main() {
 private fun <T> TreeNode<T, RuleResult>.traverseTree(
     builder: StringBuilder,
     thisNodeKey: String,
-    nodeKey: String
+    nodeKey: String,
 ) {
     when (this) {
         is ResultNode -> {

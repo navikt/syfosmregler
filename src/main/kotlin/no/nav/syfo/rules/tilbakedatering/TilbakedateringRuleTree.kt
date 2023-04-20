@@ -36,7 +36,7 @@ enum class TilbakedateringRules {
     SPESIALISTHELSETJENESTEN,
     TILBAKEDATERING,
     TILBAKEDATERT_INNTIL_8_DAGER,
-    TILBAKEDATERT_INNTIL_30_DAGER
+    TILBAKEDATERT_INNTIL_30_DAGER,
 }
 
 val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {

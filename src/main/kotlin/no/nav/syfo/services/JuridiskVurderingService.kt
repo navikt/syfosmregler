@@ -15,13 +15,13 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class JuridiskVurderingResult(
-    val juridiskeVurderinger: List<JuridiskVurdering>
+    val juridiskeVurderinger: List<JuridiskVurdering>,
 )
 
 class JuridiskVurderingService(
     private val kafkaProducer: KafkaProducer<String, JuridiskVurderingResult>,
     val juridiskVurderingTopic: String,
-    val versjonsKode: String = getEnvVar("NAIS_APP_IMAGE")
+    val versjonsKode: String = getEnvVar("NAIS_APP_IMAGE"),
 ) {
     companion object {
         val EVENT_NAME = "subsumsjon"
@@ -31,7 +31,7 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>>
+        result: List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>>,
     ) {
         val juridiskVurderingResult = JuridiskVurderingResult(
             juridiskeVurderinger = result
@@ -40,21 +40,21 @@ class JuridiskVurderingService(
                         is MedJuridisk -> resultToJuridiskVurdering(receivedSykmelding, it.first, juridisk)
                         else -> null
                     }
-                }
+                },
         )
         kafkaProducer.send(
             ProducerRecord(
                 juridiskVurderingTopic,
                 receivedSykmelding.sykmelding.id,
-                juridiskVurderingResult
-            )
+                juridiskVurderingResult,
+            ),
         ).get()
     }
 
     private fun resultToJuridiskVurdering(
         receivedSykmelding: ReceivedSykmelding,
         result: TreeOutput<out Enum<*>, RuleResult>,
-        medJuridisk: MedJuridisk
+        medJuridisk: MedJuridisk,
     ): JuridiskVurdering {
         return JuridiskVurdering(
             id = UUID.randomUUID().toString(),
@@ -65,11 +65,11 @@ class JuridiskVurderingService(
             fodselsnummer = receivedSykmelding.personNrPasient,
             juridiskHenvisning = medJuridisk.juridiskHenvisning,
             sporing = mapOf(
-                "sykmelding" to receivedSykmelding.sykmelding.id
+                "sykmelding" to receivedSykmelding.sykmelding.id,
             ),
             input = result.ruleInputs,
             utfall = toJuridiskUtfall(result.treeResult.status),
-            tidsstempel = LocalDateTime.now()
+            tidsstempel = LocalDateTime.now(),
         )
     }
 

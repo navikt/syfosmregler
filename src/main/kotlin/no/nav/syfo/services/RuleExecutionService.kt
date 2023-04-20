@@ -33,13 +33,13 @@ class RuleExecutionService() {
         PatientAgeOver70RulesExecution(patientAgeOver70RuleTree),
         PeriodLogicRulesExecution(periodLogicRuleTree),
         TilbakedateringRulesExecution(tilbakedateringRuleTree),
-        GradertRulesExecution(gradertRuleTree)
+        GradertRulesExecution(gradertRuleTree),
     )
 
     fun runRules(
         sykmelding: Sykmelding,
         ruleMetadataSykmelding: RuleMetadataSykmelding,
-        sequence: Sequence<RuleExecution<out Enum<*>>> = ruleExecution
+        sequence: Sequence<RuleExecution<out Enum<*>>> = ruleExecution,
     ): List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>> {
         var lastStatus = Status.OK
         val results = sequence

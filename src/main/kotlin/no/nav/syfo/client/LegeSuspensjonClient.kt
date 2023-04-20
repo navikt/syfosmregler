@@ -18,14 +18,14 @@ class LegeSuspensjonClient(
     private val endpointUrl: String,
     private val azureAdV2Client: AzureAdV2Client,
     private val httpClient: HttpClient,
-    private val scope: String
+    private val scope: String,
 ) {
 
     suspend fun checkTherapist(
         therapistId: String,
         ediloggid: String,
         oppslagsdato: String,
-        loggingMeta: LoggingMeta
+        loggingMeta: LoggingMeta,
     ): Suspendert {
         val httpResponse = httpClient.get("$endpointUrl/btsys/api/v1/suspensjon/status") {
             accept(ContentType.Application.Json)
@@ -49,7 +49,7 @@ class LegeSuspensjonClient(
                     "Btsys (smgcp-proxy) svarte med kode {} for ediloggId {}, {}",
                     httpResponse.status,
                     ediloggid,
-                    fields(loggingMeta)
+                    fields(loggingMeta),
                 )
                 throw IOException("Btsys (smgcp-proxy) svarte med uventet kode ${httpResponse.status} for $ediloggid")
             }

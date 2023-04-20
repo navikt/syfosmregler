@@ -13,7 +13,7 @@ import java.time.Duration
 class PdlPersonService(
     private val pdlClient: PdlClient,
     private val accessTokenClientV2: AzureAdV2Client,
-    private val pdlScope: String
+    private val pdlScope: String,
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(PdlPersonService::class.java)

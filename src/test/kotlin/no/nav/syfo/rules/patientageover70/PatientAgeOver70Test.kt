@@ -26,9 +26,9 @@ class PatientAgeOver70Test : FunSpec({
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -40,14 +40,14 @@ class PatientAgeOver70Test : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person14Years
+                pasientFodselsdato = person14Years,
             )
 
             val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.OK
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70 to false
+                PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70 to false,
             )
 
             mapOf("pasientOver70Aar" to false) shouldBeEqualTo status.ruleInputs
@@ -63,9 +63,9 @@ class PatientAgeOver70Test : FunSpec({
                     hovedDiagnose = Diagnose(
                         system = "2.16.578.1.12.4.1.1.7170",
                         kode = "R24",
-                        tekst = "Blodig oppspytt/hemoptyse"
-                    )
-                )
+                        tekst = "Blodig oppspytt/hemoptyse",
+                    ),
+                ),
             )
 
             val ruleMetadata = RuleMetadata(
@@ -77,14 +77,14 @@ class PatientAgeOver70Test : FunSpec({
                 legekontorOrgnr = null,
                 tssid = null,
                 avsenderFnr = "2",
-                pasientFodselsdato = person70Years
+                pasientFodselsdato = person70Years,
             )
 
             val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
 
             status.treeResult.status shouldBeEqualTo Status.INVALID
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70 to true
+                PatientAgeOver70Rules.PASIENT_ELDRE_ENN_70 to true,
             )
 
             mapOf("pasientOver70Aar" to true) shouldBeEqualTo status.ruleInputs

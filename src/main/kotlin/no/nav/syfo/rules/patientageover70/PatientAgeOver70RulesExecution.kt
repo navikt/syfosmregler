@@ -30,14 +30,14 @@ class PatientAgeOver70RulesExecution(val rootNode: TreeNode<PatientAgeOver70Rule
                 paragraf = "8-3",
                 ledd = 1,
                 punktum = 2,
-                bokstav = null
-            )
+                bokstav = null,
+            ),
         )
 }
 
 private fun TreeNode<PatientAgeOver70Rules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
-    ruleMetadata: RuleMetadataSykmelding
+    ruleMetadata: RuleMetadataSykmelding,
 ): PatientAgeOver70TreeOutput =
     when (this) {
         is ResultNode -> PatientAgeOver70TreeOutput(treeResult = result)
