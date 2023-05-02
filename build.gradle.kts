@@ -14,7 +14,7 @@ val ktorVersion = "2.3.0"
 val logbackVersion = "1.4.7"
 val logstashEncoderVersion = "7.3"
 val prometheusVersion = "0.16.0"
-val smCommonVersion = "1.fbf33a9"
+val smCommonVersion = "1.0.1"
 val kotestVersion = "5.6.1"
 val mockkVersion = "1.13.5"
 val kotlinVersion = "1.8.21"
@@ -24,7 +24,6 @@ val commonsCodecVersion = "1.15"
 plugins {
     kotlin("jvm") version "1.8.21"
     id("org.jmailen.kotlinter") version "3.14.0"
-    id("com.diffplug.spotless") version "6.18.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
