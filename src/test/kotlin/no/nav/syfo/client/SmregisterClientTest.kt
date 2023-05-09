@@ -91,6 +91,19 @@ object SmregisterClientTest : FunSpec({
                         )
 
                         "fnr6" -> call.respond(HttpStatusCode.OK, sykmeldingRespons(fom = LocalDate.of(2021, 2, 15), diagnosekode = null))
+
+                        "fnr7" -> call.respond(
+                            HttpStatusCode.OK,
+                            sykmeldingRespons(
+                                fom = LocalDate.of(2021, 2, 15),
+                                merknader = listOf(
+                                    Merknad(
+                                        type = MerknadType.UGYLDIG_TILBAKEDATERING.name,
+                                        beskrivelse = null,
+                                    ),
+                                ),
+                            ),
+                        )
                     }
                 }
             }
@@ -112,7 +125,7 @@ object SmregisterClientTest : FunSpec({
 
     context("Test av SmRegisterClient") {
         test("False hvis bruker ikke har andre sykmeldinger") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
@@ -120,7 +133,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med annen fom") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 1, 15), tom = LocalDate.of(2021, 2, 15))),
                 "L89",
@@ -128,7 +141,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med samme fom som er tilbakedatert") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr3",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
@@ -136,7 +149,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("True hvis bruker har sykmelding med samme fom som ikke er tilbakedatert") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
@@ -144,7 +157,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo true
         }
         test("True hvis bruker har sykmelding med samme fom som er tilbakedatert 7 dager") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr4",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
@@ -152,7 +165,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo true
         }
         test("False hvis bruker har avvist sykmelding med samme fom som ikke er tilbakedatert") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr5",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 15), tom = LocalDate.of(2021, 3, 15))),
                 "L89",
@@ -160,7 +173,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))),
                 "L89",
@@ -168,7 +181,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med tom 2 dager etter ny tom") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 3, 15), tom = LocalDate.of(2021, 3, 17))),
                 "L89",
@@ -176,7 +189,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen diagnose") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr2",
                 listOf(lagPeriode(fom = LocalDate.of(2021, 2, 13), tom = LocalDate.of(2021, 2, 15))),
                 "L87",
@@ -184,7 +197,7 @@ object SmregisterClientTest : FunSpec({
             ) shouldBeEqualTo false
         }
         test("False hvis bruker har sykmelding med fom 2 dager før ny fom men annen grad") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 "fnr2",
                 listOf(
                     Periode(
@@ -205,7 +218,7 @@ object SmregisterClientTest : FunSpec({
 
     context("Test av ny regel") {
         test("Test av overlappende datoer, skal returnere false når periodene ikke stemmer") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 fnr = "fnr2",
                 listOf(
                     Periode(
@@ -224,7 +237,7 @@ object SmregisterClientTest : FunSpec({
         }
 
         test("Test med samme fom og tom med ulik gradering skal gi false") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 fnr = "fnr2",
                 listOf(
                     Periode(
@@ -243,7 +256,7 @@ object SmregisterClientTest : FunSpec({
         }
 
         test("Test med samme fom og tom med lik gradering skal gi true") {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 fnr = "fnr2",
                 listOf(
                     lagPeriode(
@@ -258,7 +271,7 @@ object SmregisterClientTest : FunSpec({
     }
 
     test("Test med samme fom og tom med lik gradering og ulik diagnose skal gi false") {
-        smregisterClient.harOverlappendeSykmelding(
+        smregisterClient.erEttersending(
             fnr = "fnr2",
             listOf(
                 lagPeriode(
@@ -272,7 +285,7 @@ object SmregisterClientTest : FunSpec({
     }
 
     test("Test med samme fom og tom med ulik gradering og lik diagnose skal gi false") {
-        smregisterClient.harOverlappendeSykmelding(
+        smregisterClient.erEttersending(
             fnr = "fnr2",
             listOf(
                 lagPeriode(
@@ -286,7 +299,7 @@ object SmregisterClientTest : FunSpec({
     }
 
     test("Test med samme fom og tom med lik gradering og manglende diagnoser skal gi false") {
-        smregisterClient.harOverlappendeSykmelding(
+        smregisterClient.erEttersending(
             fnr = "fnr6",
             listOf(
                 lagPeriode(
@@ -298,6 +311,20 @@ object SmregisterClientTest : FunSpec({
             loggingMeta,
         ) shouldBeEqualTo false
     }
+
+    test("test med merknader skal ikke være ettersending") {
+        smregisterClient.erEttersending(
+            fnr = "fnr7",
+            listOf(
+                lagPeriode(
+                    fom = LocalDate.of(2021, 2, 15),
+                    tom = LocalDate.of(2021, 3, 15),
+                ),
+            ),
+            "L89",
+            loggingMeta,
+        ) shouldBeEqualTo false
+    }
 })
 
 private fun sykmeldingRespons(
@@ -305,6 +332,7 @@ private fun sykmeldingRespons(
     behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
     behandletDato: LocalDate? = null,
     diagnosekode: String? = "L89",
+    merknader: List<Merknad>? = null,
 ) = listOf(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
@@ -323,6 +351,7 @@ private fun sykmeldingRespons(
             OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
         },
         medisinskVurdering = MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) }),
+        merknader = merknader,
     ),
 )
 
