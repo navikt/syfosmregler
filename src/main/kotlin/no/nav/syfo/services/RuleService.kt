@@ -110,7 +110,7 @@ class RuleService(
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
         val erEttersendingAvTidligereSykmelding = if (erTilbakedatert(receivedSykmelding)) {
-            smregisterClient.harOverlappendeSykmelding(
+            smregisterClient.erEttersending(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
                 receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,

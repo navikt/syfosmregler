@@ -21,7 +21,7 @@ class SmregisterClient(
     private val httpClient: HttpClient,
 ) {
 
-    suspend fun harOverlappendeSykmelding(
+    suspend fun erEttersending(
         fnr: String,
         periodeliste: List<Periode>,
         diagnosekode: String?,
@@ -39,6 +39,7 @@ class SmregisterClient(
         val sykmeldinger = hentSykmeldinger(fnr)
         sykmeldinger.filter {
             it.behandlingsutfall.status == RegelStatusDTO.OK &&
+                !harTilbakedatertMerknad(it) &&
                 it.medisinskVurdering?.hovedDiagnose?.kode == diagnosekode &&
                 it.behandletTidspunkt.toLocalDate() <= periode.fom.plusDays(8)
         }.forEach { sykmelding ->
@@ -54,6 +55,13 @@ class SmregisterClient(
             }
         }
         return false
+    }
+
+    private fun harTilbakedatertMerknad(sykmelding: SykmeldingDTO): Boolean {
+        return sykmelding.merknader?.any {
+            it.type == MerknadType.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER.name ||
+                it.type == MerknadType.UGYLDIG_TILBAKEDATERING.name
+        } ?: false
     }
 
     private suspend fun hentSykmeldinger(fnr: String): List<SykmeldingDTO> =
@@ -76,7 +84,18 @@ data class SykmeldingDTO(
     val sykmeldingsperioder: List<SykmeldingsperiodeDTO>,
     val behandletTidspunkt: OffsetDateTime,
     val medisinskVurdering: MedisinskVurderingDTO?,
+    val merknader: List<Merknad>?,
 )
+
+data class Merknad(
+    val type: String,
+    val beskrivelse: String?,
+)
+
+enum class MerknadType {
+    UGYLDIG_TILBAKEDATERING,
+    TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER,
+}
 
 data class SykmeldingsperiodeDTO(
     val fom: LocalDate,
