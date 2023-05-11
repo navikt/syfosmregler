@@ -7,7 +7,6 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
-import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.RULE_NODE_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.RULE_NODE_RULE_PATH_COUNTER

@@ -48,13 +48,13 @@ data class Merknad(
 enum class MerknadType {
     UGYLDIG_TILBAKEDATERING,
     TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER,
-    UNDER_BEHANDLING;
+    UNDER_BEHANDLING,
+    ;
     companion object {
-        fun contains(type: String) : Boolean {
+        fun contains(type: String): Boolean {
             return values().any { it.name == type }
         }
     }
-
 }
 
 data class SykmeldingsperiodeDTO(
