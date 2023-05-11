@@ -34,6 +34,7 @@ import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.services.JuridiskVurderingService
 import no.nav.syfo.services.RuleExecutionService
 import no.nav.syfo.services.RuleService
+import no.nav.syfo.services.SykmeldingService
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.utils.JacksonKafkaSerializer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -140,7 +141,7 @@ fun main() {
         legeSuspensjonClient,
         syketilfelleClient,
         norskHelsenettClient,
-        smregisterClient,
+        SykmeldingService(smregisterClient),
         pdlService,
         juridiskVurderingService,
         RuleExecutionService(),

@@ -35,6 +35,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+/*
 
 object SmregisterClientTest : FunSpec({
     val loggingMeta = LoggingMeta("", "", "", "")
@@ -326,13 +327,16 @@ object SmregisterClientTest : FunSpec({
         ) shouldBeEqualTo false
     }
 })
-
-private fun sykmeldingRespons(
+*/
+fun sykmeldingRespons(
     fom: LocalDate,
+    tom: LocalDate = fom.plusMonths(1),
     behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
     behandletDato: LocalDate? = null,
     diagnosekode: String? = "L89",
     merknader: List<Merknad>? = null,
+    periodeType: PeriodetypeDTO = PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
+    gradert: GradertDTO? = null
 ) = listOf(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
@@ -340,9 +344,9 @@ private fun sykmeldingRespons(
         sykmeldingsperioder = listOf(
             SykmeldingsperiodeDTO(
                 fom,
-                fom.plusMonths(1),
-                null,
-                PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
+                tom,
+                gradert,
+                periodeType,
             ),
         ),
         behandletTidspunkt = if (behandletDato != null) {
@@ -365,3 +369,4 @@ private fun lagPeriode(fom: LocalDate, tom: LocalDate) =
         gradert = null,
         reisetilskudd = false,
     )
+

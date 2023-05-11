@@ -6,11 +6,8 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
-import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
-import no.nav.syfo.log
 import no.nav.syfo.model.Periode
-import no.nav.syfo.utils.LoggingMeta
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
@@ -20,51 +17,7 @@ class SmregisterClient(
     private val scope: String,
     private val httpClient: HttpClient,
 ) {
-
-    suspend fun erEttersending(
-        fnr: String,
-        periodeliste: List<Periode>,
-        diagnosekode: String?,
-        loggingMeta: LoggingMeta,
-    ): Boolean {
-        if (periodeliste.size > 1) {
-            log.info("Flere perioder i periodelisten returnerer false {}", fields(loggingMeta))
-            return false
-        }
-        if (diagnosekode.isNullOrEmpty()) {
-            log.info("Diagnosekode mangler {}", fields(loggingMeta))
-            return false
-        }
-        val periode = periodeliste.first()
-        val sykmeldinger = hentSykmeldinger(fnr)
-        sykmeldinger.filter {
-            it.behandlingsutfall.status == RegelStatusDTO.OK &&
-                !harTilbakedatertMerknad(it) &&
-                it.medisinskVurdering?.hovedDiagnose?.kode == diagnosekode &&
-                it.behandletTidspunkt.toLocalDate() <= periode.fom.plusDays(8)
-        }.forEach { sykmelding ->
-            if (sykmelding.sykmeldingsperioder.any { p ->
-                    p.fom == periode.fom &&
-                        p.tom == periode.tom &&
-                        p.gradert?.grad == periode.gradert?.grad &&
-                        p.type == periode.tilPeriodetypeDTO()
-                }
-            ) {
-                log.info("Fant tidligere innsendt sykmelding ${sykmelding.id} {}", fields(loggingMeta))
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun harTilbakedatertMerknad(sykmelding: SykmeldingDTO): Boolean {
-        return sykmelding.merknader?.any {
-            it.type == MerknadType.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER.name ||
-                it.type == MerknadType.UGYLDIG_TILBAKEDATERING.name
-        } ?: false
-    }
-
-    private suspend fun hentSykmeldinger(fnr: String): List<SykmeldingDTO> =
+    suspend fun getSykmeldinger(fnr: String): List<SykmeldingDTO> =
         httpClient.get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
             accept(ContentType.Application.Json)
             val accessToken = accessTokenClientV2.getAccessToken(scope)
@@ -95,6 +48,13 @@ data class Merknad(
 enum class MerknadType {
     UGYLDIG_TILBAKEDATERING,
     TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER,
+    UNDER_BEHANDLING;
+    companion object {
+        fun contains(type: String) : Boolean {
+            return values().any { it.name == type }
+        }
+    }
+
 }
 
 data class SykmeldingsperiodeDTO(
