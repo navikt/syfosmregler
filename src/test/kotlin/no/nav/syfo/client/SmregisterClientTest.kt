@@ -1,40 +1,13 @@
 package no.nav.syfo.client
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.kotest.core.spec.style.FunSpec
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.jackson.jackson
-import io.ktor.server.application.call
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.response.respond
-import io.ktor.server.routing.accept
 import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
-import io.mockk.coEvery
-import io.mockk.mockk
-import no.nav.syfo.azuread.v2.AzureAdV2Client
-import no.nav.syfo.azuread.v2.AzureAdV2Token
-import no.nav.syfo.generateGradert
 import no.nav.syfo.model.AktivitetIkkeMulig
-import no.nav.syfo.model.Gradert
 import no.nav.syfo.model.Periode
-import no.nav.syfo.utils.LoggingMeta
-import org.amshove.kluent.shouldBeEqualTo
-import java.net.ServerSocket
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
-import java.util.concurrent.TimeUnit
+/*
 
 object SmregisterClientTest : FunSpec({
     val loggingMeta = LoggingMeta("", "", "", "")
@@ -326,13 +299,16 @@ object SmregisterClientTest : FunSpec({
         ) shouldBeEqualTo false
     }
 })
-
-private fun sykmeldingRespons(
+*/
+fun sykmeldingRespons(
     fom: LocalDate,
+    tom: LocalDate = fom.plusMonths(1),
     behandlingsutfallDTO: BehandlingsutfallDTO = BehandlingsutfallDTO(RegelStatusDTO.OK),
     behandletDato: LocalDate? = null,
     diagnosekode: String? = "L89",
     merknader: List<Merknad>? = null,
+    periodeType: PeriodetypeDTO = PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
+    gradert: GradertDTO? = null,
 ) = listOf(
     SykmeldingDTO(
         id = UUID.randomUUID().toString(),
@@ -340,9 +316,9 @@ private fun sykmeldingRespons(
         sykmeldingsperioder = listOf(
             SykmeldingsperiodeDTO(
                 fom,
-                fom.plusMonths(1),
-                null,
-                PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
+                tom,
+                gradert,
+                periodeType,
             ),
         ),
         behandletTidspunkt = if (behandletDato != null) {

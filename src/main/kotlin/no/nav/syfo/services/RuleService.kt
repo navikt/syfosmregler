@@ -7,7 +7,6 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
-import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.RULE_NODE_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.RULE_NODE_RULE_PATH_COUNTER
@@ -33,7 +32,7 @@ class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
     private val syketilfelleClient: SyketilfelleClient,
     private val norskHelsenettClient: NorskHelsenettClient,
-    private val smregisterClient: SmregisterClient,
+    private val sykmeldingService: SykmeldingService,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
     private val ruleExecutionService: RuleExecutionService,
@@ -109,22 +108,16 @@ class RuleService(
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
-        val erEttersendingAvTidligereSykmelding = if (erTilbakedatert(receivedSykmelding)) {
-            smregisterClient.erEttersending(
-                receivedSykmelding.personNrPasient,
-                receivedSykmelding.sykmelding.perioder,
-                receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,
-                loggingMeta,
-            )
+        val ettersendingOgForlengelse = if (erTilbakedatert(receivedSykmelding)) {
+            sykmeldingService.getSykmeldingMetadataInfo(receivedSykmelding.personNrPasient, receivedSykmelding.sykmelding, loggingMeta)
         } else {
-            null
+            SykmeldingMetadataInfo(null, emptyList())
         }
 
         val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = syketilfelleStartdato == null,
-            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding,
+            sykmeldingMetadataInfo = ettersendingOgForlengelse,
             doctorSuspensjon = doctorSuspendDeferred.await(),
             behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
         )
@@ -175,8 +168,7 @@ data class BehandlerOgStartdato(
 
 data class RuleMetadataSykmelding(
     val ruleMetadata: RuleMetadata,
-    val erNyttSyketilfelle: Boolean,
-    val erEttersendingAvTidligereSykmelding: Boolean?,
+    val sykmeldingMetadataInfo: SykmeldingMetadataInfo,
     val doctorSuspensjon: Boolean,
     val behandlerOgStartdato: BehandlerOgStartdato,
 )

@@ -11,6 +11,7 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
+import no.nav.syfo.services.SykmeldingMetadataInfo
 import no.nav.syfo.validation.validatePersonAndDNumber
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
@@ -346,8 +347,7 @@ class ValidationTest : FunSpec({
 
 fun ruleMetadataSykmelding(ruleMetadata: RuleMetadata) = RuleMetadataSykmelding(
     ruleMetadata = ruleMetadata,
-    erEttersendingAvTidligereSykmelding = false,
-    erNyttSyketilfelle = false,
+    sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
     doctorSuspensjon = false,
     behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
 )
