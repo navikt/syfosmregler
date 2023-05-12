@@ -108,8 +108,8 @@ class RuleService(
 
         log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
 
-        val erEttersendingAvTidligereSykmelding = if (erTilbakedatert(receivedSykmelding)) {
-            sykmeldingService.getSykmeldingMetadataInfo(receivedSykmelding.personNrPasient, receivedSykmelding.sykmelding, loggingMeta).ettersendingAv != null
+        val ettersendingOgForlengelse = if (erTilbakedatert(receivedSykmelding)) {
+            sykmeldingService.getSykmeldingMetadataInfo(receivedSykmelding.personNrPasient, receivedSykmelding.sykmelding, loggingMeta)
             /*smregisterClient.erEttersending(
                 receivedSykmelding.personNrPasient,
                 receivedSykmelding.sykmelding.perioder,
@@ -117,14 +117,13 @@ class RuleService(
                 loggingMeta,
             )  */
         } else {
-            null
+            SykmeldingMetadataInfo(null, emptyList())
         }
 
         val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = syketilfelleStartdato == null,
-            erEttersendingAvTidligereSykmelding = erEttersendingAvTidligereSykmelding,
+            sykmeldingMetadataInfo = ettersendingOgForlengelse,
             doctorSuspensjon = doctorSuspendDeferred.await(),
             behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
         )
@@ -175,8 +174,7 @@ data class BehandlerOgStartdato(
 
 data class RuleMetadataSykmelding(
     val ruleMetadata: RuleMetadata,
-    val erNyttSyketilfelle: Boolean,
-    val erEttersendingAvTidligereSykmelding: Boolean?,
+    val sykmeldingMetadataInfo: SykmeldingMetadataInfo,
     val doctorSuspensjon: Boolean,
     val behandlerOgStartdato: BehandlerOgStartdato,
 )

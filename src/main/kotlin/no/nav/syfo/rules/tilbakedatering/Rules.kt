@@ -89,20 +89,33 @@ val begrunnelse_min_3_ord: TilbakedateringRule = { sykmelding, _ ->
 }
 
 val ettersending: TilbakedateringRule = { _, metadata ->
-    val result = metadata.erEttersendingAvTidligereSykmelding ?: false
+    val ettersendingAv = metadata.sykmeldingMetadataInfo.ettersendingAv
+    val result = ettersendingAv != null
+    val ruleInputs = mutableMapOf<String, Any>(
+        "ettersending" to result,
+    )
+    if (ettersendingAv != null) {
+        ruleInputs["ettersendingAv"] = ettersendingAv
+    }
     RuleResult(
-        ruleInputs = mutableMapOf("ettersending" to result),
+        ruleInputs = ruleInputs,
         rule = ETTERSENDING,
         ruleResult = result,
     )
 }
 
 val forlengelse: TilbakedateringRule = { _, metadata ->
-    val forlengelse = !metadata.erNyttSyketilfelle
+    val forlengelse = metadata.sykmeldingMetadataInfo.forlengelseAv
+    val result = forlengelse.isNotEmpty()
+    val ruleInputs = mutableMapOf<String, Any>("forlengelse" to result)
+
+    if (result) {
+        ruleInputs["forlengelseAv"] = forlengelse
+    }
     RuleResult(
-        ruleInputs = mapOf("forlengelse" to forlengelse),
+        ruleInputs = ruleInputs,
         rule = FORLENGELSE,
-        ruleResult = forlengelse,
+        ruleResult = result,
     )
 }
 

@@ -10,6 +10,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.rules.validation.generatePersonNumber
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
+import no.nav.syfo.services.SykmeldingMetadataInfo
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
@@ -46,8 +47,7 @@ class ArbeidsuforhetTest : FunSpec({
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = false,
-            erEttersendingAvTidligereSykmelding = false,
+            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
             doctorSuspensjon = false,
             behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
@@ -90,8 +90,7 @@ class ArbeidsuforhetTest : FunSpec({
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = false,
-            erEttersendingAvTidligereSykmelding = false,
+            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
             doctorSuspensjon = false,
             behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
@@ -136,8 +135,7 @@ class ArbeidsuforhetTest : FunSpec({
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = false,
-            erEttersendingAvTidligereSykmelding = false,
+            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
             doctorSuspensjon = false,
             behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
@@ -187,8 +185,7 @@ class ArbeidsuforhetTest : FunSpec({
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = false,
-            erEttersendingAvTidligereSykmelding = false,
+            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
             doctorSuspensjon = false,
             behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )
@@ -242,8 +239,7 @@ class ArbeidsuforhetTest : FunSpec({
 
         val ruleMetadataSykmelding = RuleMetadataSykmelding(
             ruleMetadata = ruleMetadata,
-            erNyttSyketilfelle = false,
-            erEttersendingAvTidligereSykmelding = false,
+            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
             doctorSuspensjon = false,
             behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
         )

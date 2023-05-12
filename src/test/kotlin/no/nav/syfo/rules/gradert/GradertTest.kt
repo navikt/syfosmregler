@@ -8,6 +8,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
+import no.nav.syfo.services.SykmeldingMetadataInfo
 import org.amshove.kluent.shouldBeEqualTo
 import java.time.LocalDate
 
@@ -31,8 +32,7 @@ class GradertTest : FunSpec({
 
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = ruleMetadata,
-                erNyttSyketilfelle = false,
-                erEttersendingAvTidligereSykmelding = false,
+                sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
             )
@@ -57,8 +57,7 @@ class GradertTest : FunSpec({
 
             val ruleMetadataSykmelding = RuleMetadataSykmelding(
                 ruleMetadata = ruleMetadata,
-                erNyttSyketilfelle = false,
-                erEttersendingAvTidligereSykmelding = false,
+                sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
             )

@@ -18,7 +18,9 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.BehandlerOgStartdato
+import no.nav.syfo.services.Forlengelse
 import no.nav.syfo.services.RuleMetadataSykmelding
+import no.nav.syfo.services.SykmeldingMetadataInfo
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
@@ -36,8 +38,7 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
                 ruleMetadata = sykmelding.toRuleMetadata(),
-                true,
-                false,
+                SykmeldingMetadataInfo(null, emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
                     Behandler(emptyList(), null),
@@ -63,8 +64,7 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
                 ruleMetadata = sykmelding.toRuleMetadata(),
-                true,
-                true,
+                SykmeldingMetadataInfo("sykmeldingID", emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
                     Behandler(emptyList(), null),
@@ -81,6 +81,7 @@ class TilbakedateringTest : FunSpec({
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to true,
+                "ettersendingAv" to "sykmeldingID",
             )
         }
 
@@ -95,8 +96,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        true,
-                        false,
+                        SykmeldingMetadataInfo(null, emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
                             Behandler(emptyList(), null),
@@ -128,8 +128,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        true,
-                        false,
+                        SykmeldingMetadataInfo(null, emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
                             Behandler(emptyList(), null),
@@ -166,10 +165,15 @@ class TilbakedateringTest : FunSpec({
                         behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, null),
                     )
+                    val forlengelse = Forlengelse("sykmeldingId", sykmelding.perioder.first().fom, sykmelding.perioder.first().tom)
                     val sykmeldingMetadata = RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        false,
-                        false,
+                        SykmeldingMetadataInfo(
+                            null,
+                            listOf(
+                                forlengelse,
+                            ),
+                        ),
                         doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
                             Behandler(emptyList(), null),
@@ -191,6 +195,7 @@ class TilbakedateringTest : FunSpec({
                         "ettersending" to false,
                         "begrunnelse" to "",
                         "forlengelse" to true,
+                        "forlengelseAv" to listOf(forlengelse),
                     )
                 }
                 test("Ikke forlengelse, INVALID") {
@@ -202,8 +207,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        true,
-                        false,
+                        SykmeldingMetadataInfo(null, emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
                             Behandler(emptyList(), null),
@@ -242,8 +246,7 @@ class TilbakedateringTest : FunSpec({
                     )
                     val sykmeldingMetadata = RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        true,
-                        false,
+                        SykmeldingMetadataInfo(null, emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato = BehandlerOgStartdato(
                             Behandler(emptyList(), null),
@@ -288,8 +291,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -325,8 +327,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -366,8 +367,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -401,10 +401,10 @@ class TilbakedateringTest : FunSpec({
                     behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                     kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                 )
+                val forlengelse = Forlengelse("sykmeldingId", sykmelding.perioder.first().fom, sykmelding.perioder.first().tom)
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    false,
-                    false,
+                    SykmeldingMetadataInfo(null, listOf(forlengelse)),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -428,6 +428,7 @@ class TilbakedateringTest : FunSpec({
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to true,
+                    "forlengelseAv" to listOf(forlengelse),
                 )
             }
             test("Ikke forlengelse, MANUELL") {
@@ -439,8 +440,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -482,8 +482,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -521,8 +520,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -565,8 +563,7 @@ class TilbakedateringTest : FunSpec({
                 )
                 val sykmeldingMetadata = RuleMetadataSykmelding(
                     ruleMetadata = sykmelding.toRuleMetadata(),
-                    true,
-                    false,
+                    SykmeldingMetadataInfo(null, emptyList()),
                     doctorSuspensjon = false,
                     behandlerOgStartdato = BehandlerOgStartdato(
                         Behandler(emptyList(), null),
@@ -611,8 +608,7 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
                 ruleMetadata = sykmelding.toRuleMetadata(),
-                true,
-                false,
+                SykmeldingMetadataInfo(null, emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
                     Behandler(emptyList(), null),
@@ -647,8 +643,7 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
                 ruleMetadata = sykmelding.toRuleMetadata(),
-                true,
-                false,
+                SykmeldingMetadataInfo(null, emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
                     Behandler(emptyList(), null),
@@ -689,8 +684,7 @@ class TilbakedateringTest : FunSpec({
             )
             val sykmeldingMetadata = RuleMetadataSykmelding(
                 ruleMetadata = sykmelding.toRuleMetadata(),
-                true,
-                false,
+                SykmeldingMetadataInfo(null, emptyList()),
                 doctorSuspensjon = false,
                 behandlerOgStartdato = BehandlerOgStartdato(
                     Behandler(emptyList(), null),
