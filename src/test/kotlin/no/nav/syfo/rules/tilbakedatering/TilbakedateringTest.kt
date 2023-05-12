@@ -572,6 +572,7 @@ class TilbakedateringTest : FunSpec({
                         LocalDate.now().minusDays(15),
                     ),
                 )
+
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
 
                 status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
