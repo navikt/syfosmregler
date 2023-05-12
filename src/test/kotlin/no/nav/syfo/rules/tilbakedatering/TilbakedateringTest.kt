@@ -466,6 +466,7 @@ class TilbakedateringTest : FunSpec({
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
+                    "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to false,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -507,6 +508,7 @@ class TilbakedateringTest : FunSpec({
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
+                    "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to true,
                 )
@@ -546,6 +548,50 @@ class TilbakedateringTest : FunSpec({
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
+                    "syketilfelletStartdato" to sykmelding.perioder.first().fom,
+                    "tom" to sykmelding.perioder.first().tom,
+                    "arbeidsgiverperiode" to false,
+                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                    "spesialisthelsetjenesten" to false,
+                )
+            }
+
+            test("Utenfor arbeidsgiverperioden andre sykmelding, MANUELL") {
+                val sykmelding = generateSykmelding(
+                    fom = LocalDate.now(),
+                    tom = LocalDate.now().plusDays(2),
+                    behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
+                    kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
+                )
+                val sykmeldingMetadata = RuleMetadataSykmelding(
+                    ruleMetadata = sykmelding.toRuleMetadata(),
+                    SykmeldingMetadataInfo(null, emptyList()),
+                    doctorSuspensjon = false,
+                    behandlerOgStartdato = BehandlerOgStartdato(
+                        Behandler(emptyList(), null),
+                        LocalDate.now().minusDays(15),
+                    ),
+                )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+
+                status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
+                    TILBAKEDATERING to true,
+                    ETTERSENDING to false,
+                    TILBAKEDATERT_INNTIL_8_DAGER to false,
+                    TILBAKEDATERT_INNTIL_30_DAGER to true,
+                    BEGRUNNELSE_MIN_1_ORD to true,
+                    FORLENGELSE to false,
+                    ARBEIDSGIVERPERIODE to false,
+                    SPESIALISTHELSETJENESTEN to false,
+                )
+                status.ruleInputs shouldBeEqualTo mapOf(
+                    "fom" to sykmelding.perioder.first().fom,
+                    "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                    "ettersending" to false,
+                    "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                    "forlengelse" to false,
+                    "syketilfelletStartdato" to sykmeldingMetadata.behandlerOgStartdato.startdato,
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to false,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -589,6 +635,7 @@ class TilbakedateringTest : FunSpec({
                     "ettersending" to false,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
+                    "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                     "tom" to sykmelding.perioder.first().tom,
                     "arbeidsgiverperiode" to false,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,

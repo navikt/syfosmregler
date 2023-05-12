@@ -21,7 +21,7 @@ data class SykmeldingMetadataInfo(
 class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
     suspend fun getSykmeldingMetadataInfo(fnr: String, sykmelding: Sykmelding, loggingMetadata: LoggingMeta): SykmeldingMetadataInfo {
         val tidligereSykmeldinger = syfosmregisterClient.getSykmeldinger(fnr)
-            .filter { it.behandlingsutfall.status == RegelStatusDTO.OK }
+            .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
             .filterNot { harTilbakedatertMerknad(it) }
             .filter { it.medisinskVurdering?.hovedDiagnose?.kode != null }
             .filter { it.medisinskVurdering?.hovedDiagnose?.kode == sykmelding.medisinskVurdering.hovedDiagnose?.kode }

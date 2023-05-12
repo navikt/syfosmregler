@@ -51,13 +51,14 @@ val tilbakedateringInntil8Dager: TilbakedateringRule = { sykmelding, _ ->
     )
 }
 
-val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, _ ->
-    val fom = sykmelding.perioder.sortedFOMDate().first()
+val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, metadata ->
+    val startDato = metadata.behandlerOgStartdato.startdato ?: sykmelding.perioder.sortedFOMDate().first()
     val tom = sykmelding.perioder.sortedTOMDate().last()
-    val arbeidsgiverperiode = ChronoUnit.DAYS.between(fom, tom) < 16
+    val arbeidsgiverperiode = ChronoUnit.DAYS.between(startDato, tom) < 16
     RuleResult(
         ruleInputs = mapOf(
-            "fom" to fom,
+            "syketilfelletStartdato" to startDato,
+            "fom" to sykmelding.perioder.sortedFOMDate().first(),
             "tom" to tom,
             "arbeidsgiverperiode" to arbeidsgiverperiode,
         ),
