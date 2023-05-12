@@ -317,7 +317,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
         }
 
         test("Ikke forlengelse med sykmeldinger som er under behandling") {
-            val sykmeldingResponse = sykmeldingRespons(
+            val response = sykmeldingRespons(
                 fom = fom,
                 tom = tom,
                 merknader = listOf(
@@ -327,7 +327,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
                     ),
                 ),
             )
-            coEvery { smregisterClient.getSykmeldinger("1") } returns sykmeldingResponse
+            coEvery { smregisterClient.getSykmeldinger("1") } returns response
             val periode = getPeriode(
                 fom = tom.plusDays(5),
                 tom = tom.plusMonths(1),
@@ -339,7 +339,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
         }
 
         test("Ikke forlengelse med sykmeldinger som ikke er godkjente tilbakedateringer") {
-            val sykmeldingResponse = sykmeldingRespons(
+            val response = sykmeldingRespons(
                 fom = fom,
                 tom = tom,
                 merknader = listOf(
@@ -349,7 +349,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
                     ),
                 ),
             )
-            coEvery { smregisterClient.getSykmeldinger("1") } returns sykmeldingResponse
+            coEvery { smregisterClient.getSykmeldinger("1") } returns response
             val periode = getPeriode(
                 fom = tom.plusDays(5),
                 tom = tom.plusMonths(1),
@@ -361,7 +361,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
         }
 
         test("Forlengelse med en OK sykmelding og en sykmelding som ikke er godkjent tilbakedatering") {
-            val sykmeldingResponse = sykmeldingRespons(
+            val response = sykmeldingRespons(
                 fom = fom,
                 tom = tom,
                 merknader = listOf(
@@ -374,7 +374,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
                 fom = fom,
                 tom = tom,
             )
-            coEvery { smregisterClient.getSykmeldinger("1") } returns sykmeldingResponse
+            coEvery { smregisterClient.getSykmeldinger("1") } returns response
             val periode = getPeriode(
                 fom = tom.plusDays(5),
                 tom = tom.plusMonths(1),
@@ -384,7 +384,7 @@ class SykmeldingMetadataInfoTest : FunSpec({
             sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
             sykmeldingMetadata.forlengelseAv shouldBeEqualTo listOf(
                 Forlengelse(
-                    sykmeldingResponse[1].id,
+                    response[1].id,
                     fom,
                     tom,
                 ),
@@ -392,14 +392,14 @@ class SykmeldingMetadataInfoTest : FunSpec({
         }
 
         test("Forlengelse med flere sykmeldinger som passer") {
-            val sykmeldingResponse = sykmeldingRespons(
+            val response = sykmeldingRespons(
                 fom = fom,
                 tom = tom,
             ) + sykmeldingRespons(
                 fom = fom.plusDays(1),
                 tom = tom.minusDays(1),
             )
-            coEvery { smregisterClient.getSykmeldinger("1") } returns sykmeldingResponse
+            coEvery { smregisterClient.getSykmeldinger("1") } returns response
             val periode = getPeriode(
                 fom = tom.plusDays(5),
                 tom = tom.plusMonths(1),
@@ -409,12 +409,12 @@ class SykmeldingMetadataInfoTest : FunSpec({
             sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
             sykmeldingMetadata.forlengelseAv shouldBeEqualTo listOf(
                 Forlengelse(
-                    sykmeldingResponse[0].id,
+                    response[0].id,
                     fom,
                     tom,
                 ),
                 Forlengelse(
-                    sykmeldingResponse[1].id,
+                    response[1].id,
                     fom.plusDays(1),
                     tom.minusDays(1),
                 ),

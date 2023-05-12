@@ -110,12 +110,6 @@ class RuleService(
 
         val ettersendingOgForlengelse = if (erTilbakedatert(receivedSykmelding)) {
             sykmeldingService.getSykmeldingMetadataInfo(receivedSykmelding.personNrPasient, receivedSykmelding.sykmelding, loggingMeta)
-            /*smregisterClient.erEttersending(
-                receivedSykmelding.personNrPasient,
-                receivedSykmelding.sykmelding.perioder,
-                receivedSykmelding.sykmelding.medisinskVurdering.hovedDiagnose?.kode,
-                loggingMeta,
-            )  */
         } else {
             SykmeldingMetadataInfo(null, emptyList())
         }

@@ -27,7 +27,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
             .filter { it.medisinskVurdering?.hovedDiagnose?.kode == sykmelding.medisinskVurdering.hovedDiagnose?.kode }
         return SykmeldingMetadataInfo(
             ettersendingAv = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
-            forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger, loggingMetadata),
+            forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger),
         )
     }
 
@@ -55,7 +55,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         return tidligereSykmelding?.id
     }
 
-    private fun erForlengelse(sykmelding: Sykmelding, sykmeldinger: List<SykmeldingDTO>, loggingMeta: LoggingMeta): List<Forlengelse> {
+    private fun erForlengelse(sykmelding: Sykmelding, sykmeldinger: List<SykmeldingDTO>): List<Forlengelse> {
         val firstFom = sykmelding.perioder.sortedFOMDate().first()
         val tidligerePerioderFomTom = sykmeldinger
             .filter { it.medisinskVurdering?.hovedDiagnose?.kode == sykmelding.medisinskVurdering.hovedDiagnose?.kode }
