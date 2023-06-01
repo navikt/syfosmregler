@@ -69,14 +69,4 @@ enum class TilbakedateringRuleHit(
             messageForUser = "Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert",
         ),
     ),
-    OVER_3_AR(
-        ruleHit = RuleHit(
-            rule = "TILBAKEDATERT_MER_ENN_3_AR",
-            status = Status.INVALID,
-            messageForSender = "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
-                "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende: " +
-                "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
-            messageForUser = "Startdatoen er mer enn tre år tilbake.",
-        ),
-    ),
 }

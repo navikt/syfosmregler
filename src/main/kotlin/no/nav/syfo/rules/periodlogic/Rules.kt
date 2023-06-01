@@ -235,9 +235,6 @@ val inneholderBehandlingsDager: PeriodLogicRule = { sykmelding, _ ->
     )
 }
 
-fun List<Periode>.sortedFOMDate(): List<LocalDate> =
-    map { it.fom }.sorted()
-
 fun List<Periode>.sortedTOMDate(): List<LocalDate> =
     map { it.tom }.sorted()
 
