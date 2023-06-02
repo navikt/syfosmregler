@@ -14,6 +14,7 @@ enum class ValidationRules {
     UGYLDIG_ORGNR_LENGDE,
     AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR,
     BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR,
+    UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR
 }
 
 val validationRuleTree = tree<ValidationRules, RuleResult>(ValidationRules.PASIENT_YNGRE_ENN_13) {
@@ -28,7 +29,10 @@ val validationRuleTree = tree<ValidationRules, RuleResult>(ValidationRules.PASIE
                     yes(INVALID, ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR)
                     no(ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
                         yes(INVALID, ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR)
-                        no(OK)
+                        no(ValidationRules.UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR) {
+                            yes(INVALID, ValidationRuleHit.UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR)
+                            no(OK)
+                        }
                     }
                 }
             }
@@ -52,5 +56,6 @@ fun getRule(rules: ValidationRules): Rule<ValidationRules> {
         ValidationRules.UGYLDIG_ORGNR_LENGDE -> ugyldingOrgNummerLengde
         ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR -> avsenderSammeSomPasient
         ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> behandlerSammeSomPasient
+        ValidationRules.UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR -> under3ordISvarPaaUtdypendeopplysingerSvarRegelsettVersjon3
     }
 }

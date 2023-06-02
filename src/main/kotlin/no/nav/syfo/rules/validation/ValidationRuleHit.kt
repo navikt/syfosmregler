@@ -65,4 +65,14 @@ enum class ValidationRuleHit(
             messageForUser = "Den som er behandler av sykmeldingen er også pasient.",
         ),
     ),
+    UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR(
+        ruleHit = RuleHit(
+            rule = "UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR",
+            status = Status.INVALID,
+            messageForSender = "Sykmeldingen kan ikke rettes." +
+                    " Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
+                    "Sykmeldingens utdypende opplysninger er ikke tilstrekkelig utfyllt",
+            messageForUser = "Sykmeldingens utdypende opplysninger er ikke tilstrekkelig utfyllt",
+        ),
+    ),
 }

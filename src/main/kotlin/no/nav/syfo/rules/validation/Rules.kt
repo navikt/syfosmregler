@@ -91,7 +91,45 @@ val behandlerSammeSomPasient: ValidationRule = { sykmelding, ruleMetadata ->
     )
 }
 
+val under3ordISvarPaaUtdypendeopplysingerSvarRegelsettVersjon3: ValidationRule = { sykmelding, ruleMetadata ->
+
+    val rulesetVersion = ruleMetadata.rulesetVersion
+    val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
+
+    val group63 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_3, 3) != true &&
+            rulesetVersion in arrayOf("3")
+
+    val group64 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_4, 3) != true &&
+            rulesetVersion in arrayOf("3")
+
+    val group65 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_5, 3) != true &&
+            rulesetVersion in arrayOf("3")
+
+    RuleResult(
+        ruleInputs = mapOf("utdypendeOpplysninger" to utdypendeOpplysninger,
+            "group63" to group63,
+            "group64" to group64,
+            "group65" to group65),
+        rule = ValidationRules.UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR,
+        ruleResult = group63 && group64 && group65,
+    )
+}
+
+fun Map<String, Map<String, SporsmalSvar>>.containsMinWordsAnswersFor(
+    questionGroup: QuestionGroup, numberOfWords: Int) =
+    this[questionGroup.spmGruppeId]?.all { (spmId, _) ->
+        spmId in questionGroup.spmsvar.map { it.spmId } &&
+                questionGroup.spmsvar.all { getNumberOfWords(it.spmTekst) > numberOfWords }
+    }
+
 fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: QuestionGroup) =
     this[questionGroup.spmGruppeId]?.all { (spmId, _) ->
         spmId in questionGroup.spmsvar.map { it.spmId }
     }
+
+fun getNumberOfWords(input: String?): Int {
+    return input?.trim()?.split(" ")?.filter { containsLetters(it) }?.size ?: 0
+}
+fun containsLetters(text: String): Boolean {
+    return text.contains("""[A-Za-z]""".toRegex())
+}
