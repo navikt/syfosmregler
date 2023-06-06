@@ -70,8 +70,8 @@ enum class ValidationRuleHit(
             rule = "UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR",
             status = Status.INVALID,
             messageForSender = "Sykmeldingen kan ikke rettes." +
-                    " Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
-                    "Sykmeldingens utdypende opplysninger er ikke tilstrekkelig utfyllt",
+                " Pasienten har fått beskjed, den ble avvist grunnet følgende:" +
+                "Sykmeldingens utdypende opplysninger er ikke tilstrekkelig utfyllt",
             messageForUser = "Sykmeldingens utdypende opplysninger er ikke tilstrekkelig utfyllt",
         ),
     ),

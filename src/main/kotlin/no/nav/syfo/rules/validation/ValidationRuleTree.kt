@@ -14,7 +14,7 @@ enum class ValidationRules {
     UGYLDIG_ORGNR_LENGDE,
     AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR,
     BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR,
-    UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR
+    UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR,
 }
 
 val validationRuleTree = tree<ValidationRules, RuleResult>(ValidationRules.PASIENT_YNGRE_ENN_13) {

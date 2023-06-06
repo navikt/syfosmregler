@@ -96,30 +96,34 @@ val under3ordISvarPaaUtdypendeopplysingerSvarRegelsettVersjon3: ValidationRule =
     val rulesetVersion = ruleMetadata.rulesetVersion
     val utdypendeOpplysninger = sykmelding.utdypendeOpplysninger
 
-    val group63 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_3, 3) != true &&
-            rulesetVersion in arrayOf("3")
+    val group63 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_3, 3) == true &&
+        rulesetVersion in arrayOf("3")
 
-    val group64 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_4, 3) != true &&
-            rulesetVersion in arrayOf("3")
+    val group64 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_4, 3) == true &&
+        rulesetVersion in arrayOf("3")
 
-    val group65 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_5, 3) != true &&
-            rulesetVersion in arrayOf("3")
+    val group65 = utdypendeOpplysninger.containsMinWordsAnswersFor(QuestionGroup.GROUP_6_5, 3) == true &&
+        rulesetVersion in arrayOf("3")
 
     RuleResult(
-        ruleInputs = mapOf("utdypendeOpplysninger" to utdypendeOpplysninger,
+        ruleInputs = mapOf(
+            "utdypendeOpplysninger" to utdypendeOpplysninger,
             "group63" to group63,
             "group64" to group64,
-            "group65" to group65),
+            "group65" to group65,
+        ),
         rule = ValidationRules.UNDER_3_ORD_DYNAMISKE_SPORSMAAL_SVAR,
-        ruleResult = group63 && group64 && group65,
+        ruleResult = group63 || group64 || group65,
     )
 }
 
 fun Map<String, Map<String, SporsmalSvar>>.containsMinWordsAnswersFor(
-    questionGroup: QuestionGroup, numberOfWords: Int) =
+    questionGroup: QuestionGroup,
+    numberOfWords: Int,
+) =
     this[questionGroup.spmGruppeId]?.all { (spmId, _) ->
         spmId in questionGroup.spmsvar.map { it.spmId } &&
-                questionGroup.spmsvar.all { getNumberOfWords(it.spmTekst) > numberOfWords }
+            questionGroup.spmsvar.all { getNumberOfWords(it.spmTekst) > numberOfWords }
     }
 
 fun Map<String, Map<String, SporsmalSvar>>.containsAnswersFor(questionGroup: QuestionGroup) =
