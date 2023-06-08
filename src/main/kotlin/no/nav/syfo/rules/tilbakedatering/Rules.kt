@@ -7,6 +7,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.HOUVEDDIAGNOSE_MANGLER_NULL
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
@@ -130,6 +131,16 @@ val spesialisthelsetjenesten: TilbakedateringRule = { sykmelding, _ ->
         ),
         rule = SPESIALISTHELSETJENESTEN,
         ruleResult = spesialhelsetjenesten,
+    )
+}
+
+val houvedDiagnoseMangler: TilbakedateringRule = { sykmelding, _ ->
+    val hoveddiagnose = sykmelding.medisinskVurdering.hovedDiagnose
+
+    RuleResult(
+        ruleInputs = mapOf("hoveddiagnose" to (hoveddiagnose ?: "")),
+        rule = HOUVEDDIAGNOSE_MANGLER_NULL,
+        ruleResult = hoveddiagnose == null,
     )
 }
 
