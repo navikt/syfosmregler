@@ -7,7 +7,7 @@ import no.nav.syfo.model.Status.OK
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.HOUVEDDIAGNOSE_MANGLER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.HOVEDDIAGNOSE_MANGLER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_30_DAGER_MED_BEGRUNNELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_8_DAGER
@@ -19,7 +19,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.HOUVEDDIAGNOSE_MANGLER_NULL
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.HOVEDDIAGNOSE_MANGLER_NULL
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
@@ -39,14 +39,14 @@ enum class TilbakedateringRules {
     TILBAKEDATERING,
     TILBAKEDATERT_INNTIL_8_DAGER,
     TILBAKEDATERT_INNTIL_30_DAGER,
-    HOUVEDDIAGNOSE_MANGLER_NULL,
+    HOVEDDIAGNOSE_MANGLER_NULL,
 }
 
 val tilbakedateringRuleTree = tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
     yes(ETTERSENDING) {
         yes(OK)
-        no(HOUVEDDIAGNOSE_MANGLER_NULL) {
-            yes(INVALID, HOUVEDDIAGNOSE_MANGLER)
+        no(HOVEDDIAGNOSE_MANGLER_NULL) {
+            yes(INVALID, HOVEDDIAGNOSE_MANGLER)
             no(TILBAKEDATERT_INNTIL_8_DAGER) {
                 yes(BEGRUNNELSE_MIN_1_ORD) {
                     yes(OK)
@@ -108,6 +108,6 @@ fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {
         TILBAKEDATERING -> tilbakedatering
         TILBAKEDATERT_INNTIL_8_DAGER -> tilbakedateringInntil8Dager
         TILBAKEDATERT_INNTIL_30_DAGER -> tilbakedateringInntil30Dager
-        HOUVEDDIAGNOSE_MANGLER_NULL -> houvedDiagnoseMangler
+        HOVEDDIAGNOSE_MANGLER_NULL -> houvedDiagnoseMangler
     }
 }

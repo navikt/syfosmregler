@@ -69,9 +69,9 @@ enum class TilbakedateringRuleHit(
             messageForUser = "Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert",
         ),
     ),
-    HOUVEDDIAGNOSE_MANGLER(
+    HOVEDDIAGNOSE_MANGLER(
         ruleHit = RuleHit(
-            rule = "HOUVEDDIAGNOSE_MANGLER",
+            rule = "HOVEDDIAGNOSE_MANGLER",
             status = Status.INVALID,
             messageForSender = "Sykmeldingen er tilbakedatert og det er ikkje oppgitt houveddiagnose",
             messageForUser = "Sykmeldingen er tilbakedatert, og det mangler diagnose fra den som sykmeldte deg.",

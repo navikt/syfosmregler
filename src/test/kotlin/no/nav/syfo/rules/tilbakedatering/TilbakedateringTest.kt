@@ -14,7 +14,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.HOUVEDDIAGNOSE_MANGLER_NULL
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.HOVEDDIAGNOSE_MANGLER_NULL
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
@@ -112,7 +112,7 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOUVEDDIAGNOSE_MANGLER_NULL to true,
+                HOVEDDIAGNOSE_MANGLER_NULL to true,
             )
             status.ruleInputs shouldBeEqualTo mapOf(
                 "fom" to sykmelding.perioder.first().fom,
@@ -145,7 +145,7 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to true,
                     )
@@ -179,7 +179,7 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to false,
@@ -226,7 +226,7 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to true,
@@ -263,7 +263,7 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to false,
@@ -304,7 +304,7 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to false,
@@ -351,7 +351,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
@@ -389,7 +389,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
@@ -431,7 +431,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
@@ -470,7 +470,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -508,7 +508,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -553,7 +553,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -594,7 +594,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -640,7 +640,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -686,7 +686,7 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -734,7 +734,7 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                HOVEDDIAGNOSE_MANGLER_NULL to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
                 BEGRUNNELSE_MIN_3_ORD to true,
@@ -771,7 +771,7 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                HOVEDDIAGNOSE_MANGLER_NULL to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
                 BEGRUNNELSE_MIN_3_ORD to false,
@@ -814,7 +814,7 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOUVEDDIAGNOSE_MANGLER_NULL to false,
+                HOVEDDIAGNOSE_MANGLER_NULL to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
                 BEGRUNNELSE_MIN_3_ORD to false,
