@@ -2,7 +2,6 @@ package no.nav.syfo.rules.tilbakedatering
 
 import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.client.Behandler
-import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.KontaktMedPasient
 import no.nav.syfo.model.MedisinskVurdering
@@ -14,7 +13,6 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.HOVEDDIAGNOSE_MANGLER_NULL
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
@@ -86,42 +84,6 @@ class TilbakedateringTest : FunSpec({
                 "ettersendingAv" to "sykmeldingID",
             )
         }
-
-        test("tilbakedatert forlengelse uten houveddiagnose") {
-
-            val sykmelding = generateSykmelding(
-                medisinskVurdering = generateMedisinskVurdering(
-                    hovedDiagnose = null,
-                ),
-                fom = LocalDate.now(),
-                tom = LocalDate.now().plusDays(1),
-                behandletTidspunkt = LocalDate.now().plusDays(5).atStartOfDay(),
-                kontaktMedPasient = KontaktMedPasient(null, "arst"),
-            )
-            val sykmeldingMetadata = RuleMetadataSykmelding(
-                ruleMetadata = sykmelding.toRuleMetadata(),
-                SykmeldingMetadataInfo(null, emptyList()),
-                doctorSuspensjon = false,
-                behandlerOgStartdato = BehandlerOgStartdato(
-                    Behandler(emptyList(), null),
-                    null,
-                ),
-            )
-            val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
-            status.treeResult.status shouldBeEqualTo Status.INVALID
-            status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-                TILBAKEDATERING to true,
-                ETTERSENDING to false,
-                HOVEDDIAGNOSE_MANGLER_NULL to true,
-            )
-            status.ruleInputs shouldBeEqualTo mapOf(
-                "fom" to sykmelding.perioder.first().fom,
-                "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
-                "ettersending" to false,
-                "hoveddiagnose" to "",
-            )
-        }
-
         context("Tilbakedatert") {
             context("med begrunnelse") {
                 test("Med begrunnelse OK") {
@@ -145,7 +107,6 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to true,
                     )
@@ -153,7 +114,6 @@ class TilbakedateringTest : FunSpec({
                         "fom" to sykmelding.perioder.first().fom,
                         "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                         "ettersending" to false,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     )
                     status.treeResult.status shouldBeEqualTo Status.OK
@@ -179,7 +139,6 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to false,
@@ -189,7 +148,6 @@ class TilbakedateringTest : FunSpec({
                         "fom" to sykmelding.perioder.first().fom,
                         "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                         "ettersending" to false,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "begrunnelse" to "",
                         "forlengelse" to false,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -226,7 +184,6 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to true,
@@ -235,7 +192,6 @@ class TilbakedateringTest : FunSpec({
                         "fom" to sykmelding.perioder.first().fom,
                         "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                         "ettersending" to false,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "begrunnelse" to "",
                         "forlengelse" to true,
                         "forlengelseAv" to listOf(forlengelse),
@@ -263,7 +219,6 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to false,
@@ -273,7 +228,6 @@ class TilbakedateringTest : FunSpec({
                         "fom" to sykmelding.perioder.first().fom,
                         "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                         "ettersending" to false,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "begrunnelse" to "",
                         "forlengelse" to false,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -304,7 +258,6 @@ class TilbakedateringTest : FunSpec({
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        HOVEDDIAGNOSE_MANGLER_NULL to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to true,
                         BEGRUNNELSE_MIN_1_ORD to false,
                         FORLENGELSE to false,
@@ -314,7 +267,6 @@ class TilbakedateringTest : FunSpec({
                         "fom" to sykmelding.perioder.first().fom,
                         "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                         "ettersending" to false,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "begrunnelse" to "",
                         "forlengelse" to false,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -351,7 +303,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
@@ -361,7 +312,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to "",
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "spesialisthelsetjenesten" to true,
@@ -389,7 +339,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
@@ -399,7 +348,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to "",
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "spesialisthelsetjenesten" to false,
@@ -431,7 +379,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to false,
@@ -441,7 +388,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "spesialisthelsetjenesten" to false,
@@ -470,7 +416,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -480,7 +425,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to true,
                     "forlengelseAv" to listOf(forlengelse),
@@ -508,7 +452,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -520,7 +463,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
                     "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -553,7 +495,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -564,7 +505,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
                     "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -594,7 +534,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -606,7 +545,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
                     "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -640,7 +578,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -652,7 +589,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
                     "syketilfelletStartdato" to sykmeldingMetadata.behandlerOgStartdato.startdato,
@@ -686,7 +622,6 @@ class TilbakedateringTest : FunSpec({
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                     TILBAKEDATERING to true,
                     ETTERSENDING to false,
-                    HOVEDDIAGNOSE_MANGLER_NULL to false,
                     TILBAKEDATERT_INNTIL_8_DAGER to false,
                     TILBAKEDATERT_INNTIL_30_DAGER to true,
                     BEGRUNNELSE_MIN_1_ORD to true,
@@ -698,7 +633,6 @@ class TilbakedateringTest : FunSpec({
                     "fom" to sykmelding.perioder.first().fom,
                     "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                     "ettersending" to false,
-                    "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                     "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     "forlengelse" to false,
                     "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -734,7 +668,6 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOVEDDIAGNOSE_MANGLER_NULL to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
                 BEGRUNNELSE_MIN_3_ORD to true,
@@ -744,7 +677,6 @@ class TilbakedateringTest : FunSpec({
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to false,
-                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                 "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
             )
         }
@@ -771,7 +703,6 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOVEDDIAGNOSE_MANGLER_NULL to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
                 BEGRUNNELSE_MIN_3_ORD to false,
@@ -782,7 +713,6 @@ class TilbakedateringTest : FunSpec({
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to false,
-                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                 "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                 "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                 "spesialisthelsetjenesten" to false,
@@ -814,7 +744,6 @@ class TilbakedateringTest : FunSpec({
             status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
                 TILBAKEDATERING to true,
                 ETTERSENDING to false,
-                HOVEDDIAGNOSE_MANGLER_NULL to false,
                 TILBAKEDATERT_INNTIL_8_DAGER to false,
                 TILBAKEDATERT_INNTIL_30_DAGER to false,
                 BEGRUNNELSE_MIN_3_ORD to false,
@@ -825,7 +754,6 @@ class TilbakedateringTest : FunSpec({
                 "fom" to sykmelding.perioder.first().fom,
                 "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
                 "ettersending" to false,
-                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                 "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                 "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                 "spesialisthelsetjenesten" to true,

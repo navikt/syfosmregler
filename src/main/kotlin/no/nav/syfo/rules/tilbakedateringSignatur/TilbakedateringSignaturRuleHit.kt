@@ -57,12 +57,4 @@ enum class TilbakedateringSignaturRuleHit(
             messageForUser = "Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert",
         ),
     ),
-    HOVEDDIAGNOSE_MANGLER(
-        ruleHit = RuleHit(
-            rule = "HOVEDDIAGNOSE_MANGLER",
-            status = Status.INVALID,
-            messageForSender = "Sykmeldingen er tilbakedatert og det er ikkje oppgitt houveddiagnose",
-            messageForUser = "Sykmeldingen er tilbakedatert, og det mangler diagnose fra den som sykmeldte deg.",
-        ),
-    ),
 }
