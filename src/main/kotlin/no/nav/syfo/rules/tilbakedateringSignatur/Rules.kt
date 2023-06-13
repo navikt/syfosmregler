@@ -7,7 +7,6 @@ import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.BE
 import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.BEGRUNNELSE_MIN_3_ORD
 import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.FORLENGELSE
-import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.HOVEDDIAGNOSE_MANGLER_NULL
 import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedateringSignatur.TilbakedateringSignaturRules.TILBAKEDATERT_INNTIL_30_DAGER
@@ -131,16 +130,6 @@ val spesialisthelsetjenesten: TilbakedateringSignaturRule = { sykmelding, _ ->
         ),
         rule = SPESIALISTHELSETJENESTEN,
         ruleResult = spesialhelsetjenesten,
-    )
-}
-
-val houvedDiagnoseMangler: TilbakedateringSignaturRule = { sykmelding, _ ->
-    val houveddiagnose = sykmelding.medisinskVurdering.hovedDiagnose
-
-    RuleResult(
-        ruleInputs = mapOf("hoveddiagnose" to (houveddiagnose ?: "")),
-        rule = HOVEDDIAGNOSE_MANGLER_NULL,
-        ruleResult = houveddiagnose == null,
     )
 }
 
