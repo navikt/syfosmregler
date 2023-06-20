@@ -5,7 +5,9 @@ import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.sortedFOMDate
 
-typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadataSykmelding: RuleMetadataSykmelding) -> RuleResult<T>
+typealias Rule<T> =
+    (sykmelding: Sykmelding, ruleMetadataSykmelding: RuleMetadataSykmelding) -> RuleResult<T>
+
 typealias PatientAgeOver70Rule = Rule<PatientAgeOver70Rules>
 
 val pasientOver70Aar: PatientAgeOver70Rule = { sykmelding, ruleMetadataSykmelding ->

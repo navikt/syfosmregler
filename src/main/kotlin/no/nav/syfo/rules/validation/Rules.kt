@@ -9,10 +9,10 @@ import no.nav.syfo.services.daysBetween
 import no.nav.syfo.services.sortedTOMDate
 
 typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadata: RuleMetadata) -> RuleResult<T>
+
 typealias ValidationRule = Rule<ValidationRules>
 
 val pasientUnder13Aar: ValidationRule = { sykmelding, ruleMetadata ->
-
     val sisteTomDato = sykmelding.perioder.sortedTOMDate().last()
     val pasientFodselsdato = ruleMetadata.pasientFodselsdato
 
@@ -42,12 +42,17 @@ val manglendeDynamiskesporsmaalversjon2uke39: ValidationRule = { sykmelding, rul
     val sykmeldingPerioder = sykmelding.perioder
     val utdypendeOpplysinger = sykmelding.utdypendeOpplysninger
 
-    val manglendeDynamiskesporsmaalversjon2uke39 = rulesetVersion in arrayOf("2") &&
-        sykmeldingPerioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
-        utdypendeOpplysinger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
+    val manglendeDynamiskesporsmaalversjon2uke39 =
+        rulesetVersion in arrayOf("2") &&
+            sykmeldingPerioder.any { (it.fom..it.tom).daysBetween() > 273 } &&
+            utdypendeOpplysinger.containsAnswersFor(QuestionGroup.GROUP_6_5) != true
 
     RuleResult(
-        ruleInputs = mapOf("manglendeDynamiskesporsmaalversjon2uke39" to manglendeDynamiskesporsmaalversjon2uke39),
+        ruleInputs =
+            mapOf(
+                "manglendeDynamiskesporsmaalversjon2uke39" to
+                    manglendeDynamiskesporsmaalversjon2uke39
+            ),
         rule = ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39,
         ruleResult = manglendeDynamiskesporsmaalversjon2uke39,
     )

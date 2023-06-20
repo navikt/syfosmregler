@@ -1,6 +1,10 @@
 package no.nav.syfo.questions
 
-enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, val spmsvar: List<QuestionId>) {
+enum class QuestionGroup(
+    val spmGruppeId: String,
+    val spmGruppeTekst: String,
+    val spmsvar: List<QuestionId>
+) {
     GROUP_6_1(
         "6.1",
         "Utdypende opplysninger ved 4,12 og 28 uker ved visse diagnose",
@@ -22,7 +26,11 @@ enum class QuestionGroup(val spmGruppeId: String, val spmGruppeTekst: String, va
             QuestionId.ID_6_2_4,
         ),
     ),
-    GROUP_6_3("6.3", "Opplysninger ved vurdering av aktivitetskravet", listOf(QuestionId.ID_6_3_1, QuestionId.ID_6_3_2)),
+    GROUP_6_3(
+        "6.3",
+        "Opplysninger ved vurdering av aktivitetskravet",
+        listOf(QuestionId.ID_6_3_1, QuestionId.ID_6_3_2)
+    ),
     GROUP_6_4(
         "6.4",
         "Helseopplysninger ved 17 uker",

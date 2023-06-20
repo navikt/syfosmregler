@@ -15,15 +15,16 @@ import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias ArbeidsuforhetTreeOutput = TreeOutput<ArbeidsuforhetRules, RuleResult>
+
 typealias ArbeidsuforhetTreeNode = TreeNode<ArbeidsuforhetRules, RuleResult>
 
-class ArbeidsuforhetRulesExecution(private val rootNode: ArbeidsuforhetTreeNode = arbeidsuforhetRuleTree) : RuleExecution<ArbeidsuforhetRules> {
+class ArbeidsuforhetRulesExecution(
+    private val rootNode: ArbeidsuforhetTreeNode = arbeidsuforhetRuleTree
+) : RuleExecution<ArbeidsuforhetRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode
-            .evaluate(sykmelding, ruleMetadata.ruleMetadata)
-            .also { validationRulePath ->
-                log.info("Rules ${sykmelding.id}, ${validationRulePath.printRulePath()}")
-            } to UtenJuridisk
+        rootNode.evaluate(sykmelding, ruleMetadata.ruleMetadata).also { validationRulePath ->
+            log.info("Rules ${sykmelding.id}, ${validationRulePath.printRulePath()}")
+        } to UtenJuridisk
 }
 
 private fun TreeNode<ArbeidsuforhetRules, RuleResult>.evaluate(

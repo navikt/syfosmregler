@@ -15,15 +15,14 @@ import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias HPRTreeOutput = TreeOutput<HPRRules, RuleResult>
+
 typealias HPRTreeNode = TreeNode<HPRRules, RuleResult>
 
 class HPRRulesExecution(private val rootNode: HPRTreeNode = hprRuleTree) : RuleExecution<HPRRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode
-            .evaluate(sykmelding, ruleMetadata.behandlerOgStartdato)
-            .also { hprRulePath ->
-                log.info("Rules ${sykmelding.id}, ${hprRulePath.printRulePath()}")
-            } to UtenJuridisk
+        rootNode.evaluate(sykmelding, ruleMetadata.behandlerOgStartdato).also { hprRulePath ->
+            log.info("Rules ${sykmelding.id}, ${hprRulePath.printRulePath()}")
+        } to UtenJuridisk
 }
 
 private fun TreeNode<HPRRules, RuleResult>.evaluate(

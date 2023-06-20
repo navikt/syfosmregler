@@ -23,7 +23,7 @@ data class IdentInformasjon(
     val gruppe: String,
 )
 
-data class GraphQLResponse<T> (
+data class GraphQLResponse<T>(
     val data: T,
     val errors: List<ResponseError>?,
 )

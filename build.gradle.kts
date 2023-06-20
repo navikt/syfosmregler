@@ -19,11 +19,12 @@ val kotestVersion = "5.6.2"
 val mockkVersion = "1.13.5"
 val kotlinVersion = "1.8.22"
 val commonsCodecVersion = "1.15"
+val ktfmtVersion = "0.44"
 
 
 plugins {
     kotlin("jvm") version "1.8.22"
-    id("org.jmailen.kotlinter") version "3.15.0"
+    id("com.diffplug.spotless") version "6.19.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -147,8 +148,11 @@ tasks {
         }
     }
 
-    "check" {
-        dependsOn("formatKotlin")
-        dependsOn("generateRuleMermaid")
+    spotless {
+        kotlin { ktfmt(ktfmtVersion).kotlinlangStyle() }
+        check {
+            dependsOn("spotlessApply")
+            dependsOn("generateRuleMermaid")
+        }
     }
 }

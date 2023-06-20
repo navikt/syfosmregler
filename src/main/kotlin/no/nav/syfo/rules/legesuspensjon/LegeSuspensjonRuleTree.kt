@@ -10,16 +10,23 @@ enum class LegeSuspensjonRules {
     BEHANDLER_SUSPENDERT,
 }
 
-val legeSuspensjonRuleTree = tree<LegeSuspensjonRules, RuleResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {
-    yes(Status.INVALID, LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT)
-    no(OK)
-}
+val legeSuspensjonRuleTree =
+    tree<LegeSuspensjonRules, RuleResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {
+        yes(Status.INVALID, LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT)
+        no(OK)
+    }
 
-internal fun RuleNode<LegeSuspensjonRules, RuleResult>.yes(status: Status, ruleHit: LegeSuspensjonRuleHit? = null) {
+internal fun RuleNode<LegeSuspensjonRules, RuleResult>.yes(
+    status: Status,
+    ruleHit: LegeSuspensjonRuleHit? = null
+) {
     yes(RuleResult(status, ruleHit?.ruleHit))
 }
 
-internal fun RuleNode<LegeSuspensjonRules, RuleResult>.no(status: Status, ruleHit: LegeSuspensjonRuleHit? = null) {
+internal fun RuleNode<LegeSuspensjonRules, RuleResult>.no(
+    status: Status,
+    ruleHit: LegeSuspensjonRuleHit? = null
+) {
     no(RuleResult(status, ruleHit?.ruleHit))
 }
 

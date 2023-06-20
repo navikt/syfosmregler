@@ -1,5 +1,8 @@
 package no.nav.syfo.services
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -25,9 +28,6 @@ import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -41,131 +41,160 @@ class RuleService(
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
     @DelicateCoroutinesApi
-    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult = with(GlobalScope) {
-        val loggingMeta = LoggingMeta(
-            mottakId = receivedSykmelding.navLogId,
-            orgNr = receivedSykmelding.legekontorOrgNr,
-            msgId = receivedSykmelding.msgId,
-            sykmeldingId = receivedSykmelding.sykmelding.id,
-        )
+    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult =
+        with(GlobalScope) {
+            val loggingMeta =
+                LoggingMeta(
+                    mottakId = receivedSykmelding.navLogId,
+                    orgNr = receivedSykmelding.legekontorOrgNr,
+                    msgId = receivedSykmelding.msgId,
+                    sykmeldingId = receivedSykmelding.sykmelding.id,
+                )
 
-        log.info("Received a SM2013, going to rules, {}", fields(loggingMeta))
+            log.info("Received a SM2013, going to rules, {}", fields(loggingMeta))
 
-        val pdlPerson = pdlService.getPdlPerson(receivedSykmelding.personNrPasient, loggingMeta)
-        val fodsel = pdlPerson.foedsel?.firstOrNull()
-        val fodselsdato = if (fodsel?.foedselsdato?.isNotEmpty() == true) {
-            log.info("Extracting fodeseldato from PDL date")
-            LocalDate.parse(fodsel.foedselsdato)
-        } else {
-            log.info("Extracting fodeseldato from personNrPasient")
-            extractBornDate(receivedSykmelding.personNrPasient)
-        }
+            val pdlPerson = pdlService.getPdlPerson(receivedSykmelding.personNrPasient, loggingMeta)
+            val fodsel = pdlPerson.foedsel?.firstOrNull()
+            val fodselsdato =
+                if (fodsel?.foedselsdato?.isNotEmpty() == true) {
+                    log.info("Extracting fodeseldato from PDL date")
+                    LocalDate.parse(fodsel.foedselsdato)
+                } else {
+                    log.info("Extracting fodeseldato from personNrPasient")
+                    extractBornDate(receivedSykmelding.personNrPasient)
+                }
 
-        val ruleMetadata = RuleMetadata(
-            receivedDate = receivedSykmelding.mottattDato,
-            signatureDate = receivedSykmelding.sykmelding.signaturDato,
-            behandletTidspunkt = receivedSykmelding.sykmelding.behandletTidspunkt,
-            patientPersonNumber = receivedSykmelding.personNrPasient,
-            rulesetVersion = receivedSykmelding.rulesetVersion,
-            legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
-            tssid = receivedSykmelding.tssid,
-            avsenderFnr = receivedSykmelding.personNrLege,
-            pasientFodselsdato = fodselsdato,
-        )
+            val ruleMetadata =
+                RuleMetadata(
+                    receivedDate = receivedSykmelding.mottattDato,
+                    signatureDate = receivedSykmelding.sykmelding.signaturDato,
+                    behandletTidspunkt = receivedSykmelding.sykmelding.behandletTidspunkt,
+                    patientPersonNumber = receivedSykmelding.personNrPasient,
+                    rulesetVersion = receivedSykmelding.rulesetVersion,
+                    legekontorOrgnr = receivedSykmelding.legekontorOrgNr,
+                    tssid = receivedSykmelding.tssid,
+                    avsenderFnr = receivedSykmelding.personNrLege,
+                    pasientFodselsdato = fodselsdato,
+                )
 
-        val doctorSuspendDeferred = async {
-            val signaturDatoString = DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
-            legeSuspensjonClient.checkTherapist(
-                receivedSykmelding.personNrLege,
-                receivedSykmelding.navLogId,
-                signaturDatoString,
-                loggingMeta,
-            ).suspendert
-        }
-        val syketilfelleStartdatoDeferred = async {
-            syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(
-                receivedSykmelding.personNrPasient,
-                receivedSykmelding.sykmelding.perioder,
-                loggingMeta,
-            )
-        }
-
-        val behandler = norskHelsenettClient.finnBehandler(
-            behandlerFnr = receivedSykmelding.personNrLege,
-            msgId = receivedSykmelding.msgId,
-            loggingMeta = loggingMeta,
-        )
-            ?: return ValidationResult(
-                status = Status.INVALID,
-                ruleHits = listOf(
-                    RuleInfo(
-                        ruleName = "BEHANDLER_NOT_IN_HPR",
-                        messageForSender = "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
-                        messageForUser = "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
-                        ruleStatus = Status.INVALID,
-                    ),
-                ),
-            )
-
-        log.info("Avsender behandler har hprnummer: ${behandler.hprNummer}, {}", fields(loggingMeta))
-
-        val ettersendingOgForlengelse = if (erTilbakedatert(receivedSykmelding)) {
-            sykmeldingService.getSykmeldingMetadataInfo(
-                receivedSykmelding.personNrPasient,
-                receivedSykmelding.sykmelding,
-                loggingMeta,
-            )
-        } else {
-            SykmeldingMetadataInfo(null, emptyList())
-        }
-
-        val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
-        val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata,
-            sykmeldingMetadataInfo = ettersendingOgForlengelse,
-            doctorSuspensjon = doctorSuspendDeferred.await(),
-            behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
-        )
-
-        val result = ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
-        dryRunTilbakedateringSignatur(sykmelding = receivedSykmelding.sykmelding, ruleMetadataSykmelding)
-        result.forEach {
-            RULE_NODE_RULE_PATH_COUNTER.labels(
-                it.first.printRulePath(),
-            ).inc()
-        }
-
-        juridiskVurderingService.processRuleResults(receivedSykmelding, result)
-        val validationResult = validationResult(result.map { it.first })
-        RULE_NODE_RULE_HIT_COUNTER.labels(
-            validationResult.status.name,
-            validationResult.ruleHits.firstOrNull()?.ruleName ?: validationResult.status.name,
-        ).inc()
-        return validationResult
-    }
-
-    private fun validationResult(results: List<TreeOutput<out Enum<*>, RuleResult>>): ValidationResult =
-        ValidationResult(
-            status = results
-                .map { result -> result.treeResult.status }.let {
-                    it.firstOrNull { status -> status == Status.INVALID }
-                        ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
-                        ?: Status.OK
-                },
-            ruleHits = results.mapNotNull { it.treeResult.ruleHit }
-                .map { result ->
-                    RuleInfo(
-                        result.rule,
-                        result.messageForSender,
-                        result.messageForUser,
-                        result.status,
+            val doctorSuspendDeferred = async {
+                val signaturDatoString =
+                    DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
+                legeSuspensjonClient
+                    .checkTherapist(
+                        receivedSykmelding.personNrLege,
+                        receivedSykmelding.navLogId,
+                        signaturDatoString,
+                        loggingMeta,
                     )
-                },
+                    .suspendert
+            }
+            val syketilfelleStartdatoDeferred = async {
+                syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(
+                    receivedSykmelding.personNrPasient,
+                    receivedSykmelding.sykmelding.perioder,
+                    loggingMeta,
+                )
+            }
+
+            val behandler =
+                norskHelsenettClient.finnBehandler(
+                    behandlerFnr = receivedSykmelding.personNrLege,
+                    msgId = receivedSykmelding.msgId,
+                    loggingMeta = loggingMeta,
+                )
+                    ?: return ValidationResult(
+                        status = Status.INVALID,
+                        ruleHits =
+                            listOf(
+                                RuleInfo(
+                                    ruleName = "BEHANDLER_NOT_IN_HPR",
+                                    messageForSender =
+                                        "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
+                                    messageForUser =
+                                        "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
+                                    ruleStatus = Status.INVALID,
+                                ),
+                            ),
+                    )
+
+            log.info(
+                "Avsender behandler har hprnummer: ${behandler.hprNummer}, {}",
+                fields(loggingMeta)
+            )
+
+            val ettersendingOgForlengelse =
+                if (erTilbakedatert(receivedSykmelding)) {
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        receivedSykmelding.personNrPasient,
+                        receivedSykmelding.sykmelding,
+                        loggingMeta,
+                    )
+                } else {
+                    SykmeldingMetadataInfo(null, emptyList())
+                }
+
+            val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
+            val ruleMetadataSykmelding =
+                RuleMetadataSykmelding(
+                    ruleMetadata = ruleMetadata,
+                    sykmeldingMetadataInfo = ettersendingOgForlengelse,
+                    doctorSuspensjon = doctorSuspendDeferred.await(),
+                    behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
+                )
+
+            val result =
+                ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
+            dryRunTilbakedateringSignatur(
+                sykmelding = receivedSykmelding.sykmelding,
+                ruleMetadataSykmelding
+            )
+            result.forEach {
+                RULE_NODE_RULE_PATH_COUNTER.labels(
+                        it.first.printRulePath(),
+                    )
+                    .inc()
+            }
+
+            juridiskVurderingService.processRuleResults(receivedSykmelding, result)
+            val validationResult = validationResult(result.map { it.first })
+            RULE_NODE_RULE_HIT_COUNTER.labels(
+                    validationResult.status.name,
+                    validationResult.ruleHits.firstOrNull()?.ruleName
+                        ?: validationResult.status.name,
+                )
+                .inc()
+            return validationResult
+        }
+
+    private fun validationResult(
+        results: List<TreeOutput<out Enum<*>, RuleResult>>
+    ): ValidationResult =
+        ValidationResult(
+            status =
+                results
+                    .map { result -> result.treeResult.status }
+                    .let {
+                        it.firstOrNull { status -> status == Status.INVALID }
+                            ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
+                                ?: Status.OK
+                    },
+            ruleHits =
+                results
+                    .mapNotNull { it.treeResult.ruleHit }
+                    .map { result ->
+                        RuleInfo(
+                            result.rule,
+                            result.messageForSender,
+                            result.messageForUser,
+                            result.status,
+                        )
+                    },
         )
 
     private fun erTilbakedatert(receivedSykmelding: ReceivedSykmelding): Boolean =
-        receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() > receivedSykmelding.sykmelding.perioder.sortedFOMDate()
-            .first().plusDays(8)
+        receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate() >
+            receivedSykmelding.sykmelding.perioder.sortedFOMDate().first().plusDays(8)
 }
 
 data class BehandlerOgStartdato(
@@ -180,10 +209,8 @@ data class RuleMetadataSykmelding(
     val behandlerOgStartdato: BehandlerOgStartdato,
 )
 
-fun List<Periode>.sortedFOMDate(): List<LocalDate> =
-    map { it.fom }.sorted()
+fun List<Periode>.sortedFOMDate(): List<LocalDate> = map { it.fom }.sorted()
 
-fun List<Periode>.sortedTOMDate(): List<LocalDate> =
-    map { it.tom }.sorted()
+fun List<Periode>.sortedTOMDate(): List<LocalDate> = map { it.tom }.sorted()
 
 fun ClosedRange<LocalDate>.daysBetween(): Long = ChronoUnit.DAYS.between(start, endInclusive)

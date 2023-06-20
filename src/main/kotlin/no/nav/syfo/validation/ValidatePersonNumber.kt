@@ -32,7 +32,8 @@ fun validatePersonDNumberMod11(personNumber: String): Boolean {
 
 private fun validatePersonAndPersonDNumberRange(personNumber: String): Boolean {
     val personNumberBornDay = personNumber.substring(0, 2)
-    return validatePersonNumberRange(personNumberBornDay) || validatePersonDNumberRange(personNumberBornDay)
+    return validatePersonNumberRange(personNumberBornDay) ||
+        validatePersonDNumberRange(personNumberBornDay)
 }
 
 fun validatePersonAndDNumber(personNumber: String): Boolean =
@@ -45,8 +46,13 @@ fun validatePersonNumberRange(personNumberFirstAndSecoundChar: String): Boolean 
 fun validatePersonDNumberRange(personNumberFirstAndSecoundChar: String): Boolean {
     return personNumberFirstAndSecoundChar.toInt() in 41..71
 }
+
 fun extractBornDate(personIdent: String): LocalDate =
-    LocalDate.of(extractBornYear(personIdent), extractBornMonth(personIdent), extractBornDay(personIdent))
+    LocalDate.of(
+        extractBornYear(personIdent),
+        extractBornMonth(personIdent),
+        extractBornDay(personIdent)
+    )
 
 fun extractBornYear(personIdent: String): Int {
     val lastTwoDigitsOfYear = extractLastTwoDigistOfyear(personIdent)

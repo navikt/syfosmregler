@@ -25,16 +25,17 @@ import no.nav.syfo.rules.validation.validationRuleTree
 
 class RuleExecutionService() {
 
-    private val ruleExecution = sequenceOf(
-        LegeSuspensjonRulesExecution(legeSuspensjonRuleTree),
-        HPRRulesExecution(hprRuleTree),
-        ArbeidsuforhetRulesExecution(arbeidsuforhetRuleTree),
-        ValidationRulesExecution(validationRuleTree),
-        PatientAgeOver70RulesExecution(patientAgeOver70RuleTree),
-        PeriodLogicRulesExecution(periodLogicRuleTree),
-        TilbakedateringRulesExecution(tilbakedateringRuleTree),
-        GradertRulesExecution(gradertRuleTree),
-    )
+    private val ruleExecution =
+        sequenceOf(
+            LegeSuspensjonRulesExecution(legeSuspensjonRuleTree),
+            HPRRulesExecution(hprRuleTree),
+            ArbeidsuforhetRulesExecution(arbeidsuforhetRuleTree),
+            ValidationRulesExecution(validationRuleTree),
+            PatientAgeOver70RulesExecution(patientAgeOver70RuleTree),
+            PeriodLogicRulesExecution(periodLogicRuleTree),
+            TilbakedateringRulesExecution(tilbakedateringRuleTree),
+            GradertRulesExecution(gradertRuleTree),
+        )
 
     fun runRules(
         sykmelding: Sykmelding,
@@ -42,16 +43,17 @@ class RuleExecutionService() {
         sequence: Sequence<RuleExecution<out Enum<*>>> = ruleExecution,
     ): List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>> {
         var lastStatus = Status.OK
-        val results = sequence
-            .map { it.runRules(sykmelding, ruleMetadataSykmelding) }
-            .takeWhile {
-                if (lastStatus == Status.OK) {
-                    lastStatus = it.first.treeResult.status
-                    true
-                } else {
-                    false
+        val results =
+            sequence
+                .map { it.runRules(sykmelding, ruleMetadataSykmelding) }
+                .takeWhile {
+                    if (lastStatus == Status.OK) {
+                        lastStatus = it.first.treeResult.status
+                        true
+                    } else {
+                        false
+                    }
                 }
-            }
         return results.toList()
     }
 }

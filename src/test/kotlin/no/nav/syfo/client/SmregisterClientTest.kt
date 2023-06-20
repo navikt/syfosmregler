@@ -1,12 +1,13 @@
 package no.nav.syfo.client
 
 import io.ktor.server.routing.get
-import no.nav.syfo.model.AktivitetIkkeMulig
-import no.nav.syfo.model.Periode
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
+import no.nav.syfo.model.AktivitetIkkeMulig
+import no.nav.syfo.model.Periode
+
 /*
 
 object SmregisterClientTest : FunSpec({
@@ -309,27 +310,31 @@ fun sykmeldingRespons(
     merknader: List<Merknad>? = null,
     periodeType: PeriodetypeDTO = PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
     gradert: GradertDTO? = null,
-) = listOf(
-    SykmeldingDTO(
-        id = UUID.randomUUID().toString(),
-        behandlingsutfall = behandlingsutfallDTO,
-        sykmeldingsperioder = listOf(
-            SykmeldingsperiodeDTO(
-                fom,
-                tom,
-                gradert,
-                periodeType,
-            ),
+) =
+    listOf(
+        SykmeldingDTO(
+            id = UUID.randomUUID().toString(),
+            behandlingsutfall = behandlingsutfallDTO,
+            sykmeldingsperioder =
+                listOf(
+                    SykmeldingsperiodeDTO(
+                        fom,
+                        tom,
+                        gradert,
+                        periodeType,
+                    ),
+                ),
+            behandletTidspunkt =
+                if (behandletDato != null) {
+                    OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
+                } else {
+                    OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
+                },
+            medisinskVurdering =
+                MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) }),
+            merknader = merknader,
         ),
-        behandletTidspunkt = if (behandletDato != null) {
-            OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
-        } else {
-            OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
-        },
-        medisinskVurdering = MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) }),
-        merknader = merknader,
-    ),
-)
+    )
 
 private fun lagPeriode(fom: LocalDate, tom: LocalDate) =
     Periode(

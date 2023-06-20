@@ -1,16 +1,17 @@
 package no.nav.syfo.rules.periodlogic
 
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.services.daysBetween
 import no.nav.syfo.services.sortedFOMDate
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadata: RuleMetadata) -> RuleResult<T>
+
 typealias PeriodLogicRule = Rule<PeriodLogicRules>
 
 val periodeMangler: PeriodLogicRule = { sykmelding, _ ->
@@ -39,13 +40,12 @@ val fraDatoEtterTilDato: PeriodLogicRule = { sykmelding, _ ->
 val overlappendePerioder: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val overlappendePerioder = perioder.any { periodA ->
-        perioder
-            .filter { periodB -> periodB != periodA }
-            .any { periodB ->
-                periodA.fom in periodB.range() || periodA.tom in periodB.range()
-            }
-    }
+    val overlappendePerioder =
+        perioder.any { periodA ->
+            perioder
+                .filter { periodB -> periodB != periodA }
+                .any { periodB -> periodA.fom in periodB.range() || periodA.tom in periodB.range() }
+        }
 
     RuleResult(
         ruleInputs = mapOf("perioder" to perioder),
@@ -55,10 +55,7 @@ val overlappendePerioder: PeriodLogicRule = { sykmelding, _ ->
 }
 
 val oppholdMellomPerioder: PeriodLogicRule = { sykmelding, _ ->
-
-    val periodeRanges = sykmelding.perioder
-        .sortedBy { it.fom }
-        .map { it.fom to it.tom }
+    val periodeRanges = sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom }
 
     var oppholdMellomPerioder = false
     for (i in 1 until periodeRanges.size) {
@@ -79,12 +76,14 @@ val oppholdMellomPerioder: PeriodLogicRule = { sykmelding, _ ->
 val ikkeDefinertPeriode: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val ikkeDefinertPeriode = perioder.any {
-        it.aktivitetIkkeMulig == null &&
-            it.gradert == null &&
-            it.avventendeInnspillTilArbeidsgiver.isNullOrEmpty() &&
-            !it.reisetilskudd && (it.behandlingsdager == null || it.behandlingsdager == 0)
-    }
+    val ikkeDefinertPeriode =
+        perioder.any {
+            it.aktivitetIkkeMulig == null &&
+                it.gradert == null &&
+                it.avventendeInnspillTilArbeidsgiver.isNullOrEmpty() &&
+                !it.reisetilskudd &&
+                (it.behandlingsdager == null || it.behandlingsdager == 0)
+        }
 
     RuleResult(
         ruleInputs = mapOf("perioder" to perioder),
@@ -97,10 +96,11 @@ val fremdatertOver30Dager: PeriodLogicRule = { sykmelding, ruleMetadata ->
     val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
     val behandletTidspunkt = ruleMetadata.behandletTidspunkt
 
-    val fremdatert = when (forsteFomDato) {
-        null -> false
-        else -> forsteFomDato > behandletTidspunkt.plusDays(30).toLocalDate()
-    }
+    val fremdatert =
+        when (forsteFomDato) {
+            null -> false
+            else -> forsteFomDato > behandletTidspunkt.plusDays(30).toLocalDate()
+        }
 
     RuleResult(
         ruleInputs = mapOf("fremdatert" to fremdatert),
@@ -110,12 +110,14 @@ val fremdatertOver30Dager: PeriodLogicRule = { sykmelding, ruleMetadata ->
 }
 val tilbakeDatertOver3Ar: PeriodLogicRule = { sykmelding, _ ->
     val forsteFomDato = sykmelding.perioder.sortedFOMDate().first()
-    val tilbakeDatertMerEnn3AAr = forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
+    val tilbakeDatertMerEnn3AAr =
+        forsteFomDato.atStartOfDay().isBefore(LocalDate.now().minusYears(3).atStartOfDay())
 
     RuleResult(
-        ruleInputs = mapOf(
-            "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
-        ),
+        ruleInputs =
+            mapOf(
+                "tilbakeDatertMerEnn3AAr" to tilbakeDatertMerEnn3AAr,
+            ),
         rule = PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR,
         ruleResult = tilbakeDatertMerEnn3AAr,
     )
@@ -125,13 +127,14 @@ val varighetOver1AAr: PeriodLogicRule = { sykmelding, _ ->
     val forsteFomDato = sykmelding.perioder.sortedFOMDate().firstOrNull()
     val sisteTomDato = sykmelding.perioder.sortedTOMDate().lastOrNull()
 
-    val varighetOver1AAr = if (forsteFomDato == null || sisteTomDato == null) {
-        false
-    } else {
-        val firstFomDate = forsteFomDato.atStartOfDay().toLocalDate()
-        val lastFomDate = sisteTomDato.atStartOfDay().toLocalDate()
-        (firstFomDate..lastFomDate).daysBetween() > 365
-    }
+    val varighetOver1AAr =
+        if (forsteFomDato == null || sisteTomDato == null) {
+            false
+        } else {
+            val firstFomDate = forsteFomDato.atStartOfDay().toLocalDate()
+            val lastFomDate = sisteTomDato.atStartOfDay().toLocalDate()
+            (firstFomDate..lastFomDate).daysBetween() > 365
+        }
 
     RuleResult(
         ruleInputs = mapOf("varighetOver1AAr" to varighetOver1AAr),
@@ -156,8 +159,8 @@ val behandslingsDatoEtterMottatDato: PeriodLogicRule = { sykmelding, ruleMetadat
 val avventendeKombinert: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val avventendeKombinert = perioder.count { it.avventendeInnspillTilArbeidsgiver != null } != 0 &&
-        perioder.size > 1
+    val avventendeKombinert =
+        perioder.count { it.avventendeInnspillTilArbeidsgiver != null } != 0 && perioder.size > 1
 
     RuleResult(
         ruleInputs = mapOf("avventendeKombinert" to avventendeKombinert),
@@ -169,10 +172,11 @@ val avventendeKombinert: PeriodLogicRule = { sykmelding, _ ->
 val manglendeInnspillArbeidsgiver: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val manglendeInnspillArbeidsgiver = perioder.any {
-        it.avventendeInnspillTilArbeidsgiver != null &&
-            it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty()
-    }
+    val manglendeInnspillArbeidsgiver =
+        perioder.any {
+            it.avventendeInnspillTilArbeidsgiver != null &&
+                it.avventendeInnspillTilArbeidsgiver?.trim().isNullOrEmpty()
+        }
 
     RuleResult(
         ruleInputs = mapOf("manglendeInnspillArbeidsgiver" to manglendeInnspillArbeidsgiver),
@@ -184,9 +188,10 @@ val manglendeInnspillArbeidsgiver: PeriodLogicRule = { sykmelding, _ ->
 val avventendeOver16Dager: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val avventendeOver16Dager = perioder
-        .filter { it.avventendeInnspillTilArbeidsgiver != null }
-        .any { (it.fom..it.tom).daysBetween() > 16 }
+    val avventendeOver16Dager =
+        perioder
+            .filter { it.avventendeInnspillTilArbeidsgiver != null }
+            .any { (it.fom..it.tom).daysBetween() > 16 }
 
     RuleResult(
         ruleInputs = mapOf("avventendeOver16Dager" to avventendeOver16Dager),
@@ -198,9 +203,10 @@ val avventendeOver16Dager: PeriodLogicRule = { sykmelding, _ ->
 val forMangeBehandlingsDagerPrUke: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val forMangeBehandlingsDagerPrUke = perioder.any {
-        it.behandlingsdager != null && it.behandlingsdager!! > it.range().startedWeeksBetween()
-    }
+    val forMangeBehandlingsDagerPrUke =
+        perioder.any {
+            it.behandlingsdager != null && it.behandlingsdager!! > it.range().startedWeeksBetween()
+        }
 
     RuleResult(
         ruleInputs = mapOf("forMangeBehandlingsDagerPrUke" to forMangeBehandlingsDagerPrUke),
@@ -224,9 +230,7 @@ val gradertOver99Prosent: PeriodLogicRule = { sykmelding, _ ->
 val inneholderBehandlingsDager: PeriodLogicRule = { sykmelding, _ ->
     val perioder = sykmelding.perioder
 
-    val inneholderBehandlingsDager = perioder.any {
-        it.behandlingsdager != null
-    }
+    val inneholderBehandlingsDager = perioder.any { it.behandlingsdager != null }
 
     RuleResult(
         ruleInputs = mapOf("inneholderBehandlingsDager" to inneholderBehandlingsDager),
@@ -235,13 +239,15 @@ val inneholderBehandlingsDager: PeriodLogicRule = { sykmelding, _ ->
     )
 }
 
-fun List<Periode>.sortedTOMDate(): List<LocalDate> =
-    map { it.tom }.sorted()
+fun List<Periode>.sortedTOMDate(): List<LocalDate> = map { it.tom }.sorted()
 
-fun workdaysBetween(a: LocalDate, b: LocalDate): Int = (1..(ChronoUnit.DAYS.between(a, b) - 1))
-    .map { a.plusDays(it) }
-    .filter { it.dayOfWeek !in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY) }
-    .count()
+fun workdaysBetween(a: LocalDate, b: LocalDate): Int =
+    (1..(ChronoUnit.DAYS.between(a, b) - 1))
+        .map { a.plusDays(it) }
+        .filter { it.dayOfWeek !in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY) }
+        .count()
 
-fun ClosedRange<LocalDate>.startedWeeksBetween(): Int = ChronoUnit.WEEKS.between(start, endInclusive).toInt() + 1
+fun ClosedRange<LocalDate>.startedWeeksBetween(): Int =
+    ChronoUnit.WEEKS.between(start, endInclusive).toInt() + 1
+
 fun Periode.range(): ClosedRange<LocalDate> = fom.rangeTo(tom)

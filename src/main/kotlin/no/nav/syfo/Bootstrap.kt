@@ -17,6 +17,8 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.network.sockets.SocketTimeoutException
 import io.ktor.serialization.jackson.jackson
 import io.prometheus.client.hotspot.DefaultExports
+import java.net.URL
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
@@ -40,17 +42,16 @@ import no.nav.syfo.utils.JacksonKafkaSerializer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URL
-import java.util.concurrent.TimeUnit
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smregler")
 
-val objectMapper: ObjectMapper = ObjectMapper().apply {
-    registerKotlinModule()
-    registerModule(JavaTimeModule())
-    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-}
+val objectMapper: ObjectMapper =
+    ObjectMapper().apply {
+        registerKotlinModule()
+        registerModule(JavaTimeModule())
+        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
 
 @DelicateCoroutinesApi
 fun main() {
@@ -62,10 +63,11 @@ fun main() {
     val applicationState = ApplicationState()
     DefaultExports.initialize()
 
-    val jwkProviderAad = JwkProviderBuilder(URL(env.jwkKeysUrl))
-        .cached(10, 24, TimeUnit.HOURS)
-        .rateLimited(10, 1, TimeUnit.MINUTES)
-        .build()
+    val jwkProviderAad =
+        JwkProviderBuilder(URL(env.jwkKeysUrl))
+            .cached(10, 24, TimeUnit.HOURS)
+            .rateLimited(10, 1, TimeUnit.MINUTES)
+            .build()
 
     val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
         install(ContentNegotiation) {
@@ -79,7 +81,8 @@ fun main() {
         HttpResponseValidator {
             handleResponseExceptionWithRequest { exception, _ ->
                 when (exception) {
-                    is SocketTimeoutException -> throw ServiceUnavailableException(exception.message)
+                    is SocketTimeoutException ->
+                        throw ServiceUnavailableException(exception.message)
                 }
             }
         }
@@ -91,7 +94,9 @@ fun main() {
             }
             retryIf(maxRetries) { request, response ->
                 if (response.status.value.let { it in 500..599 }) {
-                    log.warn("Retrying for statuscode ${response.status.value}, for url ${request.url}")
+                    log.warn(
+                        "Retrying for statuscode ${response.status.value}, for url ${request.url}"
+                    )
                     true
                 } else {
                     false
@@ -108,51 +113,79 @@ fun main() {
     val httpClient = HttpClient(Apache, config)
     val azureAdV2Client = AzureAdV2Client(env, httpClient)
 
-    val legeSuspensjonClient = LegeSuspensjonClient(
-        endpointUrl = env.legeSuspensjonProxyEndpointURL,
-        azureAdV2Client = azureAdV2Client,
-        httpClient = httpClient,
-        scope = env.legeSuspensjonProxyScope,
-    )
+    val legeSuspensjonClient =
+        LegeSuspensjonClient(
+            endpointUrl = env.legeSuspensjonProxyEndpointURL,
+            azureAdV2Client = azureAdV2Client,
+            httpClient = httpClient,
+            scope = env.legeSuspensjonProxyScope,
+        )
 
-    val syketilfelleClient = SyketilfelleClient(env.syketilfelleEndpointURL, azureAdV2Client, env.syketilfelleScope, httpClient)
+    val syketilfelleClient =
+        SyketilfelleClient(
+            env.syketilfelleEndpointURL,
+            azureAdV2Client,
+            env.syketilfelleScope,
+            httpClient
+        )
     val norskHelsenettClient =
-        NorskHelsenettClient(env.norskHelsenettEndpointURL, azureAdV2Client, env.helsenettproxyScope, httpClient)
-    val smregisterClient = SmregisterClient(env.smregisterEndpointURL, azureAdV2Client, env.smregisterAudience, httpClient)
+        NorskHelsenettClient(
+            env.norskHelsenettEndpointURL,
+            azureAdV2Client,
+            env.helsenettproxyScope,
+            httpClient
+        )
+    val smregisterClient =
+        SmregisterClient(
+            env.smregisterEndpointURL,
+            azureAdV2Client,
+            env.smregisterAudience,
+            httpClient
+        )
 
-    val pdlClient = PdlClient(
-        httpClient,
-        env.pdlGraphqlPath,
-        PdlClient::class.java.getResource("/graphql/getPerson.graphql")!!.readText().replace(Regex("[\n\t]"), ""),
-    )
-    val pdlService = PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
+    val pdlClient =
+        PdlClient(
+            httpClient,
+            env.pdlGraphqlPath,
+            PdlClient::class
+                .java
+                .getResource("/graphql/getPerson.graphql")!!
+                .readText()
+                .replace(Regex("[\n\t]"), ""),
+        )
+    val pdlService =
+        PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
 
     val kafkaBaseConfig = KafkaUtils.getAivenKafkaConfig()
-    val kafkaProperties = kafkaBaseConfig.toProducerConfig(
-        env.applicationName,
-        valueSerializer = JacksonKafkaSerializer::class,
-    )
+    val kafkaProperties =
+        kafkaBaseConfig.toProducerConfig(
+            env.applicationName,
+            valueSerializer = JacksonKafkaSerializer::class,
+        )
 
-    val juridiskVurderingService = JuridiskVurderingService(
-        KafkaProducer(kafkaProperties),
-        env.etterlevelsesTopic,
-    )
-    val ruleService = RuleService(
-        legeSuspensjonClient,
-        syketilfelleClient,
-        norskHelsenettClient,
-        SykmeldingService(smregisterClient),
-        pdlService,
-        juridiskVurderingService,
-        RuleExecutionService(),
-    )
+    val juridiskVurderingService =
+        JuridiskVurderingService(
+            KafkaProducer(kafkaProperties),
+            env.etterlevelsesTopic,
+        )
+    val ruleService =
+        RuleService(
+            legeSuspensjonClient,
+            syketilfelleClient,
+            norskHelsenettClient,
+            SykmeldingService(smregisterClient),
+            pdlService,
+            juridiskVurderingService,
+            RuleExecutionService(),
+        )
 
-    val applicationEngine = createApplicationEngine(
-        ruleService,
-        env,
-        applicationState,
-        jwkProviderAad,
-    )
+    val applicationEngine =
+        createApplicationEngine(
+            ruleService,
+            env,
+            applicationState,
+            jwkProviderAad,
+        )
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)
     applicationServer.start()

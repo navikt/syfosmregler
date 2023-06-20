@@ -18,21 +18,24 @@ import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias GradertTreeOutput = TreeOutput<GradertRules, RuleResult>
 
-class GradertRulesExecution(val rootNode: TreeNode<GradertRules, RuleResult> = gradertRuleTree) : RuleExecution<GradertRules> {
-    override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding): Pair<GradertTreeOutput, Juridisk> =
-        rootNode
-            .evaluate(sykmelding, ruleMetadata)
-            .also { gradertRulePath ->
-                log.info("Rules ${sykmelding.id}, ${gradertRulePath.printRulePath()}")
-            } to MedJuridisk(
-            JuridiskHenvisning(
-                lovverk = Lovverk.FOLKETRYGDLOVEN,
-                paragraf = "8-13",
-                ledd = 1,
-                punktum = null,
-                bokstav = null,
-            ),
-        )
+class GradertRulesExecution(val rootNode: TreeNode<GradertRules, RuleResult> = gradertRuleTree) :
+    RuleExecution<GradertRules> {
+    override fun runRules(
+        sykmelding: Sykmelding,
+        ruleMetadata: RuleMetadataSykmelding
+    ): Pair<GradertTreeOutput, Juridisk> =
+        rootNode.evaluate(sykmelding, ruleMetadata).also { gradertRulePath ->
+            log.info("Rules ${sykmelding.id}, ${gradertRulePath.printRulePath()}")
+        } to
+            MedJuridisk(
+                JuridiskHenvisning(
+                    lovverk = Lovverk.FOLKETRYGDLOVEN,
+                    paragraf = "8-13",
+                    ledd = 1,
+                    punktum = null,
+                    bokstav = null,
+                ),
+            )
 }
 
 private fun TreeNode<GradertRules, RuleResult>.evaluate(

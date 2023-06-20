@@ -13,61 +13,77 @@ import no.nav.syfo.rules.dsl.TreeOutput
 import org.amshove.kluent.shouldBeEqualTo
 
 enum class TestRules {
-    RULE1, RULE2, RUlE3
+    RULE1,
+    RULE2,
+    RUlE3
 }
 
-class RuleExecutionServiceTest : FunSpec({
+class RuleExecutionServiceTest :
+    FunSpec({
+        val sykmeldnig = mockk<Sykmelding>(relaxed = true)
+        val ruleMetadataSykmelding = mockk<RuleMetadataSykmelding>(relaxed = true)
+        val rulesExecution = mockk<RuleExecution<TestRules>>(relaxed = true)
+        val ruleExecutionService = RuleExecutionService()
 
-    val sykmeldnig = mockk<Sykmelding>(relaxed = true)
-    val ruleMetadataSykmelding = mockk<RuleMetadataSykmelding>(relaxed = true)
-    val rulesExecution = mockk<RuleExecution<TestRules>>(relaxed = true)
-    val ruleExecutionService = RuleExecutionService()
-
-    test("Run ruleTrees") {
-
-        every {
-            rulesExecution.runRules(
-                any(),
-                any(),
-            )
-        } returns (
-            TreeOutput<TestRules, RuleResult>(
-                treeResult = RuleResult(
-                    status = Status.OK,
-                    ruleHit = null,
-                ),
-            ) to UtenJuridisk
-            )
-
-        val (rule, juridisk) = ruleExecutionService.runRules(sykmeldnig, ruleMetadataSykmelding, sequenceOf(rulesExecution)).first()
-        rule.treeResult.status shouldBeEqualTo Status.OK
-        juridisk shouldBeEqualTo UtenJuridisk
-    }
-
-    test("should not run all rules if first no OK") {
-
-        val okRule = mockk<RuleExecution<TestRules>>().also {
-            every { it.runRules(any(), any()) } returns (
-                TreeOutput<TestRules, RuleResult>(
-                    treeResult = RuleResult(
-                        status = Status.OK,
-                        ruleHit = null,
-                    ),
-                ) to UtenJuridisk
+        test("Run ruleTrees") {
+            every {
+                rulesExecution.runRules(
+                    any(),
+                    any(),
                 )
+            } returns
+                (TreeOutput<TestRules, RuleResult>(
+                    treeResult =
+                        RuleResult(
+                            status = Status.OK,
+                            ruleHit = null,
+                        ),
+                ) to UtenJuridisk)
+
+            val (rule, juridisk) =
+                ruleExecutionService
+                    .runRules(sykmeldnig, ruleMetadataSykmelding, sequenceOf(rulesExecution))
+                    .first()
+            rule.treeResult.status shouldBeEqualTo Status.OK
+            juridisk shouldBeEqualTo UtenJuridisk
         }
-        val invalidRuleExecution = mockk<RuleExecution<TestRules>>().also {
-            every { it.runRules(any(), any()) } returns (
-                TreeOutput<TestRules, RuleResult>(
-                    treeResult = RuleResult(
-                        status = Status.INVALID,
-                        ruleHit = RuleHit(Status.INVALID, TestRules.RULE2.name, "message", "message"),
-                    ),
-                ) to UtenJuridisk
+
+        test("should not run all rules if first no OK") {
+            val okRule =
+                mockk<RuleExecution<TestRules>>().also {
+                    every { it.runRules(any(), any()) } returns
+                        (TreeOutput<TestRules, RuleResult>(
+                            treeResult =
+                                RuleResult(
+                                    status = Status.OK,
+                                    ruleHit = null,
+                                ),
+                        ) to UtenJuridisk)
+                }
+            val invalidRuleExecution =
+                mockk<RuleExecution<TestRules>>().also {
+                    every { it.runRules(any(), any()) } returns
+                        (TreeOutput<TestRules, RuleResult>(
+                            treeResult =
+                                RuleResult(
+                                    status = Status.INVALID,
+                                    ruleHit =
+                                        RuleHit(
+                                            Status.INVALID,
+                                            TestRules.RULE2.name,
+                                            "message",
+                                            "message"
+                                        ),
+                                ),
+                        ) to UtenJuridisk)
+                }
+            val results =
+                ruleExecutionService.runRules(
+                    sykmeldnig,
+                    ruleMetadataSykmelding,
+                    sequenceOf(invalidRuleExecution, okRule)
                 )
+            results.size shouldBeEqualTo 1
+            results.first().first.treeResult.status shouldBeEqualTo Status.INVALID
         }
-        val results = ruleExecutionService.runRules(sykmeldnig, ruleMetadataSykmelding, sequenceOf(invalidRuleExecution, okRule))
-        results.size shouldBeEqualTo 1
-        results.first().first.treeResult.status shouldBeEqualTo Status.INVALID
-    }
-})
+    })

@@ -39,49 +39,50 @@ enum class TilbakedateringSignaturRules {
     TILBAKEDATERT_INNTIL_30_DAGER,
 }
 
-val tilbakedateringSignaturRuleTree = tree<TilbakedateringSignaturRules, RuleResult>(TILBAKEDATERING) {
-    yes(ETTERSENDING) {
-        yes(OK)
-        no(TILBAKEDATERT_INNTIL_8_DAGER) {
-            yes(BEGRUNNELSE_MIN_1_ORD) {
-                yes(OK)
-                no(FORLENGELSE) {
-                    yes(OK)
-                    no(SPESIALISTHELSETJENESTEN) {
-                        yes(OK)
-                        no(INVALID, INNTIL_8_DAGER)
-                    }
-                }
-            }
-            no(TILBAKEDATERT_INNTIL_30_DAGER) {
+val tilbakedateringSignaturRuleTree =
+    tree<TilbakedateringSignaturRules, RuleResult>(TILBAKEDATERING) {
+        yes(ETTERSENDING) {
+            yes(OK)
+            no(TILBAKEDATERT_INNTIL_8_DAGER) {
                 yes(BEGRUNNELSE_MIN_1_ORD) {
-                    yes(FORLENGELSE) {
+                    yes(OK)
+                    no(FORLENGELSE) {
                         yes(OK)
-                        no(ARBEIDSGIVERPERIODE) {
+                        no(SPESIALISTHELSETJENESTEN) {
                             yes(OK)
-                            no(SPESIALISTHELSETJENESTEN) {
-                                yes(OK)
-                                no(MANUAL_PROCESSING, INNTIL_30_DAGER_MED_BEGRUNNELSE)
-                            }
+                            no(INVALID, INNTIL_8_DAGER)
                         }
                     }
-                    no(SPESIALISTHELSETJENESTEN) {
-                        yes(OK)
-                        no(INVALID, INNTIL_30_DAGER)
-                    }
                 }
-                no(BEGRUNNELSE_MIN_3_ORD) {
-                    yes(MANUAL_PROCESSING, OVER_30_DAGER_MED_BEGRUNNELSE)
-                    no(SPESIALISTHELSETJENESTEN) {
-                        yes(MANUAL_PROCESSING, OVER_30_DAGER_SPESIALISTHELSETJENESTEN)
-                        no(INVALID, OVER_30_DAGER)
+                no(TILBAKEDATERT_INNTIL_30_DAGER) {
+                    yes(BEGRUNNELSE_MIN_1_ORD) {
+                        yes(FORLENGELSE) {
+                            yes(OK)
+                            no(ARBEIDSGIVERPERIODE) {
+                                yes(OK)
+                                no(SPESIALISTHELSETJENESTEN) {
+                                    yes(OK)
+                                    no(MANUAL_PROCESSING, INNTIL_30_DAGER_MED_BEGRUNNELSE)
+                                }
+                            }
+                        }
+                        no(SPESIALISTHELSETJENESTEN) {
+                            yes(OK)
+                            no(INVALID, INNTIL_30_DAGER)
+                        }
+                    }
+                    no(BEGRUNNELSE_MIN_3_ORD) {
+                        yes(MANUAL_PROCESSING, OVER_30_DAGER_MED_BEGRUNNELSE)
+                        no(SPESIALISTHELSETJENESTEN) {
+                            yes(MANUAL_PROCESSING, OVER_30_DAGER_SPESIALISTHELSETJENESTEN)
+                            no(INVALID, OVER_30_DAGER)
+                        }
                     }
                 }
             }
         }
+        no(OK)
     }
-    no(OK)
-}
 
 internal fun RuleNode<TilbakedateringSignaturRules, RuleResult>.yes(
     status: Status,

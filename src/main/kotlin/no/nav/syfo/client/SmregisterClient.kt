@@ -6,10 +6,10 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
-import no.nav.syfo.azuread.v2.AzureAdV2Client
-import no.nav.syfo.model.Periode
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.model.Periode
 
 class SmregisterClient(
     private val smregisterEndpointURL: String,
@@ -18,17 +18,19 @@ class SmregisterClient(
     private val httpClient: HttpClient,
 ) {
     suspend fun getSykmeldinger(fnr: String): List<SykmeldingDTO> =
-        httpClient.get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
-            accept(ContentType.Application.Json)
-            val accessToken = accessTokenClientV2.getAccessToken(scope)
-            if (accessToken?.accessToken == null) {
-                throw RuntimeException("Klarte ikke hente ut accessToken for smregister")
+        httpClient
+            .get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
+                accept(ContentType.Application.Json)
+                val accessToken = accessTokenClientV2.getAccessToken(scope)
+                if (accessToken?.accessToken == null) {
+                    throw RuntimeException("Klarte ikke hente ut accessToken for smregister")
+                }
+                headers {
+                    append("Authorization", "Bearer ${accessToken.accessToken}")
+                    append("fnr", fnr)
+                }
             }
-            headers {
-                append("Authorization", "Bearer ${accessToken.accessToken}")
-                append("fnr", fnr)
-            }
-        }.body()
+            .body()
 }
 
 data class SykmeldingDTO(
@@ -50,6 +52,7 @@ enum class MerknadType {
     TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER,
     UNDER_BEHANDLING,
     ;
+
     companion object {
         fun contains(type: String): Boolean {
             return values().any { it.name == type }
@@ -90,14 +93,14 @@ data class BehandlingsutfallDTO(
 )
 
 enum class RegelStatusDTO {
-    OK, MANUAL_PROCESSING, INVALID
+    OK,
+    MANUAL_PROCESSING,
+    INVALID
 }
 
-fun List<SykmeldingsperiodeDTO>.sortedFOMDate(): List<LocalDate> =
-    map { it.fom }.sorted()
+fun List<SykmeldingsperiodeDTO>.sortedFOMDate(): List<LocalDate> = map { it.fom }.sorted()
 
-fun List<SykmeldingsperiodeDTO>.sortedTOMDate(): List<LocalDate> =
-    map { it.tom }.sorted()
+fun List<SykmeldingsperiodeDTO>.sortedTOMDate(): List<LocalDate> = map { it.tom }.sorted()
 
 fun SykmeldingsperiodeDTO.periodelisteInneholderSammeType(perioder: List<Periode>): Boolean {
     val periodetyper = perioder.mapNotNull { it.tilPeriodetypeDTO() }.distinct()

@@ -13,19 +13,20 @@ enum class HPRRules {
     BEHANDLER_MT_FT_KI_OVER_12_UKER,
 }
 
-val hprRuleTree = tree<HPRRules, RuleResult>(HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR) {
-    yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR)
-    no(HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR) {
-        yes(Status.INVALID, HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR)
-        no(HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR) {
-            yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR)
-            no(HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER) {
-                yes(Status.INVALID, HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER)
-                no(OK)
+val hprRuleTree =
+    tree<HPRRules, RuleResult>(HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR) {
+        yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_GYLDIG_I_HPR)
+        no(HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR) {
+            yes(Status.INVALID, HPRRuleHit.BEHANDLER_MANGLER_AUTORISASJON_I_HPR)
+            no(HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR) {
+                yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR)
+                no(HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER) {
+                    yes(Status.INVALID, HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER)
+                    no(OK)
+                }
             }
         }
     }
-}
 
 internal fun RuleNode<HPRRules, RuleResult>.yes(status: Status, ruleHit: HPRRuleHit? = null) {
     yes(RuleResult(status, ruleHit?.ruleHit))

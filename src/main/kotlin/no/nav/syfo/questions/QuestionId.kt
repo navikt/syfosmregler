@@ -6,21 +6,41 @@ enum class QuestionId(val spmId: String, val spmTekst: String, val restriksjon: 
         "Er det sykdommen, utredningen og/eller behandlingen som hindrer økt aktivitet? Beskriv.",
         RestrictionCode.RESTRICTED_FOR_EMPLOYER,
     ),
-    ID_6_1_2("6.1.2", "Har behandlingen frem til nå bedret arbeidsevnen?", RestrictionCode.RESTRICTED_FOR_EMPLOYER),
-    ID_6_1_3("6.1.3", "Hva er videre plan for behandling?", RestrictionCode.RESTRICTED_FOR_EMPLOYER),
+    ID_6_1_2(
+        "6.1.2",
+        "Har behandlingen frem til nå bedret arbeidsevnen?",
+        RestrictionCode.RESTRICTED_FOR_EMPLOYER
+    ),
+    ID_6_1_3(
+        "6.1.3",
+        "Hva er videre plan for behandling?",
+        RestrictionCode.RESTRICTED_FOR_EMPLOYER
+    ),
     ID_6_1_4(
         "6.1.4",
         "Er det arbeidsforholdet som hindrer (økt) aktivitet? Beskriv.",
         RestrictionCode.RESTRICTED_FOR_EMPLOYER,
     ),
-    ID_6_1_5("6.1.5", "Er det andre forhold som hindrer (økt) aktivitet?", RestrictionCode.RESTRICTED_FOR_EMPLOYER),
+    ID_6_1_5(
+        "6.1.5",
+        "Er det andre forhold som hindrer (økt) aktivitet?",
+        RestrictionCode.RESTRICTED_FOR_EMPLOYER
+    ),
     ID_6_2_1(
         "6.2.1",
         "Beskriv kort sykehistorie, symptomer og funn i dagens situasjon.",
         RestrictionCode.RESTRICTED_FOR_EMPLOYER,
     ),
-    ID_6_2_2("6.2.2", "Hvordan påvirker sykdommen arbeidsevnen?", RestrictionCode.RESTRICTED_FOR_EMPLOYER),
-    ID_6_2_3("6.2.3", "Har behandlingen frem til nå bedret arbeidsevnen?", RestrictionCode.RESTRICTED_FOR_EMPLOYER),
+    ID_6_2_2(
+        "6.2.2",
+        "Hvordan påvirker sykdommen arbeidsevnen?",
+        RestrictionCode.RESTRICTED_FOR_EMPLOYER
+    ),
+    ID_6_2_3(
+        "6.2.3",
+        "Har behandlingen frem til nå bedret arbeidsevnen?",
+        RestrictionCode.RESTRICTED_FOR_EMPLOYER
+    ),
     ID_6_2_4(
         "6.2.4",
         "Beskriv pågående og planlagt henvisning,utredning og/eller behandling.",
@@ -56,7 +76,11 @@ enum class QuestionId(val spmId: String, val spmTekst: String, val restriksjon: 
         "Beskriv kort sykehistorie, symptomer og funn i dagens situasjon.",
         RestrictionCode.RESTRICTED_FOR_EMPLOYER,
     ),
-    ID_6_5_2("6.5.2", "Hvordan påvirker dette funksjons-/arbeidsevnen?", RestrictionCode.RESTRICTED_FOR_EMPLOYER),
+    ID_6_5_2(
+        "6.5.2",
+        "Hvordan påvirker dette funksjons-/arbeidsevnen?",
+        RestrictionCode.RESTRICTED_FOR_EMPLOYER
+    ),
     ID_6_5_3(
         "6.5.3",
         "Beskriv pågående og planlagt henvisning, utredning og/eller medisinsk behandling",

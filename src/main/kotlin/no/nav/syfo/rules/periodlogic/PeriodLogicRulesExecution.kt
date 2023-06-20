@@ -14,16 +14,16 @@ import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias PeriodLogicTreeOutput = TreeOutput<PeriodLogicRules, RuleResult>
+
 typealias PeriodLogicTreeNode = TreeNode<PeriodLogicRules, RuleResult>
 
-class PeriodLogicRulesExecution(private val rootNode: TreeNode<PeriodLogicRules, RuleResult> = periodLogicRuleTree) :
-    RuleExecution<PeriodLogicRules> {
+class PeriodLogicRulesExecution(
+    private val rootNode: TreeNode<PeriodLogicRules, RuleResult> = periodLogicRuleTree
+) : RuleExecution<PeriodLogicRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode
-            .evaluate(sykmelding, ruleMetadata)
-            .also { periodLogicRulePath ->
-                log.info("Rules ${sykmelding.id}, ${periodLogicRulePath.printRulePath()}")
-            } to UtenJuridisk
+        rootNode.evaluate(sykmelding, ruleMetadata).also { periodLogicRulePath ->
+            log.info("Rules ${sykmelding.id}, ${periodLogicRulePath.printRulePath()}")
+        } to UtenJuridisk
 }
 
 private fun TreeNode<PeriodLogicRules, RuleResult>.evaluate(

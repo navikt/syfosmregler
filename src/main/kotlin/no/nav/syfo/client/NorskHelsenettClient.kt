@@ -10,12 +10,12 @@ import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
+import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.api.log
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.utils.LoggingMeta
-import java.io.IOException
 
 class NorskHelsenettClient(
     private val endpointUrl: String,
@@ -24,44 +24,62 @@ class NorskHelsenettClient(
     private val httpClient: HttpClient,
 ) {
 
-    suspend fun finnBehandler(behandlerFnr: String, msgId: String, loggingMeta: LoggingMeta): Behandler? = retry(
-        callName = "finnbehandler",
-        retryIntervals = arrayOf(500L, 1000L, 1000L),
-    ) {
-        log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
-        val httpResponse = httpClient.get("$endpointUrl/api/v2/behandler") {
-            accept(ContentType.Application.Json)
-            val accessToken = accessTokenClient.getAccessToken(resourceId)
-            if (accessToken?.accessToken == null) {
-                throw RuntimeException("Klarte ikke hente ut accesstoken for HPR")
-            }
-            headers {
-                append("Authorization", "Bearer ${accessToken.accessToken}")
-                append("Nav-CallId", msgId)
-                append("behandlerFnr", behandlerFnr)
-            }
-        }.also { log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta)) }
+    suspend fun finnBehandler(
+        behandlerFnr: String,
+        msgId: String,
+        loggingMeta: LoggingMeta
+    ): Behandler? =
+        retry(
+            callName = "finnbehandler",
+            retryIntervals = arrayOf(500L, 1000L, 1000L),
+        ) {
+            log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
+            val httpResponse =
+                httpClient
+                    .get("$endpointUrl/api/v2/behandler") {
+                        accept(ContentType.Application.Json)
+                        val accessToken = accessTokenClient.getAccessToken(resourceId)
+                        if (accessToken?.accessToken == null) {
+                            throw RuntimeException("Klarte ikke hente ut accesstoken for HPR")
+                        }
+                        headers {
+                            append("Authorization", "Bearer ${accessToken.accessToken}")
+                            append("Nav-CallId", msgId)
+                            append("behandlerFnr", behandlerFnr)
+                        }
+                    }
+                    .also {
+                        log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta))
+                    }
 
-        return@retry when (httpResponse.status) {
-            NotFound -> {
-                log.warn("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
-                null
-            }
-            BadRequest -> {
-                log.error("BehandlerFnr mangler i request for msgId {}, {}", msgId, fields(loggingMeta))
-                null
-            }
-            InternalServerError -> {
-                log.error("Syfohelsenettproxy svarte med feilmelding for msgId {}, {}", msgId, httpResponse.body())
-                throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
-            }
-            OK -> httpResponse.body()
-            else -> {
-                log.warn("Did not get OK from helsenett for msgid: $msgId", fields(loggingMeta))
-                null
+            return@retry when (httpResponse.status) {
+                NotFound -> {
+                    log.warn("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
+                    null
+                }
+                BadRequest -> {
+                    log.error(
+                        "BehandlerFnr mangler i request for msgId {}, {}",
+                        msgId,
+                        fields(loggingMeta)
+                    )
+                    null
+                }
+                InternalServerError -> {
+                    log.error(
+                        "Syfohelsenettproxy svarte med feilmelding for msgId {}, {}",
+                        msgId,
+                        httpResponse.body()
+                    )
+                    throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
+                }
+                OK -> httpResponse.body()
+                else -> {
+                    log.warn("Did not get OK from helsenett for msgid: $msgId", fields(loggingMeta))
+                    null
+                }
             }
         }
-    }
 }
 
 data class Behandler(

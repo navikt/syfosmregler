@@ -1,6 +1,7 @@
 package no.nav.syfo.rules.arbeidsuforhet
 
 import io.kotest.core.spec.style.FunSpec
+import java.time.LocalDate
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.generateMedisinskVurdering
 import no.nav.syfo.generateSykmelding
@@ -14,255 +15,283 @@ import no.nav.syfo.services.SykmeldingMetadataInfo
 import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
-import java.time.LocalDate
 
-class ArbeidsuforhetTest : FunSpec({
+class ArbeidsuforhetTest :
+    FunSpec({
+        val ruleTree = ArbeidsuforhetRulesExecution()
 
-    val ruleTree = ArbeidsuforhetRulesExecution()
+        test("Ukjent diagnoseKodeType, Status INVALID") {
+            val person31Years = LocalDate.now().minusYears(31)
 
-    test("Ukjent diagnoseKodeType, Status INVALID") {
-        val person31Years = LocalDate.now().minusYears(31)
+            val sykmelding =
+                generateSykmelding(
+                    medisinskVurdering =
+                        generateMedisinskVurdering(
+                            hovedDiagnose =
+                                Diagnose(
+                                    system = "2.16.578.1.12.4.1.1.9999",
+                                    kode = "A09",
+                                    tekst = "Brudd legg/ankel",
+                                ),
+                        ),
+                )
 
-        val sykmelding = generateSykmelding(
-            medisinskVurdering = generateMedisinskVurdering(
-                hovedDiagnose = Diagnose(
-                    system = "2.16.578.1.12.4.1.1.9999",
-                    kode = "A09",
-                    tekst = "Brudd legg/ankel",
-                ),
-            ),
-        )
+            val ruleMetadata =
+                RuleMetadata(
+                    signatureDate = LocalDate.now().atStartOfDay(),
+                    receivedDate = LocalDate.now().atStartOfDay(),
+                    behandletTidspunkt = LocalDate.now().atStartOfDay(),
+                    patientPersonNumber = generatePersonNumber(person31Years, false),
+                    rulesetVersion = null,
+                    legekontorOrgnr = null,
+                    tssid = null,
+                    avsenderFnr = "2",
+                    pasientFodselsdato = person31Years,
+                )
 
-        val ruleMetadata = RuleMetadata(
-            signatureDate = LocalDate.now().atStartOfDay(),
-            receivedDate = LocalDate.now().atStartOfDay(),
-            behandletTidspunkt = LocalDate.now().atStartOfDay(),
-            patientPersonNumber = generatePersonNumber(person31Years, false),
-            rulesetVersion = null,
-            legekontorOrgnr = null,
-            tssid = null,
-            avsenderFnr = "2",
-            pasientFodselsdato = person31Years,
-        )
+            val ruleMetadataSykmelding =
+                RuleMetadataSykmelding(
+                    ruleMetadata = ruleMetadata,
+                    sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                    doctorSuspensjon = false,
+                    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
+                )
 
-        val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata,
-            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
-            doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
-        )
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                listOf(
+                    ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to true,
+                )
 
-        status.first.treeResult.status shouldBeEqualTo Status.INVALID
-        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to true,
-        )
+            mapOf(
+                "ukjentDiagnoseKodeType" to true,
+            ) shouldBeEqualTo status.first.ruleInputs
 
-        mapOf(
-            "ukjentDiagnoseKodeType" to true,
+            status.first.treeResult.ruleHit shouldBeEqualTo
+                ArbeidsuforhetRuleHit.UKJENT_DIAGNOSEKODETYPE.ruleHit
+        }
 
-        ) shouldBeEqualTo status.first.ruleInputs
+        test("Diagnosen er icpz 2 z diagnose, Status INVALID") {
+            val person31Years = LocalDate.now().minusYears(31)
 
-        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UKJENT_DIAGNOSEKODETYPE.ruleHit
-    }
+            val sykmelding =
+                generateSykmelding(
+                    medisinskVurdering =
+                        generateMedisinskVurdering(
+                            hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose(),
+                        ),
+                )
 
-    test("Diagnosen er icpz 2 z diagnose, Status INVALID") {
-        val person31Years = LocalDate.now().minusYears(31)
+            val ruleMetadata =
+                RuleMetadata(
+                    signatureDate = LocalDate.now().atStartOfDay(),
+                    receivedDate = LocalDate.now().atStartOfDay(),
+                    behandletTidspunkt = LocalDate.now().atStartOfDay(),
+                    patientPersonNumber = generatePersonNumber(person31Years, false),
+                    rulesetVersion = null,
+                    legekontorOrgnr = null,
+                    tssid = null,
+                    avsenderFnr = "2",
+                    pasientFodselsdato = person31Years,
+                )
 
-        val sykmelding = generateSykmelding(
-            medisinskVurdering = generateMedisinskVurdering(
-                hovedDiagnose = Diagnosekoder.icpc2["Z09"]!!.toDiagnose(),
-            ),
-        )
+            val ruleMetadataSykmelding =
+                RuleMetadataSykmelding(
+                    ruleMetadata = ruleMetadata,
+                    sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                    doctorSuspensjon = false,
+                    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
+                )
 
-        val ruleMetadata = RuleMetadata(
-            signatureDate = LocalDate.now().atStartOfDay(),
-            receivedDate = LocalDate.now().atStartOfDay(),
-            behandletTidspunkt = LocalDate.now().atStartOfDay(),
-            patientPersonNumber = generatePersonNumber(person31Years, false),
-            rulesetVersion = null,
-            legekontorOrgnr = null,
-            tssid = null,
-            avsenderFnr = "2",
-            pasientFodselsdato = person31Years,
-        )
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-        val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata,
-            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
-            doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
-        )
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                listOf(
+                    ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
+                    ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to true,
+                )
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+            mapOf(
+                "ukjentDiagnoseKodeType" to false,
+                "icpc2ZDiagnose" to true,
+            ) shouldBeEqualTo status.first.ruleInputs
 
-        status.first.treeResult.status shouldBeEqualTo Status.INVALID
-        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
-            ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to true,
-        )
+            status.first.treeResult.ruleHit shouldBeEqualTo
+                ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE.ruleHit
+        }
+        test("HouvedDiagnose eller fraversgrunn mangler, Status INVALID") {
+            val person31Years = LocalDate.now().minusYears(31)
 
-        mapOf(
-            "ukjentDiagnoseKodeType" to false,
-            "icpc2ZDiagnose" to true,
+            val sykmelding =
+                generateSykmelding(
+                    medisinskVurdering =
+                        generateMedisinskVurdering(
+                            hovedDiagnose = null,
+                            annenFraversArsak = null,
+                        ),
+                )
 
-        ) shouldBeEqualTo status.first.ruleInputs
+            val ruleMetadata =
+                RuleMetadata(
+                    signatureDate = LocalDate.now().atStartOfDay(),
+                    receivedDate = LocalDate.now().atStartOfDay(),
+                    behandletTidspunkt = LocalDate.now().atStartOfDay(),
+                    patientPersonNumber = generatePersonNumber(person31Years, false),
+                    rulesetVersion = null,
+                    legekontorOrgnr = null,
+                    tssid = null,
+                    avsenderFnr = "2",
+                    pasientFodselsdato = person31Years,
+                )
 
-        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE.ruleHit
-    }
-    test("HouvedDiagnose eller fraversgrunn mangler, Status INVALID") {
-        val person31Years = LocalDate.now().minusYears(31)
+            val ruleMetadataSykmelding =
+                RuleMetadataSykmelding(
+                    ruleMetadata = ruleMetadata,
+                    sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                    doctorSuspensjon = false,
+                    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
+                )
 
-        val sykmelding = generateSykmelding(
-            medisinskVurdering = generateMedisinskVurdering(
-                hovedDiagnose = null,
-                annenFraversArsak = null,
-            ),
-        )
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-        val ruleMetadata = RuleMetadata(
-            signatureDate = LocalDate.now().atStartOfDay(),
-            receivedDate = LocalDate.now().atStartOfDay(),
-            behandletTidspunkt = LocalDate.now().atStartOfDay(),
-            patientPersonNumber = generatePersonNumber(person31Years, false),
-            rulesetVersion = null,
-            legekontorOrgnr = null,
-            tssid = null,
-            avsenderFnr = "2",
-            pasientFodselsdato = person31Years,
-        )
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                listOf(
+                    ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
+                    ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
+                    ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to true,
+                )
 
-        val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata,
-            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
-            doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
-        )
+            mapOf(
+                "ukjentDiagnoseKodeType" to false,
+                "icpc2ZDiagnose" to false,
+                "houvedDiagnoseEllerFraversgrunnMangler" to true,
+            ) shouldBeEqualTo status.first.ruleInputs
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+            status.first.treeResult.ruleHit shouldBeEqualTo
+                ArbeidsuforhetRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER.ruleHit
+        }
+        test("Ugyldig KodeVerk for houvedDiagnose, Status INVALID") {
+            val person31Years = LocalDate.now().minusYears(31)
 
-        status.first.treeResult.status shouldBeEqualTo Status.INVALID
-        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
-            ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
-            ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to true,
-        )
+            val sykmelding =
+                generateSykmelding(
+                    medisinskVurdering =
+                        generateMedisinskVurdering(
+                            hovedDiagnose =
+                                Diagnose(
+                                    system = "2.16.578.1.12.4.1.1.7110",
+                                    kode = "Z09",
+                                    tekst = "Brudd legg/ankel",
+                                ),
+                        ),
+                )
 
-        mapOf(
-            "ukjentDiagnoseKodeType" to false,
-            "icpc2ZDiagnose" to false,
-            "houvedDiagnoseEllerFraversgrunnMangler" to true,
+            val ruleMetadata =
+                RuleMetadata(
+                    signatureDate = LocalDate.now().atStartOfDay(),
+                    receivedDate = LocalDate.now().atStartOfDay(),
+                    behandletTidspunkt = LocalDate.now().atStartOfDay(),
+                    patientPersonNumber = generatePersonNumber(person31Years, false),
+                    rulesetVersion = null,
+                    legekontorOrgnr = null,
+                    tssid = null,
+                    avsenderFnr = "2",
+                    pasientFodselsdato = person31Years,
+                )
 
-        ) shouldBeEqualTo status.first.ruleInputs
+            val ruleMetadataSykmelding =
+                RuleMetadataSykmelding(
+                    ruleMetadata = ruleMetadata,
+                    sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                    doctorSuspensjon = false,
+                    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
+                )
 
-        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER.ruleHit
-    }
-    test("Ugyldig KodeVerk for houvedDiagnose, Status INVALID") {
-        val person31Years = LocalDate.now().minusYears(31)
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-        val sykmelding = generateSykmelding(
-            medisinskVurdering = generateMedisinskVurdering(
-                hovedDiagnose = Diagnose(
-                    system = "2.16.578.1.12.4.1.1.7110",
-                    kode = "Z09",
-                    tekst = "Brudd legg/ankel",
-                ),
-            ),
-        )
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                listOf(
+                    ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
+                    ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
+                    ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
+                    ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true,
+                )
 
-        val ruleMetadata = RuleMetadata(
-            signatureDate = LocalDate.now().atStartOfDay(),
-            receivedDate = LocalDate.now().atStartOfDay(),
-            behandletTidspunkt = LocalDate.now().atStartOfDay(),
-            patientPersonNumber = generatePersonNumber(person31Years, false),
-            rulesetVersion = null,
-            legekontorOrgnr = null,
-            tssid = null,
-            avsenderFnr = "2",
-            pasientFodselsdato = person31Years,
-        )
+            mapOf(
+                "ukjentDiagnoseKodeType" to false,
+                "icpc2ZDiagnose" to false,
+                "houvedDiagnoseEllerFraversgrunnMangler" to false,
+                "ugyldigKodeVerkHouvedDiagnose" to true,
+            ) shouldBeEqualTo status.first.ruleInputs
 
-        val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata,
-            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
-            doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
-        )
+            status.first.treeResult.ruleHit shouldBeEqualTo
+                ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
+        }
+        test("Ugyldig kodeVerk for biDiagnose, Status INVALID") {
+            val person31Years = LocalDate.now().minusYears(31)
 
-        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
+            val sykmelding =
+                generateSykmelding(
+                    medisinskVurdering =
+                        generateMedisinskVurdering(
+                            bidiagnoser =
+                                listOf(
+                                    Diagnose(
+                                        system = "2.16.578.1.12.4.1.1.7110",
+                                        kode = "S09",
+                                        tekst = "Brudd legg/ankel",
+                                    ),
+                                ),
+                        ),
+                )
 
-        status.first.treeResult.status shouldBeEqualTo Status.INVALID
-        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
-            ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
-            ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true,
-        )
+            val ruleMetadata =
+                RuleMetadata(
+                    signatureDate = LocalDate.now().atStartOfDay(),
+                    receivedDate = LocalDate.now().atStartOfDay(),
+                    behandletTidspunkt = LocalDate.now().atStartOfDay(),
+                    patientPersonNumber = generatePersonNumber(person31Years, false),
+                    rulesetVersion = null,
+                    legekontorOrgnr = null,
+                    tssid = null,
+                    avsenderFnr = "2",
+                    pasientFodselsdato = person31Years,
+                )
 
-        mapOf(
-            "ukjentDiagnoseKodeType" to false,
-            "icpc2ZDiagnose" to false,
-            "houvedDiagnoseEllerFraversgrunnMangler" to false,
-            "ugyldigKodeVerkHouvedDiagnose" to true,
+            val ruleMetadataSykmelding =
+                RuleMetadataSykmelding(
+                    ruleMetadata = ruleMetadata,
+                    sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                    doctorSuspensjon = false,
+                    behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
+                )
 
-        ) shouldBeEqualTo status.first.ruleInputs
+            val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
-    }
-    test("Ugyldig kodeVerk for biDiagnose, Status INVALID") {
-        val person31Years = LocalDate.now().minusYears(31)
+            status.first.treeResult.status shouldBeEqualTo Status.INVALID
+            status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                listOf(
+                    ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
+                    ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
+                    ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
+                    ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
+                    ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true,
+                )
 
-        val sykmelding = generateSykmelding(
-            medisinskVurdering = generateMedisinskVurdering(
-                bidiagnoser = listOf(
-                    Diagnose(
-                        system = "2.16.578.1.12.4.1.1.7110",
-                        kode = "S09",
-                        tekst = "Brudd legg/ankel",
-                    ),
-                ),
-            ),
-        )
+            mapOf(
+                "ukjentDiagnoseKodeType" to false,
+                "icpc2ZDiagnose" to false,
+                "houvedDiagnoseEllerFraversgrunnMangler" to false,
+                "ugyldigKodeVerkHouvedDiagnose" to false,
+                "ugyldigKodeVerkBiDiagnose" to true,
+            ) shouldBeEqualTo status.first.ruleInputs
 
-        val ruleMetadata = RuleMetadata(
-            signatureDate = LocalDate.now().atStartOfDay(),
-            receivedDate = LocalDate.now().atStartOfDay(),
-            behandletTidspunkt = LocalDate.now().atStartOfDay(),
-            patientPersonNumber = generatePersonNumber(person31Years, false),
-            rulesetVersion = null,
-            legekontorOrgnr = null,
-            tssid = null,
-            avsenderFnr = "2",
-            pasientFodselsdato = person31Years,
-        )
-
-        val ruleMetadataSykmelding = RuleMetadataSykmelding(
-            ruleMetadata = ruleMetadata,
-            sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
-            doctorSuspensjon = false,
-            behandlerOgStartdato = BehandlerOgStartdato(Behandler(emptyList(), null), null),
-        )
-
-        val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
-
-        status.first.treeResult.status shouldBeEqualTo Status.INVALID
-        status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo listOf(
-            ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE to false,
-            ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE to false,
-            ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER to false,
-            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
-            ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE to true,
-        )
-
-        mapOf(
-            "ukjentDiagnoseKodeType" to false,
-            "icpc2ZDiagnose" to false,
-            "houvedDiagnoseEllerFraversgrunnMangler" to false,
-            "ugyldigKodeVerkHouvedDiagnose" to false,
-            "ugyldigKodeVerkBiDiagnose" to true,
-        ) shouldBeEqualTo status.first.ruleInputs
-
-        status.first.treeResult.ruleHit shouldBeEqualTo ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
-    }
-})
+            status.first.treeResult.ruleHit shouldBeEqualTo
+                ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
+        }
+    })
