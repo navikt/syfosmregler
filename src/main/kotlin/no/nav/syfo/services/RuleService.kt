@@ -23,7 +23,6 @@ import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.TreeOutput
 import no.nav.syfo.rules.dsl.printRulePath
-import no.nav.syfo.rules.tilbakedateringSignatur.dryRunTilbakedateringSignatur
 import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
 import org.slf4j.Logger
@@ -145,10 +144,7 @@ class RuleService(
 
             val result =
                 ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
-            dryRunTilbakedateringSignatur(
-                sykmelding = receivedSykmelding.sykmelding,
-                ruleMetadataSykmelding
-            )
+
             result.forEach {
                 RULE_NODE_RULE_PATH_COUNTER.labels(
                         it.first.printRulePath(),

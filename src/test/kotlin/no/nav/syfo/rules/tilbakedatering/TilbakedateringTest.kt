@@ -56,7 +56,7 @@ class TilbakedateringTest :
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
-                        "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                     )
                 status.treeResult.ruleHit shouldBeEqualTo null
             }
@@ -90,7 +90,7 @@ class TilbakedateringTest :
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
-                        "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "ettersending" to true,
                         "ettersendingAv" to "sykmeldingID",
                     )
@@ -128,7 +128,7 @@ class TilbakedateringTest :
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
-                                "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                                "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "ettersending" to false,
                                 "begrunnelse" to
                                     sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
@@ -168,7 +168,7 @@ class TilbakedateringTest :
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
-                                "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                                "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "ettersending" to false,
                                 "begrunnelse" to "",
                                 "forlengelse" to false,
@@ -223,7 +223,7 @@ class TilbakedateringTest :
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
-                                "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                                "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "ettersending" to false,
                                 "begrunnelse" to "",
                                 "forlengelse" to true,
@@ -264,7 +264,7 @@ class TilbakedateringTest :
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
-                                "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                                "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "ettersending" to false,
                                 "begrunnelse" to "",
                                 "forlengelse" to false,
@@ -308,7 +308,7 @@ class TilbakedateringTest :
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
-                                "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                                "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "ettersending" to false,
                                 "begrunnelse" to "",
                                 "forlengelse" to false,
@@ -357,7 +357,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to "",
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -398,7 +398,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to "",
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -445,7 +445,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -492,7 +492,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "forlengelse" to true,
@@ -535,7 +535,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "forlengelse" to false,
@@ -582,7 +582,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "forlengelse" to false,
@@ -627,7 +627,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "forlengelse" to false,
@@ -676,7 +676,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "forlengelse" to false,
@@ -726,7 +726,7 @@ class TilbakedateringTest :
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
-                            "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                            "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "ettersending" to false,
                             "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                             "forlengelse" to false,
@@ -775,7 +775,7 @@ class TilbakedateringTest :
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
-                        "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "ettersending" to false,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                     )
@@ -816,7 +816,7 @@ class TilbakedateringTest :
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
-                        "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "ettersending" to false,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
@@ -860,7 +860,7 @@ class TilbakedateringTest :
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
-                        "behandletTidspunkt" to sykmelding.behandletTidspunkt.toLocalDate(),
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "ettersending" to false,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,

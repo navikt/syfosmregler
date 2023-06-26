@@ -23,32 +23,32 @@ typealias TilbakedateringRule = Rule<TilbakedateringRules>
 
 val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->
     val fom = sykmelding.perioder.sortedFOMDate().first()
-    val behandletTidspunkt = sykmelding.behandletTidspunkt.toLocalDate()
+    val genereringstidspunkt = sykmelding.signaturDato.toLocalDate()
 
     RuleResult(
-        ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
+        ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
         rule = TILBAKEDATERING,
-        ruleResult = behandletTidspunkt.isAfter(fom.plusDays(3)),
+        ruleResult = genereringstidspunkt.isAfter(fom.plusDays(3)),
     )
 }
 
 val tilbakedateringInntil30Dager: TilbakedateringRule = { sykmelding, _ ->
     val fom = sykmelding.perioder.sortedFOMDate().first()
-    val behandletTidspunkt = sykmelding.behandletTidspunkt.toLocalDate()
+    val genereringstidspunkt = sykmelding.signaturDato.toLocalDate()
     RuleResult(
-        ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
+        ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
         rule = TILBAKEDATERT_INNTIL_30_DAGER,
-        ruleResult = behandletTidspunkt.isBefore(fom.plusDays(31)),
+        ruleResult = genereringstidspunkt.isBefore(fom.plusDays(31)),
     )
 }
 
 val tilbakedateringInntil8Dager: TilbakedateringRule = { sykmelding, _ ->
     val fom = sykmelding.perioder.sortedFOMDate().first()
-    val behandletTidspunkt = sykmelding.behandletTidspunkt.toLocalDate()
+    val genereringstidspunkt = sykmelding.signaturDato.toLocalDate()
     RuleResult(
-        ruleInputs = mapOf("fom" to fom, "behandletTidspunkt" to behandletTidspunkt),
+        ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
         rule = TILBAKEDATERT_INNTIL_8_DAGER,
-        ruleResult = behandletTidspunkt.isBefore(fom.plusDays(9)),
+        ruleResult = genereringstidspunkt.isBefore(fom.plusDays(9)),
     )
 }
 

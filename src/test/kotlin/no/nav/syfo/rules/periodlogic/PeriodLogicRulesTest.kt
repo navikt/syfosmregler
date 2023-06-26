@@ -348,7 +348,10 @@ class PeriodLogicRulesTest :
                         behandletTidspunkt = LocalDateTime.now().plusDays(2),
                     )
 
-                val ruleMetadata = sykmelding.toRuleMetadata()
+                val ruleMetadata =
+                    sykmelding
+                        .toRuleMetadata()
+                        .copy(receivedDate = sykmelding.behandletTidspunkt.minusDays(2))
 
                 val status =
                     ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
