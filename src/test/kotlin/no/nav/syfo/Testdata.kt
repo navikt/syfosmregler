@@ -35,7 +35,6 @@ fun generateSykmelding(
     tom: LocalDate = LocalDate.now().plusDays(10),
     id: String = UUID.randomUUID().toString(),
     pasientAktoerId: String = UUID.randomUUID().toString(),
-    signaturDato: LocalDateTime = LocalDateTime.now(),
     syketilfelleStartDato: LocalDate = LocalDate.now(),
     medisinskVurdering: MedisinskVurdering = generateMedisinskVurdering(),
     skjermetForPasient: Boolean = false,
@@ -54,6 +53,7 @@ fun generateSykmelding(
     arbeidsgiver: Arbeidsgiver = generateArbeidsgiver(),
     msgid: String = UUID.randomUUID().toString(),
     navnFastlege: String? = null,
+    signaturDato: LocalDateTime = behandletTidspunkt,
 ) =
     Sykmelding(
         id = id,
