@@ -6,10 +6,13 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headers
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.model.Periode
+import org.slf4j.LoggerFactory
 
 class SmregisterClient(
     private val smregisterEndpointURL: String,
@@ -17,9 +20,11 @@ class SmregisterClient(
     private val scope: String,
     private val httpClient: HttpClient,
 ) {
-    suspend fun getSykmeldinger(fnr: String): List<SykmeldingDTO> =
-        httpClient
-            .get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
+    private val logger = LoggerFactory.getLogger(SmregisterClient::class.java)
+
+    suspend fun getSykmeldinger(fnr: String): List<SykmeldingDTO> {
+        val result =
+            httpClient.get("$smregisterEndpointURL/api/v2/sykmelding/sykmeldinger") {
                 accept(ContentType.Application.Json)
                 val accessToken = accessTokenClientV2.getAccessToken(scope)
                 if (accessToken?.accessToken == null) {
@@ -30,7 +35,18 @@ class SmregisterClient(
                     append("fnr", fnr)
                 }
             }
-            .body()
+        when (result.status) {
+            HttpStatusCode.OK -> {
+                val sykmeldinger = result.body<List<SykmeldingDTO>>()
+                logger.info("Got ${sykmeldinger.size} from smregister")
+                return sykmeldinger
+            }
+            else -> {
+                logger.error("Could not get sykmeldinger from smregister")
+                throw RuntimeException("Error getting sykmeldinger from smregister")
+            }
+        }
+    }
 }
 
 data class SykmeldingDTO(

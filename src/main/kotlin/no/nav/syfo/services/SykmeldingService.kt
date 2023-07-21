@@ -11,6 +11,7 @@ import no.nav.syfo.client.tilPeriodetypeDTO
 import no.nav.syfo.log
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.utils.LoggingMeta
+import org.slf4j.LoggerFactory
 
 data class Forlengelse(val sykmeldingId: String, val fom: LocalDate, val tom: LocalDate)
 
@@ -20,14 +21,19 @@ data class SykmeldingMetadataInfo(
 )
 
 class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
+    private val logger = LoggerFactory.getLogger(SykmeldingService::class.java)
+
     suspend fun getSykmeldingMetadataInfo(
         fnr: String,
         sykmelding: Sykmelding,
         loggingMetadata: LoggingMeta
     ): SykmeldingMetadataInfo {
+        val sykmeldingerFromRegister = syfosmregisterClient.getSykmeldinger(fnr)
+        logger.info(
+            "getting sykmeldinger for ${sykmelding.id}: match from smregister ${sykmeldingerFromRegister.map { it.id }}"
+        )
         val tidligereSykmeldinger =
-            syfosmregisterClient
-                .getSykmeldinger(fnr)
+            sykmeldingerFromRegister
                 .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
                 .filterNot { harTilbakedatertMerknad(it) }
                 .filter { it.medisinskVurdering?.hovedDiagnose?.kode != null }
@@ -35,6 +41,9 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                     it.medisinskVurdering?.hovedDiagnose?.kode ==
                         sykmelding.medisinskVurdering.hovedDiagnose?.kode
                 }
+        logger.info(
+            "tidligere sykmeldinger for ${sykmelding.id}, after filter ${tidligereSykmeldinger.map { it.id }}"
+        )
         return SykmeldingMetadataInfo(
             ettersendingAv = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
             forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger),
@@ -43,7 +52,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
 
     private fun erEttersending(
         sykmelding: Sykmelding,
-        tidligereSykemldinger: List<SykmeldingDTO>,
+        sykmeldingerFraRegister: List<SykmeldingDTO>,
         loggingMeta: LoggingMeta
     ): String? {
         if (sykmelding.perioder.size > 1) {
@@ -58,19 +67,25 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
             return null
         }
         val periode = sykmelding.perioder.first()
+
         val tidligereSykmelding =
-            tidligereSykemldinger.firstOrNull { tidligereSykmelding ->
-                tidligereSykmelding.sykmeldingsperioder.any { tidligerePeriode ->
+            sykmeldingerFraRegister.firstOrNull { sykmeldingFraRegister ->
+                sykmeldingFraRegister.sykmeldingsperioder.any { tidligerePeriode ->
                     tidligerePeriode.fom == periode.fom &&
                         tidligerePeriode.tom == periode.tom &&
                         tidligerePeriode.gradert?.grad == periode.gradert?.grad &&
                         tidligerePeriode.type == periode.tilPeriodetypeDTO()
                 }
             }
+
         if (tidligereSykmelding != null) {
             log.info(
                 "Sykmelding ${sykmelding.id} er ettersending av ${tidligereSykmelding.id} {}",
                 StructuredArguments.fields(loggingMeta)
+            )
+        } else {
+            logger.info(
+                "Could not find ettersending for ${sykmelding.id} from ${sykmeldingerFraRegister.map { it.id }}"
             )
         }
         return tidligereSykmelding?.id

@@ -156,7 +156,7 @@ fun main() {
     val pdlService =
         PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
 
-    val kafkaBaseConfig = KafkaUtils.getAivenKafkaConfig()
+    val kafkaBaseConfig = KafkaUtils.getAivenKafkaConfig("juridisk-producer")
     val kafkaProperties =
         kafkaBaseConfig.toProducerConfig(
             env.applicationName,
