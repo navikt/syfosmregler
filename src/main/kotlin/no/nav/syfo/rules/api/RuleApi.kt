@@ -1,4 +1,4 @@
-package no.nav.syfo.api
+package no.nav.syfo.rules.api
 
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
