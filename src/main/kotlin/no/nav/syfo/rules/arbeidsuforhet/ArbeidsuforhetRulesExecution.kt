@@ -1,6 +1,6 @@
 package no.nav.syfo.rules.arbeidsuforhet
 
-import no.nav.syfo.log
+import no.nav.syfo.logger
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.common.RuleExecution
@@ -23,7 +23,7 @@ class ArbeidsuforhetRulesExecution(
 ) : RuleExecution<ArbeidsuforhetRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata.ruleMetadata).also { validationRulePath ->
-            log.info("Rules ${sykmelding.id}, ${validationRulePath.printRulePath()}")
+            logger.info("Rules ${sykmelding.id}, ${validationRulePath.printRulePath()}")
         } to UtenJuridisk
 }
 

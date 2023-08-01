@@ -1,6 +1,6 @@
 package no.nav.syfo.rules.tilbakedatering
 
-import no.nav.syfo.log
+import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleExecution
@@ -22,7 +22,7 @@ class TilbakedateringRulesExecution(
 ) : RuleExecution<TilbakedateringRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata).also { tilbakedateringRulePath ->
-            log.info("Rules ${sykmelding.id}, ${tilbakedateringRulePath.printRulePath()}")
+            logger.info("Rules ${sykmelding.id}, ${tilbakedateringRulePath.printRulePath()}")
         } to MedJuridisk(tilbakeDatertJuridiskHenvisning())
 }
 

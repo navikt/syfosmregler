@@ -1,6 +1,6 @@
 package no.nav.syfo.rules.legesuspensjon
 
-import no.nav.syfo.log
+import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.RuleExecution
@@ -27,7 +27,7 @@ class LegeSuspensjonRulesExecution(
     ): Pair<LegeSuspensjonTreeOutput, Juridisk> =
         rootNode.evaluate(sykmelding.id, ruleMetadata.doctorSuspensjon).also {
             legeSuspensjonRulePath ->
-            log.info("Rules ${sykmelding.id}, ${legeSuspensjonRulePath.printRulePath()}")
+            logger.info("Rules ${sykmelding.id}, ${legeSuspensjonRulePath.printRulePath()}")
         } to UtenJuridisk
 }
 

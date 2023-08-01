@@ -1,6 +1,6 @@
 package no.nav.syfo.rules.periodlogic
 
-import no.nav.syfo.log
+import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
@@ -22,7 +22,7 @@ class PeriodLogicRulesExecution(
 ) : RuleExecution<PeriodLogicRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata).also { periodLogicRulePath ->
-            log.info("Rules ${sykmelding.id}, ${periodLogicRulePath.printRulePath()}")
+            logger.info("Rules ${sykmelding.id}, ${periodLogicRulePath.printRulePath()}")
         } to UtenJuridisk
 }
 

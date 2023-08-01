@@ -11,8 +11,8 @@ import io.ktor.http.headers
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.logger
 import no.nav.syfo.model.Periode
-import org.slf4j.LoggerFactory
 
 class SmregisterClient(
     private val smregisterEndpointURL: String,
@@ -20,7 +20,6 @@ class SmregisterClient(
     private val scope: String,
     private val httpClient: HttpClient,
 ) {
-    private val logger = LoggerFactory.getLogger(SmregisterClient::class.java)
 
     suspend fun getSykmeldinger(fnr: String): List<SykmeldingDTO> {
         val result =

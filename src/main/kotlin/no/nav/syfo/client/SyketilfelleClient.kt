@@ -8,9 +8,9 @@ import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import java.time.LocalDate
 import net.logstash.logback.argument.StructuredArguments.fields
-import no.nav.syfo.api.log
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.model.Periode
+import no.nav.syfo.rules.api.log
 import no.nav.syfo.services.sortedFOMDate
 import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.utils.LoggingMeta

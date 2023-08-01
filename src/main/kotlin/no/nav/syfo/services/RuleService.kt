@@ -189,9 +189,9 @@ class RuleService(
         )
 
     private fun erTilbakedatert(receivedSykmelding: ReceivedSykmelding): Boolean =
-        receivedSykmelding.sykmelding.signaturDato.toLocalDate().isAfter(
-            receivedSykmelding.sykmelding.perioder.sortedFOMDate().first().plusDays(3)
-        )
+        receivedSykmelding.sykmelding.signaturDato
+            .toLocalDate()
+            .isAfter(receivedSykmelding.sykmelding.perioder.sortedFOMDate().first().plusDays(3))
 }
 
 data class BehandlerOgStartdato(

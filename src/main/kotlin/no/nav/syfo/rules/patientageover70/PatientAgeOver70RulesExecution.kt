@@ -1,6 +1,6 @@
 package no.nav.syfo.rules.patientageover70
 
-import no.nav.syfo.log
+import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.Lovverk
@@ -22,7 +22,7 @@ class PatientAgeOver70RulesExecution(
 ) : RuleExecution<PatientAgeOver70Rules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata).also { patientAgeOver70RulePath ->
-            log.info("Rules ${sykmelding.id}, ${patientAgeOver70RulePath.printRulePath()}")
+            logger.info("Rules ${sykmelding.id}, ${patientAgeOver70RulePath.printRulePath()}")
         } to
             MedJuridisk(
                 JuridiskHenvisning(

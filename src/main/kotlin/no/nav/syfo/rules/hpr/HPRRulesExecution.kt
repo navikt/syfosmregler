@@ -1,6 +1,6 @@
 package no.nav.syfo.rules.hpr
 
-import no.nav.syfo.log
+import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
@@ -21,7 +21,7 @@ typealias HPRTreeNode = TreeNode<HPRRules, RuleResult>
 class HPRRulesExecution(private val rootNode: HPRTreeNode = hprRuleTree) : RuleExecution<HPRRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata.behandlerOgStartdato).also { hprRulePath ->
-            log.info("Rules ${sykmelding.id}, ${hprRulePath.printRulePath()}")
+            logger.info("Rules ${sykmelding.id}, ${hprRulePath.printRulePath()}")
         } to UtenJuridisk
 }
 

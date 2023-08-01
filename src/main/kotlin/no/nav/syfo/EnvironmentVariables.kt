@@ -1,6 +1,6 @@
 package no.nav.syfo
 
-data class Environment(
+data class EnvironmentVariables(
     val applicationName: String = getEnvVar("NAIS_APP_NAME", "syfosmregler"),
     val legeSuspensjonProxyEndpointURL: String = getEnvVar("LEGE_SUSPENSJON_PROXY_ENDPOINT_URL"),
     val legeSuspensjonProxyScope: String = getEnvVar("LEGE_SUSPENSJON_PROXY_SCOPE"),

@@ -12,17 +12,17 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Parameters
-import no.nav.syfo.Environment
+import no.nav.syfo.EnvironmentVariables
 import org.slf4j.LoggerFactory
 
 class AzureAdV2Client(
-    environment: Environment,
+    environmentVariables: EnvironmentVariables,
     private val httpClient: HttpClient,
     private val azureAdV2Cache: AzureAdV2Cache = AzureAdV2Cache(),
 ) {
-    private val azureAppClientId = environment.clientIdV2
-    private val azureAppClientSecret = environment.clientSecretV2
-    private val azureTokenEndpoint = environment.aadAccessTokenV2Url
+    private val azureAppClientId = environmentVariables.clientIdV2
+    private val azureAppClientSecret = environmentVariables.clientSecretV2
+    private val azureTokenEndpoint = environmentVariables.aadAccessTokenV2Url
 
     /** Returns a non-obo access token authenticated using app specific client credentials */
     suspend fun getAccessToken(
