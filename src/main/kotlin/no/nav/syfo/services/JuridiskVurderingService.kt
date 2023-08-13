@@ -1,6 +1,7 @@
 package no.nav.syfo.services
 
-import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.UUID
 import no.nav.syfo.getEnvVar
 import no.nav.syfo.model.ReceivedSykmelding
@@ -74,7 +75,7 @@ class JuridiskVurderingService(
                 ),
             input = result.ruleInputs,
             utfall = toJuridiskUtfall(result.treeResult.status),
-            tidsstempel = LocalDateTime.now(),
+            tidsstempel = ZonedDateTime.now(ZoneOffset.UTC),
         )
     }
 
