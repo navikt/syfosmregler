@@ -20,7 +20,6 @@ val mockkVersion = "1.13.7"
 val kotlinVersion = "1.9.0"
 val commonsCodecVersion = "1.16.0"
 val ktfmtVersion = "0.44"
-val jvmVersion = "17"
 
 application {
     mainClass.set("no.nav.syfo.ApplicationKt")
@@ -103,10 +102,6 @@ tasks {
         doLast {
             println(project.version)
         }
-    }
-
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = jvmVersion
     }
 
     withType<ShadowJar> {
