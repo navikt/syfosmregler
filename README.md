@@ -88,8 +88,9 @@ docker build -t syfosmregler .
 ```
 
 #### Running a docker image
+Remember to change the environment variables, to match your local services
 ``` bash
-docker run --rm -it -p 8080:8080 syfosmregler
+docker run --rm -it -p 8080:8080 -e "LEGE_SUSPENSJON_PROXY_ENDPOINT_URL=https://localhost:8081" -e "LEGE_SUSPENSJON_PROXY_SCOPE=localhost" -e "SYKETILLFELLE_SCOPE=localhost" -e "HELSENETT_ENDPOINT_URL=https://localhost:8081" -e "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT=https://localhost:8081" -e "AZURE_APP_CLIENT_ID=localhost" -e "AZURE_APP_CLIENT_SECRET=localhost" -e "HELSENETT_SCOPE=localhost" -e "SMREGISTER_AUDIENCE=localhost" -e "PDL_SCOPE=localhost" -e "PDL_GRAPHQL_PATH=https://localhost:8081/graphql" -e "AZURE_OPENID_CONFIG_ISSUER=localhost" -e "AZURE_OPENID_CONFIG_JWKS_URI=https://localhost:8081" -e "KAFKA_BROKERS=https://localhost:8081" -e "KAFKA_TRUSTSTORE_PATH=super/secret/test.cert" -e "KAFKA_KEYSTORE_PATH=super/secret/private/test.cert" -e "KAFKA_CREDSTORE_PASSWORD=password" syfosmregler 
 ```
 
 
