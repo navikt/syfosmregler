@@ -21,19 +21,20 @@ val kotlinVersion = "1.9.0"
 val commonsCodecVersion = "1.16.0"
 val ktfmtVersion = "0.44"
 
+
+plugins {
+    id("application")
+    kotlin("jvm") version "1.9.0"
+    id("com.diffplug.spotless") version "6.20.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.cyclonedx.bom") version "1.7.4"
+}
+
 application {
     mainClass.set("no.nav.syfo.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
-
-plugins {
-    kotlin("jvm") version "1.9.0"
-    id("io.ktor.plugin") version "2.3.3"
-    id("com.diffplug.spotless") version "6.20.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("org.cyclonedx.bom") version "1.7.4"
 }
 
 val githubUser: String by project
@@ -94,23 +95,20 @@ dependencies {
 }
 
 tasks {
-    withType<Jar> {
-        manifest.attributes["Main-Class"] = "no.nav.syfo.ApplicationKt"
-    }
-
-    create("printVersion") {
-        doLast {
-            println(project.version)
+    shadowJar {
+        archiveBaseName.set("app")
+        archiveClassifier.set("")
+        isZip64 = true
+        manifest {
+            attributes(
+                mapOf(
+                    "Main-Class" to "no.nav.syfo.ApplicationKt",
+                ),
+            )
         }
     }
 
-    withType<ShadowJar> {
-        transform(ServiceFileTransformer::class.java) {
-            setPath("META-INF/cxf")
-            include("bus-extensions.txt")
-        }
-    }
-    withType<Test> {
+    test {
         useJUnitPlatform {
         }
         testLogging {
