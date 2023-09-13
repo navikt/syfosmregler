@@ -164,7 +164,11 @@ class RuleService(
                 .inc()
 
             if (validationResult.status != Status.OK) {
-                secureLog.info("RuleResult for ${receivedSykmelding.sykmelding.id}: ${objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result)}")
+                secureLog.info(
+                    "RuleResult for ${receivedSykmelding.sykmelding.id}: ${objectMapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(result.filter { it.first.treeResult.status != Status.OK })}"
+                )
             }
 
             return validationResult
