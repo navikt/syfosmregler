@@ -57,6 +57,8 @@ spec:
         - host: smgcp-proxy.prod-fss-pub.nais.io
   kafka:
     pool: nav-prod
+  secureLogs:
+    enabled: true
   env:
     - name: HELSENETT_SCOPE
       value: api://prod-fss.teamsykmelding.syfohelsenettproxy/.default
