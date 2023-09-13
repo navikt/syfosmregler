@@ -19,6 +19,7 @@ import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.ValidationResult
+import no.nav.syfo.objectMapper
 import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.TreeOutput
@@ -163,7 +164,7 @@ class RuleService(
                 .inc()
 
             if (validationResult.status != Status.OK) {
-                secureLog.info("RuleResult for ${receivedSykmelding.sykmelding.id}: $result")
+                secureLog.info("RuleResult for ${receivedSykmelding.sykmelding.id}: ${objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result)}")
             }
 
             return validationResult
