@@ -16,6 +16,8 @@ import no.nav.syfo.rules.legesuspensjon.LegeSuspensjonRulesExecution
 import no.nav.syfo.rules.legesuspensjon.legeSuspensjonRuleTree
 import no.nav.syfo.rules.patientageover70.PatientAgeOver70RulesExecution
 import no.nav.syfo.rules.patientageover70.patientAgeOver70RuleTree
+import no.nav.syfo.rules.patientunder13.PatientAgeUnder13RulesExecution
+import no.nav.syfo.rules.patientunder13.patientAgeUnder13RuleTree
 import no.nav.syfo.rules.periodlogic.PeriodLogicRulesExecution
 import no.nav.syfo.rules.periodlogic.periodLogicRuleTree
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
@@ -31,6 +33,7 @@ class RuleExecutionService() {
             HPRRulesExecution(hprRuleTree),
             ArbeidsuforhetRulesExecution(arbeidsuforhetRuleTree),
             ValidationRulesExecution(validationRuleTree),
+            PatientAgeUnder13RulesExecution(patientAgeUnder13RuleTree),
             PatientAgeOver70RulesExecution(patientAgeOver70RuleTree),
             PeriodLogicRulesExecution(periodLogicRuleTree),
             TilbakedateringRulesExecution(tilbakedateringRuleTree),
