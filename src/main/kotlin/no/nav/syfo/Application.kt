@@ -225,7 +225,7 @@ fun Application.module() {
         JuridiskVurderingService(
             KafkaProducer(kafkaProperties),
             environmentVariables.etterlevelsesTopic,
-            environmentVariables.commitSha
+            environmentVariables.sourceVersionURL
         )
     val ruleService =
         RuleService(
