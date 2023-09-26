@@ -76,3 +76,5 @@ spec:
       value: https://smgcp-proxy.prod-fss-pub.nais.io
     - name: LEGE_SUSPENSJON_PROXY_SCOPE
       value: api://prod-fss.teamsykmelding.smgcp-proxy/.default
+    - name: COMMIT_SHA
+      value: {{ commit }}

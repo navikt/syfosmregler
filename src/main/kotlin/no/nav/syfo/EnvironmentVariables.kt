@@ -21,6 +21,7 @@ data class EnvironmentVariables(
     val etterlevelsesTopic: String = "teamsykmelding.paragraf-i-kode",
     val jwtIssuer: String = getEnvVar("AZURE_OPENID_CONFIG_ISSUER"),
     val jwkKeysUrl: String = getEnvVar("AZURE_OPENID_CONFIG_JWKS_URI"),
+    val commitSha: String = getEnvVar("COMMIT_SHA"),
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null) =
