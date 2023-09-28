@@ -8,6 +8,9 @@ import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.Status
+import no.nav.syfo.rules.periodvalidering.PeriodLogicRuleHit
+import no.nav.syfo.rules.periodvalidering.PeriodLogicRules
+import no.nav.syfo.rules.periodvalidering.PeriodLogicRulesExecution
 import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
 import no.nav.syfo.rules.validation.ruleMetadataSykmelding
 import org.amshove.kluent.shouldBeEqualTo
@@ -37,9 +40,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
@@ -53,9 +53,6 @@ class PeriodLogicRulesTest :
                     "perioder" to sykmelding.perioder,
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to false,
                     "manglendeInnspillArbeidsgiver" to false,
@@ -251,97 +248,6 @@ class PeriodLogicRulesTest :
                     PeriodLogicRuleHit.IKKE_DEFINERT_PERIODE.ruleHit
             }
 
-            test("Fremdater over 30 dager, Status INVALID") {
-                val sykmelding =
-                    generateSykmelding(
-                        perioder =
-                            listOf(
-                                generatePeriode(
-                                    fom = LocalDate.now().plusDays(31),
-                                    tom = LocalDate.now().plusDays(37),
-                                ),
-                            ),
-                        behandletTidspunkt = LocalDateTime.now(),
-                    )
-
-                val ruleMetadata = sykmelding.toRuleMetadata()
-
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
-
-                status.treeResult.status shouldBeEqualTo Status.INVALID
-                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
-                    listOf(
-                        PeriodLogicRules.PERIODER_MANGLER to false,
-                        PeriodLogicRules.FRADATO_ETTER_TILDATO to false,
-                        PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
-                        PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
-                        PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to true,
-                    )
-
-                mapOf(
-                    "perioder" to sykmelding.perioder,
-                    "periodeRanges" to
-                        sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
-                    "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to true,
-                ) shouldBeEqualTo status.ruleInputs
-
-                status.treeResult.ruleHit shouldBeEqualTo PeriodLogicRuleHit.FREMDATERT.ruleHit
-            }
-
-            test("Varighet over 1 år, Status INVALID") {
-                val sykmelding =
-                    generateSykmelding(
-                        perioder =
-                            listOf(
-                                generatePeriode(
-                                    fom = LocalDate.now(),
-                                    tom = LocalDate.now(),
-                                ),
-                                generatePeriode(
-                                    fom = LocalDate.now().plusDays(1),
-                                    tom = LocalDate.now().plusDays(366),
-                                ),
-                            ),
-                        behandletTidspunkt = LocalDateTime.now(),
-                    )
-
-                val ruleMetadata = sykmelding.toRuleMetadata()
-
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
-
-                status.treeResult.status shouldBeEqualTo Status.INVALID
-                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
-                    listOf(
-                        PeriodLogicRules.PERIODER_MANGLER to false,
-                        PeriodLogicRules.FRADATO_ETTER_TILDATO to false,
-                        PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
-                        PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
-                        PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to true,
-                    )
-
-                mapOf(
-                    "perioder" to sykmelding.perioder,
-                    "periodeRanges" to
-                        sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
-                    "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to true,
-                ) shouldBeEqualTo status.ruleInputs
-
-                status.treeResult.ruleHit shouldBeEqualTo
-                    PeriodLogicRuleHit.TOTAL_VARIGHET_OVER_ETT_AAR.ruleHit
-            }
-
             test("BehandlingsDato etter mottatDato, Status INVALID") {
                 val sykmelding =
                     generateSykmelding(
@@ -364,9 +270,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to true,
                     )
 
@@ -375,9 +278,6 @@ class PeriodLogicRulesTest :
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to true,
                 ) shouldBeEqualTo status.ruleInputs
 
@@ -416,9 +316,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to true,
                     )
@@ -428,9 +325,6 @@ class PeriodLogicRulesTest :
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to true,
                 ) shouldBeEqualTo status.ruleInputs
@@ -465,9 +359,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to true,
@@ -480,9 +371,6 @@ class PeriodLogicRulesTest :
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to false,
                     "manglendeInnspillArbeidsgiver" to true,
@@ -519,9 +407,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
@@ -530,14 +415,9 @@ class PeriodLogicRulesTest :
 
                 mapOf(
                     "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to false,
                     "manglendeInnspillArbeidsgiver" to false,
@@ -574,9 +454,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
@@ -586,14 +463,9 @@ class PeriodLogicRulesTest :
 
                 mapOf(
                     "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to false,
                     "manglendeInnspillArbeidsgiver" to false,
@@ -631,9 +503,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
@@ -644,14 +513,9 @@ class PeriodLogicRulesTest :
 
                 mapOf(
                     "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to false,
                     "manglendeInnspillArbeidsgiver" to false,
@@ -690,9 +554,6 @@ class PeriodLogicRulesTest :
                         PeriodLogicRules.OVERLAPPENDE_PERIODER to false,
                         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER to false,
                         PeriodLogicRules.IKKE_DEFINERT_PERIODE to false,
-                        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR to false,
-                        PeriodLogicRules.FREMDATERT to false,
-                        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR to false,
                         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO to false,
                         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT to false,
                         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER to false,
@@ -704,14 +565,9 @@ class PeriodLogicRulesTest :
 
                 mapOf(
                     "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
-                    "perioder" to sykmelding.perioder,
                     "periodeRanges" to
                         sykmelding.perioder.sortedBy { it.fom }.map { it.fom to it.tom },
                     "perioder" to sykmelding.perioder,
-                    "tilbakeDatertMerEnn3AAr" to false,
-                    "fremdatert" to false,
-                    "varighetOver1AAr" to false,
                     "behandslingsDatoEtterMottatDato" to false,
                     "avventendeKombinert" to false,
                     "manglendeInnspillArbeidsgiver" to false,

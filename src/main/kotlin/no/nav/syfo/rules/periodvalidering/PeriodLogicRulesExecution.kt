@@ -1,4 +1,4 @@
-package no.nav.syfo.rules.periodlogic
+package no.nav.syfo.rules.periodvalidering
 
 import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
@@ -14,8 +14,6 @@ import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias PeriodLogicTreeOutput = TreeOutput<PeriodLogicRules, RuleResult>
-
-typealias PeriodLogicTreeNode = TreeNode<PeriodLogicRules, RuleResult>
 
 class PeriodLogicRulesExecution(
     private val rootNode: TreeNode<PeriodLogicRules, RuleResult> = periodLogicRuleTree

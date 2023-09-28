@@ -18,8 +18,10 @@ import no.nav.syfo.rules.patientageover70.PatientAgeOver70RulesExecution
 import no.nav.syfo.rules.patientageover70.patientAgeOver70RuleTree
 import no.nav.syfo.rules.patientunder13.PatientAgeUnder13RulesExecution
 import no.nav.syfo.rules.patientunder13.patientAgeUnder13RuleTree
-import no.nav.syfo.rules.periodlogic.PeriodLogicRulesExecution
-import no.nav.syfo.rules.periodlogic.periodLogicRuleTree
+import no.nav.syfo.rules.periode.PeriodeRulesExecution
+import no.nav.syfo.rules.periode.periodeRuleTree
+import no.nav.syfo.rules.periodvalidering.PeriodLogicRulesExecution
+import no.nav.syfo.rules.periodvalidering.periodLogicRuleTree
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRulesExecution
 import no.nav.syfo.rules.tilbakedatering.tilbakedateringRuleTree
 import no.nav.syfo.rules.validation.ValidationRulesExecution
@@ -30,14 +32,15 @@ class RuleExecutionService() {
     private val ruleExecution =
         sequenceOf(
             LegeSuspensjonRulesExecution(legeSuspensjonRuleTree),
+            ValidationRulesExecution(validationRuleTree),
+            PeriodLogicRulesExecution(periodLogicRuleTree),
             HPRRulesExecution(hprRuleTree),
             ArbeidsuforhetRulesExecution(arbeidsuforhetRuleTree),
-            ValidationRulesExecution(validationRuleTree),
             PatientAgeUnder13RulesExecution(patientAgeUnder13RuleTree),
             PatientAgeOver70RulesExecution(patientAgeOver70RuleTree),
-            PeriodLogicRulesExecution(periodLogicRuleTree),
-            TilbakedateringRulesExecution(tilbakedateringRuleTree),
+            PeriodeRulesExecution(periodeRuleTree),
             GradertRulesExecution(gradertRuleTree),
+            TilbakedateringRulesExecution(tilbakedateringRuleTree),
         )
 
     fun runRules(

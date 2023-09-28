@@ -2,9 +2,11 @@ package no.nav.syfo.rules.hpr
 
 import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
-import no.nav.syfo.rules.common.UtenJuridisk
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -22,7 +24,17 @@ class HPRRulesExecution(private val rootNode: HPRTreeNode = hprRuleTree) : RuleE
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata.behandlerOgStartdato).also { hprRulePath ->
             logger.info("Rules ${sykmelding.id}, ${hprRulePath.printRulePath()}")
-        } to UtenJuridisk
+        } to
+            MedJuridisk(
+                JuridiskHenvisning(
+                    lovverk = Lovverk.HELSEPERSONELLOVEN,
+                    paragraf = "3",
+                    ledd = null,
+                    punktum = null,
+                    bokstav = null,
+                    rundskriv = null
+                )
+            )
 }
 
 private fun TreeNode<HPRRules, RuleResult>.evaluate(
