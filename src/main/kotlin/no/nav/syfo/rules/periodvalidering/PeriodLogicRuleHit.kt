@@ -1,4 +1,4 @@
-package no.nav.syfo.rules.periodlogic
+package no.nav.syfo.rules.periodvalidering
 
 import no.nav.syfo.model.Status
 import no.nav.syfo.rules.common.RuleHit
@@ -67,42 +67,6 @@ enum class PeriodLogicRuleHit(
                 messageForUser =
                     "Det er ikke oppgitt type for sykmeldingen " +
                         "(den må være enten 100 prosent, gradert, avventende, reisetilskudd eller behandlingsdager).",
-            ),
-    ),
-    TILBAKEDATERT_MER_ENN_3_AR(
-        ruleHit =
-            RuleHit(
-                rule = "TILBAKEDATERT_MER_ENN_3_AR",
-                status = Status.INVALID,
-                messageForSender =
-                    "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
-                        "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende: " +
-                        "Sykmeldinges fom-dato er mer enn 3 år tilbake i tid.",
-                messageForUser = "Startdatoen er mer enn tre år tilbake.",
-            ),
-    ),
-    FREMDATERT(
-        ruleHit =
-            RuleHit(
-                rule = "FREMDATERT",
-                status = Status.INVALID,
-                messageForSender =
-                    "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
-                        "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                        "Hvis sykmeldingen er fremdatert mer enn 30 dager etter behandletDato avvises meldingen.",
-                messageForUser = "Sykmeldingen er datert mer enn 30 dager fram i tid.",
-            ),
-    ),
-    TOTAL_VARIGHET_OVER_ETT_AAR(
-        ruleHit =
-            RuleHit(
-                rule = "TOTAL_VARIGHET_OVER_ETT_AAR",
-                status = Status.INVALID,
-                messageForSender =
-                    "Sykmeldingen kan ikke rettes, det må skrives en ny. " +
-                        "Pasienten har fått beskjed om å vente på ny sykmelding fra deg. Grunnet følgende:" +
-                        "Sykmeldingen første fom og siste tom har ein varighet som er over 1 år",
-                messageForUser = "Den kan ikke ha en varighet på over ett år.",
             ),
     ),
     BEHANDLINGSDATO_ETTER_MOTTATTDATO(

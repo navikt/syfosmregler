@@ -60,7 +60,6 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                         ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
@@ -69,7 +68,6 @@ class ValidationTest :
                     )
 
                 mapOf(
-                    "pasientUnder13Aar" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
                     "ugyldingOrgNummerLengde" to false,
@@ -78,40 +76,6 @@ class ValidationTest :
                 ) shouldBeEqualTo status.ruleInputs
 
                 status.treeResult.ruleHit shouldBeEqualTo null
-            }
-            test("Pasient under 13 Aar, Status INVALID") {
-                val person12Years = LocalDate.now().minusYears(12)
-
-                val sykmelding = generateSykmelding()
-
-                val ruleMetadata =
-                    RuleMetadata(
-                        signatureDate = LocalDate.now().atStartOfDay(),
-                        receivedDate = LocalDate.now().atStartOfDay(),
-                        behandletTidspunkt = LocalDate.now().atStartOfDay(),
-                        patientPersonNumber = generatePersonNumber(person12Years, false),
-                        rulesetVersion = null,
-                        legekontorOrgnr = null,
-                        tssid = null,
-                        avsenderFnr = "2",
-                        pasientFodselsdato = person12Years,
-                    )
-                val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
-
-                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
-
-                status.treeResult.status shouldBeEqualTo Status.INVALID
-                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
-                    listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to true,
-                    )
-
-                mapOf(
-                    "pasientUnder13Aar" to true,
-                ) shouldBeEqualTo status.ruleInputs
-
-                status.treeResult.ruleHit shouldBeEqualTo
-                    ValidationRuleHit.PASIENT_YNGRE_ENN_13.ruleHit
             }
 
             test("Ugyldig regelsettversjon, Status INVALID") {
@@ -149,12 +113,10 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to true,
                     )
 
                 mapOf(
-                    "pasientUnder13Aar" to false,
                     "ugyldigRegelsettversjon" to true,
                 ) shouldBeEqualTo status.ruleInputs
 
@@ -194,13 +156,11 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true,
                     )
 
                 mapOf(
-                    "pasientUnder13Aar" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to true,
                 ) shouldBeEqualTo status.ruleInputs
@@ -244,14 +204,12 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                         ValidationRules.UGYLDIG_ORGNR_LENGDE to true,
                     )
 
                 mapOf(
-                    "pasientUnder13Aar" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
                     "ugyldingOrgNummerLengde" to true,
@@ -297,7 +255,6 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                         ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
@@ -305,7 +262,6 @@ class ValidationTest :
                     )
 
                 mapOf(
-                    "pasientUnder13Aar" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
                     "ugyldingOrgNummerLengde" to false,
@@ -362,7 +318,6 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.PASIENT_YNGRE_ENN_13 to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                         ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
@@ -371,7 +326,6 @@ class ValidationTest :
                     )
 
                 mapOf(
-                    "pasientUnder13Aar" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
                     "ugyldingOrgNummerLengde" to false,

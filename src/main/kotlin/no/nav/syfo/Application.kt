@@ -83,6 +83,7 @@ fun Application.configureRouting(
     applicationState: ApplicationState,
     jwkProviderAad: JwkProvider,
 ) {
+
     setupAuth(
         environmentVariables = env,
         jwkProviderAadV2 = jwkProviderAad,
@@ -224,6 +225,7 @@ fun Application.module() {
         JuridiskVurderingService(
             KafkaProducer(kafkaProperties),
             environmentVariables.etterlevelsesTopic,
+            environmentVariables.sourceVersionURL
         )
     val ruleService =
         RuleService(

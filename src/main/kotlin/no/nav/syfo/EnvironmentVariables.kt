@@ -21,6 +21,7 @@ data class EnvironmentVariables(
     val etterlevelsesTopic: String = "teamsykmelding.paragraf-i-kode",
     val jwtIssuer: String = getEnvVar("AZURE_OPENID_CONFIG_ISSUER"),
     val jwkKeysUrl: String = getEnvVar("AZURE_OPENID_CONFIG_JWKS_URI"),
+    val sourceVersionURL: String = getEnvVar("SOURCE_VERSION_URL"),
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null) =

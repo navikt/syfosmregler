@@ -3,9 +3,11 @@ package no.nav.syfo.rules.arbeidsuforhet
 import no.nav.syfo.logger
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
-import no.nav.syfo.rules.common.UtenJuridisk
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -24,7 +26,17 @@ class ArbeidsuforhetRulesExecution(
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
         rootNode.evaluate(sykmelding, ruleMetadata.ruleMetadata).also { validationRulePath ->
             logger.info("Rules ${sykmelding.id}, ${validationRulePath.printRulePath()}")
-        } to UtenJuridisk
+        } to
+            MedJuridisk(
+                JuridiskHenvisning(
+                    lovverk = Lovverk.FOLKETRYGDLOVEN,
+                    paragraf = "8-4",
+                    ledd = 1,
+                    punktum = null,
+                    bokstav = null,
+                    rundskriv = "R08-00"
+                ),
+            )
 }
 
 private fun TreeNode<ArbeidsuforhetRules, RuleResult>.evaluate(

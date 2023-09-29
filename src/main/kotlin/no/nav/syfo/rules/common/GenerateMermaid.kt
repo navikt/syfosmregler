@@ -9,7 +9,9 @@ import no.nav.syfo.rules.gradert.gradertRuleTree
 import no.nav.syfo.rules.hpr.hprRuleTree
 import no.nav.syfo.rules.legesuspensjon.legeSuspensjonRuleTree
 import no.nav.syfo.rules.patientageover70.patientAgeOver70RuleTree
-import no.nav.syfo.rules.periodlogic.periodLogicRuleTree
+import no.nav.syfo.rules.patientunder13.patientAgeUnder13RuleTree
+import no.nav.syfo.rules.periode.periodeRuleTree
+import no.nav.syfo.rules.periodvalidering.periodLogicRuleTree
 import no.nav.syfo.rules.tilbakedatering.tilbakedateringRuleTree
 import no.nav.syfo.rules.validation.validationRuleTree
 
@@ -17,13 +19,15 @@ fun main() {
     val ruleTrees =
         listOf(
             "Lege suspensjon" to legeSuspensjonRuleTree,
+            "Validation" to validationRuleTree,
+            "Periode validering" to periodLogicRuleTree,
             "HPR" to hprRuleTree,
             "Arbeidsuforhet" to arbeidsuforhetRuleTree,
-            "Validation" to validationRuleTree,
+            "Pasient under 13" to patientAgeUnder13RuleTree,
             "Pasient over 70" to patientAgeOver70RuleTree,
-            "Periode" to periodLogicRuleTree,
-            "Tilbakedatering" to tilbakedateringRuleTree,
+            "Periode" to periodeRuleTree,
             "Gradert" to gradertRuleTree,
+            "Tilbakedatering" to tilbakedateringRuleTree,
         )
 
     ruleTrees.forEach {

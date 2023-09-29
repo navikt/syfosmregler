@@ -1,4 +1,4 @@
-package no.nav.syfo.rules.periodlogic
+package no.nav.syfo.rules.periodvalidering
 
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
@@ -14,9 +14,6 @@ enum class PeriodLogicRules {
     OVERLAPPENDE_PERIODER,
     OPPHOLD_MELLOM_PERIODER,
     IKKE_DEFINERT_PERIODE,
-    TILBAKEDATERT_MER_ENN_3_AR,
-    FREMDATERT,
-    TOTAL_VARIGHET_OVER_ETT_AAR,
     BEHANDLINGSDATO_ETTER_MOTTATTDATO,
     AVVENTENDE_SYKMELDING_KOMBINERT,
     MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER,
@@ -37,70 +34,49 @@ val periodLogicRuleTree =
                     yes(INVALID, PeriodLogicRuleHit.OPPHOLD_MELLOM_PERIODER)
                     no(PeriodLogicRules.IKKE_DEFINERT_PERIODE) {
                         yes(INVALID, PeriodLogicRuleHit.IKKE_DEFINERT_PERIODE)
-                        no(PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR) {
-                            yes(INVALID, PeriodLogicRuleHit.TILBAKEDATERT_MER_ENN_3_AR)
-                            no(PeriodLogicRules.FREMDATERT) {
-                                yes(INVALID, PeriodLogicRuleHit.FREMDATERT)
-                                no(PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR) {
-                                    yes(INVALID, PeriodLogicRuleHit.TOTAL_VARIGHET_OVER_ETT_AAR)
-                                    no(PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO) {
+                        no(PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO) {
+                            yes(
+                                INVALID,
+                                PeriodLogicRuleHit.BEHANDLINGSDATO_ETTER_MOTTATTDATO,
+                            )
+                            no(PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT) {
+                                yes(
+                                    INVALID,
+                                    PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_KOMBINERT,
+                                )
+                                no(PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER) {
+                                    yes(
+                                        INVALID,
+                                        PeriodLogicRuleHit.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER,
+                                    )
+                                    no(PeriodLogicRules.AVVENTENDE_SYKMELDING_OVER_16_DAGER) {
                                         yes(
                                             INVALID,
-                                            PeriodLogicRuleHit.BEHANDLINGSDATO_ETTER_MOTTATTDATO
+                                            PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_OVER_16_DAGER,
                                         )
-                                        no(PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT) {
+                                        no(PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE) {
                                             yes(
                                                 INVALID,
-                                                PeriodLogicRuleHit.AVVENTENDE_SYKMELDING_KOMBINERT
+                                                PeriodLogicRuleHit
+                                                    .FOR_MANGE_BEHANDLINGSDAGER_PER_UKE,
                                             )
                                             no(
-                                                PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER
+                                                PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT
                                             ) {
                                                 yes(
                                                     INVALID,
                                                     PeriodLogicRuleHit
-                                                        .MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER
+                                                        .GRADERT_SYKMELDING_OVER_99_PROSENT,
                                                 )
                                                 no(
-                                                    PeriodLogicRules
-                                                        .AVVENTENDE_SYKMELDING_OVER_16_DAGER
+                                                    PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER
                                                 ) {
                                                     yes(
-                                                        INVALID,
+                                                        MANUAL_PROCESSING,
                                                         PeriodLogicRuleHit
-                                                            .AVVENTENDE_SYKMELDING_OVER_16_DAGER
+                                                            .SYKMELDING_MED_BEHANDLINGSDAGER,
                                                     )
-                                                    no(
-                                                        PeriodLogicRules
-                                                            .FOR_MANGE_BEHANDLINGSDAGER_PER_UKE
-                                                    ) {
-                                                        yes(
-                                                            INVALID,
-                                                            PeriodLogicRuleHit
-                                                                .FOR_MANGE_BEHANDLINGSDAGER_PER_UKE
-                                                        )
-                                                        no(
-                                                            PeriodLogicRules
-                                                                .GRADERT_SYKMELDING_OVER_99_PROSENT
-                                                        ) {
-                                                            yes(
-                                                                INVALID,
-                                                                PeriodLogicRuleHit
-                                                                    .GRADERT_SYKMELDING_OVER_99_PROSENT
-                                                            )
-                                                            no(
-                                                                PeriodLogicRules
-                                                                    .SYKMELDING_MED_BEHANDLINGSDAGER
-                                                            ) {
-                                                                yes(
-                                                                    MANUAL_PROCESSING,
-                                                                    PeriodLogicRuleHit
-                                                                        .SYKMELDING_MED_BEHANDLINGSDAGER,
-                                                                )
-                                                                no(OK)
-                                                            }
-                                                        }
-                                                    }
+                                                    no(OK)
                                                 }
                                             }
                                         }
@@ -135,8 +111,6 @@ fun getRule(rules: PeriodLogicRules): Rule<PeriodLogicRules> {
         PeriodLogicRules.OVERLAPPENDE_PERIODER -> overlappendePerioder
         PeriodLogicRules.OPPHOLD_MELLOM_PERIODER -> oppholdMellomPerioder
         PeriodLogicRules.IKKE_DEFINERT_PERIODE -> ikkeDefinertPeriode
-        PeriodLogicRules.FREMDATERT -> fremdatertOver30Dager
-        PeriodLogicRules.TOTAL_VARIGHET_OVER_ETT_AAR -> varighetOver1AAr
         PeriodLogicRules.BEHANDLINGSDATO_ETTER_MOTTATTDATO -> behandslingsDatoEtterMottatDato
         PeriodLogicRules.AVVENTENDE_SYKMELDING_KOMBINERT -> avventendeKombinert
         PeriodLogicRules.MANGLENDE_INNSPILL_TIL_ARBEIDSGIVER -> manglendeInnspillArbeidsgiver
@@ -144,6 +118,5 @@ fun getRule(rules: PeriodLogicRules): Rule<PeriodLogicRules> {
         PeriodLogicRules.FOR_MANGE_BEHANDLINGSDAGER_PER_UKE -> forMangeBehandlingsDagerPrUke
         PeriodLogicRules.GRADERT_SYKMELDING_OVER_99_PROSENT -> gradertOver99Prosent
         PeriodLogicRules.SYKMELDING_MED_BEHANDLINGSDAGER -> inneholderBehandlingsDager
-        PeriodLogicRules.TILBAKEDATERT_MER_ENN_3_AR -> tilbakeDatertOver3Ar
     }
 }

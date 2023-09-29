@@ -3,7 +3,6 @@ package no.nav.syfo.services
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
-import no.nav.syfo.getEnvVar
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskUtfall
@@ -22,7 +21,7 @@ data class JuridiskVurderingResult(
 class JuridiskVurderingService(
     private val kafkaProducer: KafkaProducer<String, JuridiskVurderingResult>,
     val juridiskVurderingTopic: String,
-    val versjonsKode: String = getEnvVar("NAIS_APP_IMAGE"),
+    val versjonsKode: String,
 ) {
     companion object {
         val EVENT_NAME = "subsumsjon"
