@@ -52,8 +52,8 @@ spec:
         - application: flex-syketilfelle
           namespace: flex
           cluster: dev-gcp
+        - application: syfohelsenettproxy
       external:
-        - host: syfohelsenettproxy.dev-fss-pub.nais.io
         - host: pdl-api.dev-fss-pub.nais.io
         - host: smgcp-proxy.dev-fss-pub.nais.io
   kafka:
@@ -62,9 +62,7 @@ spec:
     enabled: true
   env:
     - name: HELSENETT_SCOPE
-      value: api://dev-fss.teamsykmelding.syfohelsenettproxy/.default
-    - name: HELSENETT_ENDPOINT_URL
-      value: https://syfohelsenettproxy.dev-fss-pub.nais.io
+      value: api://dev-gcp.teamsykmelding.syfohelsenettproxy/.default
     - name: SMREGISTER_AUDIENCE
       value: api://dev-gcp.teamsykmelding.syfosmregister/.default
     - name: PDL_GRAPHQL_PATH
