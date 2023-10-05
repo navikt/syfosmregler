@@ -25,7 +25,7 @@ val fremdatertOver30Dager: PeriodeRule = { sykmelding, ruleMetadata ->
                 "fom" to forsteFomDato,
                 "fremdatert" to fremdatert
             ),
-        rule = PeriodeRules.FREMDATERT_MER_ENN_30_DAGER,
+        rule = PeriodeRules.FREMDATERT,
         ruleResult = fremdatert,
     )
 }

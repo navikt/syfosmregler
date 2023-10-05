@@ -24,7 +24,7 @@ class PeriodeRulestest :
                 status.treeResult.status shouldBeEqual Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        PeriodeRules.FREMDATERT_MER_ENN_30_DAGER to false,
+                        PeriodeRules.FREMDATERT to false,
                         PeriodeRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                         PeriodeRules.TOTAL_VARIGHET_OVER_ETT_AAR to false
                     )
@@ -60,7 +60,7 @@ class PeriodeRulestest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        PeriodeRules.FREMDATERT_MER_ENN_30_DAGER to true,
+                        PeriodeRules.FREMDATERT to true,
                     )
 
                 mapOf(
@@ -69,8 +69,7 @@ class PeriodeRulestest :
                     "fremdatert" to true
                 ) shouldBeEqualTo status.ruleInputs
 
-                status.treeResult.ruleHit shouldBeEqualTo
-                    PeriodeRuleHit.FREMDATERT_MER_ENN_30_DAGER.ruleHit
+                status.treeResult.ruleHit shouldBeEqualTo PeriodeRuleHit.FREMDATERT.ruleHit
             }
 
             test("Varighet over 1 år, Status INVALID") {
@@ -98,7 +97,7 @@ class PeriodeRulestest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        PeriodeRules.FREMDATERT_MER_ENN_30_DAGER to false,
+                        PeriodeRules.FREMDATERT to false,
                         PeriodeRules.TILBAKEDATERT_MER_ENN_3_AR to false,
                         PeriodeRules.TOTAL_VARIGHET_OVER_ETT_AAR to true,
                     )

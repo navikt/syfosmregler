@@ -32,7 +32,6 @@ class HPRRulesExecution(private val rootNode: HPRTreeNode = hprRuleTree) : RuleE
                     ledd = null,
                     punktum = null,
                     bokstav = null,
-                    rundskriv = null
                 )
             )
 }

@@ -34,7 +34,6 @@ class ArbeidsuforhetRulesExecution(
                     ledd = 1,
                     punktum = null,
                     bokstav = null,
-                    rundskriv = "R08-00"
                 ),
             )
 }

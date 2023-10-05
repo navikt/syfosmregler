@@ -4,7 +4,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.rules.common.RuleHit
 
 enum class PeriodeRuleHit(val ruleHit: RuleHit) {
-    FREMDATERT_MER_ENN_30_DAGER(
+    FREMDATERT(
         ruleHit =
             RuleHit(
                 rule = "FREMDATERT",
