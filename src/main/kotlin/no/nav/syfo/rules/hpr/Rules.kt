@@ -1,6 +1,8 @@
 package no.nav.syfo.rules.hpr
 
+import java.time.LocalDateTime
 import no.nav.syfo.client.Godkjenning
+import no.nav.syfo.client.Tilleggskompetanse
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.services.BehandlerOgStartdato
@@ -12,23 +14,6 @@ typealias Rule<T> =
     (sykmelding: Sykmelding, behandlerOgStartdato: BehandlerOgStartdato) -> RuleResult<T>
 
 typealias HPRRule = Rule<HPRRules>
-
-val behanderManglerTillegeskompetanse: HPRRule = { _, behandlerOgStartdato ->
-
-    val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
-    val har = harAktivHelsepersonellAutorisasjonsSom(
-        behandlerGodkjenninger,
-        listOf(
-            HelsepersonellKategori.FYSIOTERAPAEUT.verdi,
-        ),
-    )
-
-    RuleResult(
-        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
-        rule = HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR,
-        ruleResult = !aktivAutorisasjon,
-    )
-}
 
 val behanderIkkeGyldigHPR: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
@@ -120,6 +105,49 @@ val behandlerMTFTKISykmeldtOver12Uker: HPRRule = { sykmelding, behandlerOgStartd
         rule = HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER,
         ruleResult = behandlerMTFTKISykmeldtOver12Uker,
     )
+}
+val behandlerErFTUtenTilligskompetanseSykmelding: HPRRule = { metadata, behandlerOgStartdato ->
+    val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
+    val genereringsTidspunkt = metadata.signaturDato
+
+    val erFtMedTilleggskompetanse =
+        erFTMedTillegskompetanse(behandlerGodkjenninger, genereringsTidspunkt)
+
+    val result = erFtMedTilleggskompetanse
+
+    RuleResult(
+        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
+        rule = HPRRules.BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING,
+        ruleResult = result,
+    )
+}
+
+private fun erFTMedTillegskompetanse(
+    behandlerGodkjenninger: List<Godkjenning>,
+    genereringsTidspunkt: LocalDateTime,
+) =
+    (behandlerGodkjenninger.size == 1 &&
+        behandlerGodkjenninger.any { godkjenning ->
+            godkjenning.helsepersonellkategori?.verdi ==
+                HelsepersonellKategori.FYSIOTERAPAEUT.verdi &&
+                godkjenning.tillegskompetanse?.any { tillegskompetanse ->
+                    tillegskompetanse.avsluttetStatus == null &&
+                        tillegskompetanse.gyldigPeriode(genereringsTidspunkt) &&
+                        tillegskompetanse.type?.aktiv == true &&
+                        tillegskompetanse.type.oid == 7702 &&
+                        tillegskompetanse.type.verdi == "1"
+                }
+                    ?: false
+        })
+
+private fun Tilleggskompetanse.gyldigPeriode(genereringsTidspunkt: LocalDateTime): Boolean {
+    val fom = gyldig?.fra?.toLocalDate()
+    val tom = gyldig?.til?.toLocalDate()
+    val genDate = genereringsTidspunkt.toLocalDate()
+    if (fom == null) {
+        return false
+    }
+    return fom.minusDays(1).isBefore(genDate) && (tom == null || tom.plusDays(1).isAfter(genDate))
 }
 
 private fun harAktivHelsepersonellAutorisasjonsSom(

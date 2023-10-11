@@ -11,6 +11,7 @@ enum class HPRRules {
     BEHANDLER_MANGLER_AUTORISASJON_I_HPR,
     BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR,
     BEHANDLER_MT_FT_KI_OVER_12_UKER,
+    BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING,
 }
 
 val hprRuleTree =
@@ -22,7 +23,13 @@ val hprRuleTree =
                 yes(Status.INVALID, HPRRuleHit.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR)
                 no(HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER) {
                     yes(Status.INVALID, HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER)
-                    no(OK)
+                    no(HPRRules.BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING) {
+                        yes(
+                            Status.INVALID,
+                            HPRRuleHit.BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING
+                        )
+                        no(OK)
+                    }
                 }
             }
         }
@@ -42,5 +49,7 @@ fun getRule(rules: HPRRules): Rule<HPRRules> {
         HPRRules.BEHANDLER_MANGLER_AUTORISASJON_I_HPR -> behandlerManglerAutorisasjon
         HPRRules.BEHANDLER_IKKE_LE_KI_MT_TL_FT_I_HPR -> behandlerIkkeLEKIMTTLFT
         HPRRules.BEHANDLER_MT_FT_KI_OVER_12_UKER -> behandlerMTFTKISykmeldtOver12Uker
+        HPRRules.BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING ->
+            behandlerErFTUtenTilligskompetanseSykmelding
     }
 }

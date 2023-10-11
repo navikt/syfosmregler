@@ -11,12 +11,12 @@ import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
 import java.io.IOException
+import java.time.LocalDateTime
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.rules.api.log
 import no.nav.syfo.utils.LoggingMeta
-import java.time.LocalDateTime
 
 class NorskHelsenettClient(
     private val endpointUrl: String,
@@ -91,7 +91,7 @@ data class Behandler(
 data class Godkjenning(
     val helsepersonellkategori: Kode? = null,
     val autorisasjon: Kode? = null,
-    val tillegskompetanse: List<Tilleggskompetanse>?
+    val tillegskompetanse: List<Tilleggskompetanse>? = null,
 )
 
 data class Tilleggskompetanse(
