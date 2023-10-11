@@ -13,6 +13,23 @@ typealias Rule<T> =
 
 typealias HPRRule = Rule<HPRRules>
 
+val behanderManglerTillegeskompetanse: HPRRule = { _, behandlerOgStartdato ->
+
+    val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
+    val har = harAktivHelsepersonellAutorisasjonsSom(
+        behandlerGodkjenninger,
+        listOf(
+            HelsepersonellKategori.FYSIOTERAPAEUT.verdi,
+        ),
+    )
+
+    RuleResult(
+        ruleInputs = mapOf("behandlerGodkjenninger" to behandlerGodkjenninger),
+        rule = HPRRules.BEHANDLER_IKKE_GYLDIG_I_HPR,
+        ruleResult = !aktivAutorisasjon,
+    )
+}
+
 val behanderIkkeGyldigHPR: HPRRule = { _, behandlerOgStartdato ->
     val behandlerGodkjenninger = behandlerOgStartdato.behandler.godkjenninger
 

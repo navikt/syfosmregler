@@ -16,6 +16,7 @@ import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.rules.api.log
 import no.nav.syfo.utils.LoggingMeta
+import java.time.LocalDateTime
 
 class NorskHelsenettClient(
     private val endpointUrl: String,
@@ -90,7 +91,18 @@ data class Behandler(
 data class Godkjenning(
     val helsepersonellkategori: Kode? = null,
     val autorisasjon: Kode? = null,
+    val tillegskompetanse: List<Tilleggskompetanse>?
 )
+
+data class Tilleggskompetanse(
+    val avsluttetStatus: Kode?,
+    val eTag: String?,
+    val gyldig: Periode?,
+    val id: Int?,
+    val type: Kode?
+)
+
+data class Periode(val fra: LocalDateTime?, val til: LocalDateTime?)
 
 data class Kode(
     val aktiv: Boolean,
