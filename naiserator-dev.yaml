@@ -27,9 +27,6 @@ spec:
     enabled: true
     path: /internal/prometheus
   resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
     requests:
       cpu: 100m
       memory: 512Mi
@@ -55,7 +52,7 @@ spec:
         - application: syfohelsenettproxy
       external:
         - host: pdl-api.dev-fss-pub.nais.io
-        - host: smgcp-proxy.dev-fss-pub.nais.io
+        - host: btsys.dev-fss-pub.nais.io
   kafka:
     pool: nav-dev
   secureLogs:
@@ -72,8 +69,8 @@ spec:
     - name: SYKETILLFELLE_SCOPE
       value: api://dev-gcp.flex.flex-syketilfelle/.default
     - name: LEGE_SUSPENSJON_PROXY_ENDPOINT_URL
-      value: https://smgcp-proxy.dev-fss-pub.nais.io
+      value: https://btsys.dev-fss-pub.nais.io
     - name: LEGE_SUSPENSJON_PROXY_SCOPE
-      value: api://dev-fss.teamsykmelding.smgcp-proxy/.default
+      value: api://dev-fss.team-rocket.btsys/.default
     - name: SOURCE_VERSION_URL
       value: {{ sourceVersionURL }}

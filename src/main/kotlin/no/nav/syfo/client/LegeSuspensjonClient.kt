@@ -29,7 +29,7 @@ class LegeSuspensjonClient(
     ): Suspendert {
         val httpResponse =
             httpClient
-                .get("$endpointUrl/btsys/api/v1/suspensjon/status") {
+                .get("$endpointUrl/api/v1/suspensjon/status") {
                     accept(ContentType.Application.Json)
                     val accessToken = azureAdV2Client.getAccessToken(scope)
                     if (accessToken?.accessToken == null) {
