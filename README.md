@@ -25,8 +25,7 @@ This the high level flow for the application
       syfosmregler --- syfosmregister;
       syfosmregler --- PDL;
       syfosmregler --- flex-syketilfelle;
-      syfosmregler --- smgcp-proxy;
-      smgcp-proxy --- btsys;
+      syfosmregler --- btsys;
 ```
 
 ## Getting started

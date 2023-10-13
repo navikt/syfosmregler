@@ -33,7 +33,7 @@ class LegeSuspensjonClient(
                     accept(ContentType.Application.Json)
                     val accessToken = azureAdV2Client.getAccessToken(scope)
                     if (accessToken?.accessToken == null) {
-                        throw RuntimeException("Klarte ikke hente ut accesstoken for smgcp-proxy")
+                        throw RuntimeException("Klarte ikke hente ut accesstoken for btsys")
                     }
                     headers {
                         append("Nav-Call-Id", ediloggid)
@@ -55,13 +55,13 @@ class LegeSuspensjonClient(
             HttpStatusCode.OK -> httpResponse.body()
             else -> {
                 log.error(
-                    "Btsys (smgcp-proxy) svarte med kode {} for ediloggId {}, {}",
+                    "Btsys svarte med kode {} for ediloggId {}, {}",
                     httpResponse.status,
                     ediloggid,
                     fields(loggingMeta),
                 )
                 throw IOException(
-                    "Btsys (smgcp-proxy) svarte med uventet kode ${httpResponse.status} for $ediloggid"
+                    "Btsys svarte med uventet kode ${httpResponse.status} for $ediloggid"
                 )
             }
         }
