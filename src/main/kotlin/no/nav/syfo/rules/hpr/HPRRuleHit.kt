@@ -50,4 +50,15 @@ enum class HPRRuleHit(
                         "gjør at sykefraværet ditt overstiger 12 uker",
             ),
     ),
+    BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING(
+        ruleHit =
+            RuleHit(
+                rule = "BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDINGHPRRuleHit",
+                status = Status.INVALID,
+                messageForSender =
+                    "Behandler finnes i HPR, men er fysioterapeut uten tilleggskompetanse for sykmelding" +
+                        "Pasienten har fått beskjed.",
+                messageForUser = "Den som skrev sykmeldingen manglet autorisasjon",
+            ),
+    ),
 }
