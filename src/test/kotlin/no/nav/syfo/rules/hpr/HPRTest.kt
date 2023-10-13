@@ -18,7 +18,7 @@ import no.nav.syfo.services.SykmeldingMetadataInfo
 import org.amshove.kluent.`should contain all`
 import org.amshove.kluent.shouldBeEqualTo
 
-class NewHPRTest :
+class HPRTest :
     FunSpec(
         {
             val ruleTree = HPRRulesExecution()

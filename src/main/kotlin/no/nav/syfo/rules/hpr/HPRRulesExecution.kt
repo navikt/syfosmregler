@@ -16,7 +16,7 @@ import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
 
-typealias NewHPRTreeOutput = TreeOutput<HPRRules, RuleResult>
+typealias HPRTreeOutput = TreeOutput<HPRRules, RuleResult>
 
 typealias HPRTreeNode = TreeNode<HPRRules, RuleResult>
 
@@ -39,9 +39,9 @@ class HPRRulesExecution(private val rootNode: HPRTreeNode = hprRuleTree) : RuleE
 private fun TreeNode<HPRRules, RuleResult>.evaluate(
     sykmelding: Sykmelding,
     behandlerOgStartdato: BehandlerOgStartdato,
-): NewHPRTreeOutput =
+): HPRTreeOutput =
     when (this) {
-        is ResultNode -> NewHPRTreeOutput(treeResult = result)
+        is ResultNode -> HPRTreeOutput(treeResult = result)
         is RuleNode -> {
             val rule = getRule(rule)
             val result = rule(sykmelding, behandlerOgStartdato)
