@@ -1,5 +1,6 @@
 package no.nav.syfo.rules.hpr
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -11,6 +12,7 @@ import no.nav.syfo.client.Periode
 import no.nav.syfo.client.Tilleggskompetanse
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Status
+import no.nav.syfo.objectMapper
 import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
@@ -852,6 +854,76 @@ class HPRTest :
 
                     val result = ruleTree.runRules(sykmedling, mockRuleMetadata)
                     result.first.treeResult.status shouldBeEqualTo Status.INVALID
+                }
+
+                test("Behandler er KI med gyldig stuff ") {
+                                    val behandlerSTring = "[\n" +
+                                        "  {\n" +
+                                        "    \"helsepersonellkategori\": {\n" +
+                                        "      \"aktiv\": true,\n" +
+                                        "      \"oid\": 9060,\n" +
+                                        "      \"verdi\": \"ET\"\n" +
+                                        "    },\n" +
+                                        "    \"autorisasjon\": {\n" +
+                                        "      \"aktiv\": true,\n" +
+                                        "      \"oid\": 7704,\n" +
+                                        "      \"verdi\": \"1\"\n" +
+                                        "    },\n" +
+                                        "    \"tillegskompetanse\": null\n" +
+                                        "  },\n" +
+                                        "  {\n" +
+                                        "    \"helsepersonellkategori\": {\n" +
+                                        "      \"aktiv\": true,\n" +
+                                        "      \"oid\": 9060,\n" +
+                                        "      \"verdi\": \"KI\"\n" +
+                                        "    },\n" +
+                                        "    \"autorisasjon\": {\n" +
+                                        "      \"aktiv\": true,\n" +
+                                        "      \"oid\": 7704,\n" +
+                                        "      \"verdi\": \"1\"\n" +
+                                        "    },\n" +
+                                        "    \"tillegskompetanse\": [\n" +
+                                        "      {\n" +
+                                        "        \"avsluttetStatus\": null,\n" +
+                                        "        \"gyldig\": {\n" +
+                                        "          \"fra\": \"2015-08-16T22:00:00\",\n" +
+                                        "          \"til\": \"2059-01-05T23:00:00\"\n" +
+                                        "        },\n" +
+                                        "        \"id\": 20358,\n" +
+                                        "        \"type\": {\n" +
+                                        "          \"aktiv\": true,\n" +
+                                        "          \"oid\": 7702,\n" +
+                                        "          \"verdi\": \"1\"\n" +
+                                        "        },\n" +
+                                        "        \"etag\": null\n" +
+                                        "      }\n" +
+                                        "    ]\n" +
+                                        "  }\n" +
+                                        "]"
+
+                    val behandlerGodkjenninger = objectMapper.readValue<List<Godkjenning>>(behandlerSTring)
+
+                    val behandler = Behandler(behandlerGodkjenninger)
+
+                    val sykmedling = generateSykmelding()
+                    val mockRuleMetadata = mockk<RuleMetadataSykmelding>()
+                    every { mockRuleMetadata.behandlerOgStartdato } returns
+                        BehandlerOgStartdato(behandler, null)
+
+                    val result = ruleTree.runRules(sykmedling, mockRuleMetadata)
+                    result.first.treeResult.status shouldBeEqualTo Status.OK
+                    result.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                        listOf(
+                            HPRRules.BEHANDLER_GYLIDG_I_HPR to true,
+                            HPRRules.BEHANDLER_HAR_AUTORISASJON_I_HPR to true,
+                            HPRRules.BEHANDLER_ER_LEGE_I_HPR to false,
+                            HPRRules.BEHANDLER_ER_TANNLEGE_I_HPR to false,
+                            HPRRules.BEHANDLER_ER_MANUELLTERAPEUT_I_HPR to false,
+                            HPRRules.BEHANDLER_ER_FT_MED_TILLEGSKOMPETANSE_I_HPR to false,
+                            HPRRules.BEHANDLER_ER_KI_MED_TILLEGSKOMPETANSE_I_HPR to true,
+                            HPRRules.SYKEFRAVAR_OVER_12_UKER to false
+                        )
+
                 }
             }
         },

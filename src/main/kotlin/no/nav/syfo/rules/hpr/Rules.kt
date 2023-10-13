@@ -155,7 +155,6 @@ private fun erHelsepersonellKategoriMedTilleggskompetanse(
     genereringsTidspunkt: LocalDateTime,
     helsepersonellkategori: HelsepersonellKategori
 ) =
-    (behandlerGodkjenninger.size == 1 &&
         behandlerGodkjenninger.any { godkjenning ->
             godkjenning.helsepersonellkategori?.verdi == helsepersonellkategori.verdi &&
                 godkjenning.tillegskompetanse?.any { tillegskompetanse ->
@@ -166,7 +165,7 @@ private fun erHelsepersonellKategoriMedTilleggskompetanse(
                         tillegskompetanse.type.verdi == "1"
                 }
                     ?: false
-        })
+        }
 
 private fun sjekkBehandler(
     behandlerGodkjenninger: List<Godkjenning>,
