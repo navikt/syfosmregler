@@ -155,17 +155,17 @@ private fun erHelsepersonellKategoriMedTilleggskompetanse(
     genereringsTidspunkt: LocalDateTime,
     helsepersonellkategori: HelsepersonellKategori
 ) =
-        behandlerGodkjenninger.any { godkjenning ->
-            godkjenning.helsepersonellkategori?.verdi == helsepersonellkategori.verdi &&
-                godkjenning.tillegskompetanse?.any { tillegskompetanse ->
-                    tillegskompetanse.avsluttetStatus == null &&
-                        tillegskompetanse.gyldigPeriode(genereringsTidspunkt) &&
-                        tillegskompetanse.type?.aktiv == true &&
-                        tillegskompetanse.type.oid == 7702 &&
-                        tillegskompetanse.type.verdi == "1"
-                }
-                    ?: false
-        }
+    behandlerGodkjenninger.any { godkjenning ->
+        godkjenning.helsepersonellkategori?.verdi == helsepersonellkategori.verdi &&
+            godkjenning.tillegskompetanse?.any { tillegskompetanse ->
+                tillegskompetanse.avsluttetStatus == null &&
+                    tillegskompetanse.gyldigPeriode(genereringsTidspunkt) &&
+                    tillegskompetanse.type?.aktiv == true &&
+                    tillegskompetanse.type.oid == 7702 &&
+                    tillegskompetanse.type.verdi == "1"
+            }
+                ?: false
+    }
 
 private fun sjekkBehandler(
     behandlerGodkjenninger: List<Godkjenning>,

@@ -46,19 +46,8 @@ enum class HPRRuleHit(
                     "Sykmeldingen er avvist fordi det totale sykefraværet overstiger 12 uker (du som KI/MT/FT " +
                         "kan ikke sykmelde utover 12 uker). Pasienten har fått beskjed.",
                 messageForUser =
-                    "SSykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som " +
+                    "Sykmeldingen din er avvist fordi den som sykmeldte deg ikke kan skrive en sykmelding som " +
                         "gjør at sykefraværet ditt overstiger 12 uker",
-            ),
-    ),
-    BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDING(
-        ruleHit =
-            RuleHit(
-                rule = "BEHANDLER_ER_FT_UTEN_TILLIGESKOMPETANSE_SYKMELDINGHPRRuleHit",
-                status = Status.INVALID,
-                messageForSender =
-                    "Behandler finnes i HPR, men er fysioterapeut uten tilleggskompetanse for sykmelding" +
-                        "Pasienten har fått beskjed.",
-                messageForUser = "Den som skrev sykmeldingen manglet autorisasjon",
             ),
     ),
 }

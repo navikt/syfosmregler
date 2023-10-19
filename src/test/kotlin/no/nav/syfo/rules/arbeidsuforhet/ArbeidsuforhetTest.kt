@@ -239,11 +239,12 @@ class ArbeidsuforhetTest :
                 generateSykmelding(
                     medisinskVurdering =
                         generateMedisinskVurdering(
-                            hovedDiagnose = Diagnose(
-                                system = "2.16.578.1.12.4.1.1.7170",
-                                kode = "R24",
-                                tekst = "Blodig oppspytt/hemoptyse",
-                            ),
+                            hovedDiagnose =
+                                Diagnose(
+                                    system = "2.16.578.1.12.4.1.1.7170",
+                                    kode = "R24",
+                                    tekst = "Blodig oppspytt/hemoptyse",
+                                ),
                             bidiagnoser =
                                 listOf(
                                     Diagnose(

@@ -857,51 +857,53 @@ class HPRTest :
                 }
 
                 test("Behandler er KI med gyldig stuff ") {
-                                    val behandlerSTring = "[\n" +
-                                        "  {\n" +
-                                        "    \"helsepersonellkategori\": {\n" +
-                                        "      \"aktiv\": true,\n" +
-                                        "      \"oid\": 9060,\n" +
-                                        "      \"verdi\": \"ET\"\n" +
-                                        "    },\n" +
-                                        "    \"autorisasjon\": {\n" +
-                                        "      \"aktiv\": true,\n" +
-                                        "      \"oid\": 7704,\n" +
-                                        "      \"verdi\": \"1\"\n" +
-                                        "    },\n" +
-                                        "    \"tillegskompetanse\": null\n" +
-                                        "  },\n" +
-                                        "  {\n" +
-                                        "    \"helsepersonellkategori\": {\n" +
-                                        "      \"aktiv\": true,\n" +
-                                        "      \"oid\": 9060,\n" +
-                                        "      \"verdi\": \"KI\"\n" +
-                                        "    },\n" +
-                                        "    \"autorisasjon\": {\n" +
-                                        "      \"aktiv\": true,\n" +
-                                        "      \"oid\": 7704,\n" +
-                                        "      \"verdi\": \"1\"\n" +
-                                        "    },\n" +
-                                        "    \"tillegskompetanse\": [\n" +
-                                        "      {\n" +
-                                        "        \"avsluttetStatus\": null,\n" +
-                                        "        \"gyldig\": {\n" +
-                                        "          \"fra\": \"2015-08-16T22:00:00\",\n" +
-                                        "          \"til\": \"2059-01-05T23:00:00\"\n" +
-                                        "        },\n" +
-                                        "        \"id\": 20358,\n" +
-                                        "        \"type\": {\n" +
-                                        "          \"aktiv\": true,\n" +
-                                        "          \"oid\": 7702,\n" +
-                                        "          \"verdi\": \"1\"\n" +
-                                        "        },\n" +
-                                        "        \"etag\": null\n" +
-                                        "      }\n" +
-                                        "    ]\n" +
-                                        "  }\n" +
-                                        "]"
+                    val behandlerSTring =
+                        "[\n" +
+                            "  {\n" +
+                            "    \"helsepersonellkategori\": {\n" +
+                            "      \"aktiv\": true,\n" +
+                            "      \"oid\": 9060,\n" +
+                            "      \"verdi\": \"ET\"\n" +
+                            "    },\n" +
+                            "    \"autorisasjon\": {\n" +
+                            "      \"aktiv\": true,\n" +
+                            "      \"oid\": 7704,\n" +
+                            "      \"verdi\": \"1\"\n" +
+                            "    },\n" +
+                            "    \"tillegskompetanse\": null\n" +
+                            "  },\n" +
+                            "  {\n" +
+                            "    \"helsepersonellkategori\": {\n" +
+                            "      \"aktiv\": true,\n" +
+                            "      \"oid\": 9060,\n" +
+                            "      \"verdi\": \"KI\"\n" +
+                            "    },\n" +
+                            "    \"autorisasjon\": {\n" +
+                            "      \"aktiv\": true,\n" +
+                            "      \"oid\": 7704,\n" +
+                            "      \"verdi\": \"1\"\n" +
+                            "    },\n" +
+                            "    \"tillegskompetanse\": [\n" +
+                            "      {\n" +
+                            "        \"avsluttetStatus\": null,\n" +
+                            "        \"gyldig\": {\n" +
+                            "          \"fra\": \"2015-08-16T22:00:00\",\n" +
+                            "          \"til\": \"2059-01-05T23:00:00\"\n" +
+                            "        },\n" +
+                            "        \"id\": 20358,\n" +
+                            "        \"type\": {\n" +
+                            "          \"aktiv\": true,\n" +
+                            "          \"oid\": 7702,\n" +
+                            "          \"verdi\": \"1\"\n" +
+                            "        },\n" +
+                            "        \"etag\": null\n" +
+                            "      }\n" +
+                            "    ]\n" +
+                            "  }\n" +
+                            "]"
 
-                    val behandlerGodkjenninger = objectMapper.readValue<List<Godkjenning>>(behandlerSTring)
+                    val behandlerGodkjenninger =
+                        objectMapper.readValue<List<Godkjenning>>(behandlerSTring)
 
                     val behandler = Behandler(behandlerGodkjenninger)
 
@@ -923,7 +925,6 @@ class HPRTest :
                             HPRRules.BEHANDLER_ER_KI_MED_TILLEGSKOMPETANSE_I_HPR to true,
                             HPRRules.SYKEFRAVAR_OVER_12_UKER to false
                         )
-
                 }
             }
         },
