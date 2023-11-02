@@ -8,7 +8,6 @@ import no.nav.syfo.client.RegelStatusDTO
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SykmeldingDTO
 import no.nav.syfo.client.tilPeriodetypeDTO
-import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.utils.LoggingMeta
 import org.slf4j.LoggerFactory
