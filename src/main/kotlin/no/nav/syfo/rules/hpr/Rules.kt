@@ -1,6 +1,7 @@
 import java.time.LocalDateTime
 import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.Tilleggskompetanse
+import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.rules.hpr.HPRRules
@@ -136,6 +137,12 @@ fun sykefravarOver12Uker(rule: HPRRules): HPRRule = { sykmelding, behandlerOgSta
     val over12Uker =
         (forsteFomDato..sisteTomDato).daysBetween() > 84 ||
             (behandlerStartDato != null && (behandlerStartDato..sisteTomDato).daysBetween() > 84)
+
+    logger.info(
+        "forsteFomDato: $forsteFomDato, sisteTomDato: $sisteTomDato, " +
+            "behandlerStartDato: $behandlerStartDato, behandlerGodkjenninger: $behandlerGodkjenninger, " +
+            "sykmeldingsId: ${sykmelding.id}"
+    )
 
     RuleResult(
         ruleInputs =
