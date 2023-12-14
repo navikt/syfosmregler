@@ -54,7 +54,9 @@ class SyketilfelleClient(
                     simpleSykmelding.erSammeOppfolgingstilfelle(periodeRange)
                 }
             }
-        return sammeSykeforloep?.oppfolgingsdato
+        val startdato = sammeSykeforloep?.oppfolgingsdato
+        log.info("Startdato for sykeforløpet: {} {}", startdato, fields(loggingMeta))
+        return startdato
     }
 
     private fun SimpleSykmelding.erSammeOppfolgingstilfelle(
