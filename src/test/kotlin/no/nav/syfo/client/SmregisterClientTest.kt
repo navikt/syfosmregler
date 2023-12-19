@@ -301,6 +301,7 @@ object SmregisterClientTest : FunSpec({
     }
 })
 */
+
 fun sykmeldingRespons(
     fom: LocalDate,
     tom: LocalDate = fom.plusMonths(1),
@@ -310,6 +311,7 @@ fun sykmeldingRespons(
     merknader: List<Merknad>? = null,
     periodeType: PeriodetypeDTO = PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
     gradert: GradertDTO? = null,
+    sykmeldingStatus: SykmeldingStatusDTO,
 ) =
     listOf(
         SykmeldingDTO(
@@ -333,6 +335,7 @@ fun sykmeldingRespons(
             medisinskVurdering =
                 MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) }),
             merknader = merknader,
+            sykmeldingStatus = sykmeldingStatus,
         ),
     )
 

@@ -36,7 +36,8 @@ class GradertTest :
                 val ruleMetadataSykmelding =
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
-                        sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                        sykmeldingMetadataInfo =
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -65,7 +66,8 @@ class GradertTest :
                 val ruleMetadataSykmelding =
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
-                        sykmeldingMetadataInfo = SykmeldingMetadataInfo(null, emptyList()),
+                        sykmeldingMetadataInfo =
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),

@@ -124,24 +124,20 @@ class RuleService(
                 fields(loggingMeta)
             )
 
-            val ettersendingOgForlengelse =
-                if (erTilbakedatert(receivedSykmelding)) {
-                    sykmeldingService.getSykmeldingMetadataInfo(
-                        receivedSykmelding.personNrPasient,
-                        receivedSykmelding.sykmelding,
-                        loggingMeta,
-                    )
-                } else {
-                    SykmeldingMetadataInfo(null, emptyList())
-                }
+            val sykmeldingMetadata =
+                sykmeldingService.getSykmeldingMetadataInfo(
+                    receivedSykmelding.personNrPasient,
+                    receivedSykmelding.sykmelding,
+                    loggingMeta
+                )
 
-            val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
             val ruleMetadataSykmelding =
                 RuleMetadataSykmelding(
                     ruleMetadata = ruleMetadata,
-                    sykmeldingMetadataInfo = ettersendingOgForlengelse,
+                    sykmeldingMetadataInfo = sykmeldingMetadata,
                     doctorSuspensjon = doctorSuspendDeferred.await(),
-                    behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
+                    behandlerOgStartdato =
+                        BehandlerOgStartdato(behandler, sykmeldingMetadata.syketilfelleStartDato),
                 )
 
             val result =

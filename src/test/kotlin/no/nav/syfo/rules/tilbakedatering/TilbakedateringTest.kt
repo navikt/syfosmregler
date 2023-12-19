@@ -41,7 +41,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList()),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -72,7 +72,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo("sykmeldingID", emptyList()),
+                        SykmeldingMetadataInfo("sykmeldingID", emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -108,7 +108,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList()),
+                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -146,7 +146,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList()),
+                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -202,6 +202,7 @@ class TilbakedateringTest :
                                     listOf(
                                         forlengelse,
                                     ),
+                                    LocalDate.now()
                                 ),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
@@ -241,7 +242,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList()),
+                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -285,7 +286,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList()),
+                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -334,7 +335,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -375,7 +376,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -422,7 +423,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -469,7 +470,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, listOf(forlengelse)),
+                            SykmeldingMetadataInfo(null, listOf(forlengelse), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -510,7 +511,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -558,7 +559,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -602,7 +603,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -650,7 +651,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -701,7 +702,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -752,7 +753,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList()),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -792,7 +793,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList()),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -836,7 +837,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList()),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
