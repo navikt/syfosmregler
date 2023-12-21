@@ -4,12 +4,15 @@ import io.kotest.core.spec.style.FunSpec
 import io.mockk.coEvery
 import io.mockk.mockk
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import no.nav.syfo.TestDates.Companion.april
 import no.nav.syfo.TestDates.Companion.february
 import no.nav.syfo.TestDates.Companion.january
 import no.nav.syfo.TestDates.Companion.march
 import no.nav.syfo.TestDates.Companion.may
 import no.nav.syfo.TestDates.Companion.september
+import no.nav.syfo.client.Merknad
+import no.nav.syfo.client.MerknadType
 import no.nav.syfo.client.PeriodetypeDTO
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SykmeldingStatusDTO
@@ -17,7 +20,6 @@ import no.nav.syfo.client.SykmeldingsperiodeDTO
 import no.nav.syfo.generateSykmeldingDTO
 import no.nav.syfo.utils.LoggingMeta
 import org.amshove.kluent.shouldBeEqualTo
-import java.time.OffsetDateTime
 
 class SykmeldingServiceTest :
     FunSpec(
@@ -317,8 +319,11 @@ class SykmeldingServiceTest :
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
                     listOf(
                         generateSykmeldingDTO(16.january(2023), 31.january(2023)),
-                        generateSykmeldingDTO(1.february(2023), 28.february(2023), sykmeldingStatus = SykmeldingStatusDTO("AVBRUTT", OffsetDateTime.now())
-                            ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            28.february(2023),
+                            sykmeldingStatus = SykmeldingStatusDTO("AVBRUTT", OffsetDateTime.now()),
+                        ),
                     )
 
                 val metadata =
@@ -334,6 +339,48 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.syketilfelleStartDato shouldBeEqualTo 1.march(2023)
+            }
+
+            test("Sykmelding fra syfosmregister tilbakedatert") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            16.january(2023),
+                            31.january(2023),
+                            merknader =
+                                listOf(
+                                    Merknad(
+                                        MerknadType.UNDER_BEHANDLING.toString(),
+                                        "under behandling"
+                                    ),
+                                ),
+                        ),
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            15.january(2023),
+                            merknader =
+                                listOf(
+                                    Merknad(
+                                        MerknadType.UGYLDIG_TILBAKEDATERING.toString(),
+                                        "ugyldig"
+                                    ),
+                                ),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            null,
+                            getPeriode(
+                                fom = 1.february(2023),
+                                tom = 15.february(2023),
+                            ),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.syketilfelleStartDato shouldBeEqualTo 16.january(2023)
             }
         },
     )

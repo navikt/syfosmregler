@@ -69,9 +69,17 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                 }
                 .filter { it.sykmeldingsperioder.sortedFOMDate().first() < startdato }
                 .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
+                .filterNot {
+                    !it.merknader.isNullOrEmpty() &&
+                        it.merknader.any { merknad ->
+                            merknad.type == MerknadType.UGYLDIG_TILBAKEDATERING.toString() ||
+                                merknad.type ==
+                                    MerknadType.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER.toString()
+                        }
+                }
                 .filter { it.sykmeldingStatus.statusEvent != "AVBRUTT" }
-                .map {
-                    it.sykmeldingsperioder
+                .map { sykmelding ->
+                    sykmelding.sykmeldingsperioder
                         .filter { it.type != PeriodetypeDTO.AVVENTENDE }
                         .flatMap { allDaysBetween(it.fom, it.tom) }
                 }
