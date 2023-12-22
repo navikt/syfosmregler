@@ -2,8 +2,20 @@ package no.nav.syfo
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.random.Random
+import no.nav.syfo.client.BehandlingsutfallDTO
+import no.nav.syfo.client.DiagnoseDTO
+import no.nav.syfo.client.GradertDTO
+import no.nav.syfo.client.MedisinskVurderingDTO
+import no.nav.syfo.client.Merknad
+import no.nav.syfo.client.PeriodetypeDTO
+import no.nav.syfo.client.RegelStatusDTO
+import no.nav.syfo.client.SykmeldingDTO
+import no.nav.syfo.client.SykmeldingStatusDTO
+import no.nav.syfo.client.SykmeldingsperiodeDTO
 import no.nav.syfo.model.Adresse
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.AnnenFraversArsak
@@ -137,7 +149,8 @@ fun generateArbeidsrelatertArsak(
     arsak: List<ArbeidsrelatertArsakType> =
         listOf(
             ArbeidsrelatertArsakType.values()[
-                    Random.nextInt(ArbeidsrelatertArsakType.values().size)]
+                    Random.nextInt(ArbeidsrelatertArsakType.values().size),
+                ],
         ),
 ) =
     ArbeidsrelatertArsak(
@@ -265,3 +278,42 @@ fun generateArbeidsgiver(
         yrkesbetegnelse = yrkesbetegnelse,
         stillingsprosent = stillingsprosent,
     )
+
+fun generateSykmeldingDTO(
+    fom: LocalDate,
+    tom: LocalDate = fom.plusMonths(1),
+    behandlingsutfallDTO: BehandlingsutfallDTO =
+        BehandlingsutfallDTO(
+            RegelStatusDTO.OK,
+        ),
+    behandletDato: LocalDate? = null,
+    diagnosekode: String? = "L89",
+    merknader: List<Merknad>? = null,
+    periodeType: PeriodetypeDTO = PeriodetypeDTO.AKTIVITET_IKKE_MULIG,
+    gradert: GradertDTO? = null,
+    ekstraPerioder: List<SykmeldingsperiodeDTO> = emptyList(),
+    sykmeldingStatus: SykmeldingStatusDTO = SykmeldingStatusDTO("APEN", OffsetDateTime.now())
+): SykmeldingDTO {
+    return SykmeldingDTO(
+        id = UUID.randomUUID().toString(),
+        behandlingsutfall = behandlingsutfallDTO,
+        sykmeldingsperioder =
+            listOf(
+                SykmeldingsperiodeDTO(
+                    fom,
+                    tom,
+                    gradert,
+                    periodeType,
+                ),
+            ) + ekstraPerioder,
+        behandletTidspunkt =
+            if (behandletDato != null) {
+                OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
+            } else {
+                OffsetDateTime.of(fom.atStartOfDay(), ZoneOffset.UTC)
+            },
+        medisinskVurdering = MedisinskVurderingDTO(diagnosekode?.let { DiagnoseDTO(diagnosekode) }),
+        merknader = merknader,
+        sykmeldingStatus = sykmeldingStatus
+    )
+}

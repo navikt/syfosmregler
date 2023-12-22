@@ -10,7 +10,6 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
-import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.metrics.RULE_NODE_RULE_HIT_COUNTER
 import no.nav.syfo.metrics.RULE_NODE_RULE_PATH_COUNTER
 import no.nav.syfo.model.Periode
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
-    private val syketilfelleClient: SyketilfelleClient,
     private val norskHelsenettClient: NorskHelsenettClient,
     private val sykmeldingService: SykmeldingService,
     private val pdlService: PdlPersonService,
@@ -90,13 +88,6 @@ class RuleService(
                     )
                     .suspendert
             }
-            val syketilfelleStartdatoDeferred = async {
-                syketilfelleClient.finnStartdatoForSammenhengendeSyketilfelle(
-                    receivedSykmelding.personNrPasient,
-                    receivedSykmelding.sykmelding.perioder,
-                    loggingMeta,
-                )
-            }
 
             val behandler =
                 norskHelsenettClient.finnBehandler(
@@ -124,24 +115,20 @@ class RuleService(
                 fields(loggingMeta)
             )
 
-            val ettersendingOgForlengelse =
-                if (erTilbakedatert(receivedSykmelding)) {
-                    sykmeldingService.getSykmeldingMetadataInfo(
-                        receivedSykmelding.personNrPasient,
-                        receivedSykmelding.sykmelding,
-                        loggingMeta,
-                    )
-                } else {
-                    SykmeldingMetadataInfo(null, emptyList())
-                }
+            val sykmeldingMetadata =
+                sykmeldingService.getSykmeldingMetadataInfo(
+                    receivedSykmelding.personNrPasient,
+                    receivedSykmelding.sykmelding,
+                    loggingMeta
+                )
 
-            val syketilfelleStartdato = syketilfelleStartdatoDeferred.await()
             val ruleMetadataSykmelding =
                 RuleMetadataSykmelding(
                     ruleMetadata = ruleMetadata,
-                    sykmeldingMetadataInfo = ettersendingOgForlengelse,
+                    sykmeldingMetadataInfo = sykmeldingMetadata,
                     doctorSuspensjon = doctorSuspendDeferred.await(),
-                    behandlerOgStartdato = BehandlerOgStartdato(behandler, syketilfelleStartdato),
+                    behandlerOgStartdato =
+                        BehandlerOgStartdato(behandler, sykmeldingMetadata.syketilfelleStartDato),
                 )
 
             val result =

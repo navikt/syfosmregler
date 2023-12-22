@@ -1,12 +1,15 @@
 package no.nav.syfo.services
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.client.MerknadType
 import no.nav.syfo.client.PeriodetypeDTO
 import no.nav.syfo.client.RegelStatusDTO
 import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.client.SykmeldingDTO
+import no.nav.syfo.client.sortedFOMDate
+import no.nav.syfo.client.sortedTOMDate
 import no.nav.syfo.client.tilPeriodetypeDTO
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.utils.LoggingMeta
@@ -17,6 +20,7 @@ data class Forlengelse(val sykmeldingId: String, val fom: LocalDate, val tom: Lo
 data class SykmeldingMetadataInfo(
     val ettersendingAv: String?,
     val forlengelseAv: List<Forlengelse> = emptyList(),
+    val syketilfelleStartDato: LocalDate
 )
 
 class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
@@ -29,8 +33,10 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
     ): SykmeldingMetadataInfo {
         val sykmeldingerFromRegister = syfosmregisterClient.getSykmeldinger(fnr)
         logger.info(
-            "getting sykmeldinger for ${sykmelding.id}: match from smregister ${sykmeldingerFromRegister.map { it.id }}"
+            "getting sykmeldinger for ${sykmelding.id}: match from smregister ${sykmeldingerFromRegister.map { it.id }}",
         )
+
+        val startdato = getStartDato(sykmeldingerFromRegister, sykmelding)
         val tidligereSykmeldinger =
             sykmeldingerFromRegister
                 .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
@@ -41,12 +47,58 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                         sykmelding.medisinskVurdering.hovedDiagnose?.kode
                 }
         logger.info(
-            "tidligere sykmeldinger for ${sykmelding.id}, after filter ${tidligereSykmeldinger.map { it.id }}"
+            "tidligere sykmeldinger for ${sykmelding.id}, after filter ${tidligereSykmeldinger.map { it.id }}",
         )
         return SykmeldingMetadataInfo(
             ettersendingAv = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
             forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger),
+            syketilfelleStartDato = startdato
         )
+    }
+
+    private fun getStartDato(
+        sykmeldingerFromRegister: List<SykmeldingDTO>,
+        sykmelding: Sykmelding
+    ): LocalDate {
+        var startdato = sykmelding.perioder.sortedFOMDate().first()
+        val datoer =
+            sykmeldingerFromRegister
+                .filter {
+                    it.sykmeldingsperioder.sortedTOMDate().last() >
+                        startdato.minusWeeks(12).minusDays(16)
+                }
+                .filter { it.sykmeldingsperioder.sortedFOMDate().first() < startdato }
+                .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
+                .filterNot {
+                    !it.merknader.isNullOrEmpty() &&
+                        it.merknader.any { merknad ->
+                            merknad.type == MerknadType.UGYLDIG_TILBAKEDATERING.toString() ||
+                                merknad.type ==
+                                    MerknadType.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER.toString()
+                        }
+                }
+                .filter { it.sykmeldingStatus.statusEvent != "AVBRUTT" }
+                .map { sykmelding ->
+                    sykmelding.sykmeldingsperioder
+                        .filter { it.type != PeriodetypeDTO.AVVENTENDE }
+                        .flatMap { allDaysBetween(it.fom, it.tom) }
+                }
+                .flatten()
+                .distinct()
+                .sortedDescending()
+
+        datoer.forEach {
+            if (ChronoUnit.DAYS.between(it, startdato) > 16) {
+                return startdato
+            } else {
+                startdato = it
+            }
+        }
+        return startdato
+    }
+
+    private fun allDaysBetween(fom: LocalDate, tom: LocalDate): List<LocalDate> {
+        return (0..ChronoUnit.DAYS.between(fom, tom)).map { fom.plusDays(it) }
     }
 
     private fun erEttersending(
@@ -57,7 +109,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         if (sykmelding.perioder.size > 1) {
             logger.info(
                 "Flere perioder i periodelisten returnerer false {}",
-                StructuredArguments.fields(loggingMeta)
+                StructuredArguments.fields(loggingMeta),
             )
             return null
         }
@@ -80,11 +132,11 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         if (tidligereSykmelding != null) {
             logger.info(
                 "Sykmelding ${sykmelding.id} er ettersending av ${tidligereSykmelding.id} {}",
-                StructuredArguments.fields(loggingMeta)
+                StructuredArguments.fields(loggingMeta),
             )
         } else {
             logger.info(
-                "Could not find ettersending for ${sykmelding.id} from ${sykmeldingerFraRegister.map { it.id }}"
+                "Could not find ettersending for ${sykmelding.id} from ${sykmeldingerFraRegister.map { it.id }}",
             )
         }
         return tidligereSykmelding?.id

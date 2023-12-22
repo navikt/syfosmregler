@@ -50,6 +50,7 @@ class SmregisterClient(
 
 data class SykmeldingDTO(
     val id: String,
+    val sykmeldingStatus: SykmeldingStatusDTO,
     val behandlingsutfall: BehandlingsutfallDTO,
     val sykmeldingsperioder: List<SykmeldingsperiodeDTO>,
     val behandletTidspunkt: OffsetDateTime,
@@ -105,6 +106,11 @@ enum class PeriodetypeDTO {
 
 data class BehandlingsutfallDTO(
     val status: RegelStatusDTO,
+)
+
+data class SykmeldingStatusDTO(
+    val statusEvent: String,
+    val timestamp: OffsetDateTime,
 )
 
 enum class RegelStatusDTO {

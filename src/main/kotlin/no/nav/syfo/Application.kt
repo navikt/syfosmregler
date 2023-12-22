@@ -31,7 +31,6 @@ import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.client.LegeSuspensjonClient
 import no.nav.syfo.client.NorskHelsenettClient
 import no.nav.syfo.client.SmregisterClient
-import no.nav.syfo.client.SyketilfelleClient
 import no.nav.syfo.kafka.aiven.KafkaUtils
 import no.nav.syfo.kafka.toProducerConfig
 import no.nav.syfo.metrics.monitorHttpRequests
@@ -175,13 +174,6 @@ fun Application.module() {
             scope = environmentVariables.legeSuspensjonProxyScope,
         )
 
-    val syketilfelleClient =
-        SyketilfelleClient(
-            environmentVariables.syketilfelleEndpointURL,
-            azureAdV2Client,
-            environmentVariables.syketilfelleScope,
-            httpClient
-        )
     val norskHelsenettClient =
         NorskHelsenettClient(
             environmentVariables.norskHelsenettEndpointURL,
@@ -230,7 +222,6 @@ fun Application.module() {
     val ruleService =
         RuleService(
             legeSuspensjonClient,
-            syketilfelleClient,
             norskHelsenettClient,
             SykmeldingService(smregisterClient),
             pdlService,
