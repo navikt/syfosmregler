@@ -14,14 +14,14 @@ val prometheusVersion = "0.16.0"
 val smCommonVersion = "2.0.8"
 val kotestVersion = "5.8.0"
 val mockkVersion = "1.13.8"
-val kotlinVersion = "1.9.21"
+val kotlinVersion = "1.9.22"
 val commonsCodecVersion = "1.16.0"
 val ktfmtVersion = "0.44"
 val snappyJavaVersion = "1.1.10.5"
 
 plugins {
     id("application")
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     id("com.diffplug.spotless") version "6.23.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
