@@ -5,7 +5,7 @@ version = "1.0.0"
 
 val caffeineVersion = "3.1.8"
 val coroutinesVersion = "1.7.3"
-val jacksonVersion = "2.16.0"
+val jacksonVersion = "2.16.1"
 val kluentVersion = "1.73"
 val ktorVersion = "2.3.7"
 val logbackVersion = "1.4.14"
@@ -14,14 +14,14 @@ val prometheusVersion = "0.16.0"
 val smCommonVersion = "2.0.8"
 val kotestVersion = "5.8.0"
 val mockkVersion = "1.13.8"
-val kotlinVersion = "1.9.21"
+val kotlinVersion = "1.9.22"
 val commonsCodecVersion = "1.16.0"
 val ktfmtVersion = "0.44"
 val snappyJavaVersion = "1.1.10.5"
 
 plugins {
     id("application")
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     id("com.diffplug.spotless") version "6.23.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
