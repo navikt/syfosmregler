@@ -2,9 +2,7 @@ package no.nav.syfo.rules.periode
 
 import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.model.juridisk.Lovverk
-import no.nav.syfo.rules.common.MedJuridisk
+import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
@@ -17,22 +15,14 @@ import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias PeriodeRuleTreeOutput = TreeOutput<PeriodeRules, RuleResult>
 
-class PeriodeRulesExecution(
-    private val rootNode: TreeNode<PeriodeRules, RuleResult> = periodeRuleTree
-) : RuleExecution<PeriodeRules> {
+typealias PeriodeRuleNode = Pair<TreeNode<PeriodeRules, RuleResult>, Juridisk>
+
+class PeriodeRulesExecution(private val rootNode: PeriodeRuleNode = periodeRuleTree) :
+    RuleExecution<PeriodeRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode.evaluate(sykmelding, ruleMetadata).also {
+        rootNode.first.evaluate(sykmelding, ruleMetadata).also {
             logger.info("Rules ${sykmelding.id}, ${it.printRulePath()}")
-        } to
-            MedJuridisk(
-                JuridiskHenvisning(
-                    Lovverk.FOLKETRYGDLOVEN,
-                    "8-13",
-                    1,
-                    null,
-                    null,
-                )
-            )
+        } to rootNode.second
 
     private fun TreeNode<PeriodeRules, RuleResult>.evaluate(
         sykmelding: Sykmelding,

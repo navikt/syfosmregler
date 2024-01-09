@@ -76,7 +76,13 @@ channel [#team-sykmelding](https://nav-it.slack.com/archives/CMA3XV997)
 # Rules tree
 
 <!-- RULE_MARKER_START -->
-Lege suspensjon
+## 0. Lege suspensjon
+
+---
+
+
+---
+
 ```mermaid
 graph TD
     root(BEHANDLER_SUSPENDERT) -->|Yes| root_BEHANDLER_SUSPENDERT_INVALID(INVALID):::invalid
@@ -85,7 +91,15 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Validation
+
+
+## 1. Validation
+
+---
+
+
+---
+
 ```mermaid
 graph TD
     root(UGYLDIG_REGELSETTVERSJON) -->|Yes| root_UGYLDIG_REGELSETTVERSJON_INVALID(INVALID):::invalid
@@ -102,7 +116,15 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Periode validering
+
+
+## 2. Periode validering
+
+---
+
+
+---
+
 ```mermaid
 graph TD
     root(PERIODER_MANGLER) -->|Yes| root_PERIODER_MANGLER_INVALID(INVALID):::invalid
@@ -133,7 +155,18 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-HPR
+
+
+## 3. HPR
+
+---
+
+- ### Juridisk Henvisning:
+  - **Lovverk**: HELSEPERSONELLOVEN
+  - **Paragraf**: 3
+
+---
+
 ```mermaid
 graph TD
     root(BEHANDLER_GYLIDG_I_HPR) -->|Yes| root_BEHANDLER_GYLIDG_I_HPR_BEHANDLER_HAR_AUTORISASJON_I_HPR(BEHANDLER_HAR_AUTORISASJON_I_HPR)
@@ -160,7 +193,19 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Arbeidsuforhet
+
+
+## 4. Arbeidsuforhet
+
+---
+
+- ### Juridisk Henvisning:
+  - **Lovverk**: FOLKETRYGDLOVEN
+  - **Paragraf**: 8-4
+  - **Ledd**: 1
+
+---
+
 ```mermaid
 graph TD
     root(UKJENT_DIAGNOSEKODETYPE) -->|Yes| root_UKJENT_DIAGNOSEKODETYPE_INVALID(INVALID):::invalid
@@ -177,7 +222,19 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Pasient under 13
+
+
+## 5. Pasient under 13
+
+---
+
+- ### Juridisk Henvisning:
+  - **Lovverk**: FOLKETRYGDLOVEN
+  - **Paragraf**: 8-3
+  - **Ledd**: 1
+
+---
+
 ```mermaid
 graph TD
     root(PASIENT_YNGRE_ENN_13) -->|Yes| root_PASIENT_YNGRE_ENN_13_INVALID(INVALID):::invalid
@@ -186,7 +243,20 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Pasient over 70
+
+
+## 6. Pasient over 70
+
+---
+
+- ### Juridisk Henvisning:
+  - **Lovverk**: FOLKETRYGDLOVEN
+  - **Paragraf**: 8-3
+  - **Ledd**: 1
+  - **Punktum**: 2
+
+---
+
 ```mermaid
 graph TD
     root(PASIENT_ELDRE_ENN_70) -->|Yes| root_PASIENT_ELDRE_ENN_70_INVALID(INVALID):::invalid
@@ -195,7 +265,15 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Periode
+
+
+## 7. Periode
+
+---
+
+
+---
+
 ```mermaid
 graph TD
     root(FREMDATERT) -->|Yes| root_FREMDATERT_INVALID(INVALID):::invalid
@@ -208,7 +286,19 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Gradert
+
+
+## 8. Gradert
+
+---
+
+- ### Juridisk Henvisning:
+  - **Lovverk**: FOLKETRYGDLOVEN
+  - **Paragraf**: 8-13
+  - **Ledd**: 1
+
+---
+
 ```mermaid
 graph TD
     root(GRADERT_UNDER_20_PROSENT) -->|Yes| root_GRADERT_UNDER_20_PROSENT_INVALID(INVALID):::invalid
@@ -217,7 +307,19 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
-Tilbakedatering
+
+
+## 9. Tilbakedatering
+
+---
+
+- ### Juridisk Henvisning:
+  - **Lovverk**: FOLKETRYGDLOVEN
+  - **Paragraf**: 8-7
+  - **Ledd**: 2
+
+---
+
 ```mermaid
 graph TD
     root(TILBAKEDATERING) -->|Yes| root_TILBAKEDATERING_ETTERSENDING(ETTERSENDING)
@@ -252,5 +354,7 @@ graph TD
     classDef invalid fill:#ff7373,stroke:#ff0000,color: black;
     classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;
 ```
+
+
 
 <!-- RULE_MARKER_END -->

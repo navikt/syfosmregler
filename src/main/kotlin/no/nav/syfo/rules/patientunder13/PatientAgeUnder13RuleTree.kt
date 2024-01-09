@@ -3,6 +3,9 @@ package no.nav.syfo.rules.patientunder13
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.OK
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
@@ -15,7 +18,16 @@ val patientAgeUnder13RuleTree =
     tree<PatientAgeUnder13Rules, RuleResult>(PatientAgeUnder13Rules.PASIENT_YNGRE_ENN_13) {
         yes(INVALID, PatientAgeUnder13RuleHit.PASIENT_YNGRE_ENN_13)
         no(OK)
-    }
+    } to
+        MedJuridisk(
+            JuridiskHenvisning(
+                lovverk = Lovverk.FOLKETRYGDLOVEN,
+                paragraf = "8-3",
+                ledd = 1,
+                punktum = null,
+                bokstav = null,
+            ),
+        )
 
 internal fun RuleNode<PatientAgeUnder13Rules, RuleResult>.yes(
     status: Status,

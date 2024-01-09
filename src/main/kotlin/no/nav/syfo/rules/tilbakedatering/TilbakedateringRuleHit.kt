@@ -1,19 +1,7 @@
 package no.nav.syfo.rules.tilbakedatering
 
 import no.nav.syfo.model.Status
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.model.juridisk.Lovverk
 import no.nav.syfo.rules.common.RuleHit
-
-fun tilbakeDatertJuridiskHenvisning(): JuridiskHenvisning {
-    return JuridiskHenvisning(
-        lovverk = Lovverk.FOLKETRYGDLOVEN,
-        paragraf = "8-7",
-        ledd = 2,
-        punktum = null,
-        bokstav = null,
-    )
-}
 
 enum class TilbakedateringRuleHit(
     val ruleHit: RuleHit,

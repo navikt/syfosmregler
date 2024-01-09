@@ -30,16 +30,39 @@ fun main() {
             "Tilbakedatering" to tilbakedateringRuleTree,
         )
 
-    ruleTrees.forEach {
+    ruleTrees.forEachIndexed { idx, (name, ruleTree) -> // add index to differentiate each loop
         val builder = StringBuilder()
-        builder.append("${it.first}\n")
+        builder.append("## $idx. $name\n\n") // section headers with added index number
+
+        // separator
+        builder.append("---\n\n")
+
+        when (val juridiskInfo = ruleTree.second) {
+            is MedJuridisk -> {
+                val henvisning = juridiskInfo.juridiskHenvisning
+                builder.append("- ### Juridisk Henvisning:\n") // sub-section header
+                henvisning.lovverk.let { builder.append("  - **Lovverk**: $it\n") }
+                henvisning.paragraf.let { builder.append("  - **Paragraf**: $it\n") }
+                henvisning.ledd?.let { builder.append("  - **Ledd**: $it\n") }
+                henvisning.punktum?.let { builder.append("  - **Punktum**: $it\n") }
+                henvisning.bokstav?.let { builder.append("  - **Bokstav**: $it\n") }
+            }
+            is UtenJuridisk -> {
+                // Handle the case when no `MedJuridisk` info is present
+            }
+        }
+
+        // separator
+        builder.append("\n---\n\n")
+
         builder.append("```mermaid\n")
         builder.append("graph TD\n")
-        it.second.traverseTree(builder, "root", "root")
+        ruleTree.first.traverseTree(builder, "root", "root")
         builder.append("    classDef ok fill:#c3ff91,stroke:#004a00,color: black;\n")
         builder.append("    classDef invalid fill:#ff7373,stroke:#ff0000,color: black;\n")
         builder.append("    classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;\n")
-        builder.append("```")
+        builder.append("```\n\n")
+
         println(builder.toString())
     }
 }
