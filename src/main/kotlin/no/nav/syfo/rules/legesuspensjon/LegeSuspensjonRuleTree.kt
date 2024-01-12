@@ -3,6 +3,7 @@ package no.nav.syfo.rules.legesuspensjon
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.OK
 import no.nav.syfo.rules.common.RuleResult
+import no.nav.syfo.rules.common.UtenJuridisk
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
@@ -14,7 +15,7 @@ val legeSuspensjonRuleTree =
     tree<LegeSuspensjonRules, RuleResult>(LegeSuspensjonRules.BEHANDLER_SUSPENDERT) {
         yes(Status.INVALID, LegeSuspensjonRuleHit.BEHANDLER_SUSPENDERT)
         no(OK)
-    }
+    } to UtenJuridisk
 
 internal fun RuleNode<LegeSuspensjonRules, RuleResult>.yes(
     status: Status,

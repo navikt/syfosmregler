@@ -78,8 +78,8 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                         }
                 }
                 .filter { it.sykmeldingStatus.statusEvent != "AVBRUTT" }
-                .map { sykmelding ->
-                    sykmelding.sykmeldingsperioder
+                .map { it ->
+                    it.sykmeldingsperioder
                         .filter { it.type != PeriodetypeDTO.AVVENTENDE }
                         .flatMap { allDaysBetween(it.fom, it.tom) }
                 }

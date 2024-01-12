@@ -9,6 +9,9 @@ import behandlerErManuellterapeut
 import behandlerErTannlege
 import behandlerHarAutorisasjon
 import no.nav.syfo.model.Status
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
@@ -47,7 +50,16 @@ val hprRuleTree =
                 }
             }
         }
-    }
+    } to
+        MedJuridisk(
+            JuridiskHenvisning(
+                lovverk = Lovverk.HELSEPERSONELLOVEN,
+                paragraf = "3",
+                ledd = null,
+                punktum = null,
+                bokstav = null,
+            )
+        )
 
 private fun checkSykefravarOver12Uker(): RuleNode<HPRRules, RuleResult>.() -> Unit = {
     yes(Status.INVALID, HPRRuleHit.BEHANDLER_MT_FT_KI_OVER_12_UKER)

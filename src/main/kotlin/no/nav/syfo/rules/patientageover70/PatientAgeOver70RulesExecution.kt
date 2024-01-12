@@ -2,9 +2,7 @@ package no.nav.syfo.rules.patientageover70
 
 import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.model.juridisk.JuridiskHenvisning
-import no.nav.syfo.model.juridisk.Lovverk
-import no.nav.syfo.rules.common.MedJuridisk
+import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
@@ -17,22 +15,15 @@ import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias PatientAgeOver70TreeOutput = TreeOutput<PatientAgeOver70Rules, RuleResult>
 
+typealias PatientAgeOver70TreeNode = Pair<TreeNode<PatientAgeOver70Rules, RuleResult>, Juridisk>
+
 class PatientAgeOver70RulesExecution(
-    val rootNode: TreeNode<PatientAgeOver70Rules, RuleResult> = patientAgeOver70RuleTree
+    val rootNode: PatientAgeOver70TreeNode = patientAgeOver70RuleTree
 ) : RuleExecution<PatientAgeOver70Rules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode.evaluate(sykmelding, ruleMetadata).also { patientAgeOver70RulePath ->
+        rootNode.first.evaluate(sykmelding, ruleMetadata).also { patientAgeOver70RulePath ->
             logger.info("Rules ${sykmelding.id}, ${patientAgeOver70RulePath.printRulePath()}")
-        } to
-            MedJuridisk(
-                JuridiskHenvisning(
-                    lovverk = Lovverk.FOLKETRYGDLOVEN,
-                    paragraf = "8-3",
-                    ledd = 1,
-                    punktum = 2,
-                    bokstav = null,
-                ),
-            )
+        } to rootNode.second
 }
 
 private fun TreeNode<PatientAgeOver70Rules, RuleResult>.evaluate(

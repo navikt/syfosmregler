@@ -3,9 +3,9 @@ package no.nav.syfo.rules.validation
 import no.nav.syfo.logger
 import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
-import no.nav.syfo.rules.common.UtenJuridisk
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
@@ -16,14 +16,14 @@ import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias ValidationTreeOutput = TreeOutput<ValidationRules, RuleResult>
 
-typealias ValidationTreeNode = TreeNode<ValidationRules, RuleResult>
+typealias ValidationTreeNode = Pair<TreeNode<ValidationRules, RuleResult>, Juridisk>
 
 class ValidationRulesExecution(private val rootNode: ValidationTreeNode = validationRuleTree) :
     RuleExecution<ValidationRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode.evaluate(sykmelding, ruleMetadata.ruleMetadata).also { validationRulePath ->
+        rootNode.first.evaluate(sykmelding, ruleMetadata.ruleMetadata).also { validationRulePath ->
             logger.info("Rules ${sykmelding.id}, ${validationRulePath.printRulePath()}")
-        } to UtenJuridisk
+        } to rootNode.second
 }
 
 private fun TreeNode<ValidationRules, RuleResult>.evaluate(

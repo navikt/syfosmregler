@@ -4,6 +4,9 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.MANUAL_PROCESSING
 import no.nav.syfo.model.Status.OK
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
+import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
@@ -22,10 +25,6 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
-
-// 1. ListMedRegler
-// 2. forEach (if status != OK) return rulehit
-// 3. return OK
 
 enum class TilbakedateringRules {
     ARBEIDSGIVERPERIODE,
@@ -82,7 +81,16 @@ val tilbakedateringRuleTree =
             }
         }
         no(OK)
-    }
+    } to
+        MedJuridisk(
+            JuridiskHenvisning(
+                lovverk = Lovverk.FOLKETRYGDLOVEN,
+                paragraf = "8-7",
+                ledd = 2,
+                punktum = null,
+                bokstav = null,
+            ),
+        )
 
 internal fun RuleNode<TilbakedateringRules, RuleResult>.yes(
     status: Status,

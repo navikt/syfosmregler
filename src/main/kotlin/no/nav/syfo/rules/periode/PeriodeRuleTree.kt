@@ -4,6 +4,7 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Status.INVALID
 import no.nav.syfo.model.Status.OK
 import no.nav.syfo.rules.common.RuleResult
+import no.nav.syfo.rules.common.UtenJuridisk
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 import no.nav.syfo.rules.periode.PeriodeRuleHit.*
@@ -25,7 +26,7 @@ val periodeRuleTree =
                 no(OK)
             }
         }
-    }
+    } to UtenJuridisk
 
 internal fun RuleNode<PeriodeRules, RuleResult>.yes(
     status: Status,
