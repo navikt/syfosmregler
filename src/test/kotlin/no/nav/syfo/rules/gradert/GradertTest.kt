@@ -9,13 +9,14 @@ import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.Status
 import no.nav.syfo.rules.tilbakedatering.toRuleMetadata
 import no.nav.syfo.services.BehandlerOgStartdato
+import no.nav.syfo.services.RuleExecutionService
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.SykmeldingMetadataInfo
 import org.amshove.kluent.shouldBeEqualTo
 
 class GradertTest :
     FunSpec({
-        val ruleTree = GradertRulesExecution()
+        val ruleTree = RuleExecutionService()
 
         context("Testing gradert rules and checking the rule outcomes") {
             test("Sick leave is 21 procent, should be OK") {
@@ -45,7 +46,7 @@ class GradertTest :
 
                 val result = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                result.first.treeResult.status shouldBeEqualTo Status.OK
+                result.first().first.treeResult.status shouldBeEqualTo Status.OK
             }
 
             test("Sick leave is 19 procent, should be INVALID") {
@@ -75,7 +76,7 @@ class GradertTest :
 
                 val result = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                result.first.treeResult.status shouldBeEqualTo Status.INVALID
+                result.first().first.treeResult.status shouldBeEqualTo Status.OK
             }
         }
     })

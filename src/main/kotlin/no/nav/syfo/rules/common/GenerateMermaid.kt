@@ -5,7 +5,6 @@ import no.nav.syfo.rules.arbeidsuforhet.arbeidsuforhetRuleTree
 import no.nav.syfo.rules.dsl.ResultNode
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.TreeNode
-import no.nav.syfo.rules.gradert.gradertRuleTree
 import no.nav.syfo.rules.hpr.hprRuleTree
 import no.nav.syfo.rules.legesuspensjon.legeSuspensjonRuleTree
 import no.nav.syfo.rules.patientageover70.patientAgeOver70RuleTree
@@ -26,7 +25,6 @@ fun main() {
             "Pasient under 13" to patientAgeUnder13RuleTree,
             "Pasient over 70" to patientAgeOver70RuleTree,
             "Periode" to periodeRuleTree,
-            "Gradert" to gradertRuleTree,
             "Tilbakedatering" to tilbakedateringRuleTree,
         )
 
