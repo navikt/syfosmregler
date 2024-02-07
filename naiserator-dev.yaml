@@ -28,7 +28,7 @@ spec:
     path: /internal/prometheus
   resources:
     requests:
-      cpu: 100m
+      cpu: 10m
       memory: 512Mi
   azure:
     application:
