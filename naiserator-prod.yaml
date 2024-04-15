@@ -53,7 +53,7 @@ spec:
         - application: syfohelsenettproxy
       external:
         - host: pdl-api.prod-fss-pub.nais.io
-        - host: btsys.prod-fss-pub.nais.io
+        - host: btsys-api.intern.nav.no
   kafka:
     pool: nav-prod
   secureLogs:
@@ -70,8 +70,8 @@ spec:
     - name: SYKETILLFELLE_SCOPE
       value: api://prod-gcp.flex.flex-syketilfelle/.default
     - name: LEGE_SUSPENSJON_PROXY_ENDPOINT_URL
-      value: https://btsys.prod-fss-pub.nais.io
+      value: https://btsys-api.intern.nav.no
     - name: LEGE_SUSPENSJON_PROXY_SCOPE
-      value: api://prod-fss.team-rocket.btsys/.default
+      value: api://prod-gcp.team-rocket.btsys-api/.default
     - name: SOURCE_VERSION_URL
       value: {{ sourceVersionURL }}
