@@ -15,6 +15,8 @@ import java.time.LocalDateTime
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
+import no.nav.syfo.metrics.HPR_HISTOGRAM
+import no.nav.syfo.metrics.HPR_RETRY_COUNT
 import no.nav.syfo.rules.api.log
 import no.nav.syfo.utils.LoggingMeta
 
@@ -29,15 +31,16 @@ class NorskHelsenettClient(
         behandlerFnr: String,
         msgId: String,
         loggingMeta: LoggingMeta
-    ): Behandler? =
-        retry(
-            callName = "finnbehandler",
-            retryIntervals = arrayOf(500L, 1000L, 1000L),
-        ) {
-            log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
-            val httpResponse =
-                httpClient
-                    .get("$endpointUrl/api/v2/behandler") {
+    ): Behandler? {
+        val timer = HPR_HISTOGRAM.labels("behandler").startTimer()
+        val result: Behandler? =
+            retry(
+                callName = "finnbehandler",
+                retryIntervals = arrayOf(500L, 1000L, 1000L),
+            ) {
+                log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
+                val httpResponse =
+                    httpClient.get("$endpointUrl/api/v2/behandler") {
                         accept(ContentType.Application.Json)
                         val accessToken = accessTokenClient.getAccessToken(resourceId)
                         if (accessToken?.accessToken == null) {
@@ -49,38 +52,45 @@ class NorskHelsenettClient(
                             append("behandlerFnr", behandlerFnr)
                         }
                     }
-                    .also {
-                        log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta))
-                    }
 
-            return@retry when (httpResponse.status) {
-                NotFound -> {
-                    log.warn("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
-                    null
-                }
-                BadRequest -> {
-                    log.error(
-                        "BehandlerFnr mangler i request for msgId {}, {}",
-                        msgId,
-                        fields(loggingMeta)
-                    )
-                    null
-                }
-                InternalServerError -> {
-                    log.error(
-                        "Syfohelsenettproxy svarte med feilmelding for msgId {}, {}",
-                        msgId,
-                        httpResponse.body()
-                    )
-                    throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
-                }
-                OK -> httpResponse.body()
-                else -> {
-                    log.warn("Did not get OK from helsenett for msgid: $msgId", fields(loggingMeta))
-                    null
+                log.info("Hentet behandler for msgId {}, {}", msgId, fields(loggingMeta))
+
+                return@retry when (httpResponse.status) {
+                    NotFound -> {
+                        log.warn("BehandlerFnr ikke funnet {}, {}", msgId, fields(loggingMeta))
+                        null
+                    }
+                    BadRequest -> {
+                        log.error(
+                            "BehandlerFnr mangler i request for msgId {}, {}",
+                            msgId,
+                            fields(loggingMeta),
+                        )
+                        null
+                    }
+                    InternalServerError -> {
+                        log.error(
+                            "Syfohelsenettproxy svarte med feilmelding for msgId {}, {}",
+                            msgId,
+                            httpResponse.body(),
+                        )
+
+                        HPR_RETRY_COUNT.labels("behandler").inc()
+                        throw IOException("Syfohelsenettproxy svarte med feilmelding for $msgId")
+                    }
+                    OK -> httpResponse.body()
+                    else -> {
+                        log.warn(
+                            "Did not get OK from helsenett for msgid: $msgId",
+                            fields(loggingMeta)
+                        )
+                        null
+                    }
                 }
             }
-        }
+        timer.observeDuration()
+        return result
+    }
 }
 
 data class Behandler(
