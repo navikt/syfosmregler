@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import java.time.Duration
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.metrics.PDL_HISTOGRAM
 import no.nav.syfo.pdl.client.PdlClient
 import no.nav.syfo.pdl.error.PersonNotFoundInPdl
 import no.nav.syfo.pdl.model.PdlPerson
@@ -37,7 +38,9 @@ class PdlPersonService(
             throw RuntimeException("Klarte ikke hente accesstoken for PDL")
         }
 
+        val timer = PDL_HISTOGRAM.labels("get_person").startTimer()
         val pdlResponse = pdlClient.getPerson(fnr, token.accessToken)
+        timer.observeDuration()
         if (pdlResponse.errors != null) {
             pdlResponse.errors.forEach { log.error("PDL kastet error: {} ", it) }
         }

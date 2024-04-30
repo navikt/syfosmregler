@@ -11,6 +11,7 @@ import io.ktor.http.HttpStatusCode
 import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
+import no.nav.syfo.metrics.SUSPANSJON_HISTOGRAM
 import no.nav.syfo.rules.api.log
 import no.nav.syfo.utils.LoggingMeta
 
@@ -27,30 +28,31 @@ class LegeSuspensjonClient(
         oppslagsdato: String,
         loggingMeta: LoggingMeta,
     ): Suspendert {
+        val timer = SUSPANSJON_HISTOGRAM.labels("lege_suspansjon").startTimer()
         val httpResponse =
-            httpClient
-                .get("$endpointUrl/api/v1/suspensjon/status") {
-                    accept(ContentType.Application.Json)
-                    val accessToken = azureAdV2Client.getAccessToken(scope)
-                    if (accessToken?.accessToken == null) {
-                        throw RuntimeException("Klarte ikke hente ut accesstoken for btsys")
-                    }
-                    headers {
-                        append("Nav-Call-Id", ediloggid)
-                        append("Nav-Consumer-Id", "srvsyfosmregler")
-                        append("Nav-Personident", therapistId)
+            httpClient.get("$endpointUrl/api/v1/suspensjon/status") {
+                accept(ContentType.Application.Json)
+                val accessToken = azureAdV2Client.getAccessToken(scope)
+                if (accessToken?.accessToken == null) {
+                    throw RuntimeException("Klarte ikke hente ut accesstoken for btsys")
+                }
+                headers {
+                    append("Nav-Call-Id", ediloggid)
+                    append("Nav-Consumer-Id", "srvsyfosmregler")
+                    append("Nav-Personident", therapistId)
 
-                        append("Authorization", "Bearer ${accessToken.accessToken}")
-                    }
-                    parameter("oppslagsdato", oppslagsdato)
+                    append("Authorization", "Bearer ${accessToken.accessToken}")
                 }
-                .also {
-                    log.info(
-                        "Hentet supensjonstatus for ediloggId {}, {}",
-                        ediloggid,
-                        fields(loggingMeta)
-                    )
-                }
+                parameter("oppslagsdato", oppslagsdato)
+            }
+        timer.observeDuration()
+
+        log.info(
+            "Hentet supensjonstatus for ediloggId {}, {}",
+            ediloggid,
+            fields(loggingMeta),
+        )
+
         return when (httpResponse.status) {
             HttpStatusCode.OK -> httpResponse.body()
             else -> {
@@ -61,7 +63,7 @@ class LegeSuspensjonClient(
                     fields(loggingMeta),
                 )
                 throw IOException(
-                    "Btsys svarte med uventet kode ${httpResponse.status} for $ediloggid"
+                    "Btsys svarte med uventet kode ${httpResponse.status} for $ediloggid",
                 )
             }
         }

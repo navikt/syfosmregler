@@ -79,6 +79,7 @@ class RuleService(
             val doctorSuspendDeferred = async {
                 val signaturDatoString =
                     DateTimeFormatter.ISO_DATE.format(receivedSykmelding.sykmelding.signaturDato)
+                // TODO: HISTO HER
                 legeSuspensjonClient
                     .checkTherapist(
                         receivedSykmelding.personNrLege,
@@ -112,14 +113,14 @@ class RuleService(
 
             log.info(
                 "Avsender behandler har hprnummer: ${behandler.hprNummer}, {}",
-                fields(loggingMeta)
+                fields(loggingMeta),
             )
 
             val sykmeldingMetadata =
                 sykmeldingService.getSykmeldingMetadataInfo(
                     receivedSykmelding.personNrPasient,
                     receivedSykmelding.sykmelding,
-                    loggingMeta
+                    loggingMeta,
                 )
 
             val ruleMetadataSykmelding =
@@ -152,9 +153,11 @@ class RuleService(
 
             if (validationResult.status != Status.OK) {
                 secureLog.info(
-                    "RuleResult for ${receivedSykmelding.sykmelding.id}: ${objectMapper
-                    .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(result.filter { it.first.treeResult.status != Status.OK })}"
+                    "RuleResult for ${receivedSykmelding.sykmelding.id}: ${
+                            objectMapper
+                                    .writerWithDefaultPrettyPrinter()
+                                    .writeValueAsString(result.filter { it.first.treeResult.status != Status.OK })
+                        }",
                 )
             }
 
