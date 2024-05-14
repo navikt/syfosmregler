@@ -28,7 +28,7 @@ val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
         rule = TILBAKEDATERING,
-        ruleResult = genereringstidspunkt.isAfter(fom.plusDays(3)),
+        ruleResult = genereringstidspunkt.isAfter(fom),
     )
 }
 

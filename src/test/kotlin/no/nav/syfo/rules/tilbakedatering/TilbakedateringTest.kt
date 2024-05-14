@@ -36,7 +36,7 @@ class TilbakedateringTest :
                     generateSykmelding(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(1),
-                        behandletTidspunkt = LocalDate.now().plusDays(2).atStartOfDay(),
+                        behandletTidspunkt = LocalDate.now().atStartOfDay(),
                     )
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
@@ -57,6 +57,37 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                    )
+                status.treeResult.ruleHit shouldBeEqualTo null
+            }
+            test("tilbakedatert med en dag") {
+                val sykmelding =
+                    generateSykmelding(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
+                        behandletTidspunkt = LocalDate.now().plusDays(1).atStartOfDay(),
+                    )
+                val sykmeldingMetadata =
+                    RuleMetadataSykmelding(
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        SykmeldingMetadataInfo("sykmeldingID", emptyList(), LocalDate.now()),
+                        doctorSuspensjon = false,
+                        behandlerOgStartdato =
+                            BehandlerOgStartdato(
+                                Behandler(emptyList(), null),
+                                null,
+                            ),
+                    )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                status.treeResult.status shouldBeEqualTo Status.OK
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    listOf(TILBAKEDATERING to true, ETTERSENDING to true)
+                status.ruleInputs shouldBeEqualTo
+                    mapOf(
+                        "fom" to sykmelding.perioder.first().fom,
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "ettersending" to true,
+                        "ettersendingAv" to "sykmeldingID",
                     )
                 status.treeResult.ruleHit shouldBeEqualTo null
             }
