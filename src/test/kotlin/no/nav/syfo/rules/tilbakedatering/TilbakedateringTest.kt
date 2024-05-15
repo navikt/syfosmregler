@@ -16,6 +16,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_OVER_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.BehandlerOgStartdato
@@ -81,13 +82,11 @@ class TilbakedateringTest :
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
-                    listOf(TILBAKEDATERING to true, ETTERSENDING to true)
+                    listOf(TILBAKEDATERING to true, TILBAKEDATERING_OVER_4_DAGER to false)
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to true,
-                        "ettersendingAv" to "sykmeldingID",
                     )
                 status.treeResult.ruleHit shouldBeEqualTo null
             }
@@ -116,6 +115,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         ETTERSENDING to true,
                     )
                 status.ruleInputs shouldBeEqualTo
@@ -152,6 +152,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to true,
@@ -190,6 +191,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
@@ -247,6 +249,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
@@ -287,6 +290,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
@@ -331,6 +335,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
@@ -380,6 +385,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -421,6 +427,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -468,6 +475,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -515,6 +523,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -556,6 +565,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -604,6 +614,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -648,6 +659,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -697,6 +709,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -747,6 +760,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
@@ -798,6 +812,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_30_DAGER to false,
@@ -838,6 +853,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_30_DAGER to false,
@@ -882,6 +898,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_30_DAGER to false,
