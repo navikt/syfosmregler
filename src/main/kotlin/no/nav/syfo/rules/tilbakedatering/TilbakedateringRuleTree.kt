@@ -42,11 +42,11 @@ enum class TilbakedateringRules {
 
 val tilbakedateringRuleTree =
     tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
-        yes(TILBAKEDATERING_OVER_4_DAGER) {
-            no(OK)
-            yes(ETTERSENDING) {
-                yes(OK)
-                no(TILBAKEDATERT_INNTIL_8_DAGER) {
+        yes(ETTERSENDING) {
+            yes(OK)
+            no(TILBAKEDATERING_OVER_4_DAGER) {
+                no(OK)
+                yes(TILBAKEDATERT_INNTIL_8_DAGER) {
                     yes(BEGRUNNELSE_MIN_1_ORD) {
                         yes(OK)
                         no(FORLENGELSE) {
