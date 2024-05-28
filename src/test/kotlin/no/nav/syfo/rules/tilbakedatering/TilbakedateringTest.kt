@@ -16,6 +16,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_OVER_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.BehandlerOgStartdato
@@ -36,7 +37,7 @@ class TilbakedateringTest :
                     generateSykmelding(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(1),
-                        behandletTidspunkt = LocalDate.now().plusDays(2).atStartOfDay(),
+                        behandletTidspunkt = LocalDate.now().atStartOfDay(),
                     )
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
@@ -60,8 +61,42 @@ class TilbakedateringTest :
                     )
                 status.treeResult.ruleHit shouldBeEqualTo null
             }
+            test("tilbakedatert med en dag") {
+                val sykmelding =
+                    generateSykmelding(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
+                        behandletTidspunkt = LocalDate.now().plusDays(1).atStartOfDay(),
+                    )
+                val sykmeldingMetadata =
+                    RuleMetadataSykmelding(
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        SykmeldingMetadataInfo("sykmeldingID", emptyList(), LocalDate.now()),
+                        doctorSuspensjon = false,
+                        behandlerOgStartdato =
+                            BehandlerOgStartdato(
+                                Behandler(emptyList(), null),
+                                null,
+                            ),
+                    )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                status.treeResult.status shouldBeEqualTo Status.OK
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    listOf(
+                        TILBAKEDATERING to true,
+                        ETTERSENDING to true,
+                    )
+                status.ruleInputs shouldBeEqualTo
+                    mapOf(
+                        "fom" to sykmelding.perioder.first().fom,
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "ettersending" to true,
+                        "ettersendingAv" to "sykmeldingID",
+                    )
+                status.treeResult.ruleHit shouldBeEqualTo null
+            }
 
-            test("tilbakedatert forlengelse") {
+            test("tilbakedatert forlengelse med ettersending") {
                 val sykmelding =
                     generateSykmelding(
                         fom = LocalDate.now(),
@@ -95,6 +130,40 @@ class TilbakedateringTest :
                         "ettersendingAv" to "sykmeldingID",
                     )
             }
+            test("tilbakedatert forlengelse uten ettersending") {
+                val sykmelding =
+                    generateSykmelding(
+                        fom = LocalDate.now(),
+                        tom = LocalDate.now().plusDays(1),
+                        behandletTidspunkt = LocalDate.now().plusDays(3).atStartOfDay(),
+                        kontaktMedPasient = KontaktMedPasient(null, "begrunnelse"),
+                    )
+                val sykmeldingMetadata =
+                    RuleMetadataSykmelding(
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        doctorSuspensjon = false,
+                        behandlerOgStartdato =
+                            BehandlerOgStartdato(
+                                Behandler(emptyList(), null),
+                                null,
+                            ),
+                    )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                status.treeResult.status shouldBeEqualTo Status.OK
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    listOf(
+                        TILBAKEDATERING to true,
+                        ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to false,
+                    )
+                status.ruleInputs shouldBeEqualTo
+                    mapOf(
+                        "fom" to sykmelding.perioder.first().fom,
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "ettersending" to false,
+                    )
+            }
             context("Tilbakedatert") {
                 context("med begrunnelse") {
                     test("Med begrunnelse OK") {
@@ -122,6 +191,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to true,
                             )
@@ -160,6 +230,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
@@ -217,6 +288,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to true,
@@ -257,6 +329,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
@@ -301,6 +374,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
+                                TILBAKEDATERING_OVER_4_DAGER to true,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
@@ -350,6 +424,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
@@ -391,6 +466,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
@@ -438,6 +514,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
@@ -485,6 +562,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -526,6 +604,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -574,6 +653,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -618,6 +698,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -667,6 +748,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -717,6 +799,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
+                            TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_30_DAGER to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -768,6 +851,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_30_DAGER to false,
                         BEGRUNNELSE_MIN_3_ORD to true,
@@ -808,6 +892,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_30_DAGER to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
@@ -852,6 +937,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_30_DAGER to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
