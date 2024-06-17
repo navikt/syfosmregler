@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.ByteArrayOutputStream
 
 group = "no.nav.syfo"
@@ -18,6 +19,7 @@ val kotlinVersion = "2.0.0"
 val commonsCodecVersion = "1.17.0"
 val ktfmtVersion = "0.44"
 val snappyJavaVersion = "1.1.10.5"
+val javaVersion = JvmTarget.JVM_21
 
 plugins {
     id("application")
@@ -90,6 +92,12 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = javaVersion
     }
 }
 

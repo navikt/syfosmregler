@@ -11,10 +11,20 @@ This project contains just the rules for validating whether a user is supposed t
 * Kotest
 * Jackson
 
-#### Requirements
+### :scroll: Prerequisites
+* JDK 21
+  Make sure you have the Java JDK 21 installed
+  You can check which version you have installed using this command:
+``` shell
+java -version
+```
 
-* JDK 17
 * Docker
+  Make sure you have the Docker installed
+  You can check which version you have installed using this command:
+``` shell
+docker -version
+```
 
 ## FlowChart
 This the high level flow for the application
