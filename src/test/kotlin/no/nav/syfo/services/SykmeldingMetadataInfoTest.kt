@@ -4,6 +4,9 @@ import io.kotest.core.spec.style.FunSpec
 import io.mockk.coEvery
 import io.mockk.mockk
 import java.time.LocalDate
+import no.nav.syfo.TestDates.Companion.february
+import no.nav.syfo.TestDates.Companion.january
+import no.nav.syfo.TestDates.Companion.march
 import no.nav.syfo.client.Merknad
 import no.nav.syfo.client.MerknadType
 import no.nav.syfo.client.PeriodetypeDTO
@@ -37,8 +40,8 @@ class SykmeldingMetadataInfoTest :
                     coEvery { smregisterClient.getSykmeldinger("1") } returns emptyList()
                     val periode =
                         getPeriode(
-                            fom = LocalDate.of(2023, 1, 1),
-                            tom = LocalDate.of(2023, 1, 10),
+                            fom = 1.january(2023),
+                            tom = 10.january(2023),
                         )
                     val sykmeldingMetadata =
                         sykmeldingService.getSykmeldingMetadataInfo(
@@ -251,15 +254,15 @@ class SykmeldingMetadataInfoTest :
                     val sykmeldingResponse =
                         listOf(
                             generateSykmeldingDTO(
-                                fom = LocalDate.of(2021, 2, 15),
-                                tom = LocalDate.of(2021, 3, 15),
+                                fom = 15.february(2021),
+                                tom = 15.march(2021),
                             ),
                         )
                     coEvery { smregisterClient.getSykmeldinger("1") } returns sykmeldingResponse
                     val periode =
                         getPeriode(
-                            fom = LocalDate.of(2021, 2, 15),
-                            tom = LocalDate.of(2021, 3, 15),
+                            fom = 15.february(2021),
+                            tom = 15.march(2021),
                         )
                     val sykmeldingMetadata =
                         sykmeldingService.getSykmeldingMetadataInfo(
@@ -272,16 +275,16 @@ class SykmeldingMetadataInfoTest :
                         listOf(
                             Forlengelse(
                                 sykmeldingResponse.first().id,
-                                periode.fom,
-                                periode.tom,
+                                15.february(2021),
+                                15.march(2021),
                             ),
                         )
                 }
             }
 
             context("Test forlengelse") {
-                val fom = LocalDate.of(2023, 1, 1)
-                val tom = LocalDate.of(2023, 1, 31)
+                val fom = 1.january(2023)
+                val tom = 31.january(2023)
                 val sykmeldingResponse =
                     listOf(
                         generateSykmeldingDTO(
@@ -294,8 +297,8 @@ class SykmeldingMetadataInfoTest :
                 test("Vanlig forlengelse OK") {
                     val periode =
                         getPeriode(
-                            fom = LocalDate.of(2023, 2, 1),
-                            tom = LocalDate.of(2023, 2, 15),
+                            fom = 1.february(2023),
+                            tom = 15.february(2023),
                         )
                     val sykmeldingMetadata =
                         sykmeldingService.getSykmeldingMetadataInfo(
@@ -314,11 +317,11 @@ class SykmeldingMetadataInfoTest :
                         )
                 }
 
-                test("Forlengelse intill 16 dager etter") {
+                test("ikke forlengelse intill 16 dager etter") {
                     val periode =
                         getPeriode(
-                            fom = LocalDate.of(2023, 2, 16),
-                            tom = LocalDate.of(2023, 2, 20),
+                            fom = 16.february(2023),
+                            tom = 20.february(2023),
                         )
                     val sykmeldingMetadata =
                         sykmeldingService.getSykmeldingMetadataInfo(
@@ -327,21 +330,14 @@ class SykmeldingMetadataInfoTest :
                             loggingMeta,
                         )
                     sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                sykmeldingResponse.first().id,
-                                fom,
-                                tom,
-                            ),
-                        )
+                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
                 }
 
                 test("Ikke Forlengelse 17 dager etter") {
                     val periode =
                         getPeriode(
-                            fom = LocalDate.of(2023, 2, 17),
-                            tom = LocalDate.of(2023, 2, 20),
+                            fom = 17.february(2023),
+                            tom = 20.february(2023),
                         )
                     val sykmeldingMetadata =
                         sykmeldingService.getSykmeldingMetadataInfo(
@@ -369,7 +365,7 @@ class SykmeldingMetadataInfoTest :
                     sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
                 }
 
-                test("Forlengelse med samme fom og tom") {
+                test("Ikke forlengelse med samme fom og tom - direkte overlapp") {
                     val periode =
                         getPeriode(
                             fom = fom,
@@ -392,11 +388,26 @@ class SykmeldingMetadataInfoTest :
                         )
                 }
 
-                test("Forlengelse perioden er i en tidliger godkjent sykmeldingsperiode") {
+                test("Forlengelse perioden er i en tidligere godkjent sykmeldingsperiode") {
                     val periode =
                         getPeriode(
                             fom = fom.plusDays(7),
                             tom = tom.minusDays(7),
+                        )
+                    val sykmeldingMetadata =
+                        sykmeldingService.getSykmeldingMetadataInfo(
+                            "1",
+                            getSykmelding("L89", periode),
+                            loggingMeta,
+                        )
+                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                }
+                test("overlappende som forlenger") {
+                    val periode =
+                        getPeriode(
+                            fom = fom.plusDays(7),
+                            tom = tom.plusDays(1),
                         )
                     val sykmeldingMetadata =
                         sykmeldingService.getSykmeldingMetadataInfo(
@@ -418,7 +429,7 @@ class SykmeldingMetadataInfoTest :
                 test("Forlengelse med en annen gradering") {
                     val periode =
                         getPeriode(
-                                fom = tom.plusDays(5),
+                                fom = tom.plusDays(1),
                                 tom = tom.plusMonths(1),
                             )
                             .copy(gradert = Gradert(reisetilskudd = false, grad = 40))
@@ -527,7 +538,7 @@ class SykmeldingMetadataInfoTest :
                     coEvery { smregisterClient.getSykmeldinger("1") } returns response
                     val periode =
                         getPeriode(
-                            fom = tom.plusDays(5),
+                            fom = tom.plusDays(1),
                             tom = tom.plusMonths(1),
                         )
                     val sykmeldingMetadata =
@@ -551,18 +562,18 @@ class SykmeldingMetadataInfoTest :
                     val response =
                         listOf(
                             generateSykmeldingDTO(
-                                fom = fom,
-                                tom = tom,
+                                fom = fom.plusDays(1),
+                                tom = tom.plusDays(5),
                             ),
                             generateSykmeldingDTO(
                                 fom = fom.plusDays(1),
-                                tom = tom.minusDays(1),
+                                tom = tom.plusDays(10),
                             )
                         )
                     coEvery { smregisterClient.getSykmeldinger("1") } returns response
                     val periode =
                         getPeriode(
-                            fom = tom.plusDays(5),
+                            fom = tom.plusDays(1),
                             tom = tom.plusMonths(1),
                         )
                     val sykmeldingMetadata =
@@ -576,13 +587,13 @@ class SykmeldingMetadataInfoTest :
                         listOf(
                             Forlengelse(
                                 response[0].id,
-                                fom,
-                                tom,
+                                fom = fom.plusDays(1),
+                                tom = tom.plusDays(5),
                             ),
                             Forlengelse(
                                 response[1].id,
-                                fom.plusDays(1),
-                                tom.minusDays(1),
+                                fom = fom.plusDays(1),
+                                tom = tom.plusDays(10),
                             ),
                         )
                 }

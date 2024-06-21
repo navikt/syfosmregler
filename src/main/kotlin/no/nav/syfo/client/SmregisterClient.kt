@@ -7,7 +7,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.headers
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import no.nav.syfo.azuread.v2.AzureAdV2Client
