@@ -1,5 +1,6 @@
 package no.nav.syfo.services
 
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import net.logstash.logback.argument.StructuredArguments
@@ -20,7 +21,7 @@ data class Forlengelse(val sykmeldingId: String, val fom: LocalDate, val tom: Lo
 data class SykmeldingMetadataInfo(
     val ettersendingAv: String?,
     val forlengelseAv: List<Forlengelse> = emptyList(),
-    val syketilfelleStartDato: LocalDate
+    val agpStartdato: LocalDate
 )
 
 class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
@@ -35,8 +36,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         logger.info(
             "getting sykmeldinger for ${sykmelding.id}: match from smregister ${sykmeldingerFromRegister.map { it.id }}",
         )
-
-        val startdato = getStartDato(sykmeldingerFromRegister, sykmelding)
+        val startdatoAgp = getStartDatoAgp(sykmeldingerFromRegister, sykmelding)
         val tidligereSykmeldinger =
             sykmeldingerFromRegister
                 .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
@@ -52,41 +52,16 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         return SykmeldingMetadataInfo(
             ettersendingAv = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
             forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger),
-            syketilfelleStartDato = startdato
+            agpStartdato = startdatoAgp
         )
     }
 
-    private fun getStartDato(
+    private fun getStartDatoAgp(
         sykmeldingerFromRegister: List<SykmeldingDTO>,
         sykmelding: Sykmelding
     ): LocalDate {
         var startdato = sykmelding.perioder.sortedFOMDate().first()
-        val datoer =
-            sykmeldingerFromRegister
-                .filter {
-                    it.sykmeldingsperioder.sortedTOMDate().last() >
-                        startdato.minusWeeks(12).minusDays(16)
-                }
-                .filter { it.sykmeldingsperioder.sortedFOMDate().first() < startdato }
-                .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
-                .filterNot {
-                    !it.merknader.isNullOrEmpty() &&
-                        it.merknader.any { merknad ->
-                            merknad.type == MerknadType.UGYLDIG_TILBAKEDATERING.toString() ||
-                                merknad.type ==
-                                    MerknadType.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER.toString()
-                        }
-                }
-                .filter { it.sykmeldingStatus.statusEvent != "AVBRUTT" }
-                .map { it ->
-                    it.sykmeldingsperioder
-                        .filter { it.type != PeriodetypeDTO.AVVENTENDE }
-                        .flatMap { allDaysBetween(it.fom, it.tom) }
-                }
-                .flatten()
-                .distinct()
-                .sortedDescending()
-
+        val datoer = filterDates(startdato, sykmeldingerFromRegister)
         datoer.forEach {
             if (ChronoUnit.DAYS.between(it, startdato) > 16) {
                 return startdato
@@ -95,6 +70,36 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
             }
         }
         return startdato
+    }
+
+    private fun filterDates(
+        startdato: LocalDate,
+        sykmeldingerFromRegister: List<SykmeldingDTO>
+    ): List<LocalDate> {
+        return sykmeldingerFromRegister
+            .filter {
+                it.sykmeldingsperioder.sortedTOMDate().last() >
+                    startdato.minusWeeks(12).minusDays(16)
+            }
+            .filter { it.sykmeldingsperioder.sortedFOMDate().first() < startdato }
+            .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
+            .filterNot {
+                !it.merknader.isNullOrEmpty() &&
+                    it.merknader.any { merknad ->
+                        merknad.type == MerknadType.UGYLDIG_TILBAKEDATERING.toString() ||
+                            merknad.type ==
+                                MerknadType.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER.toString()
+                    }
+            }
+            .filter { it.sykmeldingStatus.statusEvent != "AVBRUTT" }
+            .map { it ->
+                it.sykmeldingsperioder
+                    .filter { it.type != PeriodetypeDTO.AVVENTENDE }
+                    .flatMap { allDaysBetween(it.fom, it.tom) }
+            }
+            .flatten()
+            .distinct()
+            .sortedDescending()
     }
 
     private fun allDaysBetween(fom: LocalDate, tom: LocalDate): List<LocalDate> {
@@ -147,6 +152,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         sykmeldinger: List<SykmeldingDTO>
     ): List<Forlengelse> {
         val firstFom = sykmelding.perioder.sortedFOMDate().first()
+        val lastTom = sykmelding.perioder.sortedTOMDate().last()
         val tidligerePerioderFomTom =
             sykmeldinger
                 .filter {
@@ -163,11 +169,31 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
 
         val forlengelserAv =
             tidligerePerioderFomTom.filter { periode ->
-                firstFom.isAfter(periode.fom.minusDays(1)) &&
-                    firstFom.isBefore(periode.tom.plusDays(17))
+                !isWorkingDaysBetween(firstFom, periode.tom) ||
+                    isOverlappendeAndForlengelse(periode.tom, periode.fom, firstFom, lastTom)
             }
 
         return forlengelserAv
+    }
+
+    private fun isOverlappendeAndForlengelse(
+        periodeTom: LocalDate,
+        periodeFom: LocalDate,
+        firstFom: LocalDate,
+        lastTom: LocalDate
+    ) =
+        (firstFom.isAfter(periodeFom.minusDays(1)) &&
+            firstFom.isBefore(periodeTom.plusDays(1)) &&
+            lastTom.isAfter(periodeTom.minusDays(1)))
+
+    private fun isWorkingDaysBetween(firstFom: LocalDate, periodeTom: LocalDate): Boolean {
+        val daysBetween = ChronoUnit.DAYS.between(periodeTom, firstFom).toInt()
+        if (daysBetween < 0) return true
+        return when (firstFom.dayOfWeek) {
+            DayOfWeek.MONDAY -> daysBetween > 3
+            DayOfWeek.SUNDAY -> daysBetween > 2
+            else -> daysBetween > 1
+        }
     }
 
     private fun harTilbakedatertMerknad(sykmelding: SykmeldingDTO): Boolean {

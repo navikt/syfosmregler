@@ -129,7 +129,7 @@ class RuleService(
                     sykmeldingMetadataInfo = sykmeldingMetadata,
                     doctorSuspensjon = doctorSuspendDeferred.await(),
                     behandlerOgStartdato =
-                        BehandlerOgStartdato(behandler, sykmeldingMetadata.syketilfelleStartDato),
+                        BehandlerOgStartdato(behandler, sykmeldingMetadata.agpStartdato),
                 )
 
             val result =

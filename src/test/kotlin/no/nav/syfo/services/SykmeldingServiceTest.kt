@@ -39,7 +39,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
             }
             test("med en sykmelding kant til kant") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -61,7 +61,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
             }
             test("med en sykmelding med 16 dager mellomrom") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -83,7 +83,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 22.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 22.january(2023)
             }
 
             test("med en sykmelding med 15 dager mellomrom") {
@@ -106,7 +106,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 1.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 1.january(2023)
             }
 
             test("test med sykmelding langt frem i tid") {
@@ -129,7 +129,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 4.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 4.january(2023)
             }
 
             test("tilbakedatert sykmelding") {
@@ -152,7 +152,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 1.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 1.january(2023)
             }
 
             test("Flere sykmeldinger fra syfosmregister") {
@@ -176,7 +176,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 1.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 1.january(2023)
             }
 
             test("Flere sykmeldinger fra syfosmregister med gap") {
@@ -200,7 +200,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 17.march(2023)
+                metadata.agpStartdato shouldBeEqualTo 17.march(2023)
             }
             test("Flere sykmeldinger fra syfosmregister med avventende sykmelding") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -227,7 +227,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 1.april(2023)
+                metadata.agpStartdato shouldBeEqualTo 1.april(2023)
             }
             test("Flere sykmeldinger fra syfosmregister med flere perioder uten gap") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -273,7 +273,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 1.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 1.january(2023)
             }
             test("Flere sykmeldinger fra syfosmregister med flere perioder") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -312,7 +312,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 6.april(2023)
+                metadata.agpStartdato shouldBeEqualTo 6.april(2023)
             }
 
             test("Sykmelding fra syfosmregister med status AVBRUTT") {
@@ -338,7 +338,7 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 1.march(2023)
+                metadata.agpStartdato shouldBeEqualTo 1.march(2023)
             }
 
             test("Sykmelding fra syfosmregister tilbakedatert") {
@@ -351,7 +351,7 @@ class SykmeldingServiceTest :
                                 listOf(
                                     Merknad(
                                         MerknadType.UNDER_BEHANDLING.toString(),
-                                        "under behandling"
+                                        "under behandling",
                                     ),
                                 ),
                         ),
@@ -362,7 +362,7 @@ class SykmeldingServiceTest :
                                 listOf(
                                     Merknad(
                                         MerknadType.UGYLDIG_TILBAKEDATERING.toString(),
-                                        "ugyldig"
+                                        "ugyldig",
                                     ),
                                 ),
                         ),
@@ -380,7 +380,230 @@ class SykmeldingServiceTest :
                         ),
                         loggingMetadata,
                     )
-                metadata.syketilfelleStartDato shouldBeEqualTo 16.january(2023)
+                metadata.agpStartdato shouldBeEqualTo 16.january(2023)
+            }
+            test(
+                "startdato for sykefravaerstilfelle er forskjellig fra startdato for arbeidsgiverperiode",
+            ) {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            31.january(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            15.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            null,
+                            getPeriode(17.february(2023), 28.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 0
+            }
+            test("startdato for sykefravaerstilfelle er samme som startdato og er forlengelse av") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            31.january(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            15.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(16.february(2023), 28.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 1
+            }
+            test("flere sykmeldinger med samme sluttdato og er forlengelse av") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            31.january(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            15.february(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            15.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(16.february(2023), 28.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 2
+            }
+            test("sykmelding forlengelse hensyntar helg") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            31.january(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            17.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(20.february(2023), 28.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 1
+            }
+            test("sykmelding forlengelse hensyntar overlapp") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            31.january(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            17.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(17.february(2023), 28.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 1
+            }
+            test("sykmelding forlenger ikke sykmelding til manuell behandling") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            fom = 1.january(2023),
+                            tom = 31.january(2023),
+                            merknader = listOf(Merknad(MerknadType.UNDER_BEHANDLING.name, null))
+                        ),
+                    )
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(
+                                fom = 2.january(2023),
+                                tom = 1.february(2023),
+                            ),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv shouldBeEqualTo emptyList()
+            }
+            test("sykmelding forlengelse hensyntar overlapp ekstra dag") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.january(2023),
+                            31.january(2023),
+                        ),
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            17.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(10.february(2023), 28.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 1
+            }
+            test("sykmelding forlengelse hensyntar direkte overlapp") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            17.february(2023),
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(1.february(2023), 17.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 2, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 1
+            }
+            test("sykmelding forlengelse hensyntar ikke direkte overlapp dersom merknad") {
+                coEvery { smregisterClient.getSykmeldinger(any()) } returns
+                    listOf(
+                        generateSykmeldingDTO(
+                            1.february(2023),
+                            17.february(2023),
+                            merknader = listOf(Merknad(MerknadType.UNDER_BEHANDLING.name, null))
+                        ),
+                    )
+
+                val metadata =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "1234678910",
+                        getSykmelding(
+                            diagnoseKode = "L89",
+                            getPeriode(1.february(2023), 17.february(2023)),
+                        ),
+                        loggingMetadata,
+                    )
+                metadata.agpStartdato shouldBeEqualTo LocalDate.of(2023, 2, 1)
+                metadata.forlengelseAv.size shouldBeEqualTo 0
             }
         },
     )
