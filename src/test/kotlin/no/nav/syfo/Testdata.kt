@@ -1,5 +1,6 @@
 package no.nav.syfo
 
+import no.nav.helse.diagnosekoder.Diagnosekoder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -38,9 +39,9 @@ import no.nav.syfo.model.Periode
 import no.nav.syfo.model.Prognose
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.sm.Diagnosekoder
 
-fun Diagnosekoder.DiagnosekodeType.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
+fun Diagnosekoder.ICPC2.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
+fun Diagnosekoder.ICD10.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
 
 fun generateSykmelding(
     fom: LocalDate = LocalDate.now(),

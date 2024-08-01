@@ -19,6 +19,7 @@ val kotlinVersion = "2.0.0"
 val commonsCodecVersion = "1.17.0"
 val ktfmtVersion = "0.44"
 val snappyJavaVersion = "1.1.10.5"
+val diagnosekoderVersion = "1.2024.0"
 val javaVersion = JvmTarget.JVM_21
 
 plugins {
@@ -69,7 +70,7 @@ dependencies {
 
     implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-networking:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
+    implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
     implementation("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
     constraints {
         implementation("org.xerial.snappy:snappy-java:$snappyJavaVersion") {
