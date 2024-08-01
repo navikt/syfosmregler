@@ -1,6 +1,7 @@
 package no.nav.syfo.rules.arbeidsuforhet
 
 import io.kotest.core.spec.style.FunSpec
+import no.nav.helse.diagnosekoder.Diagnosekoder
 import java.time.LocalDate
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.generateMedisinskVurdering
@@ -12,7 +13,6 @@ import no.nav.syfo.rules.validation.generatePersonNumber
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.SykmeldingMetadataInfo
-import no.nav.syfo.sm.Diagnosekoder
 import no.nav.syfo.toDiagnose
 import org.amshove.kluent.shouldBeEqualTo
 
