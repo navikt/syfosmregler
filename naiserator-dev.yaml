@@ -48,7 +48,7 @@ spec:
         - application: syfosmmottak
           namespace: teamsykmelding
           cluster: dev-gcp
-        - application: teamsykmelding-mock-backend
+        - application: teamsykmelding-mock
     outbound:
       rules:
         - application: syfosmregister
