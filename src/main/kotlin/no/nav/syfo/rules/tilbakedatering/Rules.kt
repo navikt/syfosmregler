@@ -1,8 +1,8 @@
 package no.nav.syfo.rules.tilbakedatering
 
+import java.time.temporal.ChronoUnit
 import no.nav.helse.diagnosekoder.Diagnosekoder
 import no.nav.syfo.model.Diagnose
-import java.time.temporal.ChronoUnit
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE

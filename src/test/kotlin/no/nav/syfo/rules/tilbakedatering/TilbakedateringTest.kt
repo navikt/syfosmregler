@@ -1,8 +1,8 @@
 package no.nav.syfo.rules.tilbakedatering
 
 import io.kotest.core.spec.style.FunSpec
-import no.nav.helse.diagnosekoder.Diagnosekoder
 import java.time.LocalDate
+import no.nav.helse.diagnosekoder.Diagnosekoder
 import no.nav.syfo.client.Behandler
 import no.nav.syfo.generateSykmelding
 import no.nav.syfo.model.KontaktMedPasient
