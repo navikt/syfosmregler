@@ -12,7 +12,6 @@ val ktorVersion = "2.3.12"
 val logbackVersion = "1.5.6"
 val logstashEncoderVersion = "8.0"
 val prometheusVersion = "0.16.0"
-val smCommonVersion = "2.0.8"
 val kotestVersion = "5.9.1"
 val mockkVersion = "1.13.12"
 val kotlinVersion = "2.0.10"
@@ -20,6 +19,7 @@ val commonsCodecVersion = "1.17.1"
 val ktfmtVersion = "0.44"
 val snappyJavaVersion = "1.1.10.6"
 val diagnosekoderVersion = "1.2024.0"
+val kafkaVersion = "3.8.0"
 val javaVersion = JvmTarget.JVM_21
 
 plugins {
@@ -68,10 +68,9 @@ dependencies {
         }
     }
 
-    implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-networking:$smCommonVersion")
+
     implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
-    implementation("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
+    implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
     constraints {
         implementation("org.xerial.snappy:snappy-java:$snappyJavaVersion") {
             because("override transient from org.apache.kafka:kafka_2.12")

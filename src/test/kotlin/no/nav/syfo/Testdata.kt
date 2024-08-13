@@ -1,12 +1,12 @@
 package no.nav.syfo
 
-import no.nav.helse.diagnosekoder.Diagnosekoder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.random.Random
+import no.nav.helse.diagnosekoder.Diagnosekoder
 import no.nav.syfo.client.BehandlingsutfallDTO
 import no.nav.syfo.client.DiagnoseDTO
 import no.nav.syfo.client.GradertDTO
@@ -41,6 +41,7 @@ import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
 
 fun Diagnosekoder.ICPC2.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
+
 fun Diagnosekoder.ICD10.toDiagnose() = Diagnose(system = oid, kode = code, tekst = text)
 
 fun generateSykmelding(
