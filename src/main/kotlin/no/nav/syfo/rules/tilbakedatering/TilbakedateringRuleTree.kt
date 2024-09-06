@@ -24,7 +24,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_OVER_4_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANDE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 
 enum class TilbakedateringRules {
@@ -37,7 +37,7 @@ enum class TilbakedateringRules {
     TILBAKEDATERING,
     TILBAKEDATERING_OVER_4_DAGER,
     TILBAKEDATERT_INNTIL_8_DAGER,
-    TILBAKEDATERT_INNTIL_30_DAGER,
+    TILBAKEDATERT_INNTIL_1_MAANDE,
 }
 
 val tilbakedateringRuleTree =
@@ -57,7 +57,7 @@ val tilbakedateringRuleTree =
                             }
                         }
                     }
-                    no(TILBAKEDATERT_INNTIL_30_DAGER) {
+                    no(TILBAKEDATERT_INNTIL_1_MAANDE) {
                         yes(BEGRUNNELSE_MIN_1_ORD) {
                             yes(FORLENGELSE) {
                                 yes(OK)
@@ -122,6 +122,6 @@ fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {
         TILBAKEDATERING -> tilbakedatering
         TILBAKEDATERING_OVER_4_DAGER -> tilbakedateringOver4Dager
         TILBAKEDATERT_INNTIL_8_DAGER -> tilbakedateringInntil8Dager
-        TILBAKEDATERT_INNTIL_30_DAGER -> tilbakedateringInntil30Dager
+        TILBAKEDATERT_INNTIL_1_MAANDE -> tilbakedateringInntil1Maande
     }
 }

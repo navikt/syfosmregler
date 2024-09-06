@@ -18,7 +18,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_OVER_4_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANDE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.Forlengelse
@@ -426,7 +426,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to true,
                         )
@@ -468,7 +468,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to false,
                         )
@@ -516,7 +516,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to false,
                         )
@@ -564,7 +564,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to true,
                         )
@@ -606,7 +606,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -655,7 +655,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to true,
@@ -700,7 +700,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -750,7 +750,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -801,7 +801,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERING_OVER_4_DAGER to true,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_30_DAGER to true,
+                            TILBAKEDATERT_INNTIL_1_MAANDE to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -853,7 +853,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERING_OVER_4_DAGER to true,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_30_DAGER to false,
+                        TILBAKEDATERT_INNTIL_1_MAANDE to false,
                         BEGRUNNELSE_MIN_3_ORD to true,
                     )
 
@@ -894,7 +894,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERING_OVER_4_DAGER to true,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_30_DAGER to false,
+                        TILBAKEDATERT_INNTIL_1_MAANDE to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to false,
                     )
@@ -939,7 +939,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERING_OVER_4_DAGER to true,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_30_DAGER to false,
+                        TILBAKEDATERT_INNTIL_1_MAANDE to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to true,
                     )
@@ -952,6 +952,99 @@ class TilbakedateringTest :
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                         "spesialisthelsetjenesten" to true,
+                    )
+            }
+
+            test("mindre enn 1 måned men 30 dager") {
+                val sykmelding =
+                    generateSykmelding(
+                        fom = LocalDate.of(2024, 7, 30),
+                        tom = LocalDate.of(2024, 7, 31),
+                        behandletTidspunkt = LocalDate.of(2024, 8, 29).atStartOfDay(),
+                        kontaktMedPasient = KontaktMedPasient(null, "abcghgfgh"),
+                    )
+                val sykmeldingMetadata =
+                    RuleMetadataSykmelding(
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        doctorSuspensjon = false,
+                        behandlerOgStartdato =
+                            BehandlerOgStartdato(
+                                Behandler(emptyList(), null),
+                                null,
+                            ),
+                    )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+
+                status.treeResult.status shouldBeEqualTo Status.OK
+
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    listOf(
+                        TILBAKEDATERING to true,
+                        ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
+                        TILBAKEDATERT_INNTIL_8_DAGER to false,
+                        TILBAKEDATERT_INNTIL_1_MAANDE to true,
+                        BEGRUNNELSE_MIN_1_ORD to true,
+                        FORLENGELSE to false,
+                        ARBEIDSGIVERPERIODE to true,
+                    )
+
+                status.ruleInputs shouldBeEqualTo
+                    mapOf(
+                        "fom" to sykmelding.perioder.first().fom,
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "ettersending" to false,
+                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                        "forlengelse" to false,
+                        "syketilfelletStartdato" to sykmelding.perioder.first().fom,
+                        "tom" to sykmelding.perioder.first().tom,
+                        "arbeidsgiverperiode" to true,
+                    )
+            }
+
+            test("Er meir enn 1 måned men 29 dager") {
+                val sykmelding =
+                    generateSykmelding(
+                        fom = LocalDate.of(2024, 1, 28),
+                        tom = LocalDate.of(2024, 2, 1),
+                        behandletTidspunkt = LocalDate.of(2024, 2, 29).atStartOfDay(),
+                        kontaktMedPasient = KontaktMedPasient(null, "abcxcxzc"),
+                    )
+                val sykmeldingMetadata =
+                    RuleMetadataSykmelding(
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        doctorSuspensjon = false,
+                        behandlerOgStartdato =
+                            BehandlerOgStartdato(
+                                Behandler(emptyList(), null),
+                                null,
+                            ),
+                    )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    listOf(
+                        TILBAKEDATERING to true,
+                        ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
+                        TILBAKEDATERT_INNTIL_8_DAGER to false,
+                        TILBAKEDATERT_INNTIL_1_MAANDE to false,
+                        BEGRUNNELSE_MIN_3_ORD to false,
+                        SPESIALISTHELSETJENESTEN to false,
+                    )
+
+                status.ruleInputs shouldBeEqualTo
+                    mapOf(
+                        "fom" to sykmelding.perioder.first().fom,
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "ettersending" to false,
+                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "spesialisthelsetjenesten" to false,
                     )
             }
         }
