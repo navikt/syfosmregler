@@ -1010,6 +1010,7 @@ class TilbakedateringTest :
                         tom = LocalDate.of(2024, 2, 1),
                         behandletTidspunkt = LocalDate.of(2024, 2, 29).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abcxcxzc"),
+                        medisinskVurdering = fraSpesialhelsetjenesten(),
                     )
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
@@ -1024,7 +1025,7 @@ class TilbakedateringTest :
                     )
                 val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
 
-                status.treeResult.status shouldBeEqualTo Status.INVALID
+                status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
 
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
@@ -1034,7 +1035,7 @@ class TilbakedateringTest :
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANDE to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
-                        SPESIALISTHELSETJENESTEN to false,
+                        SPESIALISTHELSETJENESTEN to true,
                     )
 
                 status.ruleInputs shouldBeEqualTo
@@ -1044,7 +1045,7 @@ class TilbakedateringTest :
                         "ettersending" to false,
                         "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                         "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
-                        "spesialisthelsetjenesten" to false,
+                        "spesialisthelsetjenesten" to true,
                     )
             }
         }
