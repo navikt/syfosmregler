@@ -955,6 +955,51 @@ class TilbakedateringTest :
                     )
             }
 
+            test("meir enn 1 måned og 31 dager") {
+                val sykmelding =
+                    generateSykmelding(
+                        fom = LocalDate.of(2024, 7, 30),
+                        tom = LocalDate.of(2024, 7, 31),
+                        behandletTidspunkt = LocalDate.of(2024, 8, 30).atStartOfDay(),
+                        kontaktMedPasient = KontaktMedPasient(null, "abcghgfgh"),
+                    )
+                val sykmeldingMetadata =
+                    RuleMetadataSykmelding(
+                        ruleMetadata = sykmelding.toRuleMetadata(),
+                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        doctorSuspensjon = false,
+                        behandlerOgStartdato =
+                            BehandlerOgStartdato(
+                                Behandler(emptyList(), null),
+                                null,
+                            ),
+                    )
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    listOf(
+                        TILBAKEDATERING to true,
+                        ETTERSENDING to false,
+                        TILBAKEDATERING_OVER_4_DAGER to true,
+                        TILBAKEDATERT_INNTIL_8_DAGER to false,
+                        TILBAKEDATERT_INNTIL_1_MAANDE to false,
+                        BEGRUNNELSE_MIN_3_ORD to false,
+                        SPESIALISTHELSETJENESTEN to false,
+                    )
+
+                status.ruleInputs shouldBeEqualTo
+                    mapOf(
+                        "fom" to sykmelding.perioder.first().fom,
+                        "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "ettersending" to false,
+                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "spesialisthelsetjenesten" to false,
+                    )
+            }
+
             test("mindre enn 1 måned men 30 dager") {
                 val sykmelding =
                     generateSykmelding(
