@@ -13,7 +13,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_OVER_4_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_30_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANDE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.sortedFOMDate
@@ -45,13 +45,13 @@ val tilbakedateringOver4Dager: TilbakedateringRule = { sykmelding, _ ->
     )
 }
 
-val tilbakedateringInntil30Dager: TilbakedateringRule = { sykmelding, _ ->
+val tilbakedateringInntil1Maande: TilbakedateringRule = { sykmelding, _ ->
     val fom = sykmelding.perioder.sortedFOMDate().first()
     val genereringstidspunkt = sykmelding.signaturDato.toLocalDate()
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
-        rule = TILBAKEDATERT_INNTIL_30_DAGER,
-        ruleResult = genereringstidspunkt.isBefore(fom.plusDays(31)),
+        rule = TILBAKEDATERT_INNTIL_1_MAANDE,
+        ruleResult = genereringstidspunkt.isBefore(fom.plusMonths(1).plusDays(1)),
     )
 }
 
