@@ -483,7 +483,7 @@ class TilbakedateringTest :
                         )
 
                     status.treeResult.ruleHit shouldBeEqualTo
-                        TilbakedateringRuleHit.INNTIL_30_DAGER.ruleHit
+                        TilbakedateringRuleHit.INNTIL_1_MAANDE.ruleHit
                 }
             }
             context("Med Begrunnelse") {
@@ -955,12 +955,12 @@ class TilbakedateringTest :
                     )
             }
 
-            test("meir enn 1 måned og 31 dager") {
+            test("meir enn 1 måned og 32 dager") {
                 val sykmelding =
                     generateSykmelding(
                         fom = LocalDate.of(2024, 7, 30),
                         tom = LocalDate.of(2024, 7, 31),
-                        behandletTidspunkt = LocalDate.of(2024, 8, 30).atStartOfDay(),
+                        behandletTidspunkt = LocalDate.of(2024, 8, 31).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abcghgfgh"),
                     )
                 val sykmeldingMetadata =
@@ -1000,12 +1000,12 @@ class TilbakedateringTest :
                     )
             }
 
-            test("mindre enn 1 måned men 30 dager") {
+            test("mindre enn én måned, men 31 dager") {
                 val sykmelding =
                     generateSykmelding(
                         fom = LocalDate.of(2024, 7, 30),
                         tom = LocalDate.of(2024, 7, 31),
-                        behandletTidspunkt = LocalDate.of(2024, 8, 29).atStartOfDay(),
+                        behandletTidspunkt = LocalDate.of(2024, 8, 30).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abcghgfgh"),
                     )
                 val sykmeldingMetadata =
@@ -1048,7 +1048,7 @@ class TilbakedateringTest :
                     )
             }
 
-            test("Er meir enn 1 måned men 29 dager") {
+            test("ikke mindre enn én måned, men 29 dager") {
                 val sykmelding =
                     generateSykmelding(
                         fom = LocalDate.of(2024, 1, 28),

@@ -10,12 +10,12 @@ import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_30_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_30_DAGER_MED_BEGRUNNELSE
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_1_MAANDE
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_1_MAANDE_MED_BEGRUNNELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_8_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_30_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_30_DAGER_MED_BEGRUNNELSE
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_30_DAGER_SPESIALISTHELSETJENESTEN
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_DAGER_MED_BEGRUNNELSE
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_DAGER_SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -65,20 +65,20 @@ val tilbakedateringRuleTree =
                                     yes(OK)
                                     no(SPESIALISTHELSETJENESTEN) {
                                         yes(OK)
-                                        no(MANUAL_PROCESSING, INNTIL_30_DAGER_MED_BEGRUNNELSE)
+                                        no(MANUAL_PROCESSING, INNTIL_1_MAANDE_MED_BEGRUNNELSE)
                                     }
                                 }
                             }
                             no(SPESIALISTHELSETJENESTEN) {
                                 yes(OK)
-                                no(INVALID, INNTIL_30_DAGER)
+                                no(INVALID, INNTIL_1_MAANDE)
                             }
                         }
                         no(BEGRUNNELSE_MIN_3_ORD) {
-                            yes(MANUAL_PROCESSING, OVER_30_DAGER_MED_BEGRUNNELSE)
+                            yes(MANUAL_PROCESSING, OVER_1_MND_DAGER_MED_BEGRUNNELSE)
                             no(SPESIALISTHELSETJENESTEN) {
-                                yes(MANUAL_PROCESSING, OVER_30_DAGER_SPESIALISTHELSETJENESTEN)
-                                no(INVALID, OVER_30_DAGER)
+                                yes(MANUAL_PROCESSING, OVER_1_MND_DAGER_SPESIALISTHELSETJENESTEN)
+                                no(INVALID, OVER_1_MND_DAGER)
                             }
                         }
                     }

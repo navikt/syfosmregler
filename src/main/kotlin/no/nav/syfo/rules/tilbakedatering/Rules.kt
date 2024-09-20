@@ -51,7 +51,7 @@ val tilbakedateringInntil1Maande: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
         rule = TILBAKEDATERT_INNTIL_1_MAANDE,
-        ruleResult = genereringstidspunkt.isBefore(fom.plusMonths(1)),
+        ruleResult = genereringstidspunkt.isBefore(fom.plusMonths(1).plusDays(1)),
     )
 }
 
