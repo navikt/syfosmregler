@@ -40,10 +40,10 @@ enum class TilbakedateringRuleHit(
                 messageForUser = "Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert",
             ),
     ),
-    OVER_1_MND_DAGER(
+    OVER_1_MND(
         ruleHit =
             RuleHit(
-                rule = "OVER_1_MND_DAGER",
+                rule = "OVER_1_MND",
                 status = Status.INVALID,
                 messageForSender =
                     "Sykmeldingen kan ikke rettes, det må skrives en ny. Pasienten har fått beskjed om å vente på ny sykmelding fra deg. " +
@@ -52,20 +52,20 @@ enum class TilbakedateringRuleHit(
                     "Sykmeldingen er tilbakedatert uten tilstrekkelig begrunnelse fra den som sykmeldte deg.",
             ),
     ),
-    OVER_1_MND_DAGER_MED_BEGRUNNELSE(
+    OVER_1_DAGER_MED_BEGRUNNELSE(
         ruleHit =
             RuleHit(
-                rule = "OVER_1_MND_DAGER_MED_BEGRUNNELSE",
+                rule = "OVER_1_DAGER_MED_BEGRUNNELSE",
                 status = Status.MANUAL_PROCESSING,
                 messageForSender =
                     "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelse) er utfylt",
                 messageForUser = "Sykmeldingen blir manuell behandlet fordi den er tilbakedatert",
             ),
     ),
-    OVER_1_MND_DAGER_SPESIALISTHELSETJENESTEN(
+    OVER_1_MND_SPESIALISTHELSETJENESTEN(
         ruleHit =
             RuleHit(
-                rule = "OVER_1_MND_DAGER_SPESIALISTHELSETJENESTEN",
+                rule = "OVER_1_MND_SPESIALISTHELSETJENESTEN",
                 status = Status.MANUAL_PROCESSING,
                 messageForSender =
                     "Sykmeldingen er tilbakedatert over 1 månede og er fra spesialisthelsetjenesten",

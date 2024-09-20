@@ -13,9 +13,9 @@ import no.nav.syfo.rules.dsl.tree
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_1_MAANDE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_1_MAANDE_MED_BEGRUNNELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_8_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_DAGER
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_DAGER_MED_BEGRUNNELSE
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_DAGER_SPESIALISTHELSETJENESTEN
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_DAGER_MED_BEGRUNNELSE
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ARBEIDSGIVERPERIODE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_1_ORD
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.BEGRUNNELSE_MIN_3_ORD
@@ -75,10 +75,10 @@ val tilbakedateringRuleTree =
                             }
                         }
                         no(BEGRUNNELSE_MIN_3_ORD) {
-                            yes(MANUAL_PROCESSING, OVER_1_MND_DAGER_MED_BEGRUNNELSE)
+                            yes(MANUAL_PROCESSING, OVER_1_DAGER_MED_BEGRUNNELSE)
                             no(SPESIALISTHELSETJENESTEN) {
-                                yes(MANUAL_PROCESSING, OVER_1_MND_DAGER_SPESIALISTHELSETJENESTEN)
-                                no(INVALID, OVER_1_MND_DAGER)
+                                yes(MANUAL_PROCESSING, OVER_1_MND_SPESIALISTHELSETJENESTEN)
+                                no(INVALID, OVER_1_MND)
                             }
                         }
                     }
