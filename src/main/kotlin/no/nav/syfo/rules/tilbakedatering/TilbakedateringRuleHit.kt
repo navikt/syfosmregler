@@ -52,10 +52,10 @@ enum class TilbakedateringRuleHit(
                     "Sykmeldingen er tilbakedatert uten tilstrekkelig begrunnelse fra den som sykmeldte deg.",
             ),
     ),
-    OVER_1_DAGER_MED_BEGRUNNELSE(
+    OVER_1_MND_MED_BEGRUNNELSE(
         ruleHit =
             RuleHit(
-                rule = "OVER_1_DAGER_MED_BEGRUNNELSE",
+                rule = "OVER_1_MND_MED_BEGRUNNELSE",
                 status = Status.MANUAL_PROCESSING,
                 messageForSender =
                     "Sykmeldingen er tilbakedatert og felt 11.2 (begrunnelse) er utfylt",
