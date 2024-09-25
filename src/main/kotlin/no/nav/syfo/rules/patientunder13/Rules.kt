@@ -8,9 +8,9 @@ import no.nav.syfo.services.sortedTOMDate
 typealias Rule<T> =
     (sykmelding: Sykmelding, ruleMetadataSykmelding: RuleMetadataSykmelding) -> RuleResult<T>
 
-typealias PatientAgeOver70Rule = Rule<PatientAgeUnder13Rules>
+typealias PatientAgeUnder13Rule = Rule<PatientAgeUnder13Rules>
 
-val pasientUnder13Aar: PatientAgeOver70Rule = { sykmelding, ruleMetadata ->
+val pasientUnder13Aar: PatientAgeUnder13Rule = { sykmelding, ruleMetadata ->
     val sisteTomDato = sykmelding.perioder.sortedTOMDate().last()
     val pasientFodselsdato = ruleMetadata.ruleMetadata.pasientFodselsdato
 
