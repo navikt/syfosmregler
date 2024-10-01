@@ -824,13 +824,14 @@ class TilbakedateringTest :
             }
         }
 
-        context("Over 30 dager") {
+        context("Over 1 mnd") {
             test("Med begrunnelse, MANUELL") {
                 val sykmelding =
                     generateSykmelding(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(19),
-                        behandletTidspunkt = LocalDate.now().plusDays(31).atStartOfDay(),
+                        behandletTidspunkt =
+                            LocalDate.now().plusMonths(1).plusDays(1).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abc defgij kmnopq"),
                     )
                 val sykmeldingMetadata =
@@ -871,7 +872,8 @@ class TilbakedateringTest :
                     generateSykmelding(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(19),
-                        behandletTidspunkt = LocalDate.now().plusDays(31).atStartOfDay(),
+                        behandletTidspunkt =
+                            LocalDate.now().plusMonths(1).plusDays(1).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abc defghijklmno"),
                     )
                 val sykmeldingMetadata =
@@ -915,7 +917,8 @@ class TilbakedateringTest :
                     generateSykmelding(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusDays(19),
-                        behandletTidspunkt = LocalDate.now().plusDays(31).atStartOfDay(),
+                        behandletTidspunkt =
+                            LocalDate.now().plusMonths(1).plusDays(1).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmno"),
                         medisinskVurdering = fraSpesialhelsetjenesten(),
                     )
