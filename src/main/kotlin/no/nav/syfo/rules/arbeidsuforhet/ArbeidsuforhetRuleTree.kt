@@ -11,26 +11,29 @@ import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
 
 enum class ArbeidsuforhetRules {
-    UKJENT_DIAGNOSEKODETYPE,
     ICPC_2_Z_DIAGNOSE,
-    HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER,
+    HOVEDDIAGNOSE_MANGLER,
+    FRAVAERSGRUNN_MANGLER,
     UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE,
     UGYLDIG_KODEVERK_FOR_BIDIAGNOSE,
 }
 
 val arbeidsuforhetRuleTree =
-    tree<ArbeidsuforhetRules, RuleResult>(ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE) {
-        yes(INVALID, ArbeidsuforhetRuleHit.UKJENT_DIAGNOSEKODETYPE)
-        no(ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE) {
-            yes(INVALID, ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE)
-            no(ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER) {
-                yes(INVALID, ArbeidsuforhetRuleHit.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER)
-                no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE) {
-                    yes(INVALID, ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE)
-                    no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
-                        yes(INVALID, ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
-                        no(OK)
-                    }
+    tree<ArbeidsuforhetRules, RuleResult>(ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER) {
+        yes(ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER) {
+            yes(INVALID, ArbeidsuforhetRuleHit.FRAVAERSGRUNN_MANGLER)
+            no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
+                yes(INVALID, ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
+                no(OK)
+            }
+        }
+        no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE) {
+            yes(INVALID, ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE)
+            no(ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE) {
+                yes(INVALID, ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE)
+                no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
+                    yes(INVALID, ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE)
+                    no(OK)
                 }
             }
         }
@@ -61,11 +64,10 @@ internal fun RuleNode<ArbeidsuforhetRules, RuleResult>.no(
 
 fun getRule(rules: ArbeidsuforhetRules): Rule<ArbeidsuforhetRules> {
     return when (rules) {
-        ArbeidsuforhetRules.UKJENT_DIAGNOSEKODETYPE -> ukjentDiagnoseKodeType
         ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE -> icpc2ZDiagnose
-        ArbeidsuforhetRules.HOVEDDIAGNOSE_ELLER_FRAVAERSGRUNN_MANGLER ->
-            houvedDiagnoseEllerFraversgrunnMangler
-        ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE -> ugyldigKodeVerkHouvedDiagnose
+        ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER -> manglerHovedDiagnose
+        ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER -> manglerAnnenFravarsArsak
+        ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE -> ugyldigKodeVerkHovedDiagnose
         ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE -> ugyldigKodeVerkBiDiagnose
     }
 }
