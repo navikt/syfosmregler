@@ -2,7 +2,8 @@ package no.nav.syfo
 
 data class EnvironmentVariables(
     val applicationName: String = getEnvVar("NAIS_APP_NAME", "syfosmregler"),
-    val legeSuspensjonProxyEndpointURL: String = getEnvVar("LEGE_SUSPENSJON_PROXY_ENDPOINT_URL"),
+    val legeSuspensjonProxyEndpointURL: String =
+        getEnvVar("LEGE_SUSPENSJON_PROXY_ENDPOINT_URL", "http://btsys-api.team-rocket"),
     val legeSuspensjonProxyScope: String = getEnvVar("LEGE_SUSPENSJON_PROXY_SCOPE"),
     val syketilfelleEndpointURL: String =
         getEnvVar("SYKETILLFELLE_ENDPOINT_URL", "http://flex-syketilfelle.flex"),

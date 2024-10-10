@@ -59,9 +59,11 @@ spec:
           namespace: flex
           cluster: prod-gcp
         - application: syfohelsenettproxy
+        - application: btsys-api
+          namespace: team-rocket
+          cluster: prod-gcp
       external:
         - host: pdl-api.prod-fss-pub.nais.io
-        - host: btsys-api.intern.nav.no
   kafka:
     pool: nav-prod
   secureLogs:
@@ -77,8 +79,6 @@ spec:
       value: api://prod-fss.pdl.pdl-api/.default
     - name: SYKETILLFELLE_SCOPE
       value: api://prod-gcp.flex.flex-syketilfelle/.default
-    - name: LEGE_SUSPENSJON_PROXY_ENDPOINT_URL
-      value: https://btsys-api.intern.nav.no
     - name: LEGE_SUSPENSJON_PROXY_SCOPE
       value: api://prod-gcp.team-rocket.btsys-api/.default
     - name: SOURCE_VERSION_URL
