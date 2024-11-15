@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream
 group = "no.nav.syfo"
 version = "1.0.0"
 
+
+val javaVersion = JvmTarget.JVM_21
+
 val caffeineVersion = "3.1.8"
 val coroutinesVersion = "1.9.0"
 val jacksonVersion = "2.18.0"
@@ -15,12 +18,13 @@ val prometheusVersion = "0.16.0"
 val kotestVersion = "5.9.1"
 val mockkVersion = "1.13.12"
 val kotlinVersion = "2.0.20"
-val commonsCodecVersion = "1.17.1"
 val ktfmtVersion = "0.44"
-val snappyJavaVersion = "1.1.10.7"
 val diagnosekoderVersion = "1.2024.0"
 val kafkaVersion = "3.8.0"
-val javaVersion = JvmTarget.JVM_21
+
+///Due to vulnerabilities
+val nettyCommonVersion = "4.1.115.Final"
+val snappyJavaVersion = "1.1.10.7"
 
 plugins {
     id("application")
@@ -54,6 +58,11 @@ dependencies {
 
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    constraints {
+        implementation("io.netty:netty-common:$nettyCommonVersion") {
+            because("override transient from io.ktor:ktor-server-netty")
+        }
+    }
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
@@ -62,11 +71,6 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    constraints {
-        implementation("commons-codec:commons-codec:$commonsCodecVersion") {
-            because("override transient from io.ktor:ktor-client-apache")
-        }
-    }
 
 
     implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
