@@ -1,0 +1,496 @@
+openapi: "3.1.0"
+info:
+  title: "syfosmregler API"
+  description: "syfosmregler API"
+  version: "1.0.0"
+servers:
+- url: "http://syfosmregler.teamsykmelding"
+paths:
+  /internal/is_alive:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "I'm alive! :)"
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "I'm dead x_x"
+  /internal/is_ready:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "I'm ready! :)"
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Please wait! I'm not ready :("
+  /internal/prometheus:
+    get:
+      description: ""
+      parameters:
+      - name: "name[]"
+        in: "query"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "string"
+  /v1/rules/validate:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReceivedSykmelding"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+components:
+  schemas:
+    Diagnose:
+      type: "object"
+      properties:
+        system:
+          type: "string"
+        kode:
+          type: "string"
+        tekst:
+          type: "string"
+      required:
+      - "system"
+      - "kode"
+    AnnenFraversArsak:
+      type: "object"
+      properties:
+        beskrivelse:
+          type: "string"
+        grunn:
+          type: "array"
+          items:
+            type: "string"
+            enum:
+            - "GODKJENT_HELSEINSTITUSJON"
+            - "BEHANDLING_FORHINDRER_ARBEID"
+            - "ARBEIDSRETTET_TILTAK"
+            - "MOTTAR_TILSKUDD_GRUNNET_HELSETILSTAND"
+            - "NODVENDIG_KONTROLLUNDENRSOKELSE"
+            - "SMITTEFARE"
+            - "ABORT"
+            - "UFOR_GRUNNET_BARNLOSHET"
+            - "DONOR"
+            - "BEHANDLING_STERILISERING"
+      required:
+      - "grunn"
+    MedisinskVurdering:
+      type: "object"
+      properties:
+        hovedDiagnose:
+          $ref: "#/components/schemas/Diagnose"
+        biDiagnoser:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Diagnose"
+        svangerskap:
+          type: "boolean"
+        yrkesskade:
+          type: "boolean"
+        yrkesskadeDato:
+          type: "string"
+          format: "date"
+        annenFraversArsak:
+          $ref: "#/components/schemas/AnnenFraversArsak"
+      required:
+      - "biDiagnoser"
+    Arbeidsgiver:
+      type: "object"
+      properties:
+        harArbeidsgiver:
+          type: "string"
+          enum:
+          - "EN_ARBEIDSGIVER"
+          - "FLERE_ARBEIDSGIVERE"
+          - "INGEN_ARBEIDSGIVER"
+        navn:
+          type: "string"
+        yrkesbetegnelse:
+          type: "string"
+        stillingsprosent:
+          type: "integer"
+          format: "int32"
+      required:
+      - "harArbeidsgiver"
+    MedisinskArsak:
+      type: "object"
+      properties:
+        beskrivelse:
+          type: "string"
+        arsak:
+          type: "array"
+          items:
+            type: "string"
+            enum:
+            - "TILSTAND_HINDRER_AKTIVITET"
+            - "AKTIVITET_FORVERRER_TILSTAND"
+            - "AKTIVITET_FORHINDRER_BEDRING"
+            - "ANNET"
+      required:
+      - "arsak"
+    ArbeidsrelatertArsak:
+      type: "object"
+      properties:
+        beskrivelse:
+          type: "string"
+        arsak:
+          type: "array"
+          items:
+            type: "string"
+            enum:
+            - "MANGLENDE_TILRETTELEGGING"
+            - "ANNET"
+      required:
+      - "arsak"
+    AktivitetIkkeMulig:
+      type: "object"
+      properties:
+        medisinskArsak:
+          $ref: "#/components/schemas/MedisinskArsak"
+        arbeidsrelatertArsak:
+          $ref: "#/components/schemas/ArbeidsrelatertArsak"
+    Gradert:
+      type: "object"
+      properties:
+        reisetilskudd:
+          type: "boolean"
+        grad:
+          type: "integer"
+          format: "int32"
+    Periode:
+      type: "object"
+      properties:
+        fom:
+          type: "string"
+          format: "date"
+        tom:
+          type: "string"
+          format: "date"
+        aktivitetIkkeMulig:
+          $ref: "#/components/schemas/AktivitetIkkeMulig"
+        avventendeInnspillTilArbeidsgiver:
+          type: "string"
+        behandlingsdager:
+          type: "integer"
+          format: "int32"
+        gradert:
+          $ref: "#/components/schemas/Gradert"
+        reisetilskudd:
+          type: "boolean"
+      required:
+      - "fom"
+      - "tom"
+    ErIArbeid:
+      type: "object"
+      properties:
+        egetArbeidPaSikt:
+          type: "boolean"
+        annetArbeidPaSikt:
+          type: "boolean"
+        arbeidFOM:
+          type: "string"
+          format: "date"
+        vurderingsdato:
+          type: "string"
+          format: "date"
+    ErIkkeIArbeid:
+      type: "object"
+      properties:
+        arbeidsforPaSikt:
+          type: "boolean"
+        arbeidsforFOM:
+          type: "string"
+          format: "date"
+        vurderingsdato:
+          type: "string"
+          format: "date"
+    Prognose:
+      type: "object"
+      properties:
+        arbeidsforEtterPeriode:
+          type: "boolean"
+        hensynArbeidsplassen:
+          type: "string"
+        erIArbeid:
+          $ref: "#/components/schemas/ErIArbeid"
+        erIkkeIArbeid:
+          $ref: "#/components/schemas/ErIkkeIArbeid"
+    MeldingTilNAV:
+      type: "object"
+      properties:
+        bistandUmiddelbart:
+          type: "boolean"
+        beskrivBistand:
+          type: "string"
+    KontaktMedPasient:
+      type: "object"
+      properties:
+        kontaktDato:
+          type: "string"
+          format: "date"
+        begrunnelseIkkeKontakt:
+          type: "string"
+    Adresse:
+      type: "object"
+      properties:
+        gate:
+          type: "string"
+        postnummer:
+          type: "integer"
+          format: "int32"
+        kommune:
+          type: "string"
+        postboks:
+          type: "string"
+        land:
+          type: "string"
+    Behandler:
+      type: "object"
+      properties:
+        fornavn:
+          type: "string"
+        mellomnavn:
+          type: "string"
+        etternavn:
+          type: "string"
+        aktoerId:
+          type: "string"
+        fnr:
+          type: "string"
+        hpr:
+          type: "string"
+        her:
+          type: "string"
+        adresse:
+          $ref: "#/components/schemas/Adresse"
+        tlf:
+          type: "string"
+      required:
+      - "fornavn"
+      - "etternavn"
+      - "aktoerId"
+      - "fnr"
+      - "adresse"
+    AvsenderSystem:
+      type: "object"
+      properties:
+        navn:
+          type: "string"
+        versjon:
+          type: "string"
+      required:
+      - "navn"
+      - "versjon"
+    Sykmelding:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        msgId:
+          type: "string"
+        pasientAktoerId:
+          type: "string"
+        medisinskVurdering:
+          $ref: "#/components/schemas/MedisinskVurdering"
+        skjermesForPasient:
+          type: "boolean"
+        arbeidsgiver:
+          $ref: "#/components/schemas/Arbeidsgiver"
+        perioder:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Periode"
+        prognose:
+          $ref: "#/components/schemas/Prognose"
+        utdypendeOpplysninger:
+          type: "string"
+        tiltakArbeidsplassen:
+          type: "string"
+        tiltakNAV:
+          type: "string"
+        andreTiltak:
+          type: "string"
+        meldingTilNAV:
+          $ref: "#/components/schemas/MeldingTilNAV"
+        meldingTilArbeidsgiver:
+          type: "string"
+        kontaktMedPasient:
+          $ref: "#/components/schemas/KontaktMedPasient"
+        behandletTidspunkt:
+          type: "string"
+          format: "date-time"
+        behandler:
+          $ref: "#/components/schemas/Behandler"
+        avsenderSystem:
+          $ref: "#/components/schemas/AvsenderSystem"
+        syketilfelleStartDato:
+          type: "string"
+          format: "date"
+        signaturDato:
+          type: "string"
+          format: "date-time"
+        navnFastlege:
+          type: "string"
+      required:
+      - "id"
+      - "msgId"
+      - "pasientAktoerId"
+      - "medisinskVurdering"
+      - "arbeidsgiver"
+      - "perioder"
+      - "utdypendeOpplysninger"
+      - "kontaktMedPasient"
+      - "behandletTidspunkt"
+      - "behandler"
+      - "avsenderSystem"
+      - "signaturDato"
+    Merknad:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+        beskrivelse:
+          type: "string"
+      required:
+      - "type"
+    UtenlandskSykmelding:
+      type: "object"
+      properties:
+        land:
+          type: "string"
+        folkeRegistertAdresseErBrakkeEllerTilsvarende:
+          type: "boolean"
+      required:
+      - "land"
+    ReceivedSykmelding:
+      type: "object"
+      properties:
+        sykmelding:
+          $ref: "#/components/schemas/Sykmelding"
+        personNrPasient:
+          type: "string"
+        tlfPasient:
+          type: "string"
+        personNrLege:
+          type: "string"
+        legeHelsepersonellkategori:
+          type: "string"
+        legeHprNr:
+          type: "string"
+        navLogId:
+          type: "string"
+        msgId:
+          type: "string"
+        legekontorOrgNr:
+          type: "string"
+        legekontorHerId:
+          type: "string"
+        legekontorReshId:
+          type: "string"
+        legekontorOrgName:
+          type: "string"
+        mottattDato:
+          type: "string"
+          format: "date-time"
+        rulesetVersion:
+          type: "string"
+        merknader:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Merknad"
+        partnerreferanse:
+          type: "string"
+        vedlegg:
+          type: "array"
+          items:
+            type: "string"
+        utenlandskSykmelding:
+          $ref: "#/components/schemas/UtenlandskSykmelding"
+        fellesformat:
+          type: "string"
+        tssid:
+          type: "string"
+      required:
+      - "sykmelding"
+      - "personNrPasient"
+      - "personNrLege"
+      - "navLogId"
+      - "msgId"
+      - "legekontorOrgName"
+      - "mottattDato"
+      - "fellesformat"
+    RuleInfo:
+      type: "object"
+      properties:
+        ruleName:
+          type: "string"
+        messageForSender:
+          type: "string"
+        messageForUser:
+          type: "string"
+        ruleStatus:
+          type: "string"
+          enum:
+          - "OK"
+          - "MANUAL_PROCESSING"
+          - "INVALID"
+      required:
+      - "ruleName"
+      - "messageForSender"
+      - "messageForUser"
+      - "ruleStatus"
+    ValidationResult:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          enum:
+          - "OK"
+          - "MANUAL_PROCESSING"
+          - "INVALID"
+        ruleHits:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/RuleInfo"
+      required:
+      - "status"
+      - "ruleHits"

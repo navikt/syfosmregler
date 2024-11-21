@@ -67,6 +67,8 @@ spec:
     pool: nav-dev
   secureLogs:
     enabled: true
+  ingresses:
+    - "https://syfosmregler.intern.dev.nav.no"
   env:
     - name: HELSENETT_SCOPE
       value: api://dev-gcp.teamsykmelding.syfohelsenettproxy/.default
