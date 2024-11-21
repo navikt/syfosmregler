@@ -40,6 +40,7 @@ import no.nav.syfo.nais.isready.naisIsReadyRoute
 import no.nav.syfo.nais.prometheus.naisPrometheusRoute
 import no.nav.syfo.pdl.client.PdlClient
 import no.nav.syfo.pdl.service.PdlPersonService
+import no.nav.syfo.rules.api.configureSwagger
 import no.nav.syfo.rules.api.registerRuleApi
 import no.nav.syfo.services.JuridiskVurderingService
 import no.nav.syfo.services.RuleExecutionService
@@ -93,6 +94,7 @@ fun Application.configureRouting(
         naisIsReadyRoute(applicationState)
         naisPrometheusRoute()
         authenticate("servicebrukerAAD") { registerRuleApi(ruleService) }
+        configureSwagger()
     }
     install(ContentNegotiation) {
         jackson {
