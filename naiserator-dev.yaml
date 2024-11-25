@@ -49,6 +49,9 @@ spec:
           namespace: teamsykmelding
           cluster: dev-gcp
         - application: teamsykmelding-mock
+        - application: testnav-sykemelding-proxy-trygdeetaten
+          namespace: dolly
+          cluster: dev-gcp
     outbound:
       rules:
         - application: syfosmregister
