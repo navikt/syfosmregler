@@ -174,8 +174,9 @@ graph TD
 ---
 
 - ### Juridisk Henvisning:
-  - **Lovverk**: HELSEPERSONELLOVEN
-  - **Paragraf**: 3
+  - **Lovverk**: FOLKETRYGDLOVEN
+  - **Paragraf**: 8-7
+  - **Ledd**: 1
 
 ---
 
