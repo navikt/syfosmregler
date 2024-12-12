@@ -1,10 +1,14 @@
 package no.nav.syfo.rules.tilbakedatering
 
 import io.kotest.core.spec.style.FunSpec
+import io.mockk.coEvery
+import io.mockk.mockk
 import java.time.LocalDate
 import no.nav.helse.diagnosekoder.Diagnosekoder
 import no.nav.syfo.client.Behandler
+import no.nav.syfo.client.SmregisterClient
 import no.nav.syfo.generateSykmelding
+import no.nav.syfo.generateSykmeldingDTO
 import no.nav.syfo.model.KontaktMedPasient
 import no.nav.syfo.model.MedisinskVurdering
 import no.nav.syfo.model.RuleMetadata
@@ -24,13 +28,19 @@ import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.Forlengelse
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.SykmeldingMetadataInfo
+import no.nav.syfo.services.SykmeldingService
+import no.nav.syfo.services.sortedFOMDate
+import no.nav.syfo.services.sortedTOMDate
 import no.nav.syfo.toDiagnose
+import no.nav.syfo.utils.LoggingMeta
 import org.amshove.kluent.shouldBeEqualTo
 
 class TilbakedateringTest :
     FunSpec({
         val ruleTree = TilbakedateringRulesExecution()
-
+        val smregisterClient = mockk<SmregisterClient>()
+        val sykmeldingService = SykmeldingService(smregisterClient)
+        val loggingMetadata = mockk<LoggingMeta>(relaxed = true)
         context("Test tilbakedateringsregler mindre enn 9 dager") {
             test("ikke tilbakedatert, Status OK") {
                 val sykmelding =
@@ -104,6 +114,7 @@ class TilbakedateringTest :
                         behandletTidspunkt = LocalDate.now().plusDays(8).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, null),
                     )
+
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
@@ -586,10 +597,17 @@ class TilbakedateringTest :
                             behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                             kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                         )
+                    coEvery { smregisterClient.getSykmeldinger("11234") } returns listOf()
                     val sykmeldingMetadata =
+                        sykmeldingService.getSykmeldingMetadataInfo(
+                            "11234",
+                            sykmelding,
+                            loggingMetadata
+                        )
+                    val rulemetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            sykmeldingMetadataInfo = sykmeldingMetadata,
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -597,7 +615,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, rulemetadata).first
 
                     status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -621,6 +639,11 @@ class TilbakedateringTest :
                             "forlengelse" to false,
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
+                            "dagerForArbeidsgiverperiode" to
+                                sykmeldingService.allDaysBetween(
+                                    sykmelding.perioder.sortedFOMDate().first(),
+                                    sykmelding.perioder.sortedTOMDate().last()
+                                ),
                             "arbeidsgiverperiode" to false,
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                             "spesialisthelsetjenesten" to false,
@@ -635,10 +658,18 @@ class TilbakedateringTest :
                             behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                             kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                         )
+                    coEvery { smregisterClient.getSykmeldinger("12345678901") } returns listOf()
+                    val sykmeldingMetadataInfo =
+                        sykmeldingService.getSykmeldingMetadataInfo(
+                            "12345678901",
+                            sykmelding,
+                            loggingMetadata
+                        )
+
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            sykmeldingMetadataInfo,
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -669,6 +700,8 @@ class TilbakedateringTest :
                             "forlengelse" to false,
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
+                            "dagerForArbeidsgiverperiode" to
+                                listOf(LocalDate.now(), LocalDate.now().plusDays(1)),
                             "arbeidsgiverperiode" to true,
                         )
                 }
@@ -680,10 +713,17 @@ class TilbakedateringTest :
                             behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                             kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                         )
+
+                    coEvery { smregisterClient.getSykmeldinger(any()) } returns listOf()
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            sykmeldingMetadataInfo =
+                                sykmeldingService.getSykmeldingMetadataInfo(
+                                    "12345678901",
+                                    sykmelding,
+                                    loggingMetadata
+                                ),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -715,6 +755,11 @@ class TilbakedateringTest :
                             "forlengelse" to false,
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
+                            "dagerForArbeidsgiverperiode" to
+                                sykmeldingService.allDaysBetween(
+                                    LocalDate.now(),
+                                    LocalDate.now().plusDays(16)
+                                ),
                             "arbeidsgiverperiode" to false,
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                             "spesialisthelsetjenesten" to false,
@@ -729,10 +774,29 @@ class TilbakedateringTest :
                             behandletTidspunkt = LocalDate.now().plusDays(10).atStartOfDay(),
                             kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                         )
+                    coEvery { smregisterClient.getSykmeldinger("11234") } returns
+                        listOf(
+                            generateSykmeldingDTO(
+                                LocalDate.now().minusDays(20),
+                                LocalDate.now().minusDays(3)
+                            )
+                        )
+                    val dager =
+                        sykmeldingService.allDaysBetween(
+                            sykmelding.perioder.sortedFOMDate().first(),
+                            sykmelding.perioder.sortedTOMDate().last()
+                        ) +
+                            sykmeldingService
+                                .allDaysBetween(
+                                    LocalDate.now().minusDays(20),
+                                    LocalDate.now().minusDays(3)
+                                )
+                                .sortedDescending()
+                                .take(17)
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), dager),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -766,6 +830,7 @@ class TilbakedateringTest :
                             "syketilfelletStartdato" to
                                 sykmeldingMetadata.behandlerOgStartdato.startdato,
                             "tom" to sykmelding.perioder.first().tom,
+                            "dagerForArbeidsgiverperiode" to dager.sorted(),
                             "arbeidsgiverperiode" to false,
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                             "spesialisthelsetjenesten" to false,
@@ -781,10 +846,17 @@ class TilbakedateringTest :
                             kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                             medisinskVurdering = fraSpesialhelsetjenesten(),
                         )
+                    coEvery { smregisterClient.getSykmeldinger("11234") } returns listOf()
+                    val info =
+                        sykmeldingService.getSykmeldingMetadataInfo(
+                            "11234",
+                            sykmelding,
+                            loggingMetadata
+                        )
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            info,
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -816,6 +888,13 @@ class TilbakedateringTest :
                             "forlengelse" to false,
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
+                            "dagerForArbeidsgiverperiode" to
+                                sykmeldingService
+                                    .allDaysBetween(
+                                        sykmelding.perioder.sortedFOMDate().first(),
+                                        sykmelding.perioder.sortedTOMDate().last()
+                                    )
+                                    .take(17),
                             "arbeidsgiverperiode" to false,
                             "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
                             "spesialisthelsetjenesten" to true,
@@ -1011,10 +1090,18 @@ class TilbakedateringTest :
                         behandletTidspunkt = LocalDate.of(2024, 8, 30).atStartOfDay(),
                         kontaktMedPasient = KontaktMedPasient(null, "abcghgfgh"),
                     )
+                coEvery { smregisterClient.getSykmeldinger("11234") } returns listOf()
+                val sykmeldingMetadataInfo =
+                    sykmeldingService.getSykmeldingMetadataInfo(
+                        "11234",
+                        sykmelding,
+                        loggingMetadata
+                    )
+
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        sykmeldingMetadataInfo,
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -1047,6 +1134,8 @@ class TilbakedateringTest :
                         "forlengelse" to false,
                         "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                         "tom" to sykmelding.perioder.first().tom,
+                        "dagerForArbeidsgiverperiode" to
+                            listOf(LocalDate.of(2024, 7, 30), LocalDate.of(2024, 7, 31)),
                         "arbeidsgiverperiode" to true,
                     )
             }

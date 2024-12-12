@@ -40,7 +40,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -225,7 +225,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -277,7 +277,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -331,7 +331,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -387,7 +387,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -451,7 +451,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),

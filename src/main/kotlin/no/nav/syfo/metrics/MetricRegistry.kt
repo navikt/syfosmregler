@@ -60,3 +60,11 @@ val SUSPANSJON_HISTOGRAM: Histogram =
         .name("suspansjon_requests_duration_seconds")
         .help("suspansjon requests durations for incoming requests in seconds")
         .register()
+
+val ARBEIDSGIVERPERIODE_RULE_COUNTER: Counter =
+    Counter.Builder()
+        .namespace(METRICS_NS)
+        .labelNames("version", "status")
+        .name("arbeidsgiverperiode_count")
+        .help("Counts number of cases of arbeidsgiverperiode rule")
+        .register()

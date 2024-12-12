@@ -18,10 +18,13 @@ import org.slf4j.LoggerFactory
 
 data class Forlengelse(val sykmeldingId: String, val fom: LocalDate, val tom: LocalDate)
 
+data class StartdatoOgDager(val startDato: LocalDate, val dager: List<LocalDate>)
+
 data class SykmeldingMetadataInfo(
     val ettersendingAv: String?,
     val forlengelseAv: List<Forlengelse> = emptyList(),
-    val agpStartdato: LocalDate
+    val startdato: LocalDate,
+    val dagerForArbeidsgiverperiodeCheck: List<LocalDate> = emptyList(),
 )
 
 class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
@@ -36,7 +39,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         logger.info(
             "getting sykmeldinger for ${sykmelding.id}: match from smregister ${sykmeldingerFromRegister.map { it.id }}",
         )
-        val startdatoAgp = getStartDatoAgp(sykmeldingerFromRegister, sykmelding)
+        val startdatoOgDager = getStartDatoOgDager(sykmeldingerFromRegister, sykmelding)
         val tidligereSykmeldinger =
             sykmeldingerFromRegister
                 .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
@@ -52,24 +55,58 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         return SykmeldingMetadataInfo(
             ettersendingAv = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
             forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger),
-            agpStartdato = startdatoAgp
+            startdato = startdatoOgDager.startDato,
+            dagerForArbeidsgiverperiodeCheck = startdatoOgDager.dager,
         )
     }
 
-    private fun getStartDatoAgp(
+    fun getSykedagerForArbeidsgiverperiode(
+        fom: LocalDate,
+        tom: LocalDate,
+        allDates: List<LocalDate>
+    ): List<LocalDate> {
+        val datoer = allDates.sortedDescending()
+        val antallSykdagerForArbeidsgiverPeriode = allDaysBetween(fom, tom).toMutableList()
+
+        if (antallSykdagerForArbeidsgiverPeriode.size > 16) {
+            return antallSykdagerForArbeidsgiverPeriode.subList(0, 17)
+        }
+
+        val dager =
+            antallSykdagerForArbeidsgiverPeriode.toMutableList().sortedDescending().toMutableList()
+        var lastDate = fom
+        for (currentDate in datoer) {
+            if (!isWorkingDaysBetween(lastDate, currentDate)) {
+                dager.addAll(allDaysBetween(currentDate, lastDate.minusDays(1)))
+            } else {
+                dager.add(currentDate)
+            }
+            lastDate = currentDate
+            if (dager.size > 16) {
+                break
+            }
+        }
+        return dager
+    }
+
+    private fun getStartDatoOgDager(
         sykmeldingerFromRegister: List<SykmeldingDTO>,
         sykmelding: Sykmelding
-    ): LocalDate {
-        var startdato = sykmelding.perioder.sortedFOMDate().first()
-        val datoer = filterDates(startdato, sykmeldingerFromRegister)
+    ): StartdatoOgDager {
+        var fom = sykmelding.perioder.sortedFOMDate().first()
+        val tom = sykmelding.perioder.sortedTOMDate().last()
+        val datoer = filterDates(fom, sykmeldingerFromRegister)
+        val antallSykdagerForArbeidsgiverPeriode =
+            getSykedagerForArbeidsgiverperiode(fom, tom, datoer)
+        var startdato = fom
         datoer.forEach {
             if (ChronoUnit.DAYS.between(it, startdato) > 16) {
-                return startdato
+                return StartdatoOgDager(startdato, antallSykdagerForArbeidsgiverPeriode)
             } else {
                 startdato = it
             }
         }
-        return startdato
+        return StartdatoOgDager(startdato, antallSykdagerForArbeidsgiverPeriode)
     }
 
     private fun filterDates(
@@ -79,7 +116,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         return sykmeldingerFromRegister
             .filter {
                 it.sykmeldingsperioder.sortedTOMDate().last() >
-                    startdato.minusWeeks(12).minusDays(16)
+                    startdato.minusWeeks(40).minusDays(0)
             }
             .filter { it.sykmeldingsperioder.sortedFOMDate().first() < startdato }
             .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
@@ -102,7 +139,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
             .sortedDescending()
     }
 
-    private fun allDaysBetween(fom: LocalDate, tom: LocalDate): List<LocalDate> {
+    fun allDaysBetween(fom: LocalDate, tom: LocalDate): List<LocalDate> {
         return (0..ChronoUnit.DAYS.between(fom, tom)).map { fom.plusDays(it) }
     }
 
