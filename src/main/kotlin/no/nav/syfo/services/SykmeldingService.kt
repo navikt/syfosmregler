@@ -61,11 +61,12 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
     }
 
     fun getSykedagerForArbeidsgiverperiode(
+        startDato: LocalDate,
         fom: LocalDate,
         tom: LocalDate,
         allDates: List<LocalDate>
     ): List<LocalDate> {
-        val datoer = allDates.sortedDescending()
+        val datoer = allDates.sortedDescending().filter { it < fom && it >= startDato }
         val antallSykdagerForArbeidsgiverPeriode = allDaysBetween(fom, tom).toMutableList()
 
         if (antallSykdagerForArbeidsgiverPeriode.size > 16) {
@@ -75,6 +76,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         val dager =
             antallSykdagerForArbeidsgiverPeriode.toMutableList().sortedDescending().toMutableList()
         var lastDate = fom
+
         for (currentDate in datoer) {
             if (!isWorkingDaysBetween(lastDate, currentDate)) {
                 dager.addAll(allDaysBetween(currentDate, lastDate.minusDays(1)))
@@ -96,17 +98,21 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         var fom = sykmelding.perioder.sortedFOMDate().first()
         val tom = sykmelding.perioder.sortedTOMDate().last()
         val datoer = filterDates(fom, sykmeldingerFromRegister)
-        val antallSykdagerForArbeidsgiverPeriode =
-            getSykedagerForArbeidsgiverperiode(fom, tom, datoer)
         var startdato = fom
         datoer.forEach {
             if (ChronoUnit.DAYS.between(it, startdato) > 16) {
-                return StartdatoOgDager(startdato, antallSykdagerForArbeidsgiverPeriode)
+                return StartdatoOgDager(
+                    startdato,
+                    getSykedagerForArbeidsgiverperiode(startdato, fom, tom, datoer)
+                )
             } else {
                 startdato = it
             }
         }
-        return StartdatoOgDager(startdato, antallSykdagerForArbeidsgiverPeriode)
+        return StartdatoOgDager(
+            startdato,
+            getSykedagerForArbeidsgiverperiode(startdato, fom, tom, datoer)
+        )
     }
 
     private fun filterDates(
