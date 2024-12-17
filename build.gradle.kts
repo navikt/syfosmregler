@@ -19,11 +19,11 @@ val kotestVersion = "5.9.1"
 val mockkVersion = "1.13.13"
 val kotlinVersion = "2.1.0"
 val ktfmtVersion = "0.44"
-val diagnosekoderVersion = "1.2024.1"
+val diagnosekoderVersion = "1.2025.0"
 val kafkaVersion = "3.9.0"
 
 ///Due to vulnerabilities
-val nettyCommonVersion = "4.1.115.Final"
+val nettyCommonVersion = "4.1.116.Final"
 val snappyJavaVersion = "1.1.10.7"
 
 plugins {
