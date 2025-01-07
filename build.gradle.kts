@@ -8,28 +8,28 @@ version = "1.0.0"
 val javaVersion = JvmTarget.JVM_21
 
 val caffeineVersion = "3.1.8"
-val coroutinesVersion = "1.9.0"
+val coroutinesVersion = "1.10.1"
 val jacksonVersion = "2.18.2"
 val kluentVersion = "1.73"
-val ktorVersion = "3.0.2"
-val logbackVersion = "1.5.12"
+val ktorVersion = "3.0.3"
+val logbackVersion = "1.5.16"
 val logstashEncoderVersion = "8.0"
 val prometheusVersion = "0.16.0"
 val kotestVersion = "5.9.1"
-val mockkVersion = "1.13.13"
+val mockkVersion = "1.13.14"
 val kotlinVersion = "2.1.0"
 val ktfmtVersion = "0.44"
-val diagnosekoderVersion = "1.2024.1"
+val diagnosekoderVersion = "1.2025.0"
 val kafkaVersion = "3.9.0"
 
 ///Due to vulnerabilities
-val nettyCommonVersion = "4.1.115.Final"
+val nettyCommonVersion = "4.1.116.Final"
 val snappyJavaVersion = "1.1.10.7"
 
 plugins {
     id("application")
     kotlin("jvm") version "2.1.0"
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "7.0.0"
     id("com.gradleup.shadow") version "8.3.5"
 }
 
