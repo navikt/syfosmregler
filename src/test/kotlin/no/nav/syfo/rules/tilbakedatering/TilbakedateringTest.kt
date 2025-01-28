@@ -21,8 +21,8 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANED
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.Forlengelse
@@ -166,7 +166,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to true,
+                        TILBAKEDATERT_INNTIL_4_DAGER to true,
                     )
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
@@ -202,7 +202,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
-                                TILBAKEDATERING_INNTIL_4_DAGER to false,
+                                TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to true,
                             )
@@ -241,7 +241,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
-                                TILBAKEDATERING_INNTIL_4_DAGER to false,
+                                TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
@@ -299,7 +299,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
-                                TILBAKEDATERING_INNTIL_4_DAGER to false,
+                                TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to true,
@@ -340,7 +340,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
-                                TILBAKEDATERING_INNTIL_4_DAGER to false,
+                                TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
@@ -385,7 +385,7 @@ class TilbakedateringTest :
                             listOf(
                                 TILBAKEDATERING to true,
                                 ETTERSENDING to false,
-                                TILBAKEDATERING_INNTIL_4_DAGER to false,
+                                TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
@@ -435,7 +435,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
@@ -477,7 +477,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
@@ -525,7 +525,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
@@ -573,7 +573,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -622,7 +622,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -684,7 +684,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -738,7 +738,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -812,7 +812,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -871,7 +871,7 @@ class TilbakedateringTest :
                         listOf(
                             TILBAKEDATERING to true,
                             ETTERSENDING to false,
-                            TILBAKEDATERING_INNTIL_4_DAGER to false,
+                            TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_INNTIL_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
@@ -931,7 +931,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to false,
+                        TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to true,
@@ -973,7 +973,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to false,
+                        TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
@@ -1019,7 +1019,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to false,
+                        TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
@@ -1064,7 +1064,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to false,
+                        TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
@@ -1117,7 +1117,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to false,
+                        TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANED to true,
                         BEGRUNNELSE_MIN_1_ORD to true,
@@ -1168,7 +1168,7 @@ class TilbakedateringTest :
                     listOf(
                         TILBAKEDATERING to true,
                         ETTERSENDING to false,
-                        TILBAKEDATERING_INNTIL_4_DAGER to false,
+                        TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_INNTIL_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,

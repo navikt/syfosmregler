@@ -15,8 +15,8 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANED
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.syfo.services.sortedFOMDate
@@ -44,7 +44,7 @@ val tilbakedateringInntil4Dager: TilbakedateringRule = { sykmelding, _ ->
     TILBAKEDATERING_RULE_DAYS_COUNTER.labels("digital", daysBetween.toString()).inc()
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
-        rule = TILBAKEDATERING_INNTIL_4_DAGER,
+        rule = TILBAKEDATERT_INNTIL_4_DAGER,
         ruleResult = daysBetween <= 4,
     )
 }
