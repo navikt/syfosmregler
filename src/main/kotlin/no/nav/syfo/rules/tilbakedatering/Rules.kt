@@ -4,6 +4,7 @@ import java.time.temporal.ChronoUnit
 import no.nav.helse.diagnosekoder.Diagnosekoder
 import no.nav.syfo.logger
 import no.nav.syfo.metrics.ARBEIDSGIVERPERIODE_RULE_COUNTER
+import no.nav.syfo.metrics.TILBAKEDATERING_RULE_DAYS_COUNTER
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
@@ -14,7 +15,7 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_OVER_4_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANED
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.services.RuleMetadataSykmelding
@@ -36,14 +37,15 @@ val tilbakedatering: TilbakedateringRule = { sykmelding, _ ->
     )
 }
 
-val tilbakedateringOver4Dager: TilbakedateringRule = { sykmelding, _ ->
+val tilbakedateringInntil4Dager: TilbakedateringRule = { sykmelding, _ ->
     val fom = sykmelding.perioder.sortedFOMDate().first()
     val genereringstidspunkt = sykmelding.signaturDato.toLocalDate()
-
+    val daysBetween = ChronoUnit.DAYS.between(fom, genereringstidspunkt)
+    TILBAKEDATERING_RULE_DAYS_COUNTER.labels("digital", daysBetween.toString()).inc()
     RuleResult(
         ruleInputs = mapOf("fom" to fom, "genereringstidspunkt" to genereringstidspunkt),
-        rule = TILBAKEDATERING_OVER_4_DAGER,
-        ruleResult = genereringstidspunkt.isAfter(fom.plusDays(3)),
+        rule = TILBAKEDATERING_INNTIL_4_DAGER,
+        ruleResult = daysBetween <= 4,
     )
 }
 

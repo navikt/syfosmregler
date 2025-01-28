@@ -68,3 +68,11 @@ val ARBEIDSGIVERPERIODE_RULE_COUNTER: Counter =
         .name("arbeidsgiverperiode_count")
         .help("Counts number of cases of arbeidsgiverperiode rule")
         .register()
+
+val TILBAKEDATERING_RULE_DAYS_COUNTER: Counter =
+    Counter.Builder()
+        .namespace("tsmregler")
+        .labelNames("kilde", "dager")
+        .name("tilbakedatert_antall_dager")
+        .help("Teller antall sykmeldinger som er tilbakedatert med antall dager")
+        .register()
