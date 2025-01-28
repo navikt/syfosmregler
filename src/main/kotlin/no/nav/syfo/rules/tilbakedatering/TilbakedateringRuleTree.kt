@@ -120,7 +120,7 @@ fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {
         FORLENGELSE -> forlengelse
         SPESIALISTHELSETJENESTEN -> spesialisthelsetjenesten
         TILBAKEDATERING -> tilbakedatering
-        TILBAKEDATERING_INNTIL_4_DAGER -> tilbakedateringOver4Dager
+        TILBAKEDATERING_INNTIL_4_DAGER -> tilbakedateringInntil4Dager
         TILBAKEDATERT_INNTIL_8_DAGER -> tilbakedateringInntil8Dager
         TILBAKEDATERT_INNTIL_1_MAANED -> tilbakedateringInntil1Maaned
     }
