@@ -21,9 +21,9 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANED
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_MINDRE_ENN_1_MAANED
 import no.nav.syfo.services.BehandlerOgStartdato
 import no.nav.syfo.services.Forlengelse
 import no.nav.syfo.services.RuleMetadataSykmelding
@@ -437,7 +437,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to true,
                         )
@@ -479,7 +479,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to false,
                         )
@@ -494,7 +494,7 @@ class TilbakedateringTest :
                         )
 
                     status.treeResult.ruleHit shouldBeEqualTo
-                        TilbakedateringRuleHit.INNTIL_1_MAANDE.ruleHit
+                        TilbakedateringRuleHit.MINDRE_ENN_1_MAANED.ruleHit
                 }
             }
             context("Med Begrunnelse") {
@@ -527,7 +527,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to false,
                         )
@@ -575,7 +575,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to true,
                         )
@@ -624,7 +624,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -686,7 +686,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to true,
@@ -740,7 +740,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -814,7 +814,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -873,7 +873,7 @@ class TilbakedateringTest :
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_INNTIL_1_MAANED to true,
+                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
@@ -933,7 +933,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_1_MAANED to false,
+                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to true,
                     )
 
@@ -975,7 +975,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_1_MAANED to false,
+                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to false,
                     )
@@ -1021,7 +1021,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_1_MAANED to false,
+                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to true,
                     )
@@ -1066,7 +1066,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_1_MAANED to false,
+                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to false,
                     )
@@ -1119,7 +1119,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_1_MAANED to true,
+                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                         BEGRUNNELSE_MIN_1_ORD to true,
                         FORLENGELSE to false,
                         ARBEIDSGIVERPERIODE to true,
@@ -1170,7 +1170,7 @@ class TilbakedateringTest :
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_INNTIL_1_MAANED to false,
+                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to true,
                     )
