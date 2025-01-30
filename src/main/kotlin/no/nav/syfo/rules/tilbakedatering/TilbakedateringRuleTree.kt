@@ -10,9 +10,9 @@ import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.RuleNode
 import no.nav.syfo.rules.dsl.tree
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_1_MAANDE
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_1_MAANDE_MED_BEGRUNNELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.INNTIL_8_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.MINDRE_ENN_1_MAANED
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.MINDRE_ENN_1_MAANED_MED_BEGRUNNELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_MED_BEGRUNNELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRuleHit.OVER_1_MND_SPESIALISTHELSETJENESTEN
@@ -23,9 +23,9 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.ETTERSENDING
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.FORLENGELSE
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.SPESIALISTHELSETJENESTEN
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERING
-import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_1_MAANED
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_4_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
+import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_MINDRE_ENN_1_MAANED
 
 enum class TilbakedateringRules {
     ARBEIDSGIVERPERIODE,
@@ -37,7 +37,7 @@ enum class TilbakedateringRules {
     TILBAKEDATERING,
     TILBAKEDATERT_INNTIL_4_DAGER,
     TILBAKEDATERT_INNTIL_8_DAGER,
-    TILBAKEDATERT_INNTIL_1_MAANED,
+    TILBAKEDATERT_MINDRE_ENN_1_MAANED,
 }
 
 val tilbakedateringRuleTree =
@@ -57,7 +57,7 @@ val tilbakedateringRuleTree =
                             }
                         }
                     }
-                    no(TILBAKEDATERT_INNTIL_1_MAANED) {
+                    no(TILBAKEDATERT_MINDRE_ENN_1_MAANED) {
                         yes(BEGRUNNELSE_MIN_1_ORD) {
                             yes(FORLENGELSE) {
                                 yes(OK)
@@ -65,13 +65,13 @@ val tilbakedateringRuleTree =
                                     yes(OK)
                                     no(SPESIALISTHELSETJENESTEN) {
                                         yes(OK)
-                                        no(MANUAL_PROCESSING, INNTIL_1_MAANDE_MED_BEGRUNNELSE)
+                                        no(MANUAL_PROCESSING, MINDRE_ENN_1_MAANED_MED_BEGRUNNELSE)
                                     }
                                 }
                             }
                             no(SPESIALISTHELSETJENESTEN) {
                                 yes(OK)
-                                no(INVALID, INNTIL_1_MAANDE)
+                                no(INVALID, MINDRE_ENN_1_MAANED)
                             }
                         }
                         no(BEGRUNNELSE_MIN_3_ORD) {
@@ -122,6 +122,6 @@ fun getRule(rules: TilbakedateringRules): Rule<TilbakedateringRules> {
         TILBAKEDATERING -> tilbakedatering
         TILBAKEDATERT_INNTIL_4_DAGER -> tilbakedateringInntil4Dager
         TILBAKEDATERT_INNTIL_8_DAGER -> tilbakedateringInntil8Dager
-        TILBAKEDATERT_INNTIL_1_MAANED -> tilbakedateringInntil1Maaned
+        TILBAKEDATERT_MINDRE_ENN_1_MAANED -> tilbakedateringMindreEnn1Maaned
     }
 }
