@@ -51,7 +51,7 @@ object PdlServiceTest :
 
                 val person = pdlService.getPdlPerson("01245678901", loggingMeta)
                 person.fnr shouldBeEqualTo "01245678901"
-                person.foedsel?.firstOrNull()?.foedselsdato shouldBeEqualTo "1900-01-01"
+                person.foedselsdato?.firstOrNull()?.foedselsdato shouldBeEqualTo "1900-01-01"
             }
 
             test("Skal feile når person ikke finnes") {
@@ -78,7 +78,7 @@ object PdlServiceTest :
                         PdlResponse(
                             hentPerson =
                                 HentPerson(
-                                    foedsel = emptyList(),
+                                    foedselsdato = emptyList(),
                                 ),
                             hentIdenter = Identliste(emptyList()),
                         ),
