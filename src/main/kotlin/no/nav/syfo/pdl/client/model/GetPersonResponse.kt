@@ -6,7 +6,7 @@ data class PdlResponse(
 )
 
 data class HentPerson(
-    val foedsel: List<Foedsel>?,
+    val foedselsdato: List<Foedsel>?,
 )
 
 data class Foedsel(

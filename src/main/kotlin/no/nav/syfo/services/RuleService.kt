@@ -53,7 +53,7 @@ class RuleService(
             log.info("Received a SM2013, going to rules, {}", fields(loggingMeta))
 
             val pdlPerson = pdlService.getPdlPerson(receivedSykmelding.personNrPasient, loggingMeta)
-            val fodsel = pdlPerson.foedsel?.firstOrNull()
+            val fodsel = pdlPerson.foedselsdato?.firstOrNull()
             val fodselsdato =
                 if (fodsel?.foedselsdato?.isNotEmpty() == true) {
                     log.info("Extracting fodeseldato from PDL date")

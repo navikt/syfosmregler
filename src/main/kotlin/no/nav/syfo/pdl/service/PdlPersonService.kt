@@ -63,7 +63,7 @@ class PdlPersonService(
             fnr,
             PdlPerson(
                 pdlResponse.data.hentIdenter.identer,
-                foedsel = pdlResponse.data.hentPerson.foedsel
+                foedselsdato = pdlResponse.data.hentPerson.foedselsdato
             )
         )
     }
