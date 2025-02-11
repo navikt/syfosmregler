@@ -23,7 +23,7 @@ val diagnosekoderVersion = "1.2025.0"
 val kafkaVersion = "3.9.0"
 
 ///Due to vulnerabilities
-val nettyCommonVersion = "4.1.117.Final"
+val nettyCommonVersion = "4.1.118.Final"
 val snappyJavaVersion = "1.1.10.7"
 
 plugins {
