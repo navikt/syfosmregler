@@ -11,7 +11,7 @@ val caffeineVersion = "3.2.0"
 val coroutinesVersion = "1.10.1"
 val jacksonVersion = "2.18.2"
 val kluentVersion = "1.73"
-val ktorVersion = "3.0.3"
+val ktorVersion = "3.1.0"
 val logbackVersion = "1.5.16"
 val logstashEncoderVersion = "8.0"
 val prometheusVersion = "0.16.0"
@@ -23,8 +23,9 @@ val diagnosekoderVersion = "1.2025.0"
 val kafkaVersion = "3.9.0"
 
 ///Due to vulnerabilities
-val nettyCommonVersion = "4.1.117.Final"
+val nettyCommonVersion = "4.1.118.Final"
 val snappyJavaVersion = "1.1.10.7"
+val commonsCodecVersion = "1.17.1"
 
 plugins {
     id("application")
@@ -71,6 +72,11 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    constraints {
+        implementation("commons-codec:commons-codec:$commonsCodecVersion") {
+            because("override transient version 1.13 from io.ktor:ktor-client-apache")
+        }
+    }
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
 
 
