@@ -25,7 +25,7 @@ val kafkaVersion = "3.9.0"
 ///Due to vulnerabilities
 val nettyCommonVersion = "4.1.118.Final"
 val snappyJavaVersion = "1.1.10.7"
-val commonsCodecVersion = "1.17.1"
+val commonsCodecVersion = "1.18.0"
 
 plugins {
     id("application")
