@@ -138,7 +138,7 @@ class ArbeidsuforhetTest :
                         )
 
                     mapOf(
-                        "hovedDiagnose" to EmptyObject,
+                        "hovedDiagnose" to null,
                         "annenFraversArsak" to sykmelding.medisinskVurdering.annenFraversArsak,
                         "biDiagnoser" to sykmelding.medisinskVurdering.biDiagnoser,
                     ) shouldBeEqualTo status.first.ruleInputs
@@ -347,8 +347,8 @@ class ArbeidsuforhetTest :
                     )
 
                 mapOf(
-                    "hovedDiagnose" to EmptyObject,
-                    "annenFraversArsak" to EmptyObject,
+                    "hovedDiagnose" to null,
+                    "annenFraversArsak" to null,
                 ) shouldBeEqualTo status.first.ruleInputs
                 val string = objectMapper.writeValueAsString(status.first.ruleInputs)
                 status.first.treeResult.ruleHit shouldBeEqualTo

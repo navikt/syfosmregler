@@ -6,8 +6,6 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 
-object EmptyObject {}
-
 typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadata: RuleMetadata) -> RuleResult<T>
 
 typealias ArbeidsuforhetRule = Rule<ArbeidsuforhetRules>
@@ -30,9 +28,7 @@ val manglerHovedDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
 
     RuleResult(
         ruleInputs =
-            mapOf(
-                "hovedDiagnose" to (hovedDiagnose ?: EmptyObject),
-            ),
+            mapOf("hovedDiagnose" to hovedDiagnose),
         rule = ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER,
         ruleResult = hovedDiagnose == null,
     )
@@ -45,10 +41,7 @@ val manglerAnnenFravarsArsak: ArbeidsuforhetRule = { sykmelding, _ ->
         (annenFraversArsak?.let { it.grunn.isEmpty() && it.beskrivelse.isNullOrBlank() } ?: true)
 
     RuleResult(
-        ruleInputs =
-            mapOf(
-                "annenFraversArsak" to (annenFraversArsak ?: EmptyObject),
-            ),
+        ruleInputs = mapOf("annenFraversArsak" to annenFraversArsak),
         rule = ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER,
         ruleResult = fraversgrunnMangler,
     )

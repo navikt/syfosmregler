@@ -1,13 +1,13 @@
 package no.nav.syfo.rules.dsl
 
 data class RuleResult<T>(
-    val ruleInputs: Map<String, Any> = emptyMap(),
+    val ruleInputs: Map<String, Any?> = emptyMap(),
     val ruleResult: Boolean,
     val rule: T,
 )
 
 data class TreeOutput<T, S>(
-    val ruleInputs: Map<String, Any> = mapOf(),
+    val ruleInputs: Map<String, Any?> = mapOf(),
     val rulePath: List<RuleResult<T>> = emptyList(),
     val treeResult: S,
 )
