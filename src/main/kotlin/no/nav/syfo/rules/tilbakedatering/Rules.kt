@@ -113,7 +113,7 @@ val begrunnelse_min_1_ord: TilbakedateringRule = { sykmelding, _ ->
     val wordCount = getNumberOfWords(begrunnelse)
     val result = wordCount >= 1
     RuleResult(
-        ruleInputs = mapOf("begrunnelse" to begrunnelse),
+        ruleInputs = mapOf("begrunnelse" to "$wordCount ord"),
         rule = BEGRUNNELSE_MIN_1_ORD,
         ruleResult = result,
     )
@@ -124,21 +124,18 @@ val begrunnelse_min_3_ord: TilbakedateringRule = { sykmelding, _ ->
     val wordCount = getNumberOfWords(begrunnelse)
     val result = wordCount >= 3
     RuleResult(
-        ruleInputs = mapOf("begrunnelse" to begrunnelse),
+        ruleInputs = mapOf("begrunnelse" to "$wordCount ord"),
         rule = BEGRUNNELSE_MIN_3_ORD,
         ruleResult = result,
     )
 }
 
 val ettersending: TilbakedateringRule = { _, metadata ->
-    val ettersendingAv = metadata.sykmeldingMetadataInfo.ettersendingAv
+    val ettersendingAv = metadata.sykmeldingMetadataInfo.ettersending
     val result = ettersendingAv != null
-    val ruleInputs =
-        mutableMapOf<String, Any>(
-            "ettersending" to result,
-        )
+    val ruleInputs = mutableMapOf<String, Any>()
     if (ettersendingAv != null) {
-        ruleInputs["ettersendingAv"] = ettersendingAv
+        ruleInputs["ettersending"] = ettersendingAv
     }
     RuleResult(
         ruleInputs = ruleInputs,
@@ -148,12 +145,12 @@ val ettersending: TilbakedateringRule = { _, metadata ->
 }
 
 val forlengelse: TilbakedateringRule = { _, metadata ->
-    val forlengelse = metadata.sykmeldingMetadataInfo.forlengelseAv
-    val result = forlengelse.isNotEmpty()
-    val ruleInputs = mutableMapOf<String, Any>("forlengelse" to result)
+    val forlengelse = metadata.sykmeldingMetadataInfo.forlengelse
+    val result = forlengelse != null
+    val ruleInputs = mutableMapOf<String, Any>()
 
-    if (result) {
-        ruleInputs["forlengelseAv"] = forlengelse
+    if (forlengelse != null) {
+        ruleInputs["forlengelse"] = forlengelse
     }
     RuleResult(
         ruleInputs = ruleInputs,

@@ -21,6 +21,7 @@ import no.nav.syfo.generatePeriode
 import no.nav.syfo.generateSykmeldingDTO
 import no.nav.syfo.utils.LoggingMeta
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeEqualTo
 
 class SykmeldingServiceTest :
     FunSpec(
@@ -528,7 +529,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 0
+                metadata.forlengelse shouldBeEqualTo null
             }
             test("startdato for sykefravaerstilfelle er samme som startdato og er forlengelse av") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -553,7 +554,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 1
+                metadata.forlengelse shouldNotBeEqualTo null
             }
             test("flere sykmeldinger med samme sluttdato og er forlengelse av") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -582,7 +583,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 2
+                metadata.forlengelse shouldNotBeEqualTo null
             }
             test("sykmelding forlengelse hensyntar helg") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -607,7 +608,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 1
+                metadata.forlengelse shouldNotBeEqualTo null
             }
             test("sykmelding forlengelse hensyntar overlapp") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -632,7 +633,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 1
+                metadata.forlengelse shouldNotBeEqualTo null
             }
             test("sykmelding forlenger ikke sykmelding til manuell behandling") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -656,7 +657,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv shouldBeEqualTo emptyList()
+                metadata.forlengelse shouldBeEqualTo null
             }
             test("sykmelding forlengelse hensyntar overlapp ekstra dag") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -681,7 +682,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 1, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 1
+                metadata.forlengelse shouldNotBeEqualTo null
             }
             test("sykmelding forlengelse hensyntar direkte overlapp") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -702,7 +703,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 2, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 1
+                metadata.forlengelse shouldNotBeEqualTo null
             }
             test("sykmelding forlengelse hensyntar ikke direkte overlapp dersom merknad") {
                 coEvery { smregisterClient.getSykmeldinger(any()) } returns
@@ -724,7 +725,7 @@ class SykmeldingServiceTest :
                         loggingMetadata,
                     )
                 metadata.startdato shouldBeEqualTo LocalDate.of(2023, 2, 1)
-                metadata.forlengelseAv.size shouldBeEqualTo 0
+                metadata.forlengelse shouldBeEqualTo null
             }
         },
     )

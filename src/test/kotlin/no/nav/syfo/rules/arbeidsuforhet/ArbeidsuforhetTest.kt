@@ -40,7 +40,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -138,9 +138,9 @@ class ArbeidsuforhetTest :
                         )
 
                     mapOf(
-                        "hovedDiagnose" to EmptyObject,
-                        "annenFraversArsak" to sykmelding.medisinskVurdering.annenFraversArsak,
-                        "biDiagnoser" to sykmelding.medisinskVurdering.biDiagnoser,
+                        "hoveddiagnoseMangler" to true,
+                        "fraversgrunnMangler" to false,
+                        "ugyldigKodeVerkBiDiagnose" to true,
                     ) shouldBeEqualTo status.first.ruleInputs
 
                     status.first.treeResult.ruleHit shouldBeEqualTo
@@ -182,10 +182,10 @@ class ArbeidsuforhetTest :
                         )
 
                     mapOf(
-                        "hovedDiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "hoveddiagnoseMangler" to false,
                         "ugyldigKodeverkHovedDiagnose" to false,
                         "icpc2ZDiagnose" to false,
-                        "biDiagnoser" to sykmelding.medisinskVurdering.biDiagnoser,
+                        "ugyldigKodeVerkBiDiagnose" to false,
                     ) shouldBeEqualTo status.first.ruleInputs
 
                     status.first.treeResult.ruleHit shouldBeEqualTo null
@@ -225,7 +225,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -241,7 +241,7 @@ class ArbeidsuforhetTest :
                     )
 
                 mapOf(
-                    "hovedDiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                    "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to true,
                 ) shouldBeEqualTo status.first.ruleInputs
 
@@ -277,7 +277,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -294,7 +294,7 @@ class ArbeidsuforhetTest :
                     )
 
                 mapOf(
-                    "hovedDiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                    "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to false,
                     "icpc2ZDiagnose" to true,
                 ) shouldBeEqualTo status.first.ruleInputs
@@ -331,7 +331,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -347,8 +347,8 @@ class ArbeidsuforhetTest :
                     )
 
                 mapOf(
-                    "hovedDiagnose" to EmptyObject,
-                    "annenFraversArsak" to EmptyObject,
+                    "hoveddiagnoseMangler" to true,
+                    "fraversgrunnMangler" to true,
                 ) shouldBeEqualTo status.first.ruleInputs
                 val string = objectMapper.writeValueAsString(status.first.ruleInputs)
                 status.first.treeResult.ruleHit shouldBeEqualTo
@@ -387,7 +387,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -403,7 +403,7 @@ class ArbeidsuforhetTest :
                     )
 
                 mapOf(
-                    "hovedDiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                    "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to true,
                 ) shouldBeEqualTo status.first.ruleInputs
 
@@ -451,7 +451,7 @@ class ArbeidsuforhetTest :
                     RuleMetadataSykmelding(
                         ruleMetadata = ruleMetadata,
                         sykmeldingMetadataInfo =
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), emptyList()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), emptyList()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(Behandler(emptyList(), null), null),
@@ -469,10 +469,10 @@ class ArbeidsuforhetTest :
                     )
 
                 mapOf(
-                    "hovedDiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                    "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to false,
                     "icpc2ZDiagnose" to false,
-                    "biDiagnoser" to sykmelding.medisinskVurdering.biDiagnoser,
+                    "ugyldigKodeVerkBiDiagnose" to true,
                 ) shouldBeEqualTo status.first.ruleInputs
 
                 status.first.treeResult.ruleHit shouldBeEqualTo
