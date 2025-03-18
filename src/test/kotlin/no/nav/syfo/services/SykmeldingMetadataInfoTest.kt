@@ -49,8 +49,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("False hvis bruker har sykmelding med annen FOM") {
@@ -73,8 +73,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("False hvis bruke har en sykmelding som er til under behandlign hos manuell") {
@@ -104,8 +104,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test(
@@ -149,8 +149,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("False om sykmeldt har en godkjent sykmelding men med annen diagnose") {
@@ -173,8 +173,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L90", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("False om har annen TOM") {
@@ -197,7 +197,7 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
                 }
 
                 test("False om tidliger sykmelding er Behandlingsdager") {
@@ -221,8 +221,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("False om hoveddiagnose er null") {
@@ -246,8 +246,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding(null, periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("True når det er en ettersending") {
@@ -270,14 +270,14 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo sykmeldingResponse.first().id
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                sykmeldingResponse.first().id,
-                                15.february(2021),
-                                15.march(2021),
-                            ),
+                    sykmeldingMetadata.ettersending?.sykmeldingId shouldBeEqualTo
+                        sykmeldingResponse.first().id
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(
+                            sykmeldingResponse.first().id,
+                            15.february(2021),
+                            15.march(2021),
+                            null,
                         )
                 }
             }
@@ -306,15 +306,9 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                sykmeldingResponse.first().id,
-                                fom,
-                                tom,
-                            ),
-                        )
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(sykmeldingResponse.first().id, fom, tom, null)
                 }
 
                 test("ikke forlengelse intill 16 dager etter") {
@@ -329,8 +323,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("Ikke Forlengelse 17 dager etter") {
@@ -345,8 +339,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("Ikke Forlengelse om sykmelding starter før tidligere sykmelding") {
@@ -361,8 +355,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("Ikke forlengelse med samme fom og tom - direkte overlapp") {
@@ -377,14 +371,14 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo sykmeldingResponse.first().id
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                sykmeldingResponse.first().id,
-                                fom,
-                                tom,
-                            ),
+                    sykmeldingMetadata.ettersending?.sykmeldingId shouldBeEqualTo
+                        sykmeldingResponse.first().id
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(
+                            sykmeldingResponse.first().id,
+                            fom,
+                            tom,
+                            null,
                         )
                 }
 
@@ -400,8 +394,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
                 test("overlappende som forlenger") {
                     val periode =
@@ -415,14 +409,13 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                sykmeldingResponse.first().id,
-                                fom,
-                                tom,
-                            ),
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(
+                            sykmeldingResponse.first().id,
+                            fom,
+                            tom,
+                            null,
                         )
                 }
 
@@ -439,14 +432,13 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                sykmeldingResponse.first().id,
-                                fom,
-                                tom,
-                            ),
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(
+                            sykmeldingResponse.first().id,
+                            fom,
+                            tom,
+                            null,
                         )
                 }
 
@@ -477,8 +469,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test("Ikke forlengelse med sykmeldinger som ikke er godkjente tilbakedateringer") {
@@ -508,8 +500,8 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo emptyList()
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo null
                 }
 
                 test(
@@ -547,14 +539,13 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                response[1].id,
-                                fom,
-                                tom,
-                            ),
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(
+                            response[1].id,
+                            fom,
+                            tom,
+                            null,
                         )
                 }
 
@@ -582,19 +573,13 @@ class SykmeldingMetadataInfoTest :
                             getSykmelding("L89", periode),
                             loggingMeta,
                         )
-                    sykmeldingMetadata.ettersendingAv shouldBeEqualTo null
-                    sykmeldingMetadata.forlengelseAv shouldBeEqualTo
-                        listOf(
-                            Forlengelse(
-                                response[0].id,
-                                fom = fom.plusDays(1),
-                                tom = tom.plusDays(5),
-                            ),
-                            Forlengelse(
-                                response[1].id,
-                                fom = fom.plusDays(1),
-                                tom = tom.plusDays(10),
-                            ),
+                    sykmeldingMetadata.ettersending shouldBeEqualTo null
+                    sykmeldingMetadata.forlengelse shouldBeEqualTo
+                        SykmeldingInfo(
+                            response[0].id,
+                            fom = fom.plusDays(1),
+                            tom = tom.plusDays(5),
+                            null,
                         )
                 }
             }

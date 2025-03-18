@@ -25,8 +25,8 @@ import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNT
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_INNTIL_8_DAGER
 import no.nav.syfo.rules.tilbakedatering.TilbakedateringRules.TILBAKEDATERT_MINDRE_ENN_1_MAANED
 import no.nav.syfo.services.BehandlerOgStartdato
-import no.nav.syfo.services.Forlengelse
 import no.nav.syfo.services.RuleMetadataSykmelding
+import no.nav.syfo.services.SykmeldingInfo
 import no.nav.syfo.services.SykmeldingMetadataInfo
 import no.nav.syfo.services.SykmeldingService
 import no.nav.syfo.services.sortedFOMDate
@@ -52,7 +52,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -81,7 +81,16 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo("sykmeldingID", emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(
+                            SykmeldingInfo(
+                                sykmeldingId = "sykmeldingID",
+                                fom = LocalDate.now(),
+                                tom = LocalDate.now().plusDays(1),
+                                null
+                            ),
+                            null,
+                            LocalDate.now()
+                        ),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -100,8 +109,13 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to true,
-                        "ettersendingAv" to "sykmeldingID",
+                        "ettersending" to
+                            SykmeldingInfo(
+                                sykmeldingId = "sykmeldingID",
+                                fom = LocalDate.now(),
+                                tom = LocalDate.now().plusDays(1),
+                                null
+                            ),
                     )
                 status.treeResult.ruleHit shouldBeEqualTo null
             }
@@ -118,7 +132,16 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo("sykmeldingID", emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(
+                            SykmeldingInfo(
+                                sykmeldingId = "sykmeldingID",
+                                fom = LocalDate.now(),
+                                tom = LocalDate.now().plusDays(1),
+                                null
+                            ),
+                            null,
+                            LocalDate.now()
+                        ),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -137,8 +160,13 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to true,
-                        "ettersendingAv" to "sykmeldingID",
+                        "ettersending" to
+                            SykmeldingInfo(
+                                sykmeldingId = "sykmeldingID",
+                                fom = LocalDate.now(),
+                                tom = LocalDate.now().plusDays(1),
+                                null
+                            ),
                     )
             }
             test("tilbakedatert forlengelse uten ettersending") {
@@ -152,7 +180,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -172,7 +200,6 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
                     )
             }
             context("Tilbakedatert") {
@@ -188,7 +215,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                                SykmeldingMetadataInfo(null, null, LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -210,9 +237,8 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "ettersending" to false,
                                 "begrunnelse" to
-                                    sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                                    "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             )
                         status.treeResult.status shouldBeEqualTo Status.OK
                     }
@@ -227,7 +253,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                                SykmeldingMetadataInfo(null, null, LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -251,10 +277,9 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "ettersending" to false,
-                                "begrunnelse" to "",
-                                "forlengelse" to false,
-                                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                                "begrunnelse" to "0 ord",
+                                "diagnosesystem" to
+                                    sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to false,
                             )
                         status.treeResult.ruleHit shouldBeEqualTo
@@ -271,21 +296,16 @@ class TilbakedateringTest :
                                 kontaktMedPasient = KontaktMedPasient(null, null),
                             )
                         val forlengelse =
-                            Forlengelse(
+                            SykmeldingInfo(
                                 "sykmeldingId",
                                 sykmelding.perioder.first().fom,
-                                sykmelding.perioder.first().tom
+                                sykmelding.perioder.first().tom,
+                                null
                             )
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(
-                                    null,
-                                    listOf(
-                                        forlengelse,
-                                    ),
-                                    LocalDate.now()
-                                ),
+                                SykmeldingMetadataInfo(null, forlengelse, LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -308,10 +328,8 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "ettersending" to false,
-                                "begrunnelse" to "",
-                                "forlengelse" to true,
-                                "forlengelseAv" to listOf(forlengelse),
+                                "begrunnelse" to "0 ord",
+                                "forlengelse" to forlengelse,
                             )
                     }
                     test("Ikke forlengelse, INVALID") {
@@ -325,7 +343,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                                SykmeldingMetadataInfo(null, null, LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -350,10 +368,9 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "ettersending" to false,
-                                "begrunnelse" to "",
-                                "forlengelse" to false,
-                                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                                "begrunnelse" to "0 ord",
+                                "diagnosesystem" to
+                                    sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to false,
                             )
                     }
@@ -370,7 +387,7 @@ class TilbakedateringTest :
                         val sykmeldingMetadata =
                             RuleMetadataSykmelding(
                                 ruleMetadata = sykmelding.toRuleMetadata(),
-                                SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                                SykmeldingMetadataInfo(null, null, LocalDate.now()),
                                 doctorSuspensjon = false,
                                 behandlerOgStartdato =
                                     BehandlerOgStartdato(
@@ -395,10 +412,9 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "ettersending" to false,
-                                "begrunnelse" to "",
-                                "forlengelse" to false,
-                                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                                "begrunnelse" to "0 ord",
+                                "diagnosesystem" to
+                                    sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to true,
                             )
                     }
@@ -420,7 +436,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -445,9 +461,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to "",
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "begrunnelse" to "0 ord",
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to true,
                         )
                 }
@@ -462,7 +477,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -487,9 +502,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to "",
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "begrunnelse" to "0 ord",
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
 
@@ -510,7 +524,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -535,9 +549,9 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -550,15 +564,16 @@ class TilbakedateringTest :
                             kontaktMedPasient = KontaktMedPasient(null, "abcdefghijklmnopq"),
                         )
                     val forlengelse =
-                        Forlengelse(
+                        SykmeldingInfo(
                             "sykmeldingId",
                             sykmelding.perioder.first().fom,
-                            sykmelding.perioder.first().tom
+                            sykmelding.perioder.first().tom,
+                            null
                         )
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, listOf(forlengelse), LocalDate.now()),
+                            SykmeldingMetadataInfo(null, forlengelse, LocalDate.now()),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -583,10 +598,9 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "forlengelse" to true,
-                            "forlengelseAv" to listOf(forlengelse),
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                            "forlengelse" to forlengelse,
                         )
                 }
                 test("Ikke forlengelse, MANUELL") {
@@ -634,9 +648,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "forlengelse" to false,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
                             "dagerForArbeidsgiverperiode" to
@@ -645,7 +658,7 @@ class TilbakedateringTest :
                                     sykmelding.perioder.sortedTOMDate().last()
                                 ),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -695,9 +708,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "forlengelse" to false,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
                             "dagerForArbeidsgiverperiode" to
@@ -750,9 +762,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "forlengelse" to false,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
                             "dagerForArbeidsgiverperiode" to
@@ -761,7 +772,7 @@ class TilbakedateringTest :
                                     LocalDate.now().plusDays(16)
                                 ),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -796,7 +807,7 @@ class TilbakedateringTest :
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, emptyList(), LocalDate.now(), dager),
+                            SykmeldingMetadataInfo(null, null, LocalDate.now(), dager),
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -824,15 +835,14 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "forlengelse" to false,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to
                                 sykmeldingMetadata.behandlerOgStartdato.startdato,
                             "tom" to sykmelding.perioder.first().tom,
                             "dagerForArbeidsgiverperiode" to dager.sorted(),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -883,9 +893,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "ettersending" to false,
-                            "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                            "forlengelse" to false,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                             "tom" to sykmelding.perioder.first().tom,
                             "dagerForArbeidsgiverperiode" to
@@ -896,7 +905,7 @@ class TilbakedateringTest :
                                     )
                                     .take(17),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to true,
                         )
                 }
@@ -916,7 +925,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -941,8 +950,8 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
-                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                     )
             }
 
@@ -958,7 +967,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -984,9 +993,9 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
-                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to false,
                     )
             }
@@ -1004,7 +1013,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -1030,9 +1039,9 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
-                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to true,
                     )
             }
@@ -1048,7 +1057,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -1075,9 +1084,9 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
-                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to false,
                     )
             }
@@ -1129,9 +1138,8 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
-                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                        "forlengelse" to false,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         "syketilfelletStartdato" to sykmelding.perioder.first().fom,
                         "tom" to sykmelding.perioder.first().tom,
                         "dagerForArbeidsgiverperiode" to
@@ -1152,7 +1160,7 @@ class TilbakedateringTest :
                 val sykmeldingMetadata =
                     RuleMetadataSykmelding(
                         ruleMetadata = sykmelding.toRuleMetadata(),
-                        SykmeldingMetadataInfo(null, emptyList(), LocalDate.now()),
+                        SykmeldingMetadataInfo(null, null, LocalDate.now()),
                         doctorSuspensjon = false,
                         behandlerOgStartdato =
                             BehandlerOgStartdato(
@@ -1179,9 +1187,9 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "ettersending" to false,
-                        "begrunnelse" to sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to true,
                     )
             }

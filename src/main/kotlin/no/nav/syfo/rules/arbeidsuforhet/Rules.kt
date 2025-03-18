@@ -6,8 +6,6 @@ import no.nav.syfo.model.RuleMetadata
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.dsl.RuleResult
 
-object EmptyObject {}
-
 typealias Rule<T> = (sykmelding: Sykmelding, ruleMetadata: RuleMetadata) -> RuleResult<T>
 
 typealias ArbeidsuforhetRule = Rule<ArbeidsuforhetRules>
@@ -26,15 +24,15 @@ val icpc2ZDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
 }
 
 val manglerHovedDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
-    val hovedDiagnose = sykmelding.medisinskVurdering.hovedDiagnose
+    val hovedDiagnoseErNull = sykmelding.medisinskVurdering.hovedDiagnose == null
 
     RuleResult(
         ruleInputs =
             mapOf(
-                "hovedDiagnose" to (hovedDiagnose ?: EmptyObject),
+                "hoveddiagnoseMangler" to hovedDiagnoseErNull,
             ),
         rule = ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER,
-        ruleResult = hovedDiagnose == null,
+        ruleResult = hovedDiagnoseErNull,
     )
 }
 
@@ -47,7 +45,7 @@ val manglerAnnenFravarsArsak: ArbeidsuforhetRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs =
             mapOf(
-                "annenFraversArsak" to (annenFraversArsak ?: EmptyObject),
+                "fraversgrunnMangler" to fraversgrunnMangler,
             ),
         rule = ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER,
         ruleResult = fraversgrunnMangler,
@@ -87,7 +85,7 @@ val ugyldigKodeVerkBiDiagnose: ArbeidsuforhetRule = { sykmelding, _ ->
         }
 
     RuleResult(
-        ruleInputs = mapOf("biDiagnoser" to biDiagnoser),
+        ruleInputs = mapOf("ugyldigKodeVerkBiDiagnose" to ugyldigKodeVerkBiDiagnose),
         rule = ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE,
         ruleResult = ugyldigKodeVerkBiDiagnose,
     )

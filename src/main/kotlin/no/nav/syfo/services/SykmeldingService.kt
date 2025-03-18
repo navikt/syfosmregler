@@ -16,13 +16,18 @@ import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.utils.LoggingMeta
 import org.slf4j.LoggerFactory
 
-data class Forlengelse(val sykmeldingId: String, val fom: LocalDate, val tom: LocalDate)
+data class SykmeldingInfo(
+    val sykmeldingId: String,
+    val fom: LocalDate,
+    val tom: LocalDate,
+    val gradert: Int?
+)
 
 data class StartdatoOgDager(val startDato: LocalDate, val dager: List<LocalDate>)
 
 data class SykmeldingMetadataInfo(
-    val ettersendingAv: String?,
-    val forlengelseAv: List<Forlengelse> = emptyList(),
+    val ettersending: SykmeldingInfo?,
+    val forlengelse: SykmeldingInfo?,
     val startdato: LocalDate,
     val dagerForArbeidsgiverperiodeCheck: List<LocalDate> = emptyList(),
 )
@@ -53,8 +58,8 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
             "tidligere sykmeldinger for ${sykmelding.id}, after filter ${tidligereSykmeldinger.map { it.id }}",
         )
         return SykmeldingMetadataInfo(
-            ettersendingAv = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
-            forlengelseAv = erForlengelse(sykmelding, tidligereSykmeldinger),
+            ettersending = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
+            forlengelse = erForlengelse(sykmelding, tidligereSykmeldinger).firstOrNull(),
             startdato = startdatoOgDager.startDato,
             dagerForArbeidsgiverperiodeCheck = startdatoOgDager.dager,
         )
@@ -153,7 +158,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         sykmelding: Sykmelding,
         sykmeldingerFraRegister: List<SykmeldingDTO>,
         loggingMeta: LoggingMeta
-    ): String? {
+    ): SykmeldingInfo? {
         if (sykmelding.perioder.size > 1) {
             logger.info(
                 "Flere perioder i periodelisten returnerer false {}",
@@ -187,13 +192,20 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                 "Could not find ettersending for ${sykmelding.id} from ${sykmeldingerFraRegister.map { it.id }}",
             )
         }
-        return tidligereSykmelding?.id
+        return tidligereSykmelding?.let {
+            SykmeldingInfo(
+                sykmeldingId = it.id,
+                fom = it.sykmeldingsperioder.sortedFOMDate().first(),
+                tom = it.sykmeldingsperioder.sortedTOMDate().last(),
+                gradert = it.sykmeldingsperioder.first().gradert?.grad
+            )
+        }
     }
 
     private fun erForlengelse(
         sykmelding: Sykmelding,
         sykmeldinger: List<SykmeldingDTO>
-    ): List<Forlengelse> {
+    ): List<SykmeldingInfo> {
         val firstFom = sykmelding.perioder.sortedFOMDate().first()
         val lastTom = sykmelding.perioder.sortedTOMDate().last()
         val tidligerePerioderFomTom =
@@ -208,7 +220,14 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                     periode.type == PeriodetypeDTO.AKTIVITET_IKKE_MULIG ||
                         periode.type == PeriodetypeDTO.GRADERT
                 }
-                .map { (id, periode) -> Forlengelse(id, fom = periode.fom, tom = periode.tom) }
+                .map { (id, periode) ->
+                    SykmeldingInfo(
+                        id,
+                        fom = periode.fom,
+                        tom = periode.tom,
+                        gradert = periode.gradert?.grad
+                    )
+                }
 
         val forlengelserAv =
             tidligerePerioderFomTom.filter { periode ->
