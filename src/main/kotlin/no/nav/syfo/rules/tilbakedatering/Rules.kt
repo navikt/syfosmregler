@@ -2,8 +2,6 @@ package no.nav.syfo.rules.tilbakedatering
 
 import java.time.temporal.ChronoUnit
 import no.nav.helse.diagnosekoder.Diagnosekoder
-import no.nav.syfo.logger
-import no.nav.syfo.metrics.ARBEIDSGIVERPERIODE_RULE_COUNTER
 import no.nav.syfo.metrics.TILBAKEDATERING_RULE_DAYS_COUNTER
 import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.Sykmelding
@@ -76,24 +74,7 @@ val arbeidsgiverperiode: TilbakedateringRule = { sykmelding, metadata ->
 
     val dager = metadata.sykmeldingMetadataInfo.dagerForArbeidsgiverperiodeCheck
     val arbeidsgiverperiodeNy = dager.size < 17
-    val arbeidsgiverperiodeGammel = ChronoUnit.DAYS.between(startDato, tom) < 16
 
-    ARBEIDSGIVERPERIODE_RULE_COUNTER.labels("ny", if (arbeidsgiverperiodeNy) "ja" else "nei").inc()
-    ARBEIDSGIVERPERIODE_RULE_COUNTER.labels(
-            "gammel",
-            if (arbeidsgiverperiodeGammel) "ja" else "nei"
-        )
-        .inc()
-
-    if (!arbeidsgiverperiodeNy && arbeidsgiverperiodeGammel) {
-        logger.warn(
-            "ny arbeidsgiverperioderegel ikke godkjent, men gammel regel gir godkjent for sykmeldingId: ${sykmelding.id}"
-        )
-    } else if (arbeidsgiverperiodeNy && !arbeidsgiverperiodeGammel) {
-        logger.info("Ny arbeidsgiverperioderegel gokjent, men ikke gammel for ${sykmelding.id}")
-    } else {
-        logger.info("Ny og gammel arbeidsgiverperiode gir samme utslag $arbeidsgiverperiodeNy")
-    }
     RuleResult(
         ruleInputs =
             mapOf(
@@ -165,7 +146,7 @@ val spesialisthelsetjenesten: TilbakedateringRule = { sykmelding, _ ->
     RuleResult(
         ruleInputs =
             mapOf(
-                "hoveddiagnose" to (hoveddiagnose ?: ""),
+                "diagnosesystem" to (hoveddiagnose?.system ?: ""),
                 "spesialisthelsetjenesten" to spesialhelsetjenesten,
             ),
         rule = SPESIALISTHELSETJENESTEN,

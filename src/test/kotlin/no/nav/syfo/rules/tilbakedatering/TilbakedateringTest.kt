@@ -278,7 +278,8 @@ class TilbakedateringTest :
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "begrunnelse" to "0 ord",
-                                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                                "diagnosesystem" to
+                                    sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to false,
                             )
                         status.treeResult.ruleHit shouldBeEqualTo
@@ -368,7 +369,8 @@ class TilbakedateringTest :
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "begrunnelse" to "0 ord",
-                                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                                "diagnosesystem" to
+                                    sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to false,
                             )
                     }
@@ -411,7 +413,8 @@ class TilbakedateringTest :
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                                 "begrunnelse" to "0 ord",
-                                "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                                "diagnosesystem" to
+                                    sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to true,
                             )
                     }
@@ -459,7 +462,7 @@ class TilbakedateringTest :
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "begrunnelse" to "0 ord",
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to true,
                         )
                 }
@@ -500,7 +503,7 @@ class TilbakedateringTest :
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "begrunnelse" to "0 ord",
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
 
@@ -548,7 +551,7 @@ class TilbakedateringTest :
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                             "begrunnelse" to
                                 "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -655,7 +658,7 @@ class TilbakedateringTest :
                                     sykmelding.perioder.sortedTOMDate().last()
                                 ),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -769,7 +772,7 @@ class TilbakedateringTest :
                                     LocalDate.now().plusDays(16)
                                 ),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -839,7 +842,7 @@ class TilbakedateringTest :
                             "tom" to sykmelding.perioder.first().tom,
                             "dagerForArbeidsgiverperiode" to dager.sorted(),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
                         )
                 }
@@ -902,7 +905,7 @@ class TilbakedateringTest :
                                     )
                                     .take(17),
                             "arbeidsgiverperiode" to false,
-                            "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to true,
                         )
                 }
@@ -992,7 +995,7 @@ class TilbakedateringTest :
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "begrunnelse" to
                             "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to false,
                     )
             }
@@ -1038,7 +1041,7 @@ class TilbakedateringTest :
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "begrunnelse" to
                             "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to true,
                     )
             }
@@ -1083,7 +1086,7 @@ class TilbakedateringTest :
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "begrunnelse" to
                             "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to false,
                     )
             }
@@ -1186,7 +1189,7 @@ class TilbakedateringTest :
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
                         "begrunnelse" to
                             "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
-                        "hoveddiagnose" to sykmelding.medisinskVurdering.hovedDiagnose,
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to true,
                     )
             }
