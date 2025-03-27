@@ -46,11 +46,11 @@ fun regulaShadowTest(
                 sykmeldingId = oldSykmelding.id,
                 hoveddiagnose =
                     oldSykmelding.medisinskVurdering.hovedDiagnose?.let {
-                        Diagnose(it.kode, it.system)
+                        Diagnose(kode = it.kode, system = it.system)
                     },
                 bidiagnoser =
                     oldSykmelding.medisinskVurdering.biDiagnoser.map {
-                        Diagnose(it.kode, it.system)
+                        Diagnose(kode = it.kode, system = it.system)
                     },
                 annenFravarsArsak =
                     oldSykmelding.medisinskVurdering.annenFraversArsak?.let { annenFraversArsak ->
