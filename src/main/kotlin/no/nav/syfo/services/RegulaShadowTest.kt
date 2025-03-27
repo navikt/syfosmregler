@@ -149,9 +149,9 @@ fun regulaShadowTest(
                     | Chains executed: ${oldResult.size} / ${newResult.results.size}
                     | Diverging paths count: ${newVsOld.count { (old, new) -> old != new }} 
                     | 
-                    | Divering paths:
-                    | ${
-                    newVsOld.joinToString("\n") { (old, new) ->
+                    | Diverging paths:
+                    |${
+                    newVsOld.filter { (old, new) -> old != new }.joinToString("\n") { (old, new) ->
                         "Old: $old\nNew: $new"
                     }
                 }
