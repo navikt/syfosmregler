@@ -2,7 +2,6 @@ package no.nav.syfo.rules.periode
 
 import no.nav.syfo.logger
 import no.nav.syfo.model.Sykmelding
-import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.ResultNode
@@ -15,14 +14,14 @@ import no.nav.syfo.services.RuleMetadataSykmelding
 
 typealias PeriodeRuleTreeOutput = TreeOutput<PeriodeRules, RuleResult>
 
-typealias PeriodeRuleNode = Pair<TreeNode<PeriodeRules, RuleResult>, Juridisk>
+typealias PeriodeRuleNode = TreeNode<PeriodeRules, RuleResult>
 
 class PeriodeRulesExecution(private val rootNode: PeriodeRuleNode = periodeRuleTree) :
     RuleExecution<PeriodeRules> {
     override fun runRules(sykmelding: Sykmelding, ruleMetadata: RuleMetadataSykmelding) =
-        rootNode.first.evaluate(sykmelding, ruleMetadata).also {
+        rootNode.evaluate(sykmelding, ruleMetadata).also {
             logger.info("Rules ${sykmelding.id}, ${it.printRulePath()}")
-        } to rootNode.second
+        }
 
     private fun TreeNode<PeriodeRules, RuleResult>.evaluate(
         sykmelding: Sykmelding,

@@ -60,7 +60,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(TILBAKEDATERING to false)
@@ -98,7 +98,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
@@ -149,7 +149,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
@@ -188,7 +188,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
@@ -223,7 +223,7 @@ class TilbakedateringTest :
                                         null,
                                     ),
                             )
-                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                         status.treeResult.status shouldBeEqualTo Status.OK
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
@@ -261,7 +261,7 @@ class TilbakedateringTest :
                                         null,
                                     ),
                             )
-                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                         status.treeResult.status shouldBeEqualTo Status.INVALID
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
@@ -313,7 +313,7 @@ class TilbakedateringTest :
                                         null,
                                     ),
                             )
-                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
                         status.treeResult.status shouldBeEqualTo Status.OK
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
@@ -351,7 +351,7 @@ class TilbakedateringTest :
                                         null,
                                     ),
                             )
-                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                         status.treeResult.status shouldBeEqualTo Status.INVALID
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -395,7 +395,7 @@ class TilbakedateringTest :
                                         null,
                                     ),
                             )
-                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                        val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                         status.treeResult.status shouldBeEqualTo Status.OK
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -444,7 +444,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -485,7 +485,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.INVALID
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -532,7 +532,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.INVALID
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -581,7 +581,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -629,7 +629,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, rulemetadata).first
+                    val status = ruleTree.runRules(sykmelding, rulemetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -690,7 +690,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -743,7 +743,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -800,7 +800,6 @@ class TilbakedateringTest :
                             loggingMetadata,
                         )
 
-
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
@@ -813,7 +812,7 @@ class TilbakedateringTest :
                                 ),
                         )
 
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -837,7 +836,8 @@ class TilbakedateringTest :
                             "syketilfelletStartdato" to
                                 sykmeldingMetadata.behandlerOgStartdato.startdato,
                             "tom" to sykmelding.perioder.first().tom,
-                            "dagerForArbeidsgiverperiode" to actualSykmeldingMeta.dagerForArbeidsgiverperiodeCheck.sorted(),
+                            "dagerForArbeidsgiverperiode" to
+                                actualSykmeldingMeta.dagerForArbeidsgiverperiodeCheck.sorted(),
                             "arbeidsgiverperiode" to false,
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
@@ -871,7 +871,7 @@ class TilbakedateringTest :
                                     null,
                                 ),
                         )
-                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                    val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                     status.treeResult.status shouldBeEqualTo Status.OK
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -930,7 +930,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                 status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -972,7 +972,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -997,7 +997,7 @@ class TilbakedateringTest :
                     )
             }
 
-            test("Fra spesialisthelsetjenesten, MANUELL") {
+            test("Fra spesialisthelsetjenesten, OK") {
                 val sykmelding =
                     generateSykmelding(
                         fom = LocalDate.now(),
@@ -1018,9 +1018,9 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
+                status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
@@ -1062,7 +1062,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
 
@@ -1115,7 +1115,7 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
                 status.treeResult.status shouldBeEqualTo Status.OK
 
@@ -1165,9 +1165,9 @@ class TilbakedateringTest :
                                 null,
                             ),
                     )
-                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingMetadata)
 
-                status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
+                status.treeResult.status shouldBeEqualTo Status.OK
 
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(

@@ -11,6 +11,7 @@ data class RuleHit(
 
 data class RuleResult(
     val status: Status,
+    val juridisk: Juridisk,
     val ruleHit: RuleHit?,
 ) {
     override fun toString(): String {

@@ -4,7 +4,6 @@ import no.nav.syfo.model.Status
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.arbeidsuforhet.ArbeidsuforhetRulesExecution
 import no.nav.syfo.rules.arbeidsuforhet.arbeidsuforhetRuleTree
-import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.RuleExecution
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.TreeOutput
@@ -41,14 +40,14 @@ class RuleExecutionService() {
         sykmelding: Sykmelding,
         ruleMetadataSykmelding: RuleMetadataSykmelding,
         sequence: Sequence<RuleExecution<out Enum<*>>> = ruleExecution,
-    ): List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>> {
+    ): List<TreeOutput<out Enum<*>, RuleResult>> {
         var lastStatus = Status.OK
         val results =
             sequence
                 .map { it.runRules(sykmelding, ruleMetadataSykmelding) }
                 .takeWhile {
                     if (lastStatus == Status.OK) {
-                        lastStatus = it.first.treeResult.status
+                        lastStatus = it.treeResult.status
                         true
                     } else {
                         false
