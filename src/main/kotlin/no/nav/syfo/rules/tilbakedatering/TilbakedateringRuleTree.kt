@@ -39,29 +39,26 @@ enum class TilbakedateringRules {
 
 val tilbakedateringRuleTree =
     tree<TilbakedateringRules, RuleResult>(TILBAKEDATERING) {
-        yes(ETTERSENDING) {
+        yes(SPESIALISTHELSETJENESTEN) {
             yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
-            no(TILBAKEDATERT_INNTIL_4_DAGER) {
-                yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_2_2)
-                no(TILBAKEDATERT_INNTIL_8_DAGER) {
-                    yes(BEGRUNNELSE_MIN_1_ORD) {
-                        yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_2_2)
-                        no(FORLENGELSE) {
-                            yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
-                            no(SPESIALISTHELSETJENESTEN) {
+            no(ETTERSENDING) {
+                yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
+                no(TILBAKEDATERT_INNTIL_4_DAGER) {
+                    yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_2_2)
+                    no(TILBAKEDATERT_INNTIL_8_DAGER) {
+                        yes(BEGRUNNELSE_MIN_1_ORD) {
+                            yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_2_2)
+                            no(FORLENGELSE) {
                                 yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
                                 no(INVALID, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1, INNTIL_8_DAGER)
                             }
                         }
-                    }
-                    no(TILBAKEDATERT_MINDRE_ENN_1_MAANED) {
-                        yes(BEGRUNNELSE_MIN_1_ORD) {
-                            yes(FORLENGELSE) {
-                                yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
-                                no(ARBEIDSGIVERPERIODE) {
-                                    yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_2_2)
-                                    no(SPESIALISTHELSETJENESTEN) {
-                                        yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
+                        no(TILBAKEDATERT_MINDRE_ENN_1_MAANED) {
+                            yes(BEGRUNNELSE_MIN_1_ORD) {
+                                yes(FORLENGELSE) {
+                                    yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
+                                    no(ARBEIDSGIVERPERIODE) {
+                                        yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_2_2)
                                         no(
                                             MANUAL_PROCESSING,
                                             JuridiskEnum.FOLKETRYGDLOVEN_8_7,
@@ -69,24 +66,18 @@ val tilbakedateringRuleTree =
                                         )
                                     }
                                 }
-                            }
-                            no(SPESIALISTHELSETJENESTEN) {
-                                yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
                                 no(
                                     INVALID,
                                     JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1,
                                     MINDRE_ENN_1_MAANED
                                 )
                             }
-                        }
-                        no(BEGRUNNELSE_MIN_3_ORD) {
-                            yes(
-                                MANUAL_PROCESSING,
-                                JuridiskEnum.FOLKETRYGDLOVEN_8_7,
-                                OVER_1_MND_MED_BEGRUNNELSE
-                            )
-                            no(SPESIALISTHELSETJENESTEN) {
-                                yes(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1)
+                            no(BEGRUNNELSE_MIN_3_ORD) {
+                                yes(
+                                    MANUAL_PROCESSING,
+                                    JuridiskEnum.FOLKETRYGDLOVEN_8_7,
+                                    OVER_1_MND_MED_BEGRUNNELSE
+                                )
                                 no(INVALID, JuridiskEnum.FOLKETRYGDLOVEN_8_7_1_1, OVER_1_MND)
                             }
                         }

@@ -42,7 +42,7 @@ enum class JuridiskEnum(val JuridiskHenvisning: no.nav.syfo.rules.common.Juridis
             ),
         ),
     ),
-    FOLKETRYGDLOVEN_8_4(
+    FOLKETRYGDLOVEN_8_4_1(
         MedJuridisk(
             JuridiskHenvisning(
                 lovverk = Lovverk.FOLKETRYGDLOVEN,
@@ -105,21 +105,10 @@ enum class Lovverk(val navn: String, val kortnavn: String, val lovverksversjon: 
         kortnavn = "Folketrygdloven",
         lovverksversjon = LocalDate.of(2022, 1, 1),
     ),
-    FORVALTNINGSLOVEN(
-        navn = "Lov om behandlingsmåten i forvaltningssaker",
-        kortnavn = "Forvaltningsloven",
-        lovverksversjon = LocalDate.of(2022, 1, 1),
-    ),
-    HELSEPERSONELLOVEN(
-        navn = "Lov om helsepersonell m.v.",
-        kortnavn = "Helsepersonelloven",
-        lovverksversjon = LocalDate.of(2022, 1, 1),
-    )
 }
 
 enum class JuridiskUtfall {
     VILKAR_OPPFYLT,
     VILKAR_IKKE_OPPFYLT,
     VILKAR_UAVKLART,
-    VILKAR_BEREGNET
 }

@@ -21,37 +21,37 @@ val arbeidsuforhetRuleTree =
         yes(ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER) {
             yes(
                 INVALID,
-                JuridiskEnum.FOLKETRYGDLOVEN_8_4,
+                JuridiskEnum.FOLKETRYGDLOVEN_8_4_1,
                 ArbeidsuforhetRuleHit.FRAVAERSGRUNN_MANGLER
             )
             no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
                 yes(
                     INVALID,
-                    JuridiskEnum.FOLKETRYGDLOVEN_8_4,
+                    JuridiskEnum.FOLKETRYGDLOVEN_8_4_1,
                     ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE
                 )
-                no(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_4)
+                no(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_4_1)
             }
         }
         no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE) {
             yes(
                 INVALID,
-                JuridiskEnum.FOLKETRYGDLOVEN_8_4,
+                JuridiskEnum.FOLKETRYGDLOVEN_8_4_1,
                 ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE
             )
             no(ArbeidsuforhetRules.ICPC_2_Z_DIAGNOSE) {
                 yes(
                     INVALID,
-                    JuridiskEnum.FOLKETRYGDLOVEN_8_4,
+                    JuridiskEnum.FOLKETRYGDLOVEN_8_4_1,
                     ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE
                 )
                 no(ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE) {
                     yes(
                         INVALID,
-                        JuridiskEnum.FOLKETRYGDLOVEN_8_4,
+                        JuridiskEnum.FOLKETRYGDLOVEN_8_4_1,
                         ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE
                     )
-                    no(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_4)
+                    no(OK, JuridiskEnum.FOLKETRYGDLOVEN_8_4_1)
                 }
             }
         }

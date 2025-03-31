@@ -103,12 +103,15 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to true,
                     )
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "diagnosesystem" to Diagnosekoder.ICPC2_CODE,
+                        "spesialisthelsetjenesten" to false,
                         "ettersending" to
                             SykmeldingInfo(
                                 sykmeldingId = "sykmeldingID",
@@ -154,12 +157,15 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to true,
                     )
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                        "spesialisthelsetjenesten" to false,
                         "ettersending" to
                             SykmeldingInfo(
                                 sykmeldingId = "sykmeldingID",
@@ -193,6 +199,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to true,
                     )
@@ -200,6 +207,8 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "diagnosesystem" to Diagnosekoder.ICPC2_CODE,
+                        "spesialisthelsetjenesten" to false,
                     )
             }
             context("Tilbakedatert") {
@@ -228,6 +237,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                SPESIALISTHELSETJENESTEN to false,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
@@ -237,6 +247,8 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                                "diagnosesystem" to Diagnosekoder.ICPC2_CODE,
+                                "spesialisthelsetjenesten" to false,
                                 "begrunnelse" to
                                     "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             )
@@ -266,21 +278,21 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                SPESIALISTHELSETJENESTEN to false,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
-                                SPESIALISTHELSETJENESTEN to false,
                             )
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "begrunnelse" to "0 ord",
                                 "diagnosesystem" to
                                     sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to false,
+                                "begrunnelse" to "0 ord",
                             )
                         status.treeResult.ruleHit shouldBeEqualTo
                             TilbakedateringRuleHit.INNTIL_8_DAGER.ruleHit
@@ -318,6 +330,7 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                SPESIALISTHELSETJENESTEN to false,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
@@ -328,6 +341,8 @@ class TilbakedateringTest :
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                                "diagnosesystem" to Diagnosekoder.ICPC2_CODE,
+                                "spesialisthelsetjenesten" to false,
                                 "begrunnelse" to "0 ord",
                                 "forlengelse" to forlengelse,
                             )
@@ -357,21 +372,21 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
+                                SPESIALISTHELSETJENESTEN to false,
                                 ETTERSENDING to false,
                                 TILBAKEDATERT_INNTIL_4_DAGER to false,
                                 TILBAKEDATERT_INNTIL_8_DAGER to true,
                                 BEGRUNNELSE_MIN_1_ORD to false,
                                 FORLENGELSE to false,
-                                SPESIALISTHELSETJENESTEN to false,
                             )
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "begrunnelse" to "0 ord",
                                 "diagnosesystem" to
                                     sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to false,
+                                "begrunnelse" to "0 ord",
                             )
                     }
 
@@ -401,18 +416,12 @@ class TilbakedateringTest :
                         status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                             listOf(
                                 TILBAKEDATERING to true,
-                                ETTERSENDING to false,
-                                TILBAKEDATERT_INNTIL_4_DAGER to false,
-                                TILBAKEDATERT_INNTIL_8_DAGER to true,
-                                BEGRUNNELSE_MIN_1_ORD to false,
-                                FORLENGELSE to false,
                                 SPESIALISTHELSETJENESTEN to true,
                             )
                         status.ruleInputs shouldBeEqualTo
                             mapOf(
                                 "fom" to sykmelding.perioder.first().fom,
                                 "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                                "begrunnelse" to "0 ord",
                                 "diagnosesystem" to
                                     sykmelding.medisinskVurdering.hovedDiagnose?.system,
                                 "spesialisthelsetjenesten" to true,
@@ -450,18 +459,12 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
-                            ETTERSENDING to false,
-                            TILBAKEDATERT_INNTIL_4_DAGER to false,
-                            TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
-                            BEGRUNNELSE_MIN_1_ORD to false,
                             SPESIALISTHELSETJENESTEN to true,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "begrunnelse" to "0 ord",
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to true,
                         )
@@ -491,20 +494,20 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
-                            SPESIALISTHELSETJENESTEN to false,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "begrunnelse" to "0 ord",
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
+                            "begrunnelse" to "0 ord",
                         )
 
                     status.treeResult.ruleHit shouldBeEqualTo
@@ -538,21 +541,21 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
                             TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
                             BEGRUNNELSE_MIN_1_ORD to false,
-                            SPESIALISTHELSETJENESTEN to false,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "begrunnelse" to
-                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
+                            "begrunnelse" to
+                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         )
                 }
                 test("Forlengelse, OK") {
@@ -587,6 +590,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -598,6 +602,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                            "diagnosesystem" to Diagnosekoder.ICPC2_CODE,
+                            "spesialisthelsetjenesten" to false,
                             "begrunnelse" to
                                 "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "forlengelse" to forlengelse,
@@ -635,6 +641,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -642,12 +649,13 @@ class TilbakedateringTest :
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
-                            SPESIALISTHELSETJENESTEN to false,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                            "spesialisthelsetjenesten" to false,
                             "begrunnelse" to
                                 "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -658,8 +666,6 @@ class TilbakedateringTest :
                                     sykmelding.perioder.sortedTOMDate().last()
                                 ),
                             "arbeidsgiverperiode" to false,
-                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
-                            "spesialisthelsetjenesten" to false,
                         )
                 }
 
@@ -696,6 +702,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -708,6 +715,8 @@ class TilbakedateringTest :
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                            "spesialisthelsetjenesten" to false,
                             "begrunnelse" to
                                 "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -749,6 +758,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -756,12 +766,13 @@ class TilbakedateringTest :
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
-                            SPESIALISTHELSETJENESTEN to false,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                            "spesialisthelsetjenesten" to false,
                             "begrunnelse" to
                                 "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -772,8 +783,6 @@ class TilbakedateringTest :
                                     LocalDate.now().plusDays(16)
                                 ),
                             "arbeidsgiverperiode" to false,
-                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
-                            "spesialisthelsetjenesten" to false,
                         )
                 }
 
@@ -818,6 +827,7 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
+                            SPESIALISTHELSETJENESTEN to false,
                             ETTERSENDING to false,
                             TILBAKEDATERT_INNTIL_4_DAGER to false,
                             TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -825,12 +835,13 @@ class TilbakedateringTest :
                             BEGRUNNELSE_MIN_1_ORD to true,
                             FORLENGELSE to false,
                             ARBEIDSGIVERPERIODE to false,
-                            SPESIALISTHELSETJENESTEN to false,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                            "spesialisthelsetjenesten" to false,
                             "begrunnelse" to
                                 "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                             "syketilfelletStartdato" to
@@ -839,8 +850,6 @@ class TilbakedateringTest :
                             "dagerForArbeidsgiverperiode" to
                                 actualSykmeldingMeta.dagerForArbeidsgiverperiodeCheck.sorted(),
                             "arbeidsgiverperiode" to false,
-                            "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
-                            "spesialisthelsetjenesten" to false,
                         )
                 }
 
@@ -877,31 +886,12 @@ class TilbakedateringTest :
                     status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             TILBAKEDATERING to true,
-                            ETTERSENDING to false,
-                            TILBAKEDATERT_INNTIL_4_DAGER to false,
-                            TILBAKEDATERT_INNTIL_8_DAGER to false,
-                            TILBAKEDATERT_MINDRE_ENN_1_MAANED to true,
-                            BEGRUNNELSE_MIN_1_ORD to true,
-                            FORLENGELSE to false,
-                            ARBEIDSGIVERPERIODE to false,
                             SPESIALISTHELSETJENESTEN to true,
                         )
                     status.ruleInputs shouldBeEqualTo
                         mapOf(
                             "fom" to sykmelding.perioder.first().fom,
                             "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                            "begrunnelse" to
-                                "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
-                            "syketilfelletStartdato" to sykmelding.perioder.first().fom,
-                            "tom" to sykmelding.perioder.first().tom,
-                            "dagerForArbeidsgiverperiode" to
-                                sykmeldingService
-                                    .allDaysBetween(
-                                        sykmelding.perioder.sortedFOMDate().first(),
-                                        sykmelding.perioder.sortedTOMDate().last()
-                                    )
-                                    .take(17),
-                            "arbeidsgiverperiode" to false,
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to true,
                         )
@@ -936,6 +926,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -947,8 +938,9 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "begrunnelse" to
-                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                        "spesialisthelsetjenesten" to false,
+                        "begrunnelse" to "3 ord"
                     )
             }
 
@@ -978,22 +970,22 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
-                        SPESIALISTHELSETJENESTEN to false,
                     )
 
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "begrunnelse" to
-                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to false,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                     )
             }
 
@@ -1024,11 +1016,6 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
-                        ETTERSENDING to false,
-                        TILBAKEDATERT_INNTIL_4_DAGER to false,
-                        TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
-                        BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to true,
                     )
 
@@ -1036,8 +1023,6 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "begrunnelse" to
-                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to true,
                     )
@@ -1069,22 +1054,22 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
                         TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
                         BEGRUNNELSE_MIN_3_ORD to false,
-                        SPESIALISTHELSETJENESTEN to false,
                     )
 
                 status.ruleInputs shouldBeEqualTo
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "begrunnelse" to
-                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to false,
+                        "begrunnelse" to
+                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                     )
             }
 
@@ -1122,6 +1107,7 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
+                        SPESIALISTHELSETJENESTEN to false,
                         ETTERSENDING to false,
                         TILBAKEDATERT_INNTIL_4_DAGER to false,
                         TILBAKEDATERT_INNTIL_8_DAGER to false,
@@ -1135,6 +1121,8 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
+                        "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
+                        "spesialisthelsetjenesten" to false,
                         "begrunnelse" to
                             "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         "syketilfelletStartdato" to sykmelding.perioder.first().fom,
@@ -1172,11 +1160,6 @@ class TilbakedateringTest :
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         TILBAKEDATERING to true,
-                        ETTERSENDING to false,
-                        TILBAKEDATERT_INNTIL_4_DAGER to false,
-                        TILBAKEDATERT_INNTIL_8_DAGER to false,
-                        TILBAKEDATERT_MINDRE_ENN_1_MAANED to false,
-                        BEGRUNNELSE_MIN_3_ORD to false,
                         SPESIALISTHELSETJENESTEN to true,
                     )
 
@@ -1184,8 +1167,6 @@ class TilbakedateringTest :
                     mapOf(
                         "fom" to sykmelding.perioder.first().fom,
                         "genereringstidspunkt" to sykmelding.signaturDato.toLocalDate(),
-                        "begrunnelse" to
-                            "${getNumberOfWords(sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt)} ord",
                         "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                         "spesialisthelsetjenesten" to true,
                     )
