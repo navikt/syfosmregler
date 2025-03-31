@@ -138,18 +138,18 @@ class RuleService(
 
             result.forEach {
                 RULE_NODE_RULE_PATH_COUNTER.labels(
-                    it.first.printRulePath(),
-                )
+                        it.first.printRulePath(),
+                    )
                     .inc()
             }
 
             juridiskVurderingService.processRuleResults(receivedSykmelding, result)
             val validationResult = validationResult(result.map { it.first })
             RULE_NODE_RULE_HIT_COUNTER.labels(
-                validationResult.status.name,
-                validationResult.ruleHits.firstOrNull()?.ruleName
-                    ?: validationResult.status.name,
-            )
+                    validationResult.status.name,
+                    validationResult.ruleHits.firstOrNull()?.ruleName
+                        ?: validationResult.status.name,
+                )
                 .inc()
 
             regulaShadowTest(
@@ -183,7 +183,7 @@ class RuleService(
                     .let {
                         it.firstOrNull { status -> status == Status.INVALID }
                             ?: it.firstOrNull { status -> status == Status.MANUAL_PROCESSING }
-                            ?: Status.OK
+                                ?: Status.OK
                     },
             ruleHits =
                 results

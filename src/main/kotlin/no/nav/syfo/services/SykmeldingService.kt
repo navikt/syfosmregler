@@ -57,7 +57,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                         sykmelding.medisinskVurdering.hovedDiagnose?.kode
                 }
         logger.info(
-            "tidligere sykmeldinger for ${sykmelding.id}, after filter ${tidligereSykmeldinger.map { it.id }}",
+            "tidligere sykmeldinger for ${sykmelding.id}, after filter (count: ${tidligereSykmeldinger.size}) ${tidligereSykmeldinger.map { it.id }}",
         )
         return SykmeldingMetadataInfo(
             ettersending = erEttersending(sykmelding, tidligereSykmeldinger, loggingMetadata),
@@ -111,7 +111,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
             if (ChronoUnit.DAYS.between(it, startdato) > 16) {
                 return StartdatoOgDager(
                     startdato,
-                    getSykedagerForArbeidsgiverperiode(startdato, fom, tom, datoer)
+                    getSykedagerForArbeidsgiverperiode(startdato, fom, tom, datoer),
                 )
             } else {
                 startdato = it
@@ -119,7 +119,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
         }
         return StartdatoOgDager(
             startdato,
-            getSykedagerForArbeidsgiverperiode(startdato, fom, tom, datoer)
+            getSykedagerForArbeidsgiverperiode(startdato, fom, tom, datoer),
         )
     }
 
@@ -200,7 +200,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                 sykmeldingId = it.id,
                 fom = it.sykmeldingsperioder.sortedFOMDate().first(),
                 tom = it.sykmeldingsperioder.sortedTOMDate().last(),
-                gradert = it.sykmeldingsperioder.first().gradert?.grad
+                gradert = it.sykmeldingsperioder.first().gradert?.grad,
             )
         }
     }
@@ -228,7 +228,7 @@ class SykmeldingService(private val syfosmregisterClient: SmregisterClient) {
                         id,
                         fom = periode.fom,
                         tom = periode.tom,
-                        gradert = periode.gradert?.grad
+                        gradert = periode.gradert?.grad,
                     )
                 }
 

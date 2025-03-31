@@ -41,6 +41,32 @@ fun regulaShadowTest(
 ) {
     try {
         val oldSykmelding = receivedSykmelding.sykmelding
+        val mappedTidligereSykmeldinger =
+            tidligereSykmeldinger
+                // TODO: Should this be controlled by the lib? Probably
+                .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
+                .filterNot { harTilbakedatertMerknad(it) }
+                .filter { it.medisinskVurdering?.hovedDiagnose?.kode != null }
+                .filter {
+                    it.medisinskVurdering?.hovedDiagnose?.kode ==
+                        oldSykmelding.medisinskVurdering.hovedDiagnose?.kode
+                }
+                .map {
+                    TidligereSykmelding(
+                        sykmeldingId = it.id,
+                        perioder =
+                            it.sykmeldingsperioder.map(
+                                SykmeldingsperiodeDTO::toSykmeldingPeriode,
+                            ),
+                        hoveddiagnose =
+                            it.medisinskVurdering?.hovedDiagnose?.let { diagnose ->
+                                Diagnose(
+                                    kode = diagnose.kode,
+                                    system = "TODO: System kommer ikke fra registeret? :huh:",
+                                )
+                            },
+                    )
+                }
         val rulePayload =
             RegulaPayload(
                 sykmeldingId = oldSykmelding.id,
@@ -63,33 +89,7 @@ fun regulaShadowTest(
                 utdypendeOpplysninger = mapSvar(oldSykmelding.utdypendeOpplysninger),
                 kontaktPasientBegrunnelseIkkeKontakt =
                     oldSykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                tidligereSykmeldinger =
-                    tidligereSykmeldinger
-                        // TODO: Should this be controlled by the lib? Probably
-                        .filter { it.behandlingsutfall.status != RegelStatusDTO.INVALID }
-                        .filterNot { harTilbakedatertMerknad(it) }
-                        .filter { it.medisinskVurdering?.hovedDiagnose?.kode != null }
-                        .filter {
-                            it.medisinskVurdering?.hovedDiagnose?.kode ==
-                                oldSykmelding.medisinskVurdering.hovedDiagnose?.kode
-                        }
-                        .map {
-                            TidligereSykmelding(
-                                sykmeldingId = it.id,
-                                perioder =
-                                    it.sykmeldingsperioder.map(
-                                        SykmeldingsperiodeDTO::toSykmeldingPeriode,
-                                    ),
-                                hoveddiagnose =
-                                    it.medisinskVurdering?.hovedDiagnose?.let { diagnose ->
-                                        Diagnose(
-                                            kode = diagnose.kode,
-                                            system =
-                                                "TODO: System kommer ikke fra registeret? :huh:",
-                                        )
-                                    },
-                            )
-                        },
+                tidligereSykmeldinger = mappedTidligereSykmeldinger,
                 pasient =
                     RegulaPasient(
                         ident = receivedSykmelding.personNrPasient,
@@ -123,7 +123,6 @@ fun regulaShadowTest(
                 rulePayload,
             )
 
-
         val newVsOld: List<Pair<String, String>> =
             oldResult
                 .map { it.first.printRulePath() }
@@ -139,7 +138,8 @@ fun regulaShadowTest(
                 | SykmeldingID: ${oldSykmelding.id}
                 | Outcome: ${newResult.status.name} (${oldValidationResult.status.name})
                 | Chains executed: ${oldResult.size} / ${newResult.results.size}
-            """.trimMargin(),
+            """
+                    .trimMargin(),
             )
         } else {
             log.warn(
@@ -148,6 +148,9 @@ fun regulaShadowTest(
                     | Outcome: ${newResult.status.name} (${oldValidationResult.status.name})
                     | Chains executed: ${oldResult.size} / ${newResult.results.size}
                     | Diverging paths count: ${newVsOld.count { (old, new) -> old != new }} 
+                    | 
+                    | Some meta:
+                    |  * Tidligere sykmeldinger count: ${mappedTidligereSykmeldinger.size}
                     | 
                     | Diverging paths:
                     |${
@@ -158,7 +161,6 @@ fun regulaShadowTest(
                     """
                     .trimMargin(),
             )
-
         }
     } catch (e: Exception) {
         log.error("Regulus Regula smoke test failed", e)
@@ -172,34 +174,29 @@ private fun Periode.toSykmeldingPeriode(): SykmeldingPeriode =
                 fom = fom,
                 tom = tom,
             )
-
         gradert != null ->
             SykmeldingPeriode.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
-
         reisetilskudd ->
             SykmeldingPeriode.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
-
         behandlingsdager != null ->
             SykmeldingPeriode.Behandlingsdager(
                 fom = fom,
                 tom = tom,
                 behandlingsdager = behandlingsdager,
             )
-
         avventendeInnspillTilArbeidsgiver != null ->
             SykmeldingPeriode.Avventende(
                 fom = fom,
                 tom = tom,
                 avventendeInnspillTilArbeidsgiver = avventendeInnspillTilArbeidsgiver,
             )
-
         else ->
             SykmeldingPeriode.Ugyldig(
                 fom = fom,
@@ -214,20 +211,17 @@ private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): SykmeldingPeriode =
                 fom = fom,
                 tom = tom,
             )
-
         type == PeriodetypeDTO.GRADERT && gradert != null ->
             SykmeldingPeriode.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
-
         type == PeriodetypeDTO.REISETILSKUDD ->
             SykmeldingPeriode.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
-
         type == PeriodetypeDTO.BEHANDLINGSDAGER ->
             SykmeldingPeriode.Behandlingsdager(
                 fom = fom,
@@ -237,7 +231,6 @@ private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): SykmeldingPeriode =
                     // forskjellige typer for de to periode (gamle og nåværende)
                     0,
             )
-
         type == PeriodetypeDTO.AVVENTENDE ->
             SykmeldingPeriode.Avventende(
                 fom = fom,
@@ -246,12 +239,13 @@ private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): SykmeldingPeriode =
                 // forskjellige typer for de to periode (gamle og nåværende)
                 avventendeInnspillTilArbeidsgiver = null,
             )
-
-        else ->
+        else -> {
+            log.warn("Shadow test: Ukjent periode type: $type")
             SykmeldingPeriode.Ugyldig(
                 fom = fom,
                 tom = tom,
             )
+        }
     }
 
 private fun Godkjenning.toBehandlerGodkjenning() =
