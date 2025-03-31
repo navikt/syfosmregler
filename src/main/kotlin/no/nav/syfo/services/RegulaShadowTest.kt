@@ -19,13 +19,14 @@ import no.nav.tsm.regulus.regula.RegulaMeta
 import no.nav.tsm.regulus.regula.RegulaPasient
 import no.nav.tsm.regulus.regula.RegulaPayload
 import no.nav.tsm.regulus.regula.executeRegulaRules
+import no.nav.tsm.regulus.regula.executor.ExecutionMode
+import no.nav.tsm.regulus.regula.payload.Aktivitet
 import no.nav.tsm.regulus.regula.payload.AnnenFravarsArsak
 import no.nav.tsm.regulus.regula.payload.BehandlerGodkjenning
 import no.nav.tsm.regulus.regula.payload.BehandlerKode
 import no.nav.tsm.regulus.regula.payload.BehandlerPeriode
 import no.nav.tsm.regulus.regula.payload.BehandlerTilleggskompetanse
 import no.nav.tsm.regulus.regula.payload.Diagnose
-import no.nav.tsm.regulus.regula.payload.SykmeldingPeriode
 import no.nav.tsm.regulus.regula.payload.TidligereSykmelding
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -54,7 +55,7 @@ fun regulaShadowTest(
                 .map {
                     TidligereSykmelding(
                         sykmeldingId = it.id,
-                        perioder =
+                        aktivitet =
                             it.sykmeldingsperioder.map(
                                 SykmeldingsperiodeDTO::toSykmeldingPeriode,
                             ),
@@ -85,19 +86,19 @@ fun regulaShadowTest(
                             grunn = annenFraversArsak.grunn.map { it.name },
                         )
                     },
-                perioder = oldSykmelding.perioder.map(Periode::toSykmeldingPeriode),
+                aktivitet = oldSykmelding.perioder.map(Periode::toSykmeldingPeriode),
                 utdypendeOpplysninger = mapSvar(oldSykmelding.utdypendeOpplysninger),
                 kontaktPasientBegrunnelseIkkeKontakt =
                     oldSykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                 tidligereSykmeldinger = mappedTidligereSykmeldinger,
+                behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt,
                 pasient =
                     RegulaPasient(
                         ident = receivedSykmelding.personNrPasient,
                         fodselsdato = ruleMetadataSykmelding.ruleMetadata.pasientFodselsdato,
                     ),
                 meta =
-                    RegulaMeta(
-                        behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt,
+                    RegulaMeta.LegacyMeta(
                         mottattDato = ruleMetadataSykmelding.ruleMetadata.receivedDate,
                         signaturdato = oldSykmelding.signaturDato,
                         rulesetVersion = receivedSykmelding.rulesetVersion,
@@ -121,6 +122,7 @@ fun regulaShadowTest(
         val newResult =
             executeRegulaRules(
                 rulePayload,
+                mode = ExecutionMode.NORMAL,
             )
 
         val newVsOld: List<Pair<String, String>> =
@@ -167,63 +169,63 @@ fun regulaShadowTest(
     }
 }
 
-private fun Periode.toSykmeldingPeriode(): SykmeldingPeriode =
+private fun Periode.toSykmeldingPeriode(): Aktivitet =
     when {
         aktivitetIkkeMulig != null ->
-            SykmeldingPeriode.AktivitetIkkeMulig(
+            Aktivitet.IkkeMulig(
                 fom = fom,
                 tom = tom,
             )
         gradert != null ->
-            SykmeldingPeriode.Gradert(
+            Aktivitet.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
         reisetilskudd ->
-            SykmeldingPeriode.Reisetilskudd(
+            Aktivitet.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
         behandlingsdager != null ->
-            SykmeldingPeriode.Behandlingsdager(
+            Aktivitet.Behandlingsdager(
                 fom = fom,
                 tom = tom,
                 behandlingsdager = behandlingsdager,
             )
         avventendeInnspillTilArbeidsgiver != null ->
-            SykmeldingPeriode.Avventende(
+            Aktivitet.Avventende(
                 fom = fom,
                 tom = tom,
                 avventendeInnspillTilArbeidsgiver = avventendeInnspillTilArbeidsgiver,
             )
         else ->
-            SykmeldingPeriode.Ugyldig(
+            Aktivitet.Ugyldig(
                 fom = fom,
                 tom = tom,
             )
     }
 
-private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): SykmeldingPeriode =
+private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): Aktivitet =
     when {
         type == PeriodetypeDTO.AKTIVITET_IKKE_MULIG ->
-            SykmeldingPeriode.AktivitetIkkeMulig(
+            Aktivitet.IkkeMulig(
                 fom = fom,
                 tom = tom,
             )
         type == PeriodetypeDTO.GRADERT && gradert != null ->
-            SykmeldingPeriode.Gradert(
+            Aktivitet.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
         type == PeriodetypeDTO.REISETILSKUDD ->
-            SykmeldingPeriode.Reisetilskudd(
+            Aktivitet.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
         type == PeriodetypeDTO.BEHANDLINGSDAGER ->
-            SykmeldingPeriode.Behandlingsdager(
+            Aktivitet.Behandlingsdager(
                 fom = fom,
                 tom = tom,
                 behandlingsdager =
@@ -232,7 +234,7 @@ private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): SykmeldingPeriode =
                     0,
             )
         type == PeriodetypeDTO.AVVENTENDE ->
-            SykmeldingPeriode.Avventende(
+            Aktivitet.Avventende(
                 fom = fom,
                 tom = tom,
                 // TODO: Kommer ikke fra registeret, ikke nødvendig for testene, burde regula ha
@@ -241,7 +243,7 @@ private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): SykmeldingPeriode =
             )
         else -> {
             log.warn("Shadow test: Ukjent periode type: $type")
-            SykmeldingPeriode.Ugyldig(
+            Aktivitet.Ugyldig(
                 fom = fom,
                 tom = tom,
             )

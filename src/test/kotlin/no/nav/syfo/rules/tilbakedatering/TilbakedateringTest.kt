@@ -800,7 +800,6 @@ class TilbakedateringTest :
                             loggingMetadata,
                         )
 
-
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
@@ -837,7 +836,8 @@ class TilbakedateringTest :
                             "syketilfelletStartdato" to
                                 sykmeldingMetadata.behandlerOgStartdato.startdato,
                             "tom" to sykmelding.perioder.first().tom,
-                            "dagerForArbeidsgiverperiode" to actualSykmeldingMeta.dagerForArbeidsgiverperiodeCheck.sorted(),
+                            "dagerForArbeidsgiverperiode" to
+                                actualSykmeldingMeta.dagerForArbeidsgiverperiodeCheck.sorted(),
                             "arbeidsgiverperiode" to false,
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
