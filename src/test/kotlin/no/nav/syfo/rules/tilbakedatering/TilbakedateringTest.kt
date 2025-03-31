@@ -792,22 +792,19 @@ class TilbakedateringTest :
                                 LocalDate.now().minusDays(3)
                             )
                         )
-                    val dager =
-                        sykmeldingService.allDaysBetween(
-                            sykmelding.perioder.sortedFOMDate().first(),
-                            sykmelding.perioder.sortedTOMDate().last()
-                        ) +
-                            sykmeldingService
-                                .allDaysBetween(
-                                    LocalDate.now().minusDays(20),
-                                    LocalDate.now().minusDays(3)
-                                )
-                                .sortedDescending()
-                                .take(17)
+
+                    val actualSykmeldingMeta =
+                        sykmeldingService.getSykmeldingMetadataInfo(
+                            "11234",
+                            sykmelding,
+                            loggingMetadata,
+                        )
+
+
                     val sykmeldingMetadata =
                         RuleMetadataSykmelding(
                             ruleMetadata = sykmelding.toRuleMetadata(),
-                            SykmeldingMetadataInfo(null, null, LocalDate.now(), dager),
+                            actualSykmeldingMeta,
                             doctorSuspensjon = false,
                             behandlerOgStartdato =
                                 BehandlerOgStartdato(
@@ -840,7 +837,7 @@ class TilbakedateringTest :
                             "syketilfelletStartdato" to
                                 sykmeldingMetadata.behandlerOgStartdato.startdato,
                             "tom" to sykmelding.perioder.first().tom,
-                            "dagerForArbeidsgiverperiode" to dager.sorted(),
+                            "dagerForArbeidsgiverperiode" to actualSykmeldingMeta.dagerForArbeidsgiverperiodeCheck.sorted(),
                             "arbeidsgiverperiode" to false,
                             "diagnosesystem" to sykmelding.medisinskVurdering.hovedDiagnose?.system,
                             "spesialisthelsetjenesten" to false,
