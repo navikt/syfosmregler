@@ -29,8 +29,7 @@ class PeriodLogicRulesTest :
                     )
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -72,8 +71,7 @@ class PeriodLogicRulesTest :
                     )
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -103,8 +101,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -139,8 +136,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -184,8 +180,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -224,8 +219,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -259,8 +253,7 @@ class PeriodLogicRulesTest :
                         .toRuleMetadata()
                         .copy(receivedDate = sykmelding.behandletTidspunkt.minusDays(2))
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -305,8 +298,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -348,8 +340,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -396,8 +387,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -443,8 +433,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -492,8 +481,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -543,8 +531,7 @@ class PeriodLogicRulesTest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.MANUAL_PROCESSING
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo

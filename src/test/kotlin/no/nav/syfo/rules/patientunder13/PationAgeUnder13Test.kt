@@ -47,7 +47,7 @@ class PationAgeUnder13Test :
 
                 val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
-                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -79,7 +79,7 @@ class PationAgeUnder13Test :
                     )
                 val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
-                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo

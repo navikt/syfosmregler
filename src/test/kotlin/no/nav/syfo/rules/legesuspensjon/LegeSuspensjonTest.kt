@@ -31,7 +31,7 @@ class LegeSuspensjonTest :
         every { sykmelding.id } returns UUID.randomUUID().toString()
         context("Testing legesuspensjon rules and checking the rule outcomes") {
             test("Er ikkje suspendert, Status OK") {
-                val status = ruleTree.runRules(sykmelding, sykmeldingRuleMetadata).first
+                val status = ruleTree.runRules(sykmelding, sykmeldingRuleMetadata)
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
@@ -47,9 +47,10 @@ class LegeSuspensjonTest :
 
             test("Er suspendert, Status INVALID") {
                 val status =
-                    ruleTree
-                        .runRules(sykmelding, sykmeldingRuleMetadata.copy(doctorSuspensjon = true))
-                        .first
+                    ruleTree.runRules(
+                        sykmelding,
+                        sykmeldingRuleMetadata.copy(doctorSuspensjon = true)
+                    )
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo

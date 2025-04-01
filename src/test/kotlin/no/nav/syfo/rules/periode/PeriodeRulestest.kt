@@ -20,7 +20,7 @@ class PeriodeRulestest :
             test("OK") {
                 val sykmelding = generateSykmelding()
                 val ruleMetadata = ruleMetadataSykmelding(sykmelding.toRuleMetadata())
-                val status = periodeRules.runRules(sykmelding, ruleMetadata).first
+                val status = periodeRules.runRules(sykmelding, ruleMetadata)
                 status.treeResult.status shouldBeEqual Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
@@ -54,8 +54,7 @@ class PeriodeRulestest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    periodeRules.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = periodeRules.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -91,8 +90,7 @@ class PeriodeRulestest :
 
                 val ruleMetadata = sykmelding.toRuleMetadata()
 
-                val status =
-                    periodeRules.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = periodeRules.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo

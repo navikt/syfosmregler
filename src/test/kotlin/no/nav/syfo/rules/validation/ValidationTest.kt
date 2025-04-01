@@ -55,7 +55,7 @@ class ValidationTest :
 
                 val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
-                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -108,7 +108,7 @@ class ValidationTest :
                     )
                 val ruleMetadataSykmelding = ruleMetadataSykmelding(ruleMetadata)
 
-                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -150,8 +150,7 @@ class ValidationTest :
                         pasientFodselsdato = person31Years,
                     )
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -198,8 +197,7 @@ class ValidationTest :
                         pasientFodselsdato = person31Years,
                     )
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -249,8 +247,7 @@ class ValidationTest :
                         pasientFodselsdato = person31Years,
                     )
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
@@ -312,8 +309,7 @@ class ValidationTest :
                         pasientFodselsdato = person31Years,
                     )
 
-                val status =
-                    ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata)).first
+                val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding(ruleMetadata))
 
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo

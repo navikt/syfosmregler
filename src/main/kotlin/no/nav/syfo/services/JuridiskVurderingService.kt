@@ -7,7 +7,6 @@ import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.Status
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
-import no.nav.syfo.rules.common.Juridisk
 import no.nav.syfo.rules.common.MedJuridisk
 import no.nav.syfo.rules.common.RuleResult
 import no.nav.syfo.rules.dsl.TreeOutput
@@ -31,15 +30,15 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<Pair<TreeOutput<out Enum<*>, RuleResult>, Juridisk>>,
+        result: List<TreeOutput<out Enum<*>, RuleResult>>,
     ) {
         val juridiskVurderingResult =
             JuridiskVurderingResult(
                 juridiskeVurderinger =
                     result.mapNotNull {
-                        when (val juridisk = it.second) {
+                        when (val juridisk = it.treeResult.juridisk) {
                             is MedJuridisk ->
-                                resultToJuridiskVurdering(receivedSykmelding, it.first, juridisk)
+                                resultToJuridiskVurdering(receivedSykmelding, it, juridisk)
                             else -> null
                         }
                     },

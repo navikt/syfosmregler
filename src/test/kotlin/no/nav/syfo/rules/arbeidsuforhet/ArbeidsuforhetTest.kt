@@ -58,8 +58,8 @@ class ArbeidsuforhetTest :
 
                     val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                    status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                    status.first.treeResult.ruleHit shouldBeEqualTo
+                    status.treeResult.status shouldBeEqualTo Status.INVALID
+                    status.treeResult.ruleHit shouldBeEqualTo
                         ArbeidsuforhetRuleHit.FRAVAERSGRUNN_MANGLER.ruleHit
                 }
 
@@ -79,8 +79,8 @@ class ArbeidsuforhetTest :
 
                     val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                    status.first.treeResult.status shouldBeEqualTo Status.OK
-                    status.first.treeResult.ruleHit shouldBeEqualTo null
+                    status.treeResult.status shouldBeEqualTo Status.OK
+                    status.treeResult.ruleHit shouldBeEqualTo null
                 }
                 test(
                     "Hoveddiagnose is null and annen Fraværsårsak beskrivelse is null and grunn is empty"
@@ -100,8 +100,8 @@ class ArbeidsuforhetTest :
 
                     val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                    status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                    status.first.treeResult.ruleHit shouldBeEqualTo
+                    status.treeResult.status shouldBeEqualTo Status.INVALID
+                    status.treeResult.ruleHit shouldBeEqualTo
                         ArbeidsuforhetRuleHit.FRAVAERSGRUNN_MANGLER.ruleHit
                 }
 
@@ -129,8 +129,8 @@ class ArbeidsuforhetTest :
 
                     val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                    status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                    status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    status.treeResult.status shouldBeEqualTo Status.INVALID
+                    status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to true,
                             ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER to false,
@@ -141,9 +141,9 @@ class ArbeidsuforhetTest :
                         "hoveddiagnoseMangler" to true,
                         "fraversgrunnMangler" to false,
                         "ugyldigKodeVerkBiDiagnose" to true,
-                    ) shouldBeEqualTo status.first.ruleInputs
+                    ) shouldBeEqualTo status.ruleInputs
 
-                    status.first.treeResult.ruleHit shouldBeEqualTo
+                    status.treeResult.ruleHit shouldBeEqualTo
                         ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
                 }
 
@@ -172,8 +172,8 @@ class ArbeidsuforhetTest :
 
                     val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                    status.first.treeResult.status shouldBeEqualTo Status.OK
-                    status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                    status.treeResult.status shouldBeEqualTo Status.OK
+                    status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                         listOf(
                             ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to false,
                             ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
@@ -186,9 +186,9 @@ class ArbeidsuforhetTest :
                         "ugyldigKodeverkHovedDiagnose" to false,
                         "icpc2ZDiagnose" to false,
                         "ugyldigKodeVerkBiDiagnose" to false,
-                    ) shouldBeEqualTo status.first.ruleInputs
+                    ) shouldBeEqualTo status.ruleInputs
 
-                    status.first.treeResult.ruleHit shouldBeEqualTo null
+                    status.treeResult.ruleHit shouldBeEqualTo null
                 }
             }
 
@@ -233,8 +233,8 @@ class ArbeidsuforhetTest :
 
                 val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to false,
                         ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true,
@@ -243,9 +243,9 @@ class ArbeidsuforhetTest :
                 mapOf(
                     "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to true,
-                ) shouldBeEqualTo status.first.ruleInputs
+                ) shouldBeEqualTo status.ruleInputs
 
-                status.first.treeResult.ruleHit shouldBeEqualTo
+                status.treeResult.ruleHit shouldBeEqualTo
                     ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
             }
 
@@ -285,8 +285,8 @@ class ArbeidsuforhetTest :
 
                 val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to false,
                         ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
@@ -297,9 +297,9 @@ class ArbeidsuforhetTest :
                     "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to false,
                     "icpc2ZDiagnose" to true,
-                ) shouldBeEqualTo status.first.ruleInputs
+                ) shouldBeEqualTo status.ruleInputs
 
-                status.first.treeResult.ruleHit shouldBeEqualTo
+                status.treeResult.ruleHit shouldBeEqualTo
                     ArbeidsuforhetRuleHit.ICPC_2_Z_DIAGNOSE.ruleHit
             }
             test("HovedDiagnose og fraversgrunn mangler, Status INVALID") {
@@ -339,8 +339,8 @@ class ArbeidsuforhetTest :
 
                 val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to true,
                         ArbeidsuforhetRules.FRAVAERSGRUNN_MANGLER to true,
@@ -349,9 +349,9 @@ class ArbeidsuforhetTest :
                 mapOf(
                     "hoveddiagnoseMangler" to true,
                     "fraversgrunnMangler" to true,
-                ) shouldBeEqualTo status.first.ruleInputs
-                val string = objectMapper.writeValueAsString(status.first.ruleInputs)
-                status.first.treeResult.ruleHit shouldBeEqualTo
+                ) shouldBeEqualTo status.ruleInputs
+                val string = objectMapper.writeValueAsString(status.ruleInputs)
+                status.treeResult.ruleHit shouldBeEqualTo
                     ArbeidsuforhetRuleHit.FRAVAERSGRUNN_MANGLER.ruleHit
             }
             test("Ugyldig Kodeverk for houvedDiagnose, Status INVALID") {
@@ -395,8 +395,8 @@ class ArbeidsuforhetTest :
 
                 val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to false,
                         ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to true
@@ -405,9 +405,9 @@ class ArbeidsuforhetTest :
                 mapOf(
                     "hoveddiagnoseMangler" to false,
                     "ugyldigKodeverkHovedDiagnose" to true,
-                ) shouldBeEqualTo status.first.ruleInputs
+                ) shouldBeEqualTo status.ruleInputs
 
-                status.first.treeResult.ruleHit shouldBeEqualTo
+                status.treeResult.ruleHit shouldBeEqualTo
                     ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE.ruleHit
             }
             test("Ugyldig kodeVerk for biDiagnose, Status INVALID") {
@@ -459,8 +459,8 @@ class ArbeidsuforhetTest :
 
                 val status = ruleTree.runRules(sykmelding, ruleMetadataSykmelding)
 
-                status.first.treeResult.status shouldBeEqualTo Status.INVALID
-                status.first.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
+                status.treeResult.status shouldBeEqualTo Status.INVALID
+                status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
                         ArbeidsuforhetRules.HOVEDDIAGNOSE_MANGLER to false,
                         ArbeidsuforhetRules.UGYLDIG_KODEVERK_FOR_HOVEDDIAGNOSE to false,
@@ -473,9 +473,9 @@ class ArbeidsuforhetTest :
                     "ugyldigKodeverkHovedDiagnose" to false,
                     "icpc2ZDiagnose" to false,
                     "ugyldigKodeVerkBiDiagnose" to true,
-                ) shouldBeEqualTo status.first.ruleInputs
+                ) shouldBeEqualTo status.ruleInputs
 
-                status.first.treeResult.ruleHit shouldBeEqualTo
+                status.treeResult.ruleHit shouldBeEqualTo
                     ArbeidsuforhetRuleHit.UGYLDIG_KODEVERK_FOR_BIDIAGNOSE.ruleHit
             }
         },

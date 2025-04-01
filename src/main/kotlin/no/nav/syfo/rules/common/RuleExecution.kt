@@ -8,5 +8,5 @@ interface RuleExecution<T> {
     fun runRules(
         sykmelding: Sykmelding,
         ruleMetadata: RuleMetadataSykmelding
-    ): Pair<TreeOutput<T, RuleResult>, Juridisk>
+    ): TreeOutput<T, RuleResult>
 }
