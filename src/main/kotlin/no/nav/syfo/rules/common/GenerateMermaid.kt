@@ -137,7 +137,9 @@ fun genererLovhenvisning(juridisk: Juridisk): String {
             val punktumDel = henvisning.punktum?.let { "$it. punktum" }
             val bokstavDel = henvisning.bokstav?.let { "bokstav $it" }
 
-            return listOfNotNull(leddDel, punktumDel, bokstavDel).joinToString(" ").prependIndent("\n")
+            return listOfNotNull(leddDel, punktumDel, bokstavDel)
+                .joinToString(" ")
+                .prependIndent("\n")
         }
     }
 }
