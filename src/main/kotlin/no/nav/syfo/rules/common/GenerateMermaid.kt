@@ -102,8 +102,7 @@ private fun <T> TreeNode<T, RuleResult>.traverseTree(
                 val childResult = (no as ResultNode<T, RuleResult>).result
                 juridiskHenvisninger.add(childResult.juridisk)
                 val childKey = "${currentNodeKey}_${childResult.status}"
-                val result =
-                    "${childResult.status} <br/>" + genererLovhenvisning(childResult.juridisk)
+                val result = "${childResult.status}\n${genererLovhenvisning(childResult.juridisk)}"
                 builder.append(
                     "    $thisNodeKey($rule) -->|No| $childKey(${result})${getStyle(childResult.status)}\n"
                 )
