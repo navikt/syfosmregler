@@ -61,7 +61,7 @@ fun main() {
         }
         builder.append("```mermaid\n")
         builder.append("graph TD\n")
-        builder.append(treeStringBuilder)
+        builder.append(treeStringBuilder.toString())
         builder.append("    classDef ok fill:#c3ff91,stroke:#004a00,color: black;\n")
         builder.append("    classDef invalid fill:#ff7373,stroke:#ff0000,color: black;\n")
         builder.append("    classDef manuell fill:#ffe24f,stroke:#ffd500,color: #473c00;\n")
@@ -88,7 +88,7 @@ private fun <T> TreeNode<T, RuleResult>.traverseTree(
                 val childResult = (yes as ResultNode<T, RuleResult>).result
                 val childKey = "${currentNodeKey}_${childResult.status}"
                 juridiskHenvisninger.add(childResult.juridisk)
-                val result = "${childResult.status}\n${genererLovhenvisning(childResult.juridisk)}"
+                val result = "${childResult.status}\\n${genererLovhenvisning(childResult.juridisk)}"
                 builder.append(
                     "    $thisNodeKey($rule) -->|Yes| $childKey($result)${getStyle(childResult.status)}\n"
                 )
@@ -102,7 +102,7 @@ private fun <T> TreeNode<T, RuleResult>.traverseTree(
                 val childResult = (no as ResultNode<T, RuleResult>).result
                 juridiskHenvisninger.add(childResult.juridisk)
                 val childKey = "${currentNodeKey}_${childResult.status}"
-                val result = "${childResult.status}\n${genererLovhenvisning(childResult.juridisk)}"
+                val result = "${childResult.status}\\n${genererLovhenvisning(childResult.juridisk)}"
                 builder.append(
                     "    $thisNodeKey($rule) -->|No| $childKey(${result})${getStyle(childResult.status)}\n"
                 )
