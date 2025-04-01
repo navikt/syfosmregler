@@ -96,7 +96,6 @@ fun regulaShadowTest(
                         ident = receivedSykmelding.personNrPasient,
                         fodselsdato = ruleMetadataSykmelding.ruleMetadata.pasientFodselsdato,
                     ),
-                behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt,
                 meta =
                     RegulaMeta.LegacyMeta(
                         mottattDato = ruleMetadataSykmelding.ruleMetadata.receivedDate,
@@ -120,7 +119,6 @@ fun regulaShadowTest(
             )
 
         val newResult = executeRegulaRules(rulePayload, ExecutionMode.NORMAL)
-
 
         val newVsOld: List<Pair<String, String>> =
             oldResult
