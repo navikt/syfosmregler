@@ -90,6 +90,7 @@ fun regulaShadowTest(
                 kontaktPasientBegrunnelseIkkeKontakt =
                     oldSykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
                 tidligereSykmeldinger = mappedTidligereSykmeldinger,
+                behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt,
                 pasient =
                     RegulaPasient(
                         ident = receivedSykmelding.personNrPasient,
@@ -119,6 +120,7 @@ fun regulaShadowTest(
             )
 
         val newResult = executeRegulaRules(rulePayload, ExecutionMode.NORMAL)
+
 
         val newVsOld: List<Pair<String, String>> =
             oldResult
