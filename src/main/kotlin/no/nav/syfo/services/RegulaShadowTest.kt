@@ -29,6 +29,7 @@ import no.nav.tsm.regulus.regula.payload.BehandlerTilleggskompetanse
 import no.nav.tsm.regulus.regula.payload.Diagnose
 import no.nav.tsm.regulus.regula.payload.RelevanteMerknader
 import no.nav.tsm.regulus.regula.payload.TidligereSykmelding
+import no.nav.tsm.regulus.regula.payload.TidligereSykmeldingAktivitet
 import no.nav.tsm.regulus.regula.payload.TidligereSykmeldingMeta
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -221,44 +222,37 @@ private fun Periode.toSykmeldingPeriode(): Aktivitet =
             )
     }
 
-private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): Aktivitet =
+private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): TidligereSykmeldingAktivitet =
     when {
         type == PeriodetypeDTO.AKTIVITET_IKKE_MULIG ->
-            Aktivitet.IkkeMulig(
+            TidligereSykmeldingAktivitet.IkkeMulig(
                 fom = fom,
                 tom = tom,
             )
         type == PeriodetypeDTO.GRADERT && gradert != null ->
-            Aktivitet.Gradert(
+            TidligereSykmeldingAktivitet.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
         type == PeriodetypeDTO.REISETILSKUDD ->
-            Aktivitet.Reisetilskudd(
+            TidligereSykmeldingAktivitet.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
         type == PeriodetypeDTO.BEHANDLINGSDAGER ->
-            Aktivitet.Behandlingsdager(
+            TidligereSykmeldingAktivitet.Behandlingsdager(
                 fom = fom,
                 tom = tom,
-                behandlingsdager =
-                    // TODO: Kommer ikke fra registeret, ikke nødvendig for testene, burde regula ha
-                    // forskjellige typer for de to periode (gamle og nåværende)
-                    0,
             )
         type == PeriodetypeDTO.AVVENTENDE ->
-            Aktivitet.Avventende(
+            TidligereSykmeldingAktivitet.Avventende(
                 fom = fom,
                 tom = tom,
-                // TODO: Kommer ikke fra registeret, ikke nødvendig for testene, burde regula ha
-                // forskjellige typer for de to periode (gamle og nåværende)
-                avventendeInnspillTilArbeidsgiver = null,
             )
         else -> {
             log.warn("Shadow test: Ukjent periode type: $type")
-            Aktivitet.Ugyldig(
+            TidligereSykmeldingAktivitet.Ugyldig(
                 fom = fom,
                 tom = tom,
             )
