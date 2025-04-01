@@ -88,7 +88,7 @@ private fun <T> TreeNode<T, RuleResult>.traverseTree(
                 val childResult = (yes as ResultNode<T, RuleResult>).result
                 val childKey = "${currentNodeKey}_${childResult.status}"
                 juridiskHenvisninger.add(childResult.juridisk)
-                val result = "${childResult.status}\\n${genererLovhenvisning(childResult.juridisk)}"
+                val result = "${childResult.status}${genererLovhenvisning(childResult.juridisk)}"
                 builder.append(
                     "    $thisNodeKey($rule) -->|Yes| $childKey($result)${getStyle(childResult.status)}\n"
                 )
@@ -102,7 +102,7 @@ private fun <T> TreeNode<T, RuleResult>.traverseTree(
                 val childResult = (no as ResultNode<T, RuleResult>).result
                 juridiskHenvisninger.add(childResult.juridisk)
                 val childKey = "${currentNodeKey}_${childResult.status}"
-                val result = "${childResult.status}\\n${genererLovhenvisning(childResult.juridisk)}"
+                val result = "${childResult.status}${genererLovhenvisning(childResult.juridisk)}"
                 builder.append(
                     "    $thisNodeKey($rule) -->|No| $childKey(${result})${getStyle(childResult.status)}\n"
                 )
@@ -133,12 +133,11 @@ fun genererLovhenvisning(juridisk: Juridisk): String {
         is UtenJuridisk -> ""
         is MedJuridisk -> {
             val henvisning = juridisk.juridiskHenvisning
-
             val leddDel = henvisning.ledd?.let { "$it. ledd" }
             val punktumDel = henvisning.punktum?.let { "$it. punktum" }
             val bokstavDel = henvisning.bokstav?.let { "bokstav $it" }
 
-            return listOfNotNull(leddDel, punktumDel, bokstavDel).joinToString(" ")
+            return listOfNotNull(leddDel, punktumDel, bokstavDel).joinToString("").prependIndent("\\n")
         }
     }
 }
