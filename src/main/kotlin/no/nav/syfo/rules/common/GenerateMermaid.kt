@@ -88,8 +88,7 @@ private fun <T> TreeNode<T, RuleResult>.traverseTree(
                 val childResult = (yes as ResultNode<T, RuleResult>).result
                 val childKey = "${currentNodeKey}_${childResult.status}"
                 juridiskHenvisninger.add(childResult.juridisk)
-                val result =
-                    "${childResult.status}\n${genererLovhenvisning(childResult.juridisk)}"
+                val result = "${childResult.status}\n${genererLovhenvisning(childResult.juridisk)}"
                 builder.append(
                     "    $thisNodeKey($rule) -->|Yes| $childKey($result)${getStyle(childResult.status)}\n"
                 )
