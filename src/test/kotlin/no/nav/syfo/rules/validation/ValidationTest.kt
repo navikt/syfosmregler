@@ -60,17 +60,17 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.OK
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
+                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
                         ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
                     )
 
                 mapOf(
+                    "ugyldingOrgNummerLengde" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
-                    "ugyldingOrgNummerLengde" to false,
                     "avsenderSammeSomPasient" to false,
                     "behandlerSammeSomPasient" to false,
                 ) shouldBeEqualTo status.ruleInputs
@@ -113,10 +113,12 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
+                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to true,
                     )
 
                 mapOf(
+                    "ugyldingOrgNummerLengde" to false,
                     "ugyldigRegelsettversjon" to true,
                 ) shouldBeEqualTo status.ruleInputs
 
@@ -155,11 +157,13 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
+                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to true,
                     )
 
                 mapOf(
+                    "ugyldingOrgNummerLengde" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to true,
                 ) shouldBeEqualTo status.ruleInputs
@@ -202,14 +206,10 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
-                        ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
-                        ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
                         ValidationRules.UGYLDIG_ORGNR_LENGDE to true,
                     )
 
                 mapOf(
-                    "ugyldigRegelsettversjon" to false,
-                    "manglendeDynamiskesporsmaalversjon2uke39" to false,
                     "ugyldingOrgNummerLengde" to true,
                 ) shouldBeEqualTo status.ruleInputs
 
@@ -252,16 +252,16 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
+                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to true,
                     )
 
                 mapOf(
+                    "ugyldingOrgNummerLengde" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
-                    "ugyldingOrgNummerLengde" to false,
                     "avsenderSammeSomPasient" to true,
                 ) shouldBeEqualTo status.ruleInputs
 
@@ -314,17 +314,17 @@ class ValidationTest :
                 status.treeResult.status shouldBeEqualTo Status.INVALID
                 status.rulePath.map { it.rule to it.ruleResult } shouldBeEqualTo
                     listOf(
+                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.UGYLDIG_REGELSETTVERSJON to false,
                         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 to false,
-                        ValidationRules.UGYLDIG_ORGNR_LENGDE to false,
                         ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR to false,
                         ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR to true,
                     )
 
                 mapOf(
+                    "ugyldingOrgNummerLengde" to false,
                     "ugyldigRegelsettversjon" to false,
                     "manglendeDynamiskesporsmaalversjon2uke39" to false,
-                    "ugyldingOrgNummerLengde" to false,
                     "avsenderSammeSomPasient" to false,
                     "behandlerSammeSomPasient" to true,
                 ) shouldBeEqualTo status.ruleInputs

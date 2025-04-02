@@ -124,10 +124,9 @@ fun regulaShadowTest(
             )
 
         val newResult = executeRegulaRules(rulePayload, ExecutionMode.NORMAL)
-
         val newVsOld: List<Pair<String, String>> =
             oldResult
-                .map { it.printRulePath() }
+                .map { it.printRulePath().replace("PAPIRSYKMELDING(no)->", "") }
                 .zip(
                     newResult.results.map { it.rulePath },
                 )

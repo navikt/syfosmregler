@@ -17,27 +17,27 @@ enum class ValidationRules {
 }
 
 val validationRuleTree =
-    tree<ValidationRules, RuleResult>(ValidationRules.UGYLDIG_REGELSETTVERSJON) {
-        yes(INVALID, JuridiskEnum.INGEN, ValidationRuleHit.UGYLDIG_REGELSETTVERSJON)
-        no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
-            yes(
-                INVALID,
-                JuridiskEnum.INGEN,
-                ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39
-            )
-            no(ValidationRules.UGYLDIG_ORGNR_LENGDE) {
-                yes(INVALID, JuridiskEnum.INGEN, ValidationRuleHit.UGYLDIG_ORGNR_LENGDE)
+    tree<ValidationRules, RuleResult>(ValidationRules.UGYLDIG_ORGNR_LENGDE) {
+        yes(INVALID, JuridiskEnum.INGEN, ValidationRuleHit.UGYLDIG_ORGNR_LENGDE)
+        no(ValidationRules.UGYLDIG_REGELSETTVERSJON) {
+            yes(INVALID, JuridiskEnum.INGEN, ValidationRuleHit.UGYLDIG_REGELSETTVERSJON)
+            no(ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39) {
+                yes(
+                    INVALID,
+                    JuridiskEnum.INGEN,
+                    ValidationRuleHit.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39,
+                )
                 no(ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
                     yes(
                         INVALID,
                         JuridiskEnum.INGEN,
-                        ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR
+                        ValidationRuleHit.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR,
                     )
                     no(ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR) {
                         yes(
                             INVALID,
                             JuridiskEnum.INGEN,
-                            ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR
+                            ValidationRuleHit.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR,
                         )
                         no(OK, JuridiskEnum.INGEN)
                     }
@@ -67,6 +67,7 @@ fun getRule(rules: ValidationRules): Rule<ValidationRules> {
         ValidationRules.UGYLDIG_REGELSETTVERSJON -> ugyldigRegelsettversjon
         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 ->
             manglendeDynamiskesporsmaalversjon2uke39
+
         ValidationRules.UGYLDIG_ORGNR_LENGDE -> ugyldingOrgNummerLengde
         ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR -> avsenderSammeSomPasient
         ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> behandlerSammeSomPasient
