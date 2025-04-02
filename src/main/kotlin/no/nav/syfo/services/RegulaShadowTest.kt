@@ -108,7 +108,7 @@ fun regulaShadowTest(
                         rulesetVersion = receivedSykmelding.rulesetVersion,
                     ),
                 behandler =
-                    RegulaBehandler(
+                    RegulaBehandler.Finnes(
                         suspendert = ruleMetadataSykmelding.doctorSuspensjon,
                         fnr = oldSykmelding.behandler.fnr,
                         legekontorOrgnr = ruleMetadataSykmelding.ruleMetadata.legekontorOrgnr,

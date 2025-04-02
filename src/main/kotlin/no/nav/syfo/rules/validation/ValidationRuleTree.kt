@@ -67,7 +67,6 @@ fun getRule(rules: ValidationRules): Rule<ValidationRules> {
         ValidationRules.UGYLDIG_REGELSETTVERSJON -> ugyldigRegelsettversjon
         ValidationRules.MANGLENDE_DYNAMISKE_SPOERSMAL_VERSJON2_UKE_39 ->
             manglendeDynamiskesporsmaalversjon2uke39
-
         ValidationRules.UGYLDIG_ORGNR_LENGDE -> ugyldingOrgNummerLengde
         ValidationRules.AVSENDER_FNR_ER_SAMME_SOM_PASIENT_FNR -> avsenderSammeSomPasient
         ValidationRules.BEHANDLER_FNR_ER_SAMME_SOM_PASIENT_FNR -> behandlerSammeSomPasient
