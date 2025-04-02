@@ -43,9 +43,7 @@ import no.nav.syfo.pdl.service.PdlPersonService
 import no.nav.syfo.rules.api.configureSwagger
 import no.nav.syfo.rules.api.registerRuleApi
 import no.nav.syfo.services.JuridiskVurderingService
-import no.nav.syfo.services.RuleExecutionService
 import no.nav.syfo.services.RuleService
-import no.nav.syfo.services.SykmeldingService
 import no.nav.syfo.utils.JacksonKafkaSerializer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.Logger
@@ -226,10 +224,9 @@ fun Application.module() {
         RuleService(
             legeSuspensjonClient,
             norskHelsenettClient,
-            SykmeldingService(smregisterClient),
             pdlService,
             juridiskVurderingService,
-            RuleExecutionService(),
+            smregisterClient,
         )
 
     configureRouting(
