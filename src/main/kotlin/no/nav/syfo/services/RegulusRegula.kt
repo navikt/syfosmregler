@@ -1,23 +1,18 @@
 package no.nav.syfo.services
 
+import no.nav.syfo.client.Behandler
 import no.nav.syfo.client.Godkjenning
-import no.nav.syfo.client.MerknadType
 import no.nav.syfo.client.PeriodetypeDTO
 import no.nav.syfo.client.RegelStatusDTO
 import no.nav.syfo.client.SykmeldingDTO
 import no.nav.syfo.client.SykmeldingsperiodeDTO
-import no.nav.syfo.model.Periode
-import no.nav.syfo.model.ReceivedSykmelding
-import no.nav.syfo.model.SporsmalSvar
+import no.nav.syfo.model.*
 import no.nav.tsm.regulus.regula.RegulaAvsender
 import no.nav.tsm.regulus.regula.RegulaBehandler
 import no.nav.tsm.regulus.regula.RegulaMeta
 import no.nav.tsm.regulus.regula.RegulaPasient
 import no.nav.tsm.regulus.regula.RegulaPayload
-import no.nav.tsm.regulus.regula.RegulaResult
 import no.nav.tsm.regulus.regula.RegulaStatus
-import no.nav.tsm.regulus.regula.executeRegulaRules
-import no.nav.tsm.regulus.regula.executor.ExecutionMode
 import no.nav.tsm.regulus.regula.payload.Aktivitet
 import no.nav.tsm.regulus.regula.payload.AnnenFravarsArsak
 import no.nav.tsm.regulus.regula.payload.BehandlerGodkjenning
@@ -34,14 +29,15 @@ import org.slf4j.LoggerFactory
 
 private val log: Logger = LoggerFactory.getLogger("no.nav.syfo.services.RegulusRegula")
 
-fun runRegula(
-    receivedSykmelding: ReceivedSykmelding,
-    ruleMetadataSykmelding: RuleMetadataSykmelding,
+fun mapToRegulaPayload(
+    sykmelding: Sykmelding,
     tidligereSykmeldinger: List<SykmeldingDTO>,
-    mode: ExecutionMode,
-): RegulaResult {
+    ruleMetadata: RuleMetadata,
+    pasientIdent: String,
+    behandler: Behandler?,
+    behandlerSuspendert: Boolean,
+): RegulaPayload {
     try {
-        val oldSykmelding = receivedSykmelding.sykmelding
         val mappedTidligereSykmeldinger =
             tidligereSykmeldinger.map {
                 TidligereSykmelding(
@@ -69,64 +65,55 @@ fun runRegula(
                 )
             }
 
-        val rulePayload =
-            RegulaPayload(
-                sykmeldingId = oldSykmelding.id,
-                hoveddiagnose =
-                    oldSykmelding.medisinskVurdering.hovedDiagnose?.let {
-                        Diagnose(kode = it.kode, system = it.system)
-                    },
-                bidiagnoser =
-                    oldSykmelding.medisinskVurdering.biDiagnoser.map {
-                        Diagnose(kode = it.kode, system = it.system)
-                    },
-                annenFravarsArsak =
-                    oldSykmelding.medisinskVurdering.annenFraversArsak?.let { annenFraversArsak ->
-                        AnnenFravarsArsak(
-                            beskrivelse = annenFraversArsak.beskrivelse,
-                            grunn = annenFraversArsak.grunn.map { it.name },
-                        )
-                    },
-                aktivitet = oldSykmelding.perioder.map(Periode::toSykmeldingPeriode),
-                utdypendeOpplysninger = mapSvar(oldSykmelding.utdypendeOpplysninger),
-                kontaktPasientBegrunnelseIkkeKontakt =
-                    oldSykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
-                tidligereSykmeldinger = mappedTidligereSykmeldinger,
-                behandletTidspunkt = ruleMetadataSykmelding.ruleMetadata.behandletTidspunkt,
-                pasient =
-                    RegulaPasient(
-                        ident = receivedSykmelding.personNrPasient,
-                        fodselsdato = ruleMetadataSykmelding.ruleMetadata.pasientFodselsdato,
+        return RegulaPayload(
+            sykmeldingId = sykmelding.id,
+            hoveddiagnose =
+                sykmelding.medisinskVurdering.hovedDiagnose?.let {
+                    Diagnose(kode = it.kode, system = it.system)
+                },
+            bidiagnoser =
+                sykmelding.medisinskVurdering.biDiagnoser.map {
+                    Diagnose(kode = it.kode, system = it.system)
+                },
+            annenFravarsArsak =
+                sykmelding.medisinskVurdering.annenFraversArsak?.let { annenFraversArsak ->
+                    AnnenFravarsArsak(
+                        beskrivelse = annenFraversArsak.beskrivelse,
+                        grunn = annenFraversArsak.grunn.map { it.name },
+                    )
+                },
+            aktivitet = sykmelding.perioder.map(Periode::toSykmeldingPeriode),
+            utdypendeOpplysninger = mapSvar(sykmelding.utdypendeOpplysninger),
+            kontaktPasientBegrunnelseIkkeKontakt =
+                sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
+            tidligereSykmeldinger = mappedTidligereSykmeldinger,
+            behandletTidspunkt = ruleMetadata.behandletTidspunkt,
+            pasient =
+                RegulaPasient(
+                    ident = pasientIdent,
+                    fodselsdato = ruleMetadata.pasientFodselsdato,
+                ),
+            meta =
+                RegulaMeta.LegacyMeta(
+                    mottattDato = ruleMetadata.receivedDate,
+                    signaturdato = sykmelding.signaturDato,
+                    rulesetVersion = ruleMetadata.rulesetVersion,
+                ),
+            behandler =
+                if (behandler == null)
+                    RegulaBehandler.FinnesIkke(
+                        fnr = sykmelding.behandler.fnr,
+                    )
+                else
+                    RegulaBehandler.Finnes(
+                        suspendert = behandlerSuspendert,
+                        fnr = sykmelding.behandler.fnr,
+                        legekontorOrgnr = ruleMetadata.legekontorOrgnr,
+                        godkjenninger =
+                            behandler.godkjenninger.map(Godkjenning::toBehandlerGodkjenning),
                     ),
-                meta =
-                    RegulaMeta.LegacyMeta(
-                        mottattDato = ruleMetadataSykmelding.ruleMetadata.receivedDate,
-                        signaturdato = oldSykmelding.signaturDato,
-                        rulesetVersion = receivedSykmelding.rulesetVersion,
-                    ),
-                behandler =
-                    if (ruleMetadataSykmelding.behandlerOgStartdato.behandler.hprNummer == null)
-                        RegulaBehandler.FinnesIkke(
-                            fnr = oldSykmelding.behandler.fnr,
-                        )
-                    else
-                        RegulaBehandler.Finnes(
-                            suspendert = ruleMetadataSykmelding.doctorSuspensjon,
-                            fnr = oldSykmelding.behandler.fnr,
-                            legekontorOrgnr = ruleMetadataSykmelding.ruleMetadata.legekontorOrgnr,
-                            godkjenninger =
-                                ruleMetadataSykmelding.behandlerOgStartdato.behandler.godkjenninger
-                                    .map(
-                                        Godkjenning::toBehandlerGodkjenning,
-                                    ),
-                        ),
-                avsender =
-                    RegulaAvsender.Finnes(
-                        ruleMetadataSykmelding.ruleMetadata.avsenderFnr,
-                    ),
-            )
-
-        return executeRegulaRules(rulePayload, mode)
+            avsender = RegulaAvsender.Finnes(ruleMetadata.avsenderFnr),
+        )
     } catch (e: Exception) {
         log.error("Regulus Regula rule execution failed", e)
         throw e
@@ -280,8 +267,4 @@ private fun mapSvar(
             )
         }
     }
-}
-
-private fun harTilbakedatertMerknad(sykmelding: SykmeldingDTO): Boolean {
-    return sykmelding.merknader?.any { MerknadType.contains(it.type) } ?: false
 }
