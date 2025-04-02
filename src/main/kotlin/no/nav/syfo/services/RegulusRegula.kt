@@ -1,3 +1,5 @@
+package no.nav.syfo.services
+
 import no.nav.syfo.client.Godkjenning
 import no.nav.syfo.client.MerknadType
 import no.nav.syfo.client.PeriodetypeDTO
@@ -7,16 +9,12 @@ import no.nav.syfo.client.SykmeldingsperiodeDTO
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.SporsmalSvar
-import no.nav.syfo.model.ValidationResult
-import no.nav.syfo.rules.common.RuleResult
-import no.nav.syfo.rules.dsl.TreeOutput
-import no.nav.syfo.rules.dsl.printRulePath
-import no.nav.syfo.services.RuleMetadataSykmelding
 import no.nav.tsm.regulus.regula.RegulaAvsender
 import no.nav.tsm.regulus.regula.RegulaBehandler
 import no.nav.tsm.regulus.regula.RegulaMeta
 import no.nav.tsm.regulus.regula.RegulaPasient
 import no.nav.tsm.regulus.regula.RegulaPayload
+import no.nav.tsm.regulus.regula.RegulaResult
 import no.nav.tsm.regulus.regula.RegulaStatus
 import no.nav.tsm.regulus.regula.executeRegulaRules
 import no.nav.tsm.regulus.regula.executor.ExecutionMode
@@ -34,15 +32,13 @@ import no.nav.tsm.regulus.regula.payload.TidligereSykmeldingMeta
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-private val log: Logger = LoggerFactory.getLogger("regula-smoke-test")
+private val log: Logger = LoggerFactory.getLogger("no.nav.syfo.services.RegulusRegula")
 
-fun regulaShadowTest(
+fun runRegula(
     receivedSykmelding: ReceivedSykmelding,
     ruleMetadataSykmelding: RuleMetadataSykmelding,
     tidligereSykmeldinger: List<SykmeldingDTO>,
-    oldResult: List<TreeOutput<out Enum<*>, RuleResult>>,
-    oldValidationResult: ValidationResult,
-) {
+): RegulaResult {
     try {
         val oldSykmelding = receivedSykmelding.sykmelding
         val mappedTidligereSykmeldinger =
@@ -108,67 +104,31 @@ fun regulaShadowTest(
                         rulesetVersion = receivedSykmelding.rulesetVersion,
                     ),
                 behandler =
-                    RegulaBehandler.Finnes(
-                        suspendert = ruleMetadataSykmelding.doctorSuspensjon,
-                        fnr = oldSykmelding.behandler.fnr,
-                        legekontorOrgnr = ruleMetadataSykmelding.ruleMetadata.legekontorOrgnr,
-                        godkjenninger =
-                            ruleMetadataSykmelding.behandlerOgStartdato.behandler.godkjenninger.map(
-                                Godkjenning::toBehandlerGodkjenning,
-                            ),
-                    ),
+                    if (ruleMetadataSykmelding.behandlerOgStartdato.behandler.hprNummer == null)
+                        RegulaBehandler.FinnesIkke(
+                            fnr = oldSykmelding.behandler.fnr,
+                        )
+                    else
+                        RegulaBehandler.Finnes(
+                            suspendert = ruleMetadataSykmelding.doctorSuspensjon,
+                            fnr = oldSykmelding.behandler.fnr,
+                            legekontorOrgnr = ruleMetadataSykmelding.ruleMetadata.legekontorOrgnr,
+                            godkjenninger =
+                                ruleMetadataSykmelding.behandlerOgStartdato.behandler.godkjenninger
+                                    .map(
+                                        Godkjenning::toBehandlerGodkjenning,
+                                    ),
+                        ),
                 avsender =
                     RegulaAvsender(
                         ruleMetadataSykmelding.ruleMetadata.avsenderFnr,
                     ),
             )
 
-        val newResult = executeRegulaRules(rulePayload, ExecutionMode.NORMAL)
-        val newVsOld: List<Pair<String, String>> =
-            oldResult
-                .map { it.printRulePath() }
-                .zip(
-                    newResult.results.map {
-                        it.rulePath
-                            .replace("BEHANDLER_FINNES_I_HPR(yes)->", "")
-                            .replace("PAPIRSYKMELDING(no)->", "")
-                    },
-                )
-
-        val allPathsEqual = newVsOld.all { (old, new) -> old == new }
-
-        if (allPathsEqual) {
-            log.info(
-                """ ✅ REGULA SHADOW TEST Result: OK
-                | SykmeldingID: ${oldSykmelding.id}
-                | Outcome: ${newResult.status.name} (${oldValidationResult.status.name})
-                | Chains executed: ${oldResult.size} / ${newResult.results.size}
-            """
-                    .trimMargin(),
-            )
-        } else {
-            log.warn(
-                """ ❌ REGULA SHADOW TEST Result: DIVERGENCE DETECTED
-                    | SykmeldingID: ${oldSykmelding.id}
-                    | Outcome: ${newResult.status.name} (${oldValidationResult.status.name})
-                    | Chains executed: ${oldResult.size} / ${newResult.results.size}
-                    | Diverging paths count: ${newVsOld.count { (old, new) -> old != new }} 
-                    | 
-                    | Some meta:
-                    |  * Tidligere sykmeldinger count: ${mappedTidligereSykmeldinger.size}
-                    | 
-                    | Diverging paths:
-                    |${
-                    newVsOld.filter { (old, new) -> old != new }.joinToString("\n") { (old, new) ->
-                        "Old: $old\nNew: $new"
-                    }
-                }
-                    """
-                    .trimMargin(),
-            )
-        }
+        return executeRegulaRules(rulePayload, ExecutionMode.NORMAL)
     } catch (e: Exception) {
-        log.error("Regulus Regula smoke test failed", e)
+        log.error("Regulus Regula rule execution failed", e)
+        throw e
     }
 }
 

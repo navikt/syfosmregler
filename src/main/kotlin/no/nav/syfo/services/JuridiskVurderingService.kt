@@ -4,12 +4,15 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 import no.nav.syfo.model.ReceivedSykmelding
-import no.nav.syfo.model.Status
+import no.nav.syfo.model.juridisk.JuridiskHenvisning
 import no.nav.syfo.model.juridisk.JuridiskUtfall
 import no.nav.syfo.model.juridisk.JuridiskVurdering
-import no.nav.syfo.rules.common.MedJuridisk
-import no.nav.syfo.rules.common.RuleResult
-import no.nav.syfo.rules.dsl.TreeOutput
+import no.nav.syfo.model.juridisk.Lovverk
+import no.nav.tsm.regulus.regula.RegulaJuridiskHenvisning
+import no.nav.tsm.regulus.regula.RegulaLovverk
+import no.nav.tsm.regulus.regula.RegulaResult
+import no.nav.tsm.regulus.regula.RegulaStatus
+import no.nav.tsm.regulus.regula.TreeResult
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 
@@ -30,16 +33,15 @@ class JuridiskVurderingService(
 
     fun processRuleResults(
         receivedSykmelding: ReceivedSykmelding,
-        result: List<TreeOutput<out Enum<*>, RuleResult>>,
+        result: RegulaResult,
     ) {
         val juridiskVurderingResult =
             JuridiskVurderingResult(
                 juridiskeVurderinger =
-                    result.mapNotNull {
-                        when (val juridisk = it.treeResult.juridisk) {
-                            is MedJuridisk ->
-                                resultToJuridiskVurdering(receivedSykmelding, it, juridisk)
-                            else -> null
+                    result.results.mapNotNull {
+                        when (val juridisk = it.juridisk) {
+                            null -> null
+                            else -> resultToJuridiskVurdering(receivedSykmelding, it, juridisk)
                         }
                     },
             )
@@ -56,8 +58,8 @@ class JuridiskVurderingService(
 
     private fun resultToJuridiskVurdering(
         receivedSykmelding: ReceivedSykmelding,
-        result: TreeOutput<out Enum<*>, RuleResult>,
-        medJuridisk: MedJuridisk,
+        result: TreeResult,
+        juridisk: RegulaJuridiskHenvisning,
     ): JuridiskVurdering {
         return JuridiskVurdering(
             id = UUID.randomUUID().toString(),
@@ -66,26 +68,38 @@ class JuridiskVurderingService(
             kilde = KILDE,
             versjonAvKode = versjonsKode,
             fodselsnummer = receivedSykmelding.personNrPasient,
-            juridiskHenvisning = medJuridisk.juridiskHenvisning,
+            juridiskHenvisning =
+                JuridiskHenvisning(
+                    lovverk =
+                        when (juridisk.lovverk) {
+                            RegulaLovverk.FOLKETRYGDLOVEN -> Lovverk.FOLKETRYGDLOVEN
+                            else ->
+                                throw IllegalArgumentException("Ukjent lovverk ${juridisk.lovverk}")
+                        },
+                    paragraf = juridisk.paragraf,
+                    ledd = juridisk.ledd,
+                    punktum = juridisk.punktum,
+                    bokstav = juridisk.bokstav,
+                ),
             sporing =
                 mapOf(
                     "sykmelding" to receivedSykmelding.sykmelding.id,
                 ),
             input = result.ruleInputs,
-            utfall = toJuridiskUtfall(result.treeResult.status),
+            utfall = toJuridiskUtfall(result.outcome?.status ?: RegulaStatus.OK),
             tidsstempel = ZonedDateTime.now(ZoneOffset.UTC),
         )
     }
 
-    private fun toJuridiskUtfall(status: Status) =
+    private fun toJuridiskUtfall(status: RegulaStatus) =
         when (status) {
-            Status.OK -> {
+            RegulaStatus.OK -> {
                 JuridiskUtfall.VILKAR_OPPFYLT
             }
-            Status.INVALID -> {
+            RegulaStatus.INVALID -> {
                 JuridiskUtfall.VILKAR_IKKE_OPPFYLT
             }
-            Status.MANUAL_PROCESSING -> {
+            RegulaStatus.MANUAL_PROCESSING -> {
                 JuridiskUtfall.VILKAR_UAVKLART
             }
             else -> {

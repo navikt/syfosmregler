@@ -26,9 +26,10 @@ import no.nav.syfo.rules.dsl.printRulePath
 import no.nav.syfo.secureLog
 import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
+import no.nav.tsm.regulus.regula.RegulaResult
+import no.nav.tsm.regulus.regula.RegulaStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import regulaShadowTest
 
 class RuleService(
     private val legeSuspensjonClient: LegeSuspensjonClient,
@@ -41,7 +42,7 @@ class RuleService(
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
     @DelicateCoroutinesApi
-    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): ValidationResult =
+    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): RegulaResult =
         with(GlobalScope) {
             val loggingMeta =
                 LoggingMeta(
@@ -97,23 +98,9 @@ class RuleService(
                     msgId = receivedSykmelding.msgId,
                     loggingMeta = loggingMeta,
                 )
-                    ?: return ValidationResult(
-                        status = Status.INVALID,
-                        ruleHits =
-                            listOf(
-                                RuleInfo(
-                                    ruleName = "BEHANDLER_NOT_IN_HPR",
-                                    messageForSender =
-                                        "Den som har skrevet sykmeldingen ble ikke funnet i Helsepersonellregisteret (HPR)",
-                                    messageForUser =
-                                        "Avsender fodselsnummer er ikke registert i Helsepersonellregisteret (HPR)",
-                                    ruleStatus = Status.INVALID,
-                                ),
-                            ),
-                    )
 
             log.info(
-                "Avsender behandler har hprnummer: ${behandler.hprNummer}, {}",
+                "Avsender behandler har hprnummer: ${behandler?.hprNummer ?: "[finnes ikke i hpr]"}, {}",
                 fields(loggingMeta),
             )
 
@@ -130,47 +117,65 @@ class RuleService(
                     sykmeldingMetadataInfo = sykmeldingMetadata,
                     doctorSuspensjon = doctorSuspendDeferred.await(),
                     behandlerOgStartdato =
-                        BehandlerOgStartdato(behandler, sykmeldingMetadata.startdato),
+                        if (behandler != null)
+                            BehandlerOgStartdato(
+                                behandler,
+                                sykmeldingMetadata.startdato,
+                            )
+                        else
+                            BehandlerOgStartdato(
+                                Behandler(godkjenninger = emptyList(), hprNummer = null),
+                                startdato = sykmeldingMetadata.startdato,
+                            ),
                 )
 
-            val result =
+            // TODO: OLD EXECUTION ONLY FOR COMPARISON
+            val oldResult =
                 ruleExecutionService.runRules(receivedSykmelding.sykmelding, ruleMetadataSykmelding)
 
-            result.forEach {
+            // TODO: OLD EXECUTION ONLY FOR COMPARISON
+            oldResult.forEach {
                 RULE_NODE_RULE_PATH_COUNTER.labels(
                         it.printRulePath(),
                     )
                     .inc()
             }
 
-            juridiskVurderingService.processRuleResults(receivedSykmelding, result)
-            val validationResult = validationResult(result.map { it })
+            // TODO: OLD EXECUTION ONLY FOR COMPARISON
+            val oldValidationResult = validationResult(oldResult.map { it })
             RULE_NODE_RULE_HIT_COUNTER.labels(
-                    validationResult.status.name,
-                    validationResult.ruleHits.firstOrNull()?.ruleName
-                        ?: validationResult.status.name,
+                    oldValidationResult.status.name,
+                    oldValidationResult.ruleHits.firstOrNull()?.ruleName
+                        ?: oldValidationResult.status.name,
                 )
                 .inc()
 
-            regulaShadowTest(
-                receivedSykmelding = receivedSykmelding,
-                ruleMetadataSykmelding = ruleMetadataSykmelding,
-                tidligereSykmeldinger = sykmeldingMetadata.sykmeldingerFraRegister,
-                oldResult = result,
-                oldValidationResult = validationResult,
-            )
+            val regulaResult =
+                runRegula(
+                    receivedSykmelding = receivedSykmelding,
+                    ruleMetadataSykmelding = ruleMetadataSykmelding,
+                    tidligereSykmeldinger = sykmeldingMetadata.sykmeldingerFraRegister,
+                )
+            juridiskVurderingService.processRuleResults(receivedSykmelding, regulaResult)
 
-            if (validationResult.status != Status.OK) {
+            if (regulaResult.status != RegulaStatus.OK) {
                 secureLog.info(
                     "RuleResult for ${receivedSykmelding.sykmelding.id}: ${
                         objectMapper
                             .writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(result.filter { it.treeResult.status != Status.OK })
+                            .writeValueAsString(regulaResult.results.filter { it.outcome?.status != RegulaStatus.OK })
                     }",
                 )
             }
 
-            return validationResult
+            compareNewVsOld(
+                sykmeldingId = receivedSykmelding.sykmelding.id,
+                newResult = regulaResult,
+                oldResult = oldResult,
+                oldValidationResult = oldValidationResult,
+            )
+
+            return regulaResult
         }
 
     private fun validationResult(
