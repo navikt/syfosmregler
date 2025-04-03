@@ -12,11 +12,11 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Parameters
-import no.nav.syfo.EnvironmentVariables
+import no.nav.syfo.utils.Environment
 import org.slf4j.LoggerFactory
 
 class AzureAdV2Client(
-    environmentVariables: EnvironmentVariables,
+    environmentVariables: Environment,
     private val httpClient: HttpClient,
     private val azureAdV2Cache: AzureAdV2Cache = AzureAdV2Cache(),
 ) {
