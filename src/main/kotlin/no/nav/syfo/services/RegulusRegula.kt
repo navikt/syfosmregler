@@ -120,7 +120,7 @@ fun runRegula(
                                     ),
                         ),
                 avsender =
-                    RegulaAvsender(
+                    RegulaAvsender.Finnes(
                         ruleMetadataSykmelding.ruleMetadata.avsenderFnr,
                     ),
             )
