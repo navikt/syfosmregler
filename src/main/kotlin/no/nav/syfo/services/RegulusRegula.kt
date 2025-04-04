@@ -38,6 +38,7 @@ fun runRegula(
     receivedSykmelding: ReceivedSykmelding,
     ruleMetadataSykmelding: RuleMetadataSykmelding,
     tidligereSykmeldinger: List<SykmeldingDTO>,
+    mode: ExecutionMode,
 ): RegulaResult {
     try {
         val oldSykmelding = receivedSykmelding.sykmelding
@@ -137,7 +138,6 @@ private fun String.toRegulaMerknad() =
         "UGYLDIG_TILBAKEDATERING" -> RelevanteMerknader.UGYLDIG_TILBAKEDATERING
         "TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER" ->
             RelevanteMerknader.TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER
-
         "UNDER_BEHANDLING" -> RelevanteMerknader.UNDER_BEHANDLING
         else -> null
     }
@@ -156,34 +156,29 @@ private fun Periode.toSykmeldingPeriode(): Aktivitet =
                 fom = fom,
                 tom = tom,
             )
-
         gradert != null ->
             Aktivitet.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
-
         reisetilskudd ->
             Aktivitet.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
-
         behandlingsdager != null ->
             Aktivitet.Behandlingsdager(
                 fom = fom,
                 tom = tom,
                 behandlingsdager = behandlingsdager,
             )
-
         avventendeInnspillTilArbeidsgiver != null ->
             Aktivitet.Avventende(
                 fom = fom,
                 tom = tom,
                 avventendeInnspillTilArbeidsgiver = avventendeInnspillTilArbeidsgiver,
             )
-
         else ->
             Aktivitet.Ugyldig(
                 fom = fom,
@@ -198,32 +193,27 @@ private fun SykmeldingsperiodeDTO.toSykmeldingPeriode(): TidligereSykmeldingAkti
                 fom = fom,
                 tom = tom,
             )
-
         type == PeriodetypeDTO.GRADERT && gradert != null ->
             TidligereSykmeldingAktivitet.Gradert(
                 fom = fom,
                 tom = tom,
                 grad = gradert.grad,
             )
-
         type == PeriodetypeDTO.REISETILSKUDD ->
             TidligereSykmeldingAktivitet.Reisetilskudd(
                 fom = fom,
                 tom = tom,
             )
-
         type == PeriodetypeDTO.BEHANDLINGSDAGER ->
             TidligereSykmeldingAktivitet.Behandlingsdager(
                 fom = fom,
                 tom = tom,
             )
-
         type == PeriodetypeDTO.AVVENTENDE ->
             TidligereSykmeldingAktivitet.Avventende(
                 fom = fom,
                 tom = tom,
             )
-
         else -> {
             log.warn("Shadow test: Ukjent periode type: $type")
             TidligereSykmeldingAktivitet.Ugyldig(

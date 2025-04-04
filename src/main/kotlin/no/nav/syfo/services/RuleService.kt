@@ -28,6 +28,7 @@ import no.nav.syfo.utils.LoggingMeta
 import no.nav.syfo.validation.extractBornDate
 import no.nav.tsm.regulus.regula.RegulaResult
 import no.nav.tsm.regulus.regula.RegulaStatus
+import no.nav.tsm.regulus.regula.executor.ExecutionMode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -42,7 +43,10 @@ class RuleService(
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
     @DelicateCoroutinesApi
-    suspend fun executeRuleChains(receivedSykmelding: ReceivedSykmelding): RegulaResult =
+    suspend fun executeRuleChains(
+        receivedSykmelding: ReceivedSykmelding,
+        mode: ExecutionMode
+    ): RegulaResult =
         with(GlobalScope) {
             val loggingMeta =
                 LoggingMeta(
@@ -155,6 +159,7 @@ class RuleService(
                     receivedSykmelding = receivedSykmelding,
                     ruleMetadataSykmelding = ruleMetadataSykmelding,
                     tidligereSykmeldinger = sykmeldingMetadata.sykmeldingerFraRegister,
+                    mode = mode,
                 )
             juridiskVurderingService.processRuleResults(receivedSykmelding, regulaResult)
 

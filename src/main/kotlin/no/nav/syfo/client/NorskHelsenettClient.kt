@@ -17,8 +17,8 @@ import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.metrics.HPR_HISTOGRAM
 import no.nav.syfo.metrics.HPR_RETRY_COUNT
-import no.nav.syfo.rules.api.log
 import no.nav.syfo.utils.LoggingMeta
+import org.slf4j.LoggerFactory
 
 class NorskHelsenettClient(
     private val endpointUrl: String,
@@ -26,6 +26,7 @@ class NorskHelsenettClient(
     private val resourceId: String,
     private val httpClient: HttpClient,
 ) {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     suspend fun finnBehandler(
         behandlerFnr: String,
