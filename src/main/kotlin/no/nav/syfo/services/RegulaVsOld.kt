@@ -24,6 +24,7 @@ fun compareNewVsOld(
                     it.rulePath
                         .replace("PAPIRSYKMELDING(no)->", "")
                         .replace("BEHANDLER_FINNES_I_HPR(yes)->", "")
+                        .replace("GRADERT_SYKMELDING_0_PROSENT(no)->", "")
                 },
             )
 
