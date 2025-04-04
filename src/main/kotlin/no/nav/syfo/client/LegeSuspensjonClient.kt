@@ -12,8 +12,8 @@ import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
 import no.nav.syfo.metrics.SUSPANSJON_HISTOGRAM
-import no.nav.syfo.rules.api.log
 import no.nav.syfo.utils.LoggingMeta
+import org.slf4j.LoggerFactory
 
 class LegeSuspensjonClient(
     private val endpointUrl: String,
@@ -21,6 +21,7 @@ class LegeSuspensjonClient(
     private val httpClient: HttpClient,
     private val scope: String,
 ) {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     suspend fun checkTherapist(
         therapistId: String,
