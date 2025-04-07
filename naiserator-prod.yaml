@@ -48,14 +48,10 @@ spec:
     inbound:
       rules:
         - application: syfosmmottak
-          namespace: teamsykmelding
-          cluster: prod-gcp
         - application: syfosmpapirmottak
-          namespace: teamsykmelding
-          cluster: prod-gcp
+        - application: syk-dig-backend
         - application: syk-inn-api
           namespace: tsm
-          cluster: prod-gcp
     outbound:
       rules:
         - application: syfosmregister

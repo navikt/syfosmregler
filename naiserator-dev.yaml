@@ -46,21 +46,15 @@ spec:
     inbound:
       rules:
         - application: syfosmmottak
-          namespace: teamsykmelding
-          cluster: dev-gcp
         - application: syfosmpapirmottak
-          namespace: teamsykmelding
-          cluster: dev-gcp
+        - application: syk-dig-backend
         - application: teamsykmelding-mock
         - application: testnav-sykemelding-proxy
           namespace: dolly
-          cluster: dev-gcp
         - application: testnav-sykemelding-proxy-trygdeetaten
           namespace: dolly
-          cluster: dev-gcp
         - application: syk-inn-api
           namespace: tsm
-          cluster: dev-gcp
     outbound:
       rules:
         - application: syfosmregister
