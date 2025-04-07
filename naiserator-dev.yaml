@@ -48,6 +48,9 @@ spec:
         - application: syfosmmottak
           namespace: teamsykmelding
           cluster: dev-gcp
+        - application: syfosmpapirmottak
+          namespace: teamsykmelding
+          cluster: dev-gcp
         - application: teamsykmelding-mock
         - application: testnav-sykemelding-proxy
           namespace: dolly
