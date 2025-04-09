@@ -126,7 +126,7 @@ fun runRegula(
                     ),
             )
 
-        return executeRegulaRules(rulePayload, ExecutionMode.NORMAL)
+        return executeRegulaRules(rulePayload, mode)
     } catch (e: Exception) {
         log.error("Regulus Regula rule execution failed", e)
         throw e
