@@ -18,7 +18,6 @@ import no.nav.syfo.utils.objectMapper
 import no.nav.syfo.utils.secureLog
 import no.nav.syfo.validation.extractBornDate
 import no.nav.tsm.regulus.regula.RegulaResult
-import no.nav.tsm.regulus.regula.RegulaStatus
 import no.nav.tsm.regulus.regula.executeRegulaRules
 import no.nav.tsm.regulus.regula.executor.ExecutionMode
 import org.slf4j.Logger
@@ -120,12 +119,12 @@ class RuleService(
             val regulaResult = executeRegulaRules(regulaPayload, mode)
             juridiskVurderingService.processRuleResults(receivedSykmelding, regulaResult)
 
-            if (regulaResult.status != RegulaStatus.OK) {
+            if (regulaResult is RegulaResult.NotOk) {
                 secureLog.info(
                     "RuleResult for ${receivedSykmelding.sykmelding.id}: ${
                         objectMapper
                             .writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(regulaResult.results.filter { it.outcome?.status != RegulaStatus.OK })
+                            .writeValueAsString(regulaResult.results.filter { it.outcome != null })
                     }",
                 )
             }

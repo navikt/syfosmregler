@@ -6,6 +6,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import kotlinx.coroutines.DelicateCoroutinesApi
 import no.nav.syfo.rules.shared.ReceivedSykmelding
+import no.nav.tsm.regulus.regula.RegulaOutcomeStatus
 import no.nav.tsm.regulus.regula.RegulaResult
 import no.nav.tsm.regulus.regula.RegulaStatus
 import no.nav.tsm.regulus.regula.executor.ExecutionMode
@@ -45,24 +46,25 @@ private fun RegulaResult.toApiResponse(): RuleValidationResponse {
             RegulaStatus.MANUAL_PROCESSING -> RuleValidationRuleStatus.MANUAL_PROCESSING
             RegulaStatus.INVALID -> RuleValidationRuleStatus.INVALID
         }
+
     val apiResponseRuleHits =
-        this.outcome?.let {
-            listOf(
-                RuleValidationRuleInfo(
-                    ruleName = it.rule,
-                    messageForSender = it.messageForSender,
-                    messageForUser = it.messageForUser,
-                    ruleStatus =
-                        when (it.status) {
-                            RegulaStatus.OK -> RuleValidationRuleStatus.OK
-                            RegulaStatus.MANUAL_PROCESSING ->
-                                RuleValidationRuleStatus.MANUAL_PROCESSING
-                            RegulaStatus.INVALID -> RuleValidationRuleStatus.INVALID
-                        },
-                ),
-            )
+        when (this) {
+            is RegulaResult.Ok -> emptyList()
+            is RegulaResult.NotOk ->
+                listOf(
+                    RuleValidationRuleInfo(
+                        ruleName = this.outcome.rule,
+                        messageForSender = this.outcome.reason.sykmelder,
+                        messageForUser = this.outcome.reason.sykmeldt,
+                        ruleStatus =
+                            when (this.outcome.status) {
+                                RegulaOutcomeStatus.MANUAL_PROCESSING ->
+                                    RuleValidationRuleStatus.MANUAL_PROCESSING
+                                RegulaOutcomeStatus.INVALID -> RuleValidationRuleStatus.INVALID
+                            },
+                    ),
+                )
         }
-            ?: emptyList()
 
     return RuleValidationResponse(
         status = apiResponseStatus,

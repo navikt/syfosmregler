@@ -82,7 +82,7 @@ class JuridiskVurderingService(
                     "sykmelding" to receivedSykmelding.sykmelding.id,
                 ),
             input = result.ruleInputs,
-            utfall = toJuridiskUtfall(result.outcome?.status ?: RegulaStatus.OK),
+            utfall = toJuridiskUtfall(result.status),
             tidsstempel = ZonedDateTime.now(ZoneOffset.UTC),
         )
     }
