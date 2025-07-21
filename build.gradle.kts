@@ -7,31 +7,31 @@ version = "1.0.0"
 
 val javaVersion = JvmTarget.JVM_21
 
-val caffeineVersion = "3.2.0"
-val coroutinesVersion = "1.10.1"
-val jacksonVersion = "2.18.3"
+val caffeineVersion = "3.2.2"
+val coroutinesVersion = "1.10.2"
+val jacksonVersion = "2.19.2"
 val kluentVersion = "1.73"
-val ktorVersion = "3.1.1"
-val logbackVersion = "1.5.17"
-val logstashEncoderVersion = "8.0"
+val ktorVersion = "3.2.2"
+val logbackVersion = "1.5.18"
+val logstashEncoderVersion = "8.1"
 val prometheusVersion = "0.16.0"
 val kotestVersion = "5.9.1"
-val mockkVersion = "1.13.17"
-val kotlinVersion = "2.1.10"
+val mockkVersion = "1.14.5"
+val kotlinVersion = "2.2.0"
 val ktfmtVersion = "0.44"
 val diagnosekoderVersion = "1.2025.0"
-val kafkaVersion = "3.9.0"
+val kafkaVersion = "3.9.1"
 
 ///Due to vulnerabilities
-val nettyCommonVersion = "4.1.119.Final"
-val snappyJavaVersion = "1.1.10.7"
+val nettyCommonVersion = "4.2.3.Final"
+val snappyJavaVersion = "1.1.10.8"
 val commonsCodecVersion = "1.18.0"
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.1.10"
-    id("com.diffplug.spotless") version "7.0.2"
-    id("com.gradleup.shadow") version "8.3.6"
+    kotlin("jvm") version "2.2.0"
+    id("com.diffplug.spotless") version "7.2.0"
+    id("com.gradleup.shadow") version "8.3.8"
 }
 
 application {
@@ -79,7 +79,7 @@ dependencies {
     }
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
 
-    implementation("no.nav.tsm.regulus:regula:40")
+    implementation("no.nav.tsm.regulus:regula:41")
 
     implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
     implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
