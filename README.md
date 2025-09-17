@@ -48,10 +48,10 @@ This the high level flow for the application
 #### Compile and package application
 To build locally and run the integration tests you can simply run
 ``` bash
-./gradlew shadowJar
+./gradlew installDist
 ```
 or on windows 
-`gradlew.bat shadowJar`
+`gradlew.bat installDist`
 
 #### Creating a docker image
 Creating a docker image should be as simple as 
