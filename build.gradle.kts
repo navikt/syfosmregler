@@ -78,7 +78,7 @@ dependencies {
     }
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
 
-    implementation("no.nav.tsm.regulus:regula:41")
+    implementation("no.nav.tsm.regulus:regula:42")
 
     implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
     implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
