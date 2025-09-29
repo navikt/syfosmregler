@@ -30,7 +30,7 @@ val commonsCodecVersion = "1.19.0"
 plugins {
     id("application")
     kotlin("jvm") version "2.2.20"
-    id("com.diffplug.spotless") version "7.2.1"
+    id("com.diffplug.spotless") version "8.0.0"
 }
 
 application {
@@ -78,7 +78,7 @@ dependencies {
     }
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
 
-    implementation("no.nav.tsm.regulus:regula:41")
+    implementation("no.nav.tsm.regulus:regula:43")
 
     implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
     implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
