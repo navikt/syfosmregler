@@ -53,8 +53,6 @@ spec:
           namespace: dolly
         - application: testnav-sykemelding-proxy-trygdeetaten
           namespace: dolly
-        - application: syk-inn-api
-          namespace: tsm
     outbound:
       rules:
         - application: syfosmregister

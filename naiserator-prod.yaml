@@ -52,8 +52,6 @@ spec:
         - application: syfosmmottak
         - application: syfosmpapirmottak
         - application: syk-dig-backend
-        - application: syk-inn-api
-          namespace: tsm
     outbound:
       rules:
         - application: syfosmregister
