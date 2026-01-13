@@ -54,6 +54,8 @@ spec:
         - application: syk-dig-backend
     outbound:
       rules:
+        - application: logging
+          namespace: nais-system
         - application: syfosmregister
           namespace: teamsykmelding
           cluster: prod-gcp
@@ -65,8 +67,6 @@ spec:
         - host: pdl-api.prod-fss-pub.nais.io
   kafka:
     pool: nav-prod
-  secureLogs:
-    enabled: true
   env:
     - name: HELSENETT_SCOPE
       value: api://prod-gcp.teamsykmelding.syfohelsenettproxy/.default

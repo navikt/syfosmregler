@@ -55,6 +55,8 @@ spec:
           namespace: dolly
     outbound:
       rules:
+        - application: logging
+          namespace: nais-system
         - application: syfosmregister
           namespace: teamsykmelding
           cluster: dev-gcp
@@ -66,8 +68,6 @@ spec:
         - host: pdl-api.dev-fss-pub.nais.io
   kafka:
     pool: nav-dev
-  secureLogs:
-    enabled: true
   ingresses:
     - "https://syfosmregler.intern.dev.nav.no"
   env:
