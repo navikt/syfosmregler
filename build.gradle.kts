@@ -12,7 +12,7 @@ val coroutinesVersion = "1.10.2"
 val jacksonVersion = "2.20.2"
 val kluentVersion = "1.73"
 val ktorVersion = "3.4.0"
-val logbackVersion = "1.5.18"
+val logbackVersion = "1.5.25"
 val logstashEncoderVersion = "8.1"
 val prometheusVersion = "0.16.0"
 val kotestVersion = "6.0.3"
@@ -21,10 +21,8 @@ val kotlinVersion = "2.2.20"
 val ktfmtVersion = "0.44"
 val diagnosekoderVersion = "1.2025.0"
 val kafkaVersion = "3.9.1"
-
-///Due to vulnerabilities
-val snappyJavaVersion = "1.1.10.8"
-
+val regulaVersion = "41"
+val kafkaClientVersion = "4.0.0"
 plugins {
     id("application")
     kotlin("jvm") version "2.2.20"
@@ -63,18 +61,14 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
 
-    implementation("no.nav.tsm.regulus:regula:41")
+    implementation("org.apache.kafka:kafka-clients:$kafkaClientVersion")
+
+    implementation("no.nav.tsm.regulus:regula:$regulaVersion")
 
     implementation("no.nav.helse:diagnosekoder:$diagnosekoderVersion")
-    implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
-    constraints {
-        implementation("org.xerial.snappy:snappy-java:$snappyJavaVersion") {
-            because("override transient from org.apache.kafka:kafka_2.12")
-        }
-    }
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")

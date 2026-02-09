@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.apache5.Apache5
+import io.ktor.client.engine.apache5.Apache5EngineConfig
 import io.ktor.client.plugins.*
 import io.ktor.network.sockets.*
 import io.ktor.serialization.jackson.*
@@ -97,7 +98,7 @@ fun Application.configureRouting() {
 }
 
 private fun createHttpClient(): HttpClient {
-    val config: HttpClientConfig<ApacheEngineConfig>.() -> Unit = {
+    val config: HttpClientConfig<Apache5EngineConfig>.() -> Unit = {
         install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
             jackson {
                 registerKotlinModule()
@@ -138,7 +139,7 @@ private fun createHttpClient(): HttpClient {
         }
     }
 
-    return HttpClient(Apache, config)
+    return HttpClient(Apache5, config)
 }
 
 class ServiceUnavailableException(message: String?) : Exception(message)
