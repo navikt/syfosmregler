@@ -7,26 +7,26 @@ version = "1.0.0"
 
 val javaVersion = JvmTarget.JVM_21
 
-val caffeineVersion = "3.2.2"
+val caffeineVersion = "3.2.3"
 val coroutinesVersion = "1.10.2"
-val jacksonVersion = "2.20.2"
+val jacksonVersion = "2.21.1"
 val kluentVersion = "1.73"
 val ktorVersion = "3.4.0"
-val logbackVersion = "1.5.25"
-val logstashEncoderVersion = "8.1"
+val logbackVersion = "1.5.32"
+val logstashEncoderVersion = "9.0"
 val prometheusVersion = "0.16.0"
-val kotestVersion = "6.0.3"
-val mockkVersion = "1.14.5"
-val kotlinVersion = "2.2.20"
+val kotestVersion = "6.1.5"
+val mockkVersion = "1.14.9"
+val kotlinVersion = "2.3.10"
 val ktfmtVersion = "0.44"
-val diagnosekoderVersion = "1.2025.0"
+val diagnosekoderVersion = "1.2026.0"
 val kafkaVersion = "3.9.1"
-val regulaVersion = "41"
-val kafkaClientVersion = "4.0.0"
+val regulaVersion = "47"
+val kafkaClientVersion = "4.2.0"
 plugins {
     id("application")
-    kotlin("jvm") version "2.2.20"
-    id("com.diffplug.spotless") version "7.2.1"
+    kotlin("jvm") version "2.3.10"
+    id("com.diffplug.spotless") version "8.3.0"
 }
 
 application {
