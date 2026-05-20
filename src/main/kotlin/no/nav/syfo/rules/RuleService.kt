@@ -124,7 +124,7 @@ class RuleService(
                     "RuleResult for ${receivedSykmelding.sykmelding.id}: ${
                         objectMapper
                             .writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(regulaResult.results.filter { it.outcome != null })
+                            .writeValueAsString(regulaResult.trees.filter { it.outcome != null })
                     }",
                 )
             }

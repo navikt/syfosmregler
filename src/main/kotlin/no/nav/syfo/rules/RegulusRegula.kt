@@ -69,7 +69,6 @@ fun mapToRegulaPayload(
             }
 
         return RegulaPayload(
-            sykmeldingId = sykmelding.id,
             hoveddiagnose =
                 sykmelding.medisinskVurdering.hovedDiagnose?.let {
                     Diagnose(kode = it.kode, system = it.system)
@@ -86,7 +85,8 @@ fun mapToRegulaPayload(
                     )
                 },
             aktivitet = sykmelding.perioder.map(Periode::toSykmeldingPeriode),
-            utdypendeOpplysninger = mapSvar(sykmelding.utdypendeOpplysninger),
+            besvarteUtdypendeOpplysninger =
+                sykmelding.utdypendeOpplysninger.flatMap { it.value.keys },
             kontaktPasientBegrunnelseIkkeKontakt =
                 sykmelding.kontaktMedPasient.begrunnelseIkkeKontakt,
             tidligereSykmeldinger = mappedTidligereSykmeldinger,
@@ -103,10 +103,7 @@ fun mapToRegulaPayload(
                     rulesetVersion = ruleMetadata.rulesetVersion,
                 ),
             behandler =
-                if (behandler == null)
-                    RegulaBehandler.FinnesIkke(
-                        fnr = sykmelding.behandler.fnr,
-                    )
+                if (behandler == null) RegulaBehandler.FinnesIkke
                 else
                     RegulaBehandler.Finnes(
                         suspendert = behandlerSuspendert,
