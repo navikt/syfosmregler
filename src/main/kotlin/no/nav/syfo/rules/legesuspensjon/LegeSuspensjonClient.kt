@@ -3,11 +3,12 @@ package no.nav.syfo.rules.legesuspensjon
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.accept
-import io.ktor.client.request.get
 import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import java.io.IOException
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.azuread.v2.AzureAdV2Client
@@ -31,7 +32,7 @@ class LegeSuspensjonClient(
     ): Suspendert {
         val timer = SUSPANSJON_HISTOGRAM.labels("lege_suspansjon").startTimer()
         val httpResponse =
-            httpClient.get("$endpointUrl/api/v1/suspensjon/status") {
+            httpClient.post("$endpointUrl/api/v1/suspensjon/soek") {
                 accept(ContentType.Application.Json)
                 val accessToken = azureAdV2Client.getAccessToken(scope)
                 if (accessToken?.accessToken == null) {
@@ -40,11 +41,16 @@ class LegeSuspensjonClient(
                 headers {
                     append("Nav-Call-Id", ediloggid)
                     append("Nav-Consumer-Id", "srvsyfosmregler")
-                    append("Nav-Personident", therapistId)
-
                     append("Authorization", "Bearer ${accessToken.accessToken}")
                 }
-                parameter("oppslagsdato", oppslagsdato)
+
+                contentType(ContentType.Application.Json)
+                setBody(
+                    mapOf(
+                        "personident" to therapistId,
+                        "oppslagsdato" to oppslagsdato,
+                    )
+                )
             }
         timer.observeDuration()
 
