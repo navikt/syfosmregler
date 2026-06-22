@@ -21,7 +21,7 @@ val kotlinVersion = "2.2.20"
 val ktfmtVersion = "0.44"
 val diagnosekoderVersion = "1.2025.0"
 val kafkaVersion = "3.9.1"
-val regulaVersion = "55"
+val regulaVersion = "56"
 val kafkaClientVersion = "4.0.0"
 plugins {
     id("application")
