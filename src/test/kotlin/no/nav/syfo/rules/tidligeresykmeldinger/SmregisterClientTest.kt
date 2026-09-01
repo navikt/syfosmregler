@@ -318,14 +318,7 @@ fun sykmeldingRespons(
             id = UUID.randomUUID().toString(),
             behandlingsutfall = behandlingsutfallDTO,
             sykmeldingsperioder =
-                listOf(
-                    SmregisterSykmeldingsperiode(
-                        fom,
-                        tom,
-                        gradert,
-                        periodeType,
-                    ),
-                ),
+                listOf(SmregisterSykmeldingsperiode(fom, tom, gradert, periodeType)),
             behandletTidspunkt =
                 if (behandletDato != null) {
                     OffsetDateTime.of(behandletDato.atStartOfDay(), ZoneOffset.UTC)
@@ -338,7 +331,7 @@ fun sykmeldingRespons(
                 ),
             merknader = merknader,
             sykmeldingStatus = sykmeldingStatus,
-        ),
+        )
     )
 
 private fun lagPeriode(fom: LocalDate, tom: LocalDate) =

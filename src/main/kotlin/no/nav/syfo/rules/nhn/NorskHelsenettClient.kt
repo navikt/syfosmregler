@@ -30,14 +30,11 @@ class NorskHelsenettClient(
     suspend fun finnBehandler(
         behandlerFnr: String,
         msgId: String,
-        loggingMeta: LoggingMeta
+        loggingMeta: LoggingMeta,
     ): Behandler? {
         val timer = HPR_HISTOGRAM.labels("behandler").startTimer()
         val result: Behandler? =
-            retry(
-                callName = "finnbehandler",
-                retryIntervals = arrayOf(500L, 1000L, 1000L),
-            ) {
+            retry(callName = "finnbehandler", retryIntervals = arrayOf(500L, 1000L, 1000L)) {
                 log.info("Henter behandler fra syfohelsenettproxy for msgId {}", msgId)
                 val httpResponse =
                     httpClient.get("$endpointUrl/api/v2/behandler") {
@@ -82,7 +79,7 @@ class NorskHelsenettClient(
                     else -> {
                         log.warn(
                             "Did not get OK from helsenett for msgid: $msgId",
-                            fields(loggingMeta)
+                            fields(loggingMeta),
                         )
                         null
                     }
@@ -93,10 +90,7 @@ class NorskHelsenettClient(
     }
 }
 
-data class Behandler(
-    val godkjenninger: List<Godkjenning>,
-    val hprNummer: Int? = null,
-)
+data class Behandler(val godkjenninger: List<Godkjenning>, val hprNummer: Int? = null)
 
 data class Godkjenning(
     val helsepersonellkategori: Kode? = null,
@@ -109,13 +103,9 @@ data class Tilleggskompetanse(
     val eTag: String?,
     val gyldig: Periode?,
     val id: Int?,
-    val type: Kode?
+    val type: Kode?,
 )
 
 data class Periode(val fra: LocalDateTime?, val til: LocalDateTime?)
 
-data class Kode(
-    val aktiv: Boolean,
-    val oid: Int,
-    val verdi: String?,
-)
+data class Kode(val aktiv: Boolean, val oid: Int, val verdi: String?)

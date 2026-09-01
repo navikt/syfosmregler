@@ -18,7 +18,7 @@ fun main() {
         .addShutdownHook(
             Thread {
                 embeddedServer.stop(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(10))
-            },
+            }
         )
     embeddedServer.start(true)
 }
@@ -32,7 +32,4 @@ fun Application.module() {
     configureRouting()
 }
 
-data class ApplicationState(
-    var alive: Boolean = true,
-    var ready: Boolean = true,
-)
+data class ApplicationState(var alive: Boolean = true, var ready: Boolean = true)

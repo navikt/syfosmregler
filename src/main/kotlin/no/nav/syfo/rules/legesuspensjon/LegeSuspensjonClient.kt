@@ -45,20 +45,11 @@ class LegeSuspensjonClient(
                 }
 
                 contentType(ContentType.Application.Json)
-                setBody(
-                    mapOf(
-                        "personident" to therapistId,
-                        "oppslagsdato" to oppslagsdato,
-                    )
-                )
+                setBody(mapOf("personident" to therapistId, "oppslagsdato" to oppslagsdato))
             }
         timer.observeDuration()
 
-        log.info(
-            "Hentet supensjonstatus for ediloggId {}, {}",
-            ediloggid,
-            fields(loggingMeta),
-        )
+        log.info("Hentet supensjonstatus for ediloggId {}, {}", ediloggid, fields(loggingMeta))
 
         return when (httpResponse.status) {
             HttpStatusCode.OK -> httpResponse.body()
@@ -70,7 +61,7 @@ class LegeSuspensjonClient(
                     fields(loggingMeta),
                 )
                 throw IOException(
-                    "Btsys svarte med uventet kode ${httpResponse.status} for $ediloggid",
+                    "Btsys svarte med uventet kode ${httpResponse.status} for $ediloggid"
                 )
             }
         }

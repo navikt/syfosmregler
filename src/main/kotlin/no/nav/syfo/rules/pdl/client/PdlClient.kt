@@ -11,18 +11,12 @@ import no.nav.syfo.rules.pdl.client.model.GetPersonVeriables
 import no.nav.syfo.rules.pdl.client.model.GraphQLResponse
 import no.nav.syfo.rules.pdl.client.model.PdlResponse
 
-class PdlClient(
-    private val httpClient: HttpClient,
-    private val basePath: String,
-) {
+class PdlClient(private val httpClient: HttpClient, private val basePath: String) {
     private val temaHeader = "TEMA"
     private val tema = "SYM"
 
     suspend fun getPerson(fnr: String, token: String): GraphQLResponse<PdlResponse> {
-        val getPersonRequest =
-            GetPersonRequest(
-                variables = GetPersonVeriables(ident = fnr),
-            )
+        val getPersonRequest = GetPersonRequest(variables = GetPersonVeriables(ident = fnr))
 
         return httpClient
             .post(basePath) {

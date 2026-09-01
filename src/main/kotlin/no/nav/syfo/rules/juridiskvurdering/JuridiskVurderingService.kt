@@ -8,9 +8,7 @@ import no.nav.tsm.regulus.regula.toJuridiskVurdering
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 
-data class JuridiskVurderingResult(
-    val juridiskeVurderinger: List<JuridiskVurdering>,
-)
+data class JuridiskVurderingResult(val juridiskeVurderinger: List<JuridiskVurdering>)
 
 class JuridiskVurderingService(
     private val kafkaProducer: KafkaProducer<String, JuridiskVurderingResult>,
@@ -23,10 +21,7 @@ class JuridiskVurderingService(
         val KILDE = "syfosmregler"
     }
 
-    fun processRuleResults(
-        receivedSykmelding: ReceivedSykmelding,
-        result: RegulaResult,
-    ) {
+    fun processRuleResults(receivedSykmelding: ReceivedSykmelding, result: RegulaResult) {
 
         val juridiskVurderingResult =
             JuridiskVurderingResult(
@@ -37,10 +32,7 @@ class JuridiskVurderingService(
                         version = VERSION,
                         kilde = KILDE,
                         versjonAvKode = versjonsKode,
-                        sporing =
-                            mapOf(
-                                "sykmelding" to receivedSykmelding.sykmelding.id,
-                            ),
+                        sporing = mapOf("sykmelding" to receivedSykmelding.sykmelding.id),
                     )
                 }
             )
@@ -51,7 +43,7 @@ class JuridiskVurderingService(
                     juridiskVurderingTopic,
                     receivedSykmelding.sykmelding.id,
                     juridiskVurderingResult,
-                ),
+                )
             )
             .get()
     }

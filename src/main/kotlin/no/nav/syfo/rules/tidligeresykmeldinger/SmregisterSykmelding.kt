@@ -13,10 +13,7 @@ data class SmregisterSykmelding(
     val merknader: List<SmregisterMerknad>?,
 )
 
-data class SmregisterMerknad(
-    val type: String,
-    val beskrivelse: String?,
-)
+data class SmregisterMerknad(val type: String, val beskrivelse: String?)
 
 data class SmregisterSykmeldingsperiode(
     val fom: LocalDate,
@@ -25,18 +22,11 @@ data class SmregisterSykmeldingsperiode(
     val type: SmregisterPeriodetype,
 )
 
-data class SmregisterMedisinskVurdering(
-    val hovedDiagnose: SmregisterDiagnose?,
-)
+data class SmregisterMedisinskVurdering(val hovedDiagnose: SmregisterDiagnose?)
 
-data class SmregisterDiagnose(
-    val kode: String,
-)
+data class SmregisterDiagnose(val kode: String)
 
-data class SmregisterGradert(
-    val grad: Int,
-    val reisetilskudd: Boolean,
-)
+data class SmregisterGradert(val grad: Int, val reisetilskudd: Boolean)
 
 enum class SmregisterPeriodetype {
     AKTIVITET_IKKE_MULIG,
@@ -46,17 +36,12 @@ enum class SmregisterPeriodetype {
     REISETILSKUDD,
 }
 
-data class SmregisterBehandlingsutfall(
-    val status: SmregisterRegelStatus,
-)
+data class SmregisterBehandlingsutfall(val status: SmregisterRegelStatus)
 
-data class SmregisterSykmeldingStatus(
-    val statusEvent: String,
-    val timestamp: OffsetDateTime,
-)
+data class SmregisterSykmeldingStatus(val statusEvent: String, val timestamp: OffsetDateTime)
 
 enum class SmregisterRegelStatus {
     OK,
     MANUAL_PROCESSING,
-    INVALID
+    INVALID,
 }

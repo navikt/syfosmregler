@@ -62,31 +62,28 @@ private fun RegulaResult.toApiResponse(): RuleValidationResponse {
                                     RuleValidationRuleStatus.MANUAL_PROCESSING
                                 RegulaOutcomeStatus.INVALID -> RuleValidationRuleStatus.INVALID
                             },
-                    ),
+                    )
                 )
         }
 
-    return RuleValidationResponse(
-        status = apiResponseStatus,
-        ruleHits = apiResponseRuleHits,
-    )
+    return RuleValidationResponse(status = apiResponseStatus, ruleHits = apiResponseRuleHits)
 }
 
 /** These data classes are used to keep the API stable. */
 data class RuleValidationResponse(
     val status: RuleValidationRuleStatus,
-    val ruleHits: List<RuleValidationRuleInfo>
+    val ruleHits: List<RuleValidationRuleInfo>,
 )
 
 data class RuleValidationRuleInfo(
     val ruleName: String,
     val messageForSender: String,
     val messageForUser: String,
-    val ruleStatus: RuleValidationRuleStatus
+    val ruleStatus: RuleValidationRuleStatus,
 )
 
 enum class RuleValidationRuleStatus {
     OK,
     MANUAL_PROCESSING,
-    INVALID
+    INVALID,
 }
