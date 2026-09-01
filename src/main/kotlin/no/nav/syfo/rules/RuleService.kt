@@ -14,7 +14,7 @@ import no.nav.syfo.rules.shared.ReceivedSykmelding
 import no.nav.syfo.rules.shared.RuleMetadata
 import no.nav.syfo.rules.tidligeresykmeldinger.SmregisterClient
 import no.nav.syfo.utils.LoggingMeta
-import no.nav.syfo.utils.objectMapper
+import no.nav.syfo.utils.jsonMapper
 import no.nav.syfo.utils.secureLog
 import no.nav.syfo.validation.extractBornDate
 import no.nav.tsm.regulus.regula.RegulaResult
@@ -28,7 +28,7 @@ class RuleService(
     private val norskHelsenettClient: NorskHelsenettClient,
     private val pdlService: PdlPersonService,
     private val juridiskVurderingService: JuridiskVurderingService,
-    private val syfosmregisterClient: SmregisterClient
+    private val syfosmregisterClient: SmregisterClient,
 ) {
     private val log: Logger = LoggerFactory.getLogger("ruleservice")
 
@@ -122,10 +122,10 @@ class RuleService(
             if (regulaResult is RegulaResult.NotOk) {
                 secureLog.info(
                     "RuleResult for ${receivedSykmelding.sykmelding.id}: ${
-                        objectMapper
+                        jsonMapper
                             .writerWithDefaultPrettyPrinter()
                             .writeValueAsString(regulaResult.trees.filter { it.outcome != null })
-                    }",
+                    }"
                 )
             }
 

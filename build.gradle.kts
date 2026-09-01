@@ -1,32 +1,32 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.io.ByteArrayOutputStream
 
 group = "no.nav.syfo"
 version = "1.0.0"
 
 
-val javaVersion = JvmTarget.JVM_21
+val javaVersion = JvmTarget.JVM_25
 
 val caffeineVersion = "3.2.2"
 val coroutinesVersion = "1.10.2"
-val jacksonVersion = "2.20.2"
+val jacksonVersion = "3.2.2"
 val kluentVersion = "1.73"
-val ktorVersion = "3.4.0"
-val logbackVersion = "1.5.25"
-val logstashEncoderVersion = "8.1"
+val ktorVersion = "3.5.2"
+val logbackVersion = "1.6.3"
+val logstashEncoderVersion = "9.0"
 val prometheusVersion = "0.16.0"
-val kotestVersion = "6.0.3"
+val kotestVersion = "6.2.4"
 val mockkVersion = "1.14.5"
-val kotlinVersion = "2.2.20"
-val ktfmtVersion = "0.44"
-val diagnosekoderVersion = "1.2025.0"
-val kafkaVersion = "3.9.1"
+val kotlinVersion = "2.4.10"
+val ktfmtVersion = "0.56"
+val diagnosekoderVersion = "1.2026.0"
+val kafkaVersion = "4.3.1"
 val regulaVersion = "56"
-val kafkaClientVersion = "4.0.0"
+val kafkaClientVersion = "4.3.1"
+
 plugins {
     id("application")
-    kotlin("jvm") version "2.2.20"
-    id("com.diffplug.spotless") version "7.2.1"
+    kotlin("jvm") version "2.4.10"
+    id("com.diffplug.spotless") version "8.10.1"
 }
 
 application {
@@ -46,8 +46,6 @@ repositories {
 
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
@@ -59,7 +57,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson3:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
@@ -73,8 +71,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("tools.jackson.module:jackson-module-kotlin:${jacksonVersion}")
 
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 

@@ -44,7 +44,7 @@ class PdlPersonService(
         if (pdlResponse.data.hentPerson == null) {
             log.error(
                 "Klarte ikke hente ut person fra PDL {}",
-                StructuredArguments.fields(loggingMeta)
+                StructuredArguments.fields(loggingMeta),
             )
             throw PersonNotFoundInPdl("Klarte ikke hente ut person fra PDL")
         }
@@ -60,8 +60,8 @@ class PdlPersonService(
             fnr,
             PdlPerson(
                 pdlResponse.data.hentIdenter.identer,
-                foedselsdato = pdlResponse.data.hentPerson.foedselsdato
-            )
+                foedselsdato = pdlResponse.data.hentPerson.foedselsdato,
+            ),
         )
     }
 

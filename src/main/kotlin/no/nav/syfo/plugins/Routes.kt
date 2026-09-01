@@ -1,15 +1,11 @@
 package no.nav.syfo.plugins
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.apache5.Apache5
 import io.ktor.client.engine.apache5.Apache5EngineConfig
 import io.ktor.client.plugins.*
 import io.ktor.network.sockets.*
-import io.ktor.serialization.jackson.*
+import io.ktor.serialization.jackson3.jackson
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
@@ -59,17 +55,9 @@ fun Application.configureRouting() {
             httpClient,
         )
 
-    val pdlClient =
-        PdlClient(
-            httpClient,
-            env.pdlGraphqlPath,
-        )
+    val pdlClient = PdlClient(httpClient, env.pdlGraphqlPath)
     val pdlService =
-        PdlPersonService(
-            pdlClient,
-            accessTokenClientV2 = azureAdV2Client,
-            env.pdlScope,
-        )
+        PdlPersonService(pdlClient, accessTokenClientV2 = azureAdV2Client, env.pdlScope)
 
     val kafkaBaseConfig = KafkaUtils.getAivenKafkaConfig("juridisk-producer")
     val kafkaProperties =
@@ -99,14 +87,7 @@ fun Application.configureRouting() {
 
 private fun createHttpClient(): HttpClient {
     val config: HttpClientConfig<Apache5EngineConfig>.() -> Unit = {
-        install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
-            jackson {
-                registerKotlinModule()
-                registerModule(JavaTimeModule())
-                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            }
-        }
+        install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) { jackson {} }
         HttpResponseValidator {
             handleResponseExceptionWithRequest { exception, _ ->
                 when (exception) {
@@ -124,7 +105,7 @@ private fun createHttpClient(): HttpClient {
             retryIf(maxRetries) { request, response ->
                 if (response.status.value.let { it in 500..599 }) {
                     logger.warn(
-                        "Retrying for statuscode ${response.status.value}, for url ${request.url}",
+                        "Retrying for statuscode ${response.status.value}, for url ${request.url}"
                     )
                     true
                 } else {

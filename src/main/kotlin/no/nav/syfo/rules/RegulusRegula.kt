@@ -47,7 +47,7 @@ fun mapToRegulaPayload(
                     sykmeldingId = it.id,
                     aktivitet =
                         it.sykmeldingsperioder.map(
-                            SmregisterSykmeldingsperiode::toSykmeldingPeriode,
+                            SmregisterSykmeldingsperiode::toSykmeldingPeriode
                         ),
                     hoveddiagnose =
                         it.medisinskVurdering?.hovedDiagnose?.let { diagnose ->
@@ -92,10 +92,7 @@ fun mapToRegulaPayload(
             tidligereSykmeldinger = mappedTidligereSykmeldinger,
             behandletTidspunkt = ruleMetadata.behandletTidspunkt,
             pasient =
-                RegulaPasient(
-                    ident = pasientIdent,
-                    fodselsdato = ruleMetadata.pasientFodselsdato,
-                ),
+                RegulaPasient(ident = pasientIdent, fodselsdato = ruleMetadata.pasientFodselsdato),
             meta =
                 RegulaMeta.LegacyMeta(
                     mottattDato = ruleMetadata.receivedDate,
@@ -138,75 +135,35 @@ private fun SmregisterRegelStatus.toRegulaStatus(): RegulaStatus =
 
 private fun Periode.toSykmeldingPeriode(): Aktivitet =
     when {
-        aktivitetIkkeMulig != null ->
-            Aktivitet.IkkeMulig(
-                fom = fom,
-                tom = tom,
-            )
-        gradert != null ->
-            Aktivitet.Gradert(
-                fom = fom,
-                tom = tom,
-                grad = gradert.grad,
-            )
-        reisetilskudd ->
-            Aktivitet.Reisetilskudd(
-                fom = fom,
-                tom = tom,
-            )
+        aktivitetIkkeMulig != null -> Aktivitet.IkkeMulig(fom = fom, tom = tom)
+        gradert != null -> Aktivitet.Gradert(fom = fom, tom = tom, grad = gradert.grad)
+        reisetilskudd -> Aktivitet.Reisetilskudd(fom = fom, tom = tom)
         behandlingsdager != null ->
-            Aktivitet.Behandlingsdager(
-                fom = fom,
-                tom = tom,
-                behandlingsdager = behandlingsdager,
-            )
+            Aktivitet.Behandlingsdager(fom = fom, tom = tom, behandlingsdager = behandlingsdager)
         avventendeInnspillTilArbeidsgiver != null ->
             Aktivitet.Avventende(
                 fom = fom,
                 tom = tom,
                 avventendeInnspillTilArbeidsgiver = avventendeInnspillTilArbeidsgiver,
             )
-        else ->
-            Aktivitet.Ugyldig(
-                fom = fom,
-                tom = tom,
-            )
+        else -> Aktivitet.Ugyldig(fom = fom, tom = tom)
     }
 
 private fun SmregisterSykmeldingsperiode.toSykmeldingPeriode(): TidligereSykmeldingAktivitet =
     when {
         type == SmregisterPeriodetype.AKTIVITET_IKKE_MULIG ->
-            TidligereSykmeldingAktivitet.IkkeMulig(
-                fom = fom,
-                tom = tom,
-            )
+            TidligereSykmeldingAktivitet.IkkeMulig(fom = fom, tom = tom)
         type == SmregisterPeriodetype.GRADERT && gradert != null ->
-            TidligereSykmeldingAktivitet.Gradert(
-                fom = fom,
-                tom = tom,
-                grad = gradert.grad,
-            )
+            TidligereSykmeldingAktivitet.Gradert(fom = fom, tom = tom, grad = gradert.grad)
         type == SmregisterPeriodetype.REISETILSKUDD ->
-            TidligereSykmeldingAktivitet.Reisetilskudd(
-                fom = fom,
-                tom = tom,
-            )
+            TidligereSykmeldingAktivitet.Reisetilskudd(fom = fom, tom = tom)
         type == SmregisterPeriodetype.BEHANDLINGSDAGER ->
-            TidligereSykmeldingAktivitet.Behandlingsdager(
-                fom = fom,
-                tom = tom,
-            )
+            TidligereSykmeldingAktivitet.Behandlingsdager(fom = fom, tom = tom)
         type == SmregisterPeriodetype.AVVENTENDE ->
-            TidligereSykmeldingAktivitet.Avventende(
-                fom = fom,
-                tom = tom,
-            )
+            TidligereSykmeldingAktivitet.Avventende(fom = fom, tom = tom)
         else -> {
             log.warn("Shadow test: Ukjent periode type: $type")
-            TidligereSykmeldingAktivitet.Ugyldig(
-                fom = fom,
-                tom = tom,
-            )
+            TidligereSykmeldingAktivitet.Ugyldig(fom = fom, tom = tom)
         }
     }
 
@@ -214,22 +171,14 @@ private fun Godkjenning.toBehandlerGodkjenning() =
     BehandlerGodkjenning(
         helsepersonellkategori =
             helsepersonellkategori?.let {
-                BehandlerKode(
-                    oid = it.oid,
-                    aktiv = it.aktiv,
-                    verdi = it.verdi,
-                )
+                BehandlerKode(oid = it.oid, aktiv = it.aktiv, verdi = it.verdi)
             },
         tillegskompetanse =
             tillegskompetanse?.map { tillegskompetanse ->
                 BehandlerTilleggskompetanse(
                     avsluttetStatus =
                         tillegskompetanse.avsluttetStatus?.let {
-                            BehandlerKode(
-                                oid = it.oid,
-                                aktiv = it.aktiv,
-                                verdi = it.verdi,
-                            )
+                            BehandlerKode(oid = it.oid, aktiv = it.aktiv, verdi = it.verdi)
                         },
                     gyldig =
                         tillegskompetanse.gyldig?.let {
@@ -237,22 +186,12 @@ private fun Godkjenning.toBehandlerGodkjenning() =
                         },
                     type =
                         tillegskompetanse.type?.let {
-                            BehandlerKode(
-                                oid = it.oid,
-                                aktiv = it.aktiv,
-                                verdi = it.verdi,
-                            )
+                            BehandlerKode(oid = it.oid, aktiv = it.aktiv, verdi = it.verdi)
                         },
                 )
             },
         autorisasjon =
-            autorisasjon?.let {
-                BehandlerKode(
-                    oid = it.oid,
-                    aktiv = it.aktiv,
-                    verdi = it.verdi,
-                )
-            },
+            autorisasjon?.let { BehandlerKode(oid = it.oid, aktiv = it.aktiv, verdi = it.verdi) },
     )
 
 private fun mapSvar(

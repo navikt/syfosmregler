@@ -6,7 +6,7 @@ fun extractBornDate(personIdent: String): LocalDate =
     LocalDate.of(
         extractBornYear(personIdent),
         extractBornMonth(personIdent),
-        extractBornDay(personIdent)
+        extractBornDay(personIdent),
     )
 
 fun extractBornYear(personIdent: String): Int {

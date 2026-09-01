@@ -1,14 +1,10 @@
 package no.nav.syfo.rules.nhn
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.kotest.core.spec.style.FunSpec
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.jackson.jackson
+import io.ktor.serialization.jackson3.jackson
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -34,14 +30,7 @@ object NorskHelsenettClientTest :
         val accessTokenClientMock = mockk<AzureAdV2Client>()
         val httpClient =
             HttpClient(CIO) {
-                install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
-                    jackson {
-                        registerKotlinModule()
-                        registerModule(JavaTimeModule())
-                        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    }
-                }
+                install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) { jackson {} }
             }
 
         val mockHttpServerPort = ServerSocket(0).use { it.localPort }
@@ -58,7 +47,7 @@ object NorskHelsenettClientTest :
                                             listOf(
                                                 Godkjenning(
                                                     helsepersonellkategori = Kode(true, 1, "verdi"),
-                                                    autorisasjon = Kode(true, 2, "annenVerdi")
+                                                    autorisasjon = Kode(true, 2, "annenVerdi"),
                                                 )
                                             )
                                         )
@@ -68,7 +57,7 @@ object NorskHelsenettClientTest :
                                 else ->
                                     call.respond(
                                         HttpStatusCode.InternalServerError,
-                                        "Noe gikk galt"
+                                        "Noe gikk galt",
                                     )
                             }
                         }
@@ -89,11 +78,7 @@ object NorskHelsenettClientTest :
         context("Test NorskHelsenettClient") {
             test("Should get behandler") {
                 val behandler =
-                    norskHelsenettClient.finnBehandler(
-                        fnr,
-                        "123",
-                        LoggingMeta("", "", "123", ""),
-                    )
+                    norskHelsenettClient.finnBehandler(fnr, "123", LoggingMeta("", "", "123", ""))
 
                 behandler shouldBeEqualTo
                     Behandler(
@@ -101,8 +86,8 @@ object NorskHelsenettClientTest :
                             Godkjenning(
                                 helsepersonellkategori = Kode(true, 1, "verdi"),
                                 autorisasjon = Kode(true, 2, "annenVerdi"),
-                            ),
-                        ),
+                            )
+                        )
                     )
             }
 
@@ -121,11 +106,7 @@ object NorskHelsenettClientTest :
         context("Test retry") {
             test("Should retry when getting internal server error") {
                 val behandler =
-                    norskHelsenettClient.finnBehandler(
-                        fnr,
-                        "1",
-                        LoggingMeta("", "", "1", ""),
-                    )
+                    norskHelsenettClient.finnBehandler(fnr, "1", LoggingMeta("", "", "1", ""))
 
                 behandler shouldBeEqualTo
                     Behandler(
@@ -133,18 +114,14 @@ object NorskHelsenettClientTest :
                             Godkjenning(
                                 helsepersonellkategori = Kode(true, 1, "verdi"),
                                 autorisasjon = Kode(true, 2, "annenVerdi"),
-                            ),
-                        ),
+                            )
+                        )
                     )
             }
 
             test("Should throw exeption when exceeds max retries") {
                 assertFailsWith<IOException> {
-                    norskHelsenettClient.finnBehandler(
-                        "1234",
-                        "1",
-                        LoggingMeta("", "", "123", ""),
-                    )
+                    norskHelsenettClient.finnBehandler("1234", "1", LoggingMeta("", "", "123", ""))
                 }
             }
         }

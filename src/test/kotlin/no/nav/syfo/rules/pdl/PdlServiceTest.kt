@@ -41,7 +41,7 @@ object PdlServiceTest :
                                         IdentInformasjon(
                                             ident = "01245678901",
                                             gruppe = "FOLKEREGISTERIDENT",
-                                            historisk = false
+                                            historisk = false,
                                         )
                                     )
                                 ),
@@ -58,10 +58,7 @@ object PdlServiceTest :
                 coEvery { accessTokenClientMock.getAccessToken(any()) } returns
                     AzureAdV2Token("accessToken", OffsetDateTime.now().plusHours(1))
                 coEvery { pdlClient.getPerson(any(), any()) } returns
-                    GraphQLResponse<PdlResponse>(
-                        PdlResponse(null, null),
-                        errors = null,
-                    )
+                    GraphQLResponse<PdlResponse>(PdlResponse(null, null), errors = null)
 
                 val exception =
                     assertFailsWith<PersonNotFoundInPdl> {
@@ -76,10 +73,7 @@ object PdlServiceTest :
                 coEvery { pdlClient.getPerson(any(), any()) } returns
                     GraphQLResponse<PdlResponse>(
                         PdlResponse(
-                            hentPerson =
-                                HentPerson(
-                                    foedselsdato = emptyList(),
-                                ),
+                            hentPerson = HentPerson(foedselsdato = emptyList()),
                             hentIdenter = Identliste(emptyList()),
                         ),
                         errors = null,

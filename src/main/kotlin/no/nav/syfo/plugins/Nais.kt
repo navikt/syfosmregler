@@ -14,9 +14,7 @@ import no.nav.syfo.nais.naisIsReadyRoute
 import no.nav.syfo.nais.naisPrometheusRoute
 import no.nav.syfo.utils.logger
 
-fun Application.configureInternalRouting(
-    applicationState: ApplicationState,
-) {
+fun Application.configureInternalRouting(applicationState: ApplicationState) {
     routing {
         naisIsAliveRoute(applicationState)
         naisIsReadyRoute(applicationState)
