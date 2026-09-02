@@ -37,7 +37,7 @@ class SmregisterClient(
                 return sykmeldinger
             }
             else -> {
-                logger.error("Could not get sykmeldinger from smregister")
+                logger.error("Could not get sykmeldinger from smregister, got HttpStatusCode statuscode=${result.status}")
                 throw RuntimeException("Error getting sykmeldinger from smregister")
             }
         }
